@@ -31,13 +31,13 @@ class Images extends Component {
         return <ImageSwiper showsButtons={true} height={height}>
             <Image source={{uri: outsideURL}} style={{flex: 1, height: height}} />
             <Image source={{uri: insideURL}} style={{flex: 1, height: height}} />
-        </Swiper>
+        </ImageSwiper>
     }
 }
 
 const dotStyles = StyleSheet.create({
     dotStyle: {
-        backgroundColor:'rgba(0,0,0,.2)',
+        backgroundColor: 'rgba(236, 230, 223, 0.5)',
         width: 8,
         height: 8,
         borderRadius: 4,
@@ -47,7 +47,7 @@ const dotStyles = StyleSheet.create({
         marginBottom: 3,
     },
     activeDotStyle: {
-        backgroundColor: '#007aff',
+        backgroundColor: 'rgba(236, 230, 223, 0.9)',
         width: 8,
         height: 8,
         borderRadius: 4,
@@ -58,7 +58,15 @@ const dotStyles = StyleSheet.create({
     }
 })
 
-class ImageSlider extends Component {
+const buttonStyles = StyleSheet.create({
+    buttonTextStyle: {
+        fontSize: 50,
+        color: 'rgba(236, 230, 223, 0.8)',
+        // fontFamily: 'Arial',
+    }
+})
+
+class ImageSwiper extends Component {
     /* properties:
         height: int
         showsButtons: bool
@@ -68,11 +76,16 @@ class ImageSlider extends Component {
     render = () => {
         const dot = <View style={dotStyles.dotStyle} />
         const activeDot = <View style={dotStyles.activeDotStyle} />
-        return <Swiper showsButtons={this.props.showsButtons}
-                       height={this.props.height}
-                       dot={dot}
-                       activeDot={activeDot}
-                       />
+        const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
+        const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
+        return <Swiper
+                    showsButtons={this.props.showsButtons}
+                    height={this.props.height}
+                    dot={dot}
+                    activeDot={activeDot}
+                    prevButton={prevButton}
+                    nextButton={nextButton}
+                    >
             {this.props.children}
         </Swiper>
     }
