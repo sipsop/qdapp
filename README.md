@@ -39,6 +39,10 @@ For a list of components, see:
 
     https://github.com/jondot/awesome-react-native
 
+See also:
+
+    https://js.coach/react-native/react-native-carousel?search=carousel
+
 ### Intro Screen
 
 https://www.npmjs.com/package/react-native-viewpager
@@ -46,9 +50,15 @@ https://github.com/FuYaoDe/react-native-app-intro
 
 ### Navigation
 
+https://github.com/aksonov/react-native-router-flux (1800+ stars)
+
 https://github.com/23c/react-native-transparent-bar
 
 There is also a router component thing
+
+### Tabs
+
+https://github.com/skv-headless/react-native-scrollable-tab-view (1700+ stars)
 
 ### Buttons
 

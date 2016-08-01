@@ -13,188 +13,22 @@ import {
   View,
   ScrollView,
   ListView,
-} from 'react-native';
-import Dimensions from 'Dimensions';
+} from 'react-native'
+import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
+// import Carousel from 'react-native-carousel'
+import Carousel from 'react-native-carousel-control'
 
-import { Menu, SampleMenu } from './Menu.js'
+import { Main } from './Main.js'
 
-class Images extends Component {
-    /* properties:
-        height: int
-    */
+class App extends Component {
     render = () => {
-        const height = this.props.height
-        const outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
-        const insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
-        return <ImageSwiper showsButtons={true} height={height}>
-            <Image source={{uri: outsideURL}} style={{flex: 1, height: height}} />
-            <Image source={{uri: insideURL}} style={{flex: 1, height: height}} />
-        </ImageSwiper>
+        return <Main />
     }
 }
 
-const dotStyles = StyleSheet.create({
-    dotStyle: {
-        backgroundColor: 'rgba(236, 230, 223, 0.5)',
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginLeft: 3,
-        marginRight: 3,
-        marginTop: 3,
-        marginBottom: 3,
-    },
-    activeDotStyle: {
-        backgroundColor: 'rgba(236, 230, 223, 0.9)',
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        marginLeft: 3,
-        marginRight: 3,
-        marginTop: 3,
-        marginBottom: 3,
-    }
-})
-
-const buttonStyles = StyleSheet.create({
-    buttonTextStyle: {
-        fontSize: 50,
-        color: 'rgba(236, 230, 223, 0.8)',
-        // fontFamily: 'Arial',
-    }
-})
-
-class ImageSwiper extends Component {
-    /* properties:
-        height: int
-        showsButtons: bool
-        children: [Image]
-    */
-
-    render = () => {
-        const dot = <View style={dotStyles.dotStyle} />
-        const activeDot = <View style={dotStyles.activeDotStyle} />
-        const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
-        const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
-        return <Swiper
-                    showsButtons={this.props.showsButtons}
-                    height={this.props.height}
-                    dot={dot}
-                    activeDot={activeDot}
-                    prevButton={prevButton}
-                    nextButton={nextButton}
-                    >
-            {this.props.children}
-        </Swiper>
-    }
-}
-
-class Main extends Component {
-
-    constructor(props) {
-        super(props)
-        const { height, width} = Dimensions.get('screen')
-        this.state = {width: width, height: height} // approximate width and height
-    }
-
-    handleLayoutChange = (event) => {
-        const { height, width} = event.nativeEvent.layout
-        this.setState({width: width, height: height})
-    }
-
-    render() {
-        const imageHeight = this.state.height / 2
-
-        // TODO: make bar images swipable
-        return (
-            <View style={{flex: 1, flexDirection: 'column'}}>
-                <ScrollView style={{flex: 1}} onLayout={this.handleLayoutChange}>
-                    <Images height={imageHeight} />
-                    <View style={contentStyle.title}>
-                        <Text style={barTitleStyle.barTitleText}>
-                            The Eagle
-                        </Text>
-                    </View>
-                    <View style={contentStyle.menu}>
-                        <Text style={contentStyle.menuText}>Menu</Text>
-                    </View>
-                    <SampleMenu />
-                </ScrollView>
-            </View>
-        )
-
-        // return (
-        //     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch'}}>
-        //         <ScrollView style={{flex: 1}}>
-        //             <View style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch'}}>
-        //                 <Image source={{uri: url}} style={{flex: 1, alignSelf: 'stretch', resizeMode: 'contain'}} />
-        //                 <Image source={{uri: url}} style={{flex: 1, alignSelf: 'stretch', resizeMode: 'contain'}} />
-        //             </View>
-        //         </ScrollView>
-        //     </View>
-        // )
-    }
-}
-
-const contentStyle = StyleSheet.create({
-    main: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        backgroundColor: '#D7CCC8',
-    },
-    picture: {
-        flex: 1,
-        flexDirection: 'row',
-        height: 400,
-    },
-    title: {
-        // flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        height: 50, // TODO: remove
-        backgroundColor: "#B0BEC5",
-    },
-    fill: {
-        flex: 1,
-    },
-    menu: {
-        flexDirection:  'row',
-        justifyContent: 'center',
-        marginTop:      20,
-    },
-    menuText: {
-        fontSize: 18,
-    },
-});
-
-const barImageStyle = StyleSheet.create({
-    barImage: {
-        flex: 1,
-        flexDirection: 'row',
-    }
-})
-
-const barTitleStyle = StyleSheet.create({
-    // children
-    barTitleText: {
-        flex: 1,
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    barTitleInfo: {
-        flex: 1,
-        fontSize: 15,
-        textAlign: 'center',
-        margin: 10,
-    },
-});
-
-AppRegistry.registerComponent('AwesomeProject', () => Main);
+AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing
 
