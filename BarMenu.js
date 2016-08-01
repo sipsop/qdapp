@@ -28,7 +28,7 @@ const menuPadding = 10
 
 // https://github.com/leecade/react-native-swiper
 
-export class Menu extends SizeTracker {
+export class BarMenu extends SizeTracker {
     /* properties:
         categories: [Category]
         cardsPerRow: int
@@ -77,7 +77,7 @@ class CardRow extends Component {
             margin: margin,
             width:  cardWidth,
             height: cardWidth,
-            borderRadius: 20,
+            // borderRadius: 20,
         }
         return <Card key={i} category={category} style={cardStyle} />
     }
@@ -143,4 +143,4 @@ const waterCategory = new Category("Water", {uri: water})
 
 const categories = [beerCategory, wineCategory, spiritCategory, cocktailCategory, waterCategory]
 
-export const SampleMenu = () => <Menu categories={categories} />
+export const SampleBarMenu = () => <BarMenu categories={categories} />

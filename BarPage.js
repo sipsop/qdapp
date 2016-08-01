@@ -20,8 +20,9 @@ import Swiper from 'react-native-swiper'
 // import Carousel from 'react-native-carousel'
 import Carousel from 'react-native-carousel-control'
 
-import { Menu, SampleMenu } from './Menu.js'
+import { SampleBarMenu } from './BarMenu.js'
 import { ImageSwiper } from './ImageSwiper.js'
+import { SizeTracker } from './SizeTracker.js'
 
 class Images extends Component {
     /* properties:
@@ -38,17 +39,16 @@ class Images extends Component {
     }
 }
 
-export class MenuPage extends Component {
+export class BarPage extends SizeTracker {
+    /* properties:
+        width: int
+        height: int
+    */
 
     constructor(props) {
         super(props)
         const { height, width} = Dimensions.get('screen')
         this.state = {width: width, height: height} // approximate width and height
-    }
-
-    handleLayoutChange = (event) => {
-        const { height, width} = event.nativeEvent.layout
-        this.setState({width: width, height: height})
     }
 
     render() {
@@ -57,31 +57,29 @@ export class MenuPage extends Component {
         // TODO: make bar images swipable
         return (
             <View style={{flex: 1, flexDirection: 'column'}}>
-                <ScrollView style={{flex: 1}} onLayout={this.handleLayoutChange}>
-                    <Images height={imageHeight} />
-                    <View style={contentStyle.title}>
-                        <Text style={barTitleStyle.barTitleText}>
-                            The Eagle
-                        </Text>
-                    </View>
-                    <View style={contentStyle.menu}>
-                        <Text style={contentStyle.menuText}>Menu</Text>
-                    </View>
-                    <SampleMenu />
-                    <View style={{flex: 1}}>
-                        <Carousel>
-                            <View style={carouselStyles.container}>
-                                <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                            </View>
-                            <View style={carouselStyles.container}>
-                                <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                            </View>
-                            <View style={carouselStyles.container}>
-                                <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                            </View>
-                        </Carousel>
-                    </View>
-                </ScrollView>
+                <Images height={imageHeight} />
+                <View style={contentStyle.title}>
+                    <Text style={barTitleStyle.barTitleText}>
+                        The Eagle
+                    </Text>
+                </View>
+                <View style={contentStyle.menu}>
+                    <Text style={contentStyle.menuText}>Menu</Text>
+                </View>
+                <SampleBarMenu />
+                <View style={{flex: 1}}>
+                    <Carousel>
+                        <View style={carouselStyles.container}>
+                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
+                        </View>
+                        <View style={carouselStyles.container}>
+                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
+                        </View>
+                        <View style={carouselStyles.container}>
+                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
+                        </View>
+                    </Carousel>
+                </View>
             </View>
         )
     }
