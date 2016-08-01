@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -54,7 +48,6 @@ export class BarPage extends SizeTracker {
     render() {
         const imageHeight = this.state.height / 2
 
-        // TODO: make bar images swipable
         return (
             <View style={{flex: 1, flexDirection: 'column'}}>
                 <Images height={imageHeight} />
@@ -67,19 +60,6 @@ export class BarPage extends SizeTracker {
                     <Text style={contentStyle.menuText}>Menu</Text>
                 </View>
                 <SampleBarMenu />
-                <View style={{flex: 1}}>
-                    <Carousel>
-                        <View style={carouselStyles.container}>
-                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                        </View>
-                        <View style={carouselStyles.container}>
-                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                        </View>
-                        <View style={carouselStyles.container}>
-                            <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                        </View>
-                    </Carousel>
-                </View>
             </View>
         )
     }

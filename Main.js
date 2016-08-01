@@ -12,6 +12,7 @@ import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 
 import { BarPage } from './BarPage.js'
+import { MenuPage } from './MenuPage.js'
 
 export class Main extends Component {
 
@@ -21,7 +22,9 @@ export class Main extends Component {
             <ScrollView tabLabel='Bar'>
                 <BarPage />
             </ScrollView>
-            <Text tabLabel='Menu'>explore menu</Text>
+            <ScrollView tabLabel='Menu'>
+                <MenuPage />
+            </ScrollView>
             <Text tabLabel='Order'>review order</Text>
         </ScrollableTabView>
     }
