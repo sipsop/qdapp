@@ -12,6 +12,8 @@
     "react-native-carousel": "^0.10.0",
     "react-native-carousel-control": "^1.0.2",
     "react-native-circular-progress": "0.0.7",
+    "react-native-picker": "^3.0.5",
+    "react-native-prefix-picker": "^2.0.2",
     "react-native-scrollable-tab-view": "^0.5.3",
     "react-native-slider": "^0.9.0",
     "react-native-swiper": "^1.4.7",

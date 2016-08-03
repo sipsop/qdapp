@@ -9,6 +9,8 @@ import {
   ScrollView,
   ListView,
   Picker,
+  TouchableOpacity,
+  TouchableHighlight,
   // Slider,
 } from 'react-native'
 import Dimensions from 'Dimensions'
@@ -17,9 +19,11 @@ import _ from 'lodash'
 // import Carousel from 'react-native-carousel'
 import Carousel from 'react-native-carousel-control'
 import Slider from 'react-native-slider'
+import WheelPicker from 'react-native-picker'
 
 import { SizeTracker } from './SizeTracker.js'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 export class MenuPage extends SizeTracker {
     /* properties:
@@ -52,6 +56,11 @@ export class MenuPage extends SizeTracker {
                 <View style={{flex: 1}}>
                     <MenuItem />
                 </View>
+                {/*
+                <View style={{flex: 1}}>
+                    <ItemPicker />
+                </View>
+                */}
             </View>
         )
     }
@@ -73,17 +82,49 @@ var carouselStyles = StyleSheet.create({
     },
 })
 
+class Order {
+    constructor(size, top) {
+        this.size = size
+        this.top  = top
+    }
+}
 
 class MenuItem extends Component {
 
     constructor(props) {
         super()
-        this.state = {expanded: false}
+        this.state = { selected: undefined }
     }
 
     render = () => {
         return <View style={menuItemStyle.menuItemView}>
             <PrimaryMenuItem />
+            <ItemSelection size="half-pint" number={2} price={2.60} added={true} />
+            <ItemSelection size="pint + lime" number={1} price={3.40} added={true} />
+            <ItemSelection size="pint" number={0} price={3.40} added={false} />
+
+            <View style={{flex: 1, flexDirection: 'row', height: 50, justifyContent: 'space-between', alignItems: 'center', marginRight: 5, marginLeft: 5}}>
+                <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+                    <EvilIcon name="minus" size={30} color="#900" />
+                </View>
+                <View style={{flex: 1}}>
+                    <Picker selectedValue={this.state.selectedOrder}>
+                        <Picker.Item label="pint (£3.60)" value="pint" />
+                        <Picker.Item label="half-pint (£2.40)" value="half-pint" />
+                    </Picker>
+                </View>
+                <View style={{flex: 1}}>
+                    <Picker>
+                        <Picker.Item label="+top" value="add-top" />
+                        <Picker.Item label="shandy" value="shandy" />
+                        <Picker.Item label="lime" value="lime" />
+                        <Picker.Item label="blackcurrant" value="blackcurrant" />
+                    </Picker>
+                </View>
+                <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+                    <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
+                </View>
+            </View>
         </View>
     }
 }
@@ -93,54 +134,114 @@ class PrimaryMenuItem extends Component {
         return <View style={menuItemStyle.primaryMenuItemView}>
             <Image source={{uri: beerImg}} style={menuItemStyle.image} />
             <View style={menuItemStyle.contentView}>
-                <View style={{flex: 5, flexWrap: 'wrap'}}>
-                    <Text lineBreakMode='tail' numberOfLines={2} style={menuItemStyle.titleText}>
-                        Guiness
-                        {/*Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Stout*/}
-                    </Text>
-                    <Text style={menuItemStyle.keywordText}>
-                        #stout #dry #irish
-                    </Text>
-                    <Text style={menuItemStyle.infoText} numberOfLines={5}>
-                        Guinness is an Irish dry stout.
-                    </Text>
-                    <View style={{flex:1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-                        <Picker selectedValue={"pint"} style={{flex: 1}}>
-                            <Picker.Item value="pint" label="pint" />
-                            <Picker.Item value="half-pint" label="half-pint" />
-                        </Picker>
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginLeft: 10}}>
-                            <Icon name="minus-square-o" size={20} style={{marginLeft: 5}} color="#900" />
-                            <TextInput
-                                style={{marginLeft: 5, textAlign: 'center'}}
-                                placeholder="0"
-                                />
-                            <Icon name="plus-square-o" size={20} style={{marginLeft: 5}} color="rgb(16, 145, 17)" />
-                        </View>
-                        <Text style={{textAlign: 'right'}}>£0</Text>
-                     </View>
-                </View>
-                <View style={{flex: 2, alignItems: 'center'}}>
-                    <Icon name="heart-o" size={30} color="#900" style={{marginTop: 15}} />
-                </View>
+                <MenuItemHeader />
             </View>
+        </View>
+    }
+}
+
+class ItemSelection extends Component {
+    /* properties:
+        size: str
+            pint, half-pint, shot, double-shot, bottle, etc
+        price: float
+            price of individual drink
+        number: int
+            number of drinks
+        added: bool
+    */
+    render = () => {
+        // const iconName = this.props.added ? "times" : "plus"
+        // const iconColor = this.props.added ? "rgb(145, 47, 16)" : "rgb(16, 145, 17)"
+        const total = this.props.price == 0 ? "" : this.props.price * this.props.number
+
+        return <View style={{flex: 0, height: 30, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+            <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+                <EvilIcon name="minus" size={30} color="#900" />
+            </View>
+            <TouchableOpacity style={{flex: 3, flexWrap: 'wrap'}}>
+                <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', borderBottomWidth: 1}}>
+                    <Text lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
+                        {this.props.size}
+                    </Text>
+                    <Text style={{textAlign: 'right'}}>
+                        {this.props.number}
+                    </Text>
+                    <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
+                </View>
+            </TouchableOpacity>
+            <Text style={{marginLeft: 10, textAlign: 'right'}}>
+                {'£' + total.toFixed(2)}
+            </Text>
+            <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+                <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
+            </View>
+            {/*
+            <TouchableOpacity style={{width: 40, justifyContent: 'center', alignItems: 'center'}}>
+                <Icon name={iconName} size={30} color={iconColor} style={{}} />
+            </TouchableOpacity>
+            */}
+         </View>
+    }
+}
+
+class ItemPicker extends Component {
+    constructor(props) {
+        super(props)
+        this.picker = undefined
+    }
+
+    handleToggle = () => {
+        this.picker.toggle()
+    }
+
+    handlePickerBind = (picker) => {
+        console.log("set picker")
+        this.picker = picker
+    }
+
+    render = () => {
+        console.log("rendering...")
+        return <View style={{flex: 1}}>
+            <TouchableOpacity onPress={this.handleToggle.bind(this)}>
+                <Text>pint (£3.40)</Text>
+            </TouchableOpacity>
+            <WheelPicker ref={this.handlePickerBind.bind(this)}
+                    pickerData={[ ["pint (£3.40)", "half-pint (£2.60)"]
+                                , [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                                , ["no top", "shandy", "lime", "black currant"]
+                                ]}
+                    selectedValue={["pint", 1, "no-top"]}
+                    style={{height: 320}}
+                    showDuration={300}
+                    />
         </View>
     }
 }
 
 class MenuItemHeader extends Component {
     render = () => {
-        return <View style={{flex: 5, flexWrap: 'wrap'}}>
-            <Text lineBreakMode='tail' numberOfLines={2} style={menuItemStyle.titleText}>
-                Guiness
-                {/*Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Stout*/}
-            </Text>
-            <Text style={menuItemStyle.keywordText}>
-                #stout #dry #irish
-            </Text>
-            <Text style={menuItemStyle.infoText} numberOfLines={5}>
-                Guinness is an Irish dry stout.
-            </Text>
+        return <View style={{flex: 0, height: 60, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-start' }}>
+            <View style={{flex: 1, flexWrap: 'wrap'}}>
+                <Text lineBreakMode='tail' numberOfLines={1} style={menuItemStyle.titleText}>
+                    Guiness
+                    {/*Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Stout*/}
+                </Text>
+                <Text style={menuItemStyle.keywordText}>
+                    #stout #dry #irish
+                </Text>
+                <Text style={menuItemStyle.infoText} numberOfLines={1}>
+                    Guinness is an Irish dry stout.
+                </Text>
+            </View>
+            <View>
+                <Text>£3.60</Text>
+                <TouchableOpacity>
+                    <View style={{flex: 0, width: 40, height: 40, justifyContent: 'center', marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
+                        <Icon name="heart-o" size={30} color="#900" />
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     }
 }
@@ -154,14 +255,15 @@ const menuItemStyle = StyleSheet.create({
         // borderRadius:   10,
         flex:               0,
         borderWidth:        1,
-        height:             100,
+        minHeight:             120,
     },
     primaryMenuItemView: {
         flex:           0,
         flexDirection:  'row',
         justifyContent: 'flex-start',
+        // alignItems:     'flex-start',
         alignItems:     'flex-start',
-        height:         100,
+        minHeight:      120,
     },
     image: {
         /*
@@ -171,14 +273,16 @@ const menuItemStyle = StyleSheet.create({
         */
         // minWidth: 100,
         // minHeight: 100,
-        width: 100,
+        width:  100,
         height: 100,
-        // borderRadius: 10,
+        margin: 5,
+        borderRadius: 10,
     },
     contentView: {
         flex:           1,
-        flexDirection:  'row',
-        height:         100,
+        flexWrap: 'wrap',
+        // minHeight:      100,
+        marginTop:      5,
         marginLeft:     5,
         marginRight:    5,
     },
@@ -209,52 +313,5 @@ const menuItemStyle = StyleSheet.create({
     keywordText: {
         fontSize: 12,
         color: 'rgba(0, 0, 0, 0.40)',
-    },
-})
-
-class Selection extends Component {
-    render = () => {
-        return <View style={{flex: 1}}>
-            <SelectionItem name="pint" />
-            <SelectionItem name="half-pint" />
-        </View>
-    }
-}
-
-class SelectionItem extends Component {
-    /* properties:
-        name: str
-    */
-    render = () => {
-        return <View>
-            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
-                <Text style={{width: 80, textAlign: 'center', fontSize: 14}}>2 {this.props.name}</Text>
-                <View style={{flex: 4, flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontSize: 30, textAlign: 'center', marginLeft: 5, marginRight: 5}}>-</Text>
-                    <Slider style={{flex: 3, height: 50}}
-                            value={0}
-                            minimumValue={0}
-                            maximumValue={20}
-                            minimumTrackTintColor='#1fb28a'
-                            maximumTrackTintColor='#d3d3d3'
-                            thumbTintColor='#1a9274'
-                            trackStyle={{height: 10}}
-                            thumbStyle={{height: 20}}
-                            />
-                        <Text style={{fontSize: 30, textAlign: 'center', marginLeft: 5, marginRight: 5}}>+</Text>
-                </View>
-                <Text style={{flex: 1, textAlign: 'center'}}>price</Text>
-            </View>
-        </View>
-    }
-}
-
-const selectionItemStyle = StyleSheet.create({
-    selectionItemView: {
-        // flex:           1,
-        flexDirection:  'row',
-        // justifyContent: 'space-between',
-        // alignItems:     'center',
-        // marginTop:      20,
     },
 })
