@@ -13,14 +13,18 @@ import {
   View,
   ScrollView,
   ListView,
+  Platform,
+  PickerIOS
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
 // import Carousel from 'react-native-carousel'
 import Carousel from 'react-native-carousel-control'
-import Picker from 'react-native-wheel-picker'
-var PickerItem = Picker.Item;
+// import Picker from 'react-native-wheel-picker'
+// var PickerItem = Picker.Item;
+
+import PickerAndroid from 'react-native-picker-android';
 
 import { Main } from './Main.js'
 
@@ -158,3 +162,93 @@ const styles = StyleSheet.create({
 });
 
 // AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
+
+let Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
+let PickerItem = Picker.Item
+
+let CAR_MAKES_AND_MODELS = {
+    amc: {
+        name: 'AMC',
+        models: ['AMX', 'Concord', 'Eagle', 'Gremlin', 'Matador', 'Pacer'],
+    },
+    alfa: {
+        name: 'Alfa-Romeo',
+        models: ['159', '4C', 'Alfasud', 'Brera', 'GTV6', 'Giulia', 'MiTo', 'Spider'],
+    },
+    aston: {
+        name: 'Aston Martin',
+        models: ['DB5', 'DB9', 'DBS', 'Rapide', 'Vanquish', 'Vantage'],
+    },
+    audi: {
+        name: 'Audi',
+        models: ['90', '4000', '5000', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q5', 'Q7'],
+    },
+    austin: {
+        name: 'Austin',
+        models: ['America', 'Maestro', 'Maxi', 'Mini', 'Montego', 'Princess'],
+    },
+    borgward: {
+        name: 'Borgward',
+        models: ['Hansa', 'Isabella', 'P100'],
+    },
+    buick: {
+        name: 'Buick',
+        models: ['Electra', 'LaCrosse', 'LeSabre', 'Park Avenue', 'Regal', 'Roadmaster', 'Skylark'],
+    },
+    cadillac: {
+        name: 'Cadillac',
+        models: ['Catera', 'Cimarron', 'Eldorado', 'Fleetwood', 'Sedan de Ville'],
+    },
+    chevrolet: {
+        name: 'Chevrolet',
+        models: ['Astro', 'Aveo', 'Bel Air', 'Captiva', 'Cavalier', 'Chevelle', 'Corvair', 'Corvette', 'Cruze', 'Nova', 'SS', 'Vega', 'Volt'],
+    },
+};
+
+class SomeScene extends React.Component {
+
+    constructor(props, context){
+        super(props, context);
+        this.state = {
+            carMake: 'cadillac',
+            modelIndex: 3,
+        }
+    }
+
+    render() {
+        let make = CAR_MAKES_AND_MODELS[this.state.carMake];
+        let selectionString = make.name + ' ' + make.models[this.state.modelIndex];
+        return (
+            <View>
+                <Text>Please choose a make for your car:</Text>
+                <Picker
+                    selectedValue={this.state.carMake}
+                    onValueChange={(carMake) => this.setState({carMake, modelIndex: 0})}>
+                    {Object.keys(CAR_MAKES_AND_MODELS).map((carMake) => (
+                        <PickerItem
+                            key={carMake}
+                            value={carMake}
+                            label={CAR_MAKES_AND_MODELS[carMake].name}
+                        />
+                    ))}
+                </Picker>
+                <Text>Please choose a model of {make.name}:</Text>
+                <Picker
+                    selectedValue={this.state.modelIndex}
+                    key={this.state.carMake}
+                    onValueChange={(modelIndex) => this.setState({modelIndex})}>
+                    {CAR_MAKES_AND_MODELS[this.state.carMake].models.map((modelName, modelIndex) => (
+                        <PickerItem
+                            key={this.state.carMake + '_' + modelIndex}
+                            value={modelIndex}
+                            label={modelName}
+                        />
+                    ))}
+                </Picker>
+                <Text>You selected: {selectionString}</Text>
+            </View>
+        );
+    }
+}
+
+// AppRegistry.registerComponent('AwesomeProject', () => SomeScene);

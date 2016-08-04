@@ -83,3 +83,7 @@ https://github.com/nick/react-native-carousel
 ### Card Swiping (like/dislike)
 
 https://github.com/meteor-factory/react-native-tinder-swipe-cards
+
+### Spinners
+
+react-native-spinkit
