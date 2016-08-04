@@ -24,7 +24,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { SizeTracker } from './SizeTracker.js'
-import { CustomPicker } from './CustomPicker.js'
+import { WheelPickerCollection, ScrollPickerCollection } from './Pickers.js'
 import { min, max } from './Curry.js'
 
 export class MenuPage extends SizeTracker {
@@ -146,6 +146,12 @@ class PrimaryMenuItem extends Component {
     }
 }
 
+const ChangeType = new Enum('ChangeType',
+    [ 'ChangeSize'
+    , 'ChangeTop'
+    , 'ChangeNumber'
+    ])
+
 class DrinkSelection extends Component {
     /* properties:
         drinkSizes: [str]
@@ -172,6 +178,16 @@ class DrinkSelection extends Component {
         this.setState({currentNumber: min(this.state.currentNumber + 1, 99)})
     }
 
+    handleChange = (changeType, i) => {
+        if (changeType == ChangeType.ChangeSize) {
+            this.handleDrinkSizeChange(i)
+        } else if (changeType == ChangeType.ChangeTop) {
+            this.handleDrinkTopChange(i)
+        } else {
+            this.handleNumberChange(i)
+        }
+    }
+
     handleDrinkSizeChange = (i) => {
         this.setState({currentDrinkSize: i})
     }
@@ -188,36 +204,51 @@ class DrinkSelection extends Component {
         const price = this.props.drinkPrices[this.state.currentDrinkSize]
         const total = this.state.currentNumber * price
 
-        const drinkSizesModal =  _.zipWith(
-            this.props.drinkSizes,
-            this.props.drinkPrices,
-            (text, price) => text + ' (£' + price.toFixed(2) + ')'
-            )
+        const sizeItem = {
+            name:           ChangeType.ChangeSize,
+            title:          'Pick a Size:',
+            labels:         this.props.drinkSizes,
+            modalLabels:    _.zipWith(
+                this.props.drinkSizes,
+                this.props.drinkPrices,
+                (text, price) => text + ' (£' + price.toFixed(2) + ')'
+            ),
+        }
 
-        const drinkTopsModal = this.props.drinkTops.map(
-            (text, i) => text + ' (+£0.00)')
+        const topsItem = {
+            name:           ChangeType.ChangeTop,
+            title:          'Pick a Top:',
+            labels:         this.props.drinkTops,
+            modalLabels:    this.props.drinkTops.map(
+                (text, i) => text + ' (+£0.00)'
+            ),
+        }
+
+        const numberItem = {
+            name:           ChangeType.ChangeNumber,
+            title:          'Number of Drinks:',
+            labels:         _.range(100),
+            modalLabels:    _.range(100),
+        }
 
         return <View style={{flex: 0, height: 30, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={30} color="#900" />
             </TouchableOpacity>
-            <CustomPicker
-                labels={this.props.drinkSizes}
-                modalLabels={drinkSizesModal}
-                current={this.state.currentDrinkSize}
-                handleItemChange={this.handleDrinkSizeChange}
+            <WheelPicker
+                pickerItems={[sizeItem, topsItem]}
+                handleItemsChange={this.handleChange}
+                initialSelection={{
+                    ChangeType.ChangeSize: this.state.currentDrinkSize,
+                    ChangeType.ChangeTop:  this.state.currentDrinkTop,
+                }}
                 />
-            <CustomPicker
-                labels={this.props.drinkTops}
-                modalLabels={drinkTopsModal}
-                current={this.state.currentDrinkTop}
-                handleItemChange={this.handleDrinkTopChange}
-                />
-            <CustomPicker
-                labels={_.range(100)}
-                modalLabels={_.range(100)}
-                current={this.state.currentNumber}
-                handleItemChange={this.handleNumberChange}
+            <ScrollPicker
+                items={[numberItem]}
+                handleItemsChange={this.handleChange}
+                initialSelection={{
+                    ChangeType.ChangeNumber: this.state.currentNumber,
+                }}
                 />
             {/*
             <View style={{flex: 3}}>
