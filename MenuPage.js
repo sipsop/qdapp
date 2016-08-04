@@ -9,8 +9,8 @@ import {
   ScrollView,
   ListView,
   Picker,
+  Modal,
   TouchableOpacity,
-  TouchableHighlight,
   // Slider,
 } from 'react-native'
 import Dimensions from 'Dimensions'
@@ -20,10 +20,11 @@ import _ from 'lodash'
 import Carousel from 'react-native-carousel-control'
 import Slider from 'react-native-slider'
 import WheelPicker from 'react-native-picker'
-
-import { SizeTracker } from './SizeTracker.js'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
+
+import { SizeTracker } from './SizeTracker.js'
+import { min, max } from './Curry.js'
 
 export class MenuPage extends SizeTracker {
     /* properties:
@@ -103,6 +104,7 @@ class MenuItem extends Component {
             <ItemSelection size="pint + lime" number={1} price={3.40} added={true} />
             <ItemSelection size="pint" number={0} price={3.40} added={false} />
 
+            {/* Picker thing
             <View style={{flex: 1, flexDirection: 'row', height: 50, justifyContent: 'space-between', alignItems: 'center', marginRight: 5, marginLeft: 5}}>
                 <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                     <EvilIcon name="minus" size={30} color="#900" />
@@ -125,6 +127,7 @@ class MenuItem extends Component {
                     <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
                 </View>
             </View>
+            */}
         </View>
     }
 }
@@ -148,41 +151,161 @@ class ItemSelection extends Component {
             price of individual drink
         number: int
             number of drinks
-        added: bool
     */
+    constructor(props) {
+        super(props)
+        this.state = {
+            drinkSize:   0,
+            number: this.props.number,
+            top: 0,
+        }
+    }
+
+    handleDecrease = () => {
+        this.setState({number: max(this.state.number - 1, 0)})
+    }
+
+    handleIncrease = () => {
+        this.setState({number: min(this.state.number + 1, 99)})
+    }
+
+    handleSizeChange = (i) => {
+        this.setState({drinkSize: i})
+    }
+
+    handleTopChange = (i) => {
+        this.setState({top: i})
+    }
+
+    handleNumberChange = (i) => {
+        this.setState({number: i})
+    }
+
     render = () => {
-        // const iconName = this.props.added ? "times" : "plus"
-        // const iconColor = this.props.added ? "rgb(145, 47, 16)" : "rgb(16, 145, 17)"
-        const total = this.props.price == 0 ? "" : this.props.price * this.props.number
+        const total = this.props.price == 0 ? "" : this.props.price * this.state.number
+
+        const sizeLabels = ["pint", "half-pint"]
+        const sizeModalLabels = ["pint (£3.60)", "half-pint (£2.40)"]
+
+        const topLabels = ["+top", "shandy", "lime", "blackcurrant"]
+        const topModalLabels = ["(no top)", "shandy (+£0.00)", "lime (+£0.00)", "blackcurrant (+£0.00)"]
 
         return <View style={{flex: 0, height: 30, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-            <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+            <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={30} color="#900" />
+            </TouchableOpacity>
+            <CustomPicker
+                labels={sizeLabels}
+                modalLabels={sizeModalLabels}
+                current={this.state.drinkSize}
+                handleItemChange={this.handleSizeChange}
+                />
+            <CustomPicker
+                labels={topLabels}
+                modalLabels={topModalLabels}
+                current={this.state.top}
+                handleItemChange={this.handleTopChange}
+                />
+            <CustomPicker
+                labels={_.range(100)}
+                modalLabels={_.range(100)}
+                current={this.state.number}
+                handleItemChange={this.handleNumberChange}
+                />
+            {/*
+            <View style={{flex: 3}}>
+                <Picker selectedValue={this.state.selectedOrder}>
+                    <Picker.Item label="pint (£3.60)" value="pint" />
+                    <Picker.Item label="half-pint (£2.40)" value="half-pint" />
+                </Picker>
             </View>
-            <TouchableOpacity style={{flex: 3, flexWrap: 'wrap'}}>
+            */}
+            {/*
+            <TouchableOpacity style={{flex: 1, flexWrap: 'wrap'}}>
                 <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', borderBottomWidth: 1}}>
                     <Text lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
-                        {this.props.size}
+                        {this.state.size}
                     </Text>
                     <Text style={{textAlign: 'right'}}>
-                        {this.props.number}
+                        {this.state.number}
                     </Text>
                     <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
                 </View>
             </TouchableOpacity>
+            */}
             <Text style={{marginLeft: 10, textAlign: 'right'}}>
                 {'£' + total.toFixed(2)}
             </Text>
-            <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
+            <TouchableOpacity onPress={this.handleIncrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
-            </View>
-            {/*
-            <TouchableOpacity style={{width: 40, justifyContent: 'center', alignItems: 'center'}}>
-                <Icon name={iconName} size={30} color={iconColor} style={{}} />
             </TouchableOpacity>
-            */}
          </View>
     }
+}
+
+class CustomPicker extends Component {
+    /* properties:
+        labels: [str]
+            list of labels, displayed in the "button"
+        modalLabels: [str]
+            list of labels displayed in the modal picker
+        current: int
+            index of initial value to display
+        handleItemChange: int -> void
+    */
+    constructor(props) {
+        super(props)
+        this.state = {
+            modalVisible: false,
+        }
+    }
+
+    showModal = () => {
+        this.setState({modalVisible: true})
+    }
+
+    closeModal = () => {
+        this.setState({modalVisible: false})
+    }
+
+    chooseItem = (i) => {
+        this.closeModal()
+        this.props.handleItemChange(i)
+    }
+
+    render = () => {
+        const label = this.props.labels[this.props.current || 0]
+
+        return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
+            <Modal  animationType={"fade"}
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={this.closeModal}>
+                <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'stretch', marginBottom: 20, backgroundColor: "#fff"}}>
+                    <ScrollView>
+                        <View style={{flex: 1, alignItems: 'center', margin: 25}}>
+                            {this.props.modalLabels.map(this.renderModalItem)}
+                        </View>
+                    </ScrollView>
+                    <TouchableOpacity onPress={this.closeModal}>
+                        <Text style={{flex: 1, borderRadius: 10, fontSize: 30, textAlign: 'center'}}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+            <TouchableOpacity onPress={this.showModal}>
+                <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
+                    <Text lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
+                        {label}
+                    </Text>
+                    <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
+                </View>
+            </TouchableOpacity>
+        </View>
+    }
+
+    renderModalItem = (label, i) => <TouchableOpacity key={i} onPress={() => this.chooseItem(i)}>
+        <Text style={{fontSize: 25, textAlign: 'center'}}>{label}</Text>
+    </TouchableOpacity>
 }
 
 class ItemPicker extends Component {
