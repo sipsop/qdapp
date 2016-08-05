@@ -31,14 +31,12 @@ import { min, max } from './Curry.js'
 
 export class MenuPage extends SizeTracker {
     /* properties:
-        width: int
-        height: int
+        menu: [MenuItem]
     */
-
     constructor(props) {
         super(props)
-        const { height, width} = Dimensions.get('screen')
-        this.state = {width: width, height: height} // approximate width and height
+        // const { height, width} = Dimensions.get('screen')
+        // this.state = {width: width, height: height} // approximate width and height
     }
 
     render() {
@@ -125,9 +123,49 @@ class DrinkSelection extends Component {
             price to add for top
     */
 
-    @observable currentDrinkSize = 0
-    @observable currentDrinkTop = 0
-    @observable currentNumber = 0
+    @observable sizeItem = new PickerItem("Pick a Size:", null, null, 0)
+    @observable topsItem = new PickerItem("Pick a Size:", null, null, 0)
+    @observable numberItem = new PickerItem("Number of Drinks:", null, null, 0)
+
+    constructor(props) {
+        super(props)
+        this.sizeItem.labels = this.props.drinkSizes
+        this.sizeItem.modalLabels = _.zipWith(
+                this.props.drinkSizes,
+                this.props.drinkPrices,
+                (text, price) => text + ' (£' + price.toFixed(2) + ')'
+
+        this.topsItem.labels = this.props.drinkTops
+        this.topsItem.modalLabels = this.props.drinkTops.map(
+                (text, i) => text + ' (+£0.00)'
+
+        this.number
+
+        this.sizeItem = {
+            title:          'Pick a Size:',
+            labels:         this.props.drinkSizes,
+            modalLabels:    _.zipWith(
+                this.props.drinkSizes,
+                this.props.drinkPrices,
+                (text, price) => text + ' (£' + price.toFixed(2) + ')'
+            ),
+            initial:        [this.currentDrinkSize, this.currentDrinkTop]
+        }
+
+        this.topsItem = {
+            title:          'Pick a Top:',
+            labels:         this.props.drinkTops,
+            modalLabels:    this.props.drinkTops.map(
+                (text, i) => text + ' (+£0.00)'
+            ),
+        }
+
+        const numberItem = {
+            title:          'Number of Drinks:',
+            labels:         _.range(5),
+            modalLabels:    _.range(5),
+        }
+    }
 
     handleDecrease = () => {
         this.currentNumber = max(this.currentNumber - 1, 0)
@@ -161,30 +199,6 @@ class DrinkSelection extends Component {
 
     render = () => {
         const price = this.price
-
-        const sizeItem = {
-            title:          'Pick a Size:',
-            labels:         this.props.drinkSizes,
-            modalLabels:    _.zipWith(
-                this.props.drinkSizes,
-                this.props.drinkPrices,
-                (text, price) => text + ' (£' + price.toFixed(2) + ')'
-            ),
-        }
-
-        const topsItem = {
-            title:          'Pick a Top:',
-            labels:         this.props.drinkTops,
-            modalLabels:    this.props.drinkTops.map(
-                (text, i) => text + ' (+£0.00)'
-            ),
-        }
-
-        const numberItem = {
-            title:          'Number of Drinks:',
-            labels:         _.range(100),
-            modalLabels:    _.range(100),
-        }
 
         return <View style={{flex: 0, height: 30, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>

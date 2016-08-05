@@ -32,10 +32,16 @@ export class PickerItem {
             list of labels displayed in the modal picker
     */
 
-    constructor(title, labels, modalLabels) {
+    @observable title = null
+    @observable labels = null
+    @observable modalLabels = null
+    @observable initial = null
+
+    constructor(title, labels, modalLabels, initial) {
         this.title = title
         this.labels = labels
         this.modalLabels = modalLabels
+        this.initial = initial
     }
 }
 
@@ -46,6 +52,12 @@ export class PickerItem {
         initialSelection: [int]
         wheelPicker: bool
     */
+    constructor(props) {
+        super(props)
+        autorun(() => {
+            this.currentSelection = this.pickerItems.map((pickerItem) => pickerItem.initial)
+        })
+    }
 
     @observable modalVisible = false
     @observable currentSelection = null

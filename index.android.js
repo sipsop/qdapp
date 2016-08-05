@@ -14,7 +14,8 @@ import {
   ScrollView,
   ListView,
   Platform,
-  PickerIOS
+  PickerIOS,
+  TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
@@ -23,6 +24,8 @@ import Swiper from 'react-native-swiper'
 import Carousel from 'react-native-carousel-control'
 // import Picker from 'react-native-wheel-picker'
 // var PickerItem = Picker.Item;
+import { observable, computed, autorun } from 'mobx'
+import { observer } from 'mobx-react/native'
 
 import PickerAndroid from 'react-native-picker-android';
 
@@ -35,7 +38,7 @@ class App extends Component {
     }
 }
 
-AppRegistry.registerComponent('AwesomeProject', () => App);
+// AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing
 
@@ -252,3 +255,64 @@ class SomeScene extends React.Component {
 }
 
 // AppRegistry.registerComponent('AwesomeProject', () => SomeScene);
+
+class CounterStore {
+    @observable count = 0
+
+    // update actions
+    increment = () => this.count += 1
+    decrement = () => this.count -= 1
+    commit    = (i) => this.count = i
+}
+
+const store = new CounterStore()
+
+@observer class MobxTest extends Component {
+
+    render = () => {
+        return <View>
+            {this.renderValue()}
+            <TouchableOpacity onPress={store.increment}>
+                <Text>Add One</Text>
+            </TouchableOpacity>
+            <OtherComponent  />
+        </View>
+    }
+
+    renderValue = () => {
+        return <Text>{store.count}</Text>
+    }
+}
+
+@observer class OtherComponent extends Component {
+    @observable value = 0
+
+    constructor(props) {
+        super(props)
+        autorun(() => {
+            console.log("updating value from store...")
+            this.value = store.count
+        })
+    }
+
+    handleButtonPress = () => {
+        this.value = this.value - 1
+    }
+
+    commit = () => {
+        store.commit(this.value)
+    }
+
+    render = () => {
+        return <View>
+            <TouchableOpacity onPress={this.handleButtonPress}>
+                <Text>Subtract one from {this.value}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.commit}>
+                <Text>Commit value</Text>
+            </TouchableOpacity>
+        </View>
+    }
+}
+
+AppRegistry.registerComponent('AwesomeProject', () => MobxTest);
