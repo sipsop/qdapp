@@ -1,5 +1,6 @@
 from curry import typeddict, URL, alias, enum
-from curry.typing.javascript import to_javascript
+
+from .bar import BarID
 
 DrinkID = alias('DrinkID', str)
 URL     = alias('URL', str)
@@ -25,7 +26,6 @@ MenuItem = typeddict(
     ], name='MenuItem')
 
 Menu = typeddict(
-    [ ('items', {Category: MenuItem})
+    [ ('barID',             BarID)
+    , ('items',             {Category: MenuItem})
     ], name='Menu')
-
-to_javascript([Menu])

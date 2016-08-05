@@ -2,18 +2,20 @@ import { observable } from 'mobx'
 
 export class OrderItem {
 
+    @observable drinkID
     @observable size
     @observable opts
     @observable count
 
-    constructor(size, opts, count) {
+    constructor(drinkID, size, opts, count) {
+        this.drinkID = drinkID
         this.size = size    // str, e.g. 'pint', 'half-pint', 'glass', 'bottle', etc
         this.opts = opts    // [str], e,g. ["shandy"]
         this.count = count  // int, number of drinks to order
     }
 }
 
-class OrderList {
+export class OrderList {
     @observable orders = asMap()
 
     getOrder = (drinkID) => {
@@ -46,3 +48,5 @@ class OrderList {
         this.orders.clear()
     }
 }
+
+export const orderList = new OrderList()
