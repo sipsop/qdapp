@@ -14,27 +14,26 @@ export class OkCancelModal extends Component {
         cancelModal: () => void
         okModal: [int] => void
         children: [Component]
+        showOkButton: bool
     */
 
     render = () => {
         const cancelButton = <ModalButton label="Cancel" onPress={this.props.cancelModal} />
         var okButton = undefined
-        if (this.props.okModal !== undefined) {
+        if (this.props.showOkButton) {
             okButton = <ModalButton label="Ok" onPress={this.props.okModal} />
         }
 
         return <Modal visible={this.props.visible}
                       onRequestClose={this.props.cancelModal}>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', marginBottom: 20, backgroundColor: "#fff"}}>
-                <View style={{flex: 1}} />
-                <View style={{flex: 2}}>
+                <View>
                     {this.props.children}
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around'}}>
-                        {cancelButton}
-                        {okButton}
-                    </View>
                 </View>
-                <View style={{flex: 1}} />
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                {cancelButton}
+                {okButton}
             </View>
         </Modal>
     }

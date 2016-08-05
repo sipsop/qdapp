@@ -12,7 +12,8 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import PickerAndroid from 'react-native-picker-android';
-import merge from 'merge'
+// import merge from 'merge'
+import _ from 'lodash'
 
 import { OkCancelModal } from './Modals.js'
 
@@ -22,7 +23,6 @@ export const Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
 
 export class PickerItem {
     /* Attributes:
-        name: str
         title: str
         labels: [str]
             list of labels, displayed in the "button"
@@ -37,18 +37,18 @@ export class PickerItem {
     }
 }
 
-class BasicPickerCollection extends Component {
+export class PickerCollection extends Component {
     /* properties:
         pickerItems: [PickerItem]
-        handleItemsChange: [int] -> void
-        initialSelection: { name: int }
+        handleItemChanges: [int => void]
+        initialSelection: [int]
         wheelPicker: bool
     */
+
     constructor(props) {
         super(props)
         this.state = {
-            modalVisible: false,
-            currentSelection: merge(true, props.initialSelection),
+            modalVisible:     false,
         }
     }
 
@@ -59,21 +59,18 @@ class BasicPickerCollection extends Component {
     closeModal = () => {
         this.setState({
             modalVisible: false,
-            currentSelection: this.props.initialSelection,
         })
     }
 
-    okModal = (itemIndices) => {
+    okModal = () => {
+        this.props.handleItemChanges.forEach((f, i) => {
+            f(this.state.currentSelection[i])
+        })
         this.closeModal()
-        this.props.handleItemsChange(itemIndices)
     }
 
-    getItemIndex = (name) => {
-        this.state.currentSelection[name]
-    }
-
-    setItemIndex = (name, itemIndex) => {
-        this.state.currentSelection[name] = itemIndex
+    handleItemChange = (i, itemIndex) => {
+        this.props.handleItemChanges[i](itemIndex)
     }
 
     render = () => {
@@ -82,9 +79,9 @@ class BasicPickerCollection extends Component {
                 visible={this.state.modalVisible}
                 cancelModal={this.closeModal}
                 okModal={this.okModal}
-                showOkButton={this.wheelPicker}
+                showOkButton={this.props.wheelPicker}
                 >
-                {this.pickerItems.map(this.renderPicker)}
+                {this.props.pickerItems.map(this.renderPicker)}
             </OkCancelModal>
             <TouchableOpacity onPress={this.showModal}>
                 <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
@@ -98,60 +95,44 @@ class BasicPickerCollection extends Component {
     }
 
     renderPicker = (pickerItem, i) => {
-        if (this.wheelPicker) {
-            return <WheelPicker key={i} pickerItem={pickerItem} />
+        const itemIndex = this.initialSelection[i]
+        const handleChange = (itemIndex) => this.handleItemChange(i, itemIndex)
+
+        if (this.props.wheelPicker) {
+            return <Picker  key={i}
+                            selectedValue={itemIndex}
+                            onValueChange={this.handleChange}>
+                {pickerItem.modalLabels.map(this.renderWheelPickerItem)}
+            </Picker>
         } else {
-            return <ScrollPicker key={i} pickerItem={pickerItem} />
+            return  <ScrollView key={i}>
+                <View style={{flex: 1, alignItems: 'center', margin: 25}}>
+                    {pickerItem.modalLabels.map((label, i) => this.renderScrollPickerItem(handleChange, label, i))}
+                </View>
+            </ScrollView>
         }
+    }
+
+    renderWheelPickerItem = (label, i) => {
+        return <Picker.Item key={i} value={i} label={label} />
+    }
+
+    renderScrollPickerItem = (handleChange, label, i) => {
+        return <TouchableOpacity
+                    style={{flex: 1}}
+                    key={i}
+                    onPress={handleChange}
+                    >
+            <Text style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</Text>
+        </TouchableOpacity>
     }
 
     renderLabels = () => {
         const currentSelection = this.state.currentSelection
-        const labels = this.props.pickerItems.map((pickerItem) => {
-            const itemIndex = currentSelection[pickerItem.name]
+        const labels = this.props.pickerItems.map((pickerItem, i) => {
+            const itemIndex = currentSelection[i]
             return pickerItem.labels[itemIndex]
         })
         return _.join(labels, ' + ')
-    }
-}
-
-export class WheelPicker extends Component {
-    /* properties:
-        pickerItem: PickerItem
-    */
-    render = () => {
-        const itemIndex = this.getItemIndex(this.props.pickerItem.name)
-        return <Picker selectedValue={itemIndex} onValueChange={this.setItemIndex}>
-            {this.props.modalLabels.map(this.renderItem)}
-        </Picker>
-    }
-
-    renderItem = (label, i) => {
-        return <Picker.Item key={i} value={i} label={label} />
-    }
-
-}
-
-export class ScrollPicker extends Component {
-    /* properties:
-        pickerItem: PickerItem
-    */
-
-    render = () => {
-        return <ScrollView>
-            <View style={{flex: 1, alignItems: 'center', margin: 25}}>
-                {this.props.modalLabels.map(this.renderItem}
-            </View>
-        </ScrollView>
-    }
-
-    renderItem = (label, i) => {
-        return <TouchableOpacity
-                    style={{flex: 1}}
-                    key={i}
-                    onPress={(itemIndex) => this.setItemIndex(this.props.pickerItem.name, itemIndex)}
-                    >
-            <Text style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</Text>
-        </TouchableOpacity>
     }
 }
