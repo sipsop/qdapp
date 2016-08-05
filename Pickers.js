@@ -14,6 +14,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
 import _ from 'lodash'
+import { observable, computed } from 'mobx'
+import { observer } from 'mobx-react/native'
 
 import { OkCancelModal } from './Modals.js'
 
@@ -37,7 +39,7 @@ export class PickerItem {
     }
 }
 
-export class PickerCollection extends Component {
+@observer export class PickerCollection extends Component {
     /* properties:
         pickerItems: [PickerItem]
         handleItemChanges: [int => void]
@@ -45,38 +47,43 @@ export class PickerCollection extends Component {
         wheelPicker: bool
     */
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            modalVisible:     false,
-        }
-    }
+    @observable modalVisible = false
+    @observable currentSelection = null
 
     showModal = () => {
-        this.setState({modalVisible: true})
+        this.modalVisible = true
     }
 
     closeModal = () => {
-        this.setState({
-            modalVisible: false,
-        })
+        this.modalVisible = false
+        this.currentSelection = null
     }
 
     okModal = () => {
         this.props.handleItemChanges.forEach((f, i) => {
-            f(this.state.currentSelection[i])
+            f(this.selection[i])
         })
         this.closeModal()
     }
 
+    @computed get selection() {
+        if (this.currentSelection === null) {
+            return this.props.initialSelection
+        }
+        return this.currentSelection
+    }
+
     handleItemChange = (i, itemIndex) => {
-        this.props.handleItemChanges[i](itemIndex)
+        if (this.currentSelection === null) {
+            this.currentSelection = this.props.initialSelection.slice()
+        }
+        this.currentSelection[i] = itemIndex
     }
 
     render = () => {
         return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
             <OkCancelModal
-                visible={this.state.modalVisible}
+                visible={this.modalVisible}
                 cancelModal={this.closeModal}
                 okModal={this.okModal}
                 showOkButton={this.props.wheelPicker}
@@ -95,10 +102,10 @@ export class PickerCollection extends Component {
     }
 
     renderPicker = (pickerItem, i) => {
-        const itemIndex = this.initialSelection[i]
         const handleChange = (itemIndex) => this.handleItemChange(i, itemIndex)
 
         if (this.props.wheelPicker) {
+            const itemIndex = this.selection[i]
             return <Picker  key={i}
                             selectedValue={itemIndex}
                             onValueChange={this.handleChange}>
@@ -121,16 +128,15 @@ export class PickerCollection extends Component {
         return <TouchableOpacity
                     style={{flex: 1}}
                     key={i}
-                    onPress={handleChange}
+                    /*onPress={(itemIndex) => { handleChange(itemIndex); this.closeModal() }}*/
                     >
             <Text style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</Text>
         </TouchableOpacity>
     }
 
     renderLabels = () => {
-        const currentSelection = this.state.currentSelection
         const labels = this.props.pickerItems.map((pickerItem, i) => {
-            const itemIndex = currentSelection[i]
+            const itemIndex = this.props.initialSelection[i]
             return pickerItem.labels[itemIndex]
         })
         return _.join(labels, ' + ')

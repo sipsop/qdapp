@@ -15,6 +15,8 @@ import {
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
+import { observable, computed } from 'mobx'
+import { observer } from 'mobx-react/native'
 
 // import Carousel from 'react-native-carousel'
 import Carousel from 'react-native-carousel-control'
@@ -58,11 +60,6 @@ export class MenuPage extends SizeTracker {
                 <View style={{flex: 1}}>
                     <MenuItem />
                 </View>
-                {/*
-                <View style={{flex: 1}}>
-                    <ItemPicker />
-                </View>
-                */}
             </View>
         )
     }
@@ -84,13 +81,6 @@ var carouselStyles = StyleSheet.create({
     },
 })
 
-class Order {
-    constructor(size, top) {
-        this.size = size
-        this.top  = top
-    }
-}
-
 class MenuItem extends Component {
 
     constructor(props) {
@@ -104,33 +94,9 @@ class MenuItem extends Component {
         const tops = ["(+top)", "shandy", "lime", "blackcurrant"]
         return <View style={menuItemStyle.menuItemView}>
             <PrimaryMenuItem />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} />
-            {/* Picker thing
-            <View style={{flex: 1, flexDirection: 'row', height: 50, justifyContent: 'space-between', alignItems: 'center', marginRight: 5, marginLeft: 5}}>
-                <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
-                    <EvilIcon name="minus" size={30} color="#900" />
-                </View>
-                <View style={{flex: 1}}>
-                    <Picker selectedValue={this.state.selectedOrder}>
-                        <Picker.Item label="pint (£3.60)" value="pint" />
-                        <Picker.Item label="half-pint (£2.40)" value="half-pint" />
-                    </Picker>
-                </View>
-                <View style={{flex: 1}}>
-                    <Picker>
-                        <Picker.Item label="+top" value="add-top" />
-                        <Picker.Item label="shandy" value="shandy" />
-                        <Picker.Item label="lime" value="lime" />
-                        <Picker.Item label="blackcurrant" value="blackcurrant" />
-                    </Picker>
-                </View>
-                <View style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
-                    <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
-                </View>
-            </View>
-            */}
+            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
+            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
+            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
         </View>
     }
 }
@@ -146,12 +112,7 @@ class PrimaryMenuItem extends Component {
     }
 }
 
-// const ChangeType = new Enum('ChangeType',
-//     [ 'ChangeSize'
-//     , 'ChangeTop'
-//     , 'ChangeNumber'
-//     ])
-
+@observer
 class DrinkSelection extends Component {
     /* properties:
         drinkSizes: [str]
@@ -160,49 +121,46 @@ class DrinkSelection extends Component {
             price of drink (corresponding to the drink size)
         drinkTops: [str]
             shandy, lime, blackcurrant, etc
+        drinkTopPrices: [float]
+            price to add for top
     */
-    constructor(props) {
-        super(props)
-        this.state = {
-            currentDrinkSize:   0,
-            currentDrinkTop:    0,
-            currentNumber:      0,
-        }
-    }
+
+    @observable currentDrinkSize = 0
+    @observable currentDrinkTop = 0
+    @observable currentNumber = 0
 
     handleDecrease = () => {
-        this.setState({currentNumber: max(this.state.currentNumber - 1, 0)})
+        this.currentNumber = max(this.currentNumber - 1, 0)
     }
 
     handleIncrease = () => {
-        this.setState({currentNumber: min(this.state.currentNumber + 1, 99)})
+        this.currentNumber = min(this.currentNumber + 1, 99)
     }
 
-    // handleChange = (changeType, i) => {
-    //     if (changeType == ChangeType.ChangeSize) {
-    //         this.handleDrinkSizeChange(i)
-    //     } else if (changeType == ChangeType.ChangeTop) {
-    //         this.handleDrinkTopChange(i)
-    //     } else {
-    //         this.handleNumberChange(i)
-    //     }
-    // }
-
     handleDrinkSizeChange = (i) => {
-        this.setState({currentDrinkSize: i})
+        this.currentDrinkSize = i
     }
 
     handleDrinkTopChange = (i) => {
-        this.setState({currentDrinkTop: i})
+        this.currentDrinkTop = i
     }
 
     handleNumberChange = (i) => {
-        this.setState({currentNumber: i})
+        this.currentNumber = i
+    }
+
+    @computed get price() {
+        const drinkPrice = this.props.drinkPrices[this.currentDrinkSize]
+        const topPrice = this.props.drinkTopPrices[this.currentDrinkTop]
+        return drinkPrice + topPrice
+    }
+
+    @computed get total() {
+        return this.price * this.currentNumber
     }
 
     render = () => {
-        const price = this.props.drinkPrices[this.state.currentDrinkSize]
-        const total = this.state.currentNumber * price
+        const price = this.price
 
         const sizeItem = {
             title:          'Pick a Size:',
@@ -235,76 +193,22 @@ class DrinkSelection extends Component {
             <PickerCollection
                 pickerItems={[sizeItem, topsItem]}
                 handleItemChanges={[this.handleDrinkSizeChange, this.handleDrinkTopChange]}
-                initialSelection={[this.state.currentDrinkSize, this.state.currentDrinkTop]}
+                initialSelection={[this.currentDrinkSize, this.currentDrinkTop]}
                 wheelPicker={true}
                 />
             <PickerCollection
                 pickerItems={[numberItem]}
                 handleItemChanges={[this.handleNumberChange]}
-                initialSelection={[this.state.currentNumber]}
+                initialSelection={[this.currentNumber]}
                 wheelPicker={false}
                 />
-            {/*
-            <View style={{flex: 3}}>
-                <Picker selectedValue={this.state.selectedOrder}>
-                    <Picker.Item label="pint (£3.60)" value="pint" />
-                    <Picker.Item label="half-pint (£2.40)" value="half-pint" />
-                </Picker>
-            </View>
-            */}
-            {/*
-            <TouchableOpacity style={{flex: 1, flexWrap: 'wrap'}}>
-                <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', borderBottomWidth: 1}}>
-                    <Text lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
-                        {this.state.size}
-                    </Text>
-                    <Text style={{textAlign: 'right'}}>
-                        {this.state.currentNumber}
-                    </Text>
-                    <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
-                </View>
-            </TouchableOpacity>
-            */}
             <Text style={{marginLeft: 10, textAlign: 'right'}}>
-                {'£' + total.toFixed(2)}
+                {'£' + this.total.toFixed(2)}
             </Text>
             <TouchableOpacity onPress={this.handleIncrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
             </TouchableOpacity>
          </View>
-    }
-}
-
-class ItemPicker extends Component {
-    constructor(props) {
-        super(props)
-        this.picker = undefined
-    }
-
-    handleToggle = () => {
-        this.picker.toggle()
-    }
-
-    handlePickerBind = (picker) => {
-        console.log("set picker")
-        this.picker = picker
-    }
-
-    render = () => {
-        return <View style={{flex: 1}}>
-            <TouchableOpacity onPress={this.handleToggle.bind(this)}>
-                <Text>pint (£3.60)</Text>
-            </TouchableOpacity>
-            <WheelPicker ref={this.handlePickerBind.bind(this)}
-                    pickerData={[ ["pint (£3.60)", "half-pint (£2.40)"]
-                                , [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-                                , ["no top", "shandy", "lime", "black currant"]
-                                ]}
-                    selectedValue={["pint", 1, "no-top"]}
-                    style={{height: 320}}
-                    showDuration={300}
-                    />
-        </View>
     }
 }
 

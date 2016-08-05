@@ -1,31 +1,10 @@
 import { observable } from 'mobx'
-/*
-import { Alias, Dict, DataType, Case, BasicTypes } from './Typing.js'
-
-export const DrinkID = new Alias('DrinkID', BasicTypes.str)
-
-// pint, half-pint, shot, double shot, small glass, medium glass, large glass, bottle, etc
-export const DrinkSize = new Alias('DrinkSize', BasicTypes.str)
-
-// shandy, lime, blackcurrant, etc
-export const DrinkOpts = new Alias('DrinkOpt', new List(BasicTypes.str))
-
-export const OrderItem = new Dict('OrderItem',
-    [ ['size',      DrinkSize]
-    , ['opts',      DrinkOpts]
-    ])
-
-export const Order = new SimpleDict(DrinkID, new List(OrderItem))
-
-export const orderList = observable(asMap())
-*/
-
 
 export class OrderItem {
     constructor(size, opts, count) {
-        this.size = size    // pint, half-pint, glass, bottle, etc
-        this.opts = opts    // top
-        this.count = count  // number of drinks to order
+        this.size = size    // str, e.g. 'pint', 'half-pint', 'glass', 'bottle', etc
+        this.opts = opts    // [str], e,g. ["shandy"]
+        this.count = count  // int, number of drinks to order
     }
 }
 
