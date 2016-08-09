@@ -134,12 +134,13 @@ class DrinkSelection extends Component {
                 this.props.drinkSizes,
                 this.props.drinkPrices,
                 (text, price) => text + ' (£' + price.toFixed(2) + ')'
+            )
 
-        this.topsItem.labels = this.props.drinkTops
-        this.topsItem.modalLabels = this.props.drinkTops.map(
-                (text, i) => text + ' (+£0.00)'
+        // this.topsItem.labels = this.props.drinkTops
+        // this.topsItem.modalLabels = this.props.drinkTops.map(
+        //         (text, i) => text + ' (+£0.00)'
 
-        this.number
+        // this.number
 
         this.sizeItem = {
             title:          'Pick a Size:',

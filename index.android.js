@@ -17,6 +17,7 @@ import {
   PickerIOS,
   TouchableOpacity,
 } from 'react-native'
+import Relay from 'react-relay'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
@@ -30,6 +31,7 @@ import { observer } from 'mobx-react/native'
 import PickerAndroid from 'react-native-picker-android';
 
 import { Main } from './Main.js'
+// import rootNode from './RelayTest.js'
 
 
 class App extends Component {
@@ -38,7 +40,7 @@ class App extends Component {
     }
 }
 
-// AppRegistry.registerComponent('AwesomeProject', () => App);
+AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing
 
@@ -257,12 +259,12 @@ class SomeScene extends React.Component {
 // AppRegistry.registerComponent('AwesomeProject', () => SomeScene);
 
 class CounterStore {
-    @observable count = 0
+    @observable count = { value: { x: 0 }}
 
     // update actions
-    increment = () => this.count += 1
-    decrement = () => this.count -= 1
-    commit    = (i) => this.count = i
+    increment = () => this.count.value.x += 1
+    decrement = () => this.count.value.x -= 1
+    commit    = (i) => this.count.value.x = i
 }
 
 const store = new CounterStore()
@@ -280,7 +282,7 @@ const store = new CounterStore()
     }
 
     renderValue = () => {
-        return <Text>{store.count}</Text>
+        return <Text>{store.count.value.x}</Text>
     }
 }
 
@@ -291,7 +293,7 @@ const store = new CounterStore()
         super(props)
         autorun(() => {
             console.log("updating value from store...")
-            this.value = store.count
+            this.value = store.count.value.x
         })
     }
 
@@ -315,4 +317,10 @@ const store = new CounterStore()
     }
 }
 
-AppRegistry.registerComponent('AwesomeProject', () => MobxTest);
+// AppRegistry.registerComponent('AwesomeProject', () => MobxTest);
+
+// console.log(rootNode)
+
+// AppRegistry.registerComponent('AwesomeProject', () => rootNode)
+// AppRegistry.registerComponent(
+//     'AwesomeProject', () => <Relay.RootContainer Component={Bar} route={queries} />)
