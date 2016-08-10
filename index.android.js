@@ -45,7 +45,7 @@ class App extends Component {
 }
 
 // store.initialize()
-setTimeout(store.initialize, 2000)
+setTimeout(store.initialize, 500)
 AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing
