@@ -17,7 +17,6 @@ import {
   PickerIOS,
   TouchableOpacity,
 } from 'react-native'
-import Relay from 'react-relay'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
