@@ -16,8 +16,10 @@ import Swiper from 'react-native-swiper'
 export class ImageSwiper extends Component {
     /* properties:
         height: int
-        showsButtons: bool
+        showButtons: bool
         children: [Image]
+        width: int
+            optional width (otherwise it takes up the full screen width)
     */
 
     render = () => {
@@ -26,12 +28,13 @@ export class ImageSwiper extends Component {
         const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
         const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
         return <Swiper
-                    showsButtons={this.props.showsButtons}
+                    showsButtons={this.props.showButtons}
                     height={this.props.height}
                     dot={dot}
                     activeDot={activeDot}
                     prevButton={prevButton}
                     nextButton={nextButton}
+                    width={this.props.width}
                     >
             {this.props.children}
         </Swiper>

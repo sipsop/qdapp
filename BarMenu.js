@@ -7,13 +7,14 @@ import {
   View,
   ScrollView,
   ListView,
-  TouchableHighlight,
   TouchableOpacity,
 } from 'react-native';
 import Dimensions from 'Dimensions';
 import _ from 'lodash'
+import { observer } from 'mobx-react/native'
 
 import { SizeTracker } from './SizeTracker.js'
+import { store } from './Store.js'
 
 
 export class Category {
@@ -28,14 +29,17 @@ const menuPadding = 10
 
 // https://github.com/leecade/react-native-swiper
 
-export class BarMenu extends SizeTracker {
+// store.setBarID("1")
+
+@observer class BarMenu extends SizeTracker {
     /* properties:
         categories: [Category]
-        cardsPerRow: int
-            number of cards to display per row
     */
 
     render = () => {
+        if (!store.bar)
+            return this.renderNoBarSelected()
+
         const cateogires = this.props.categories
         const evens = _.filter(categories, (x, i) => i % 2 == 0)
         const odds  = _.filter(categories, (x, i) => i % 2 == 1)
@@ -43,6 +47,12 @@ export class BarMenu extends SizeTracker {
         return <View style={[styles.vertical, {padding: menuPadding}]}
                      onLayout={this.handleLayoutChange}>
             { rows.map(this.renderRow) }
+        </View>
+    }
+
+    renderNoBarSelected = () => {
+        return <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Please select a bar first.</Text>
         </View>
     }
 
@@ -77,7 +87,7 @@ class CardRow extends Component {
             margin: margin,
             width:  cardWidth,
             height: cardWidth,
-            // borderRadius: 20,
+            borderRadius: 20,
         }
         return <Card key={i} category={category} style={cardStyle} />
     }
@@ -144,3 +154,5 @@ const waterCategory = new Category("Water", {uri: water})
 const categories = [beerCategory, wineCategory, spiritCategory, cocktailCategory, waterCategory]
 
 export const SampleBarMenu = () => <BarMenu categories={categories} />
+
+export { BarMenu }

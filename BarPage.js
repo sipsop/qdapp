@@ -26,7 +26,7 @@ class Images extends Component {
         const height = this.props.height
         const outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
         const insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
-        return <ImageSwiper showsButtons={true} height={height}>
+        return <ImageSwiper showButtons={true} height={height}>
             <Image source={{uri: outsideURL}} style={{flex: 1, height: height}} />
             <Image source={{uri: insideURL}} style={{flex: 1, height: height}} />
         </ImageSwiper>

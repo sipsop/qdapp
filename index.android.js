@@ -29,9 +29,13 @@ import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import PickerAndroid from 'react-native-picker-android';
+import MapView from 'react-native-maps'
+import merge from 'merge'
 
 import { Main } from './Main.js'
+import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
+import { BarMapView } from './BarMapView.js'
 
 
 class App extends Component {
@@ -40,6 +44,8 @@ class App extends Component {
     }
 }
 
+// store.initialize()
+setTimeout(store.initialize, 2000)
 AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing
@@ -267,14 +273,14 @@ class CounterStore {
     commit    = (i) => this.count.value.x = i
 }
 
-const store = new CounterStore()
+const counterStore = new CounterStore()
 
 @observer class MobxTest extends Component {
 
     render = () => {
         return <View>
             {this.renderValue()}
-            <TouchableOpacity onPress={store.increment}>
+            <TouchableOpacity onPress={counterStore.increment}>
                 <Text>Add One</Text>
             </TouchableOpacity>
             <OtherComponent  />
@@ -282,7 +288,7 @@ const store = new CounterStore()
     }
 
     renderValue = () => {
-        return <Text>{store.count.value.x}</Text>
+        return <Text>{counterStore.count.value.x}</Text>
     }
 }
 
@@ -293,7 +299,7 @@ const store = new CounterStore()
         super(props)
         autorun(() => {
             console.log("updating value from store...")
-            this.value = store.count.value.x
+            this.value = counterStore.count.value.x
         })
     }
 
@@ -302,7 +308,7 @@ const store = new CounterStore()
     }
 
     commit = () => {
-        store.commit(this.value)
+        counterStore.commit(this.value)
     }
 
     render = () => {
@@ -321,6 +327,4 @@ const store = new CounterStore()
 
 // console.log(rootNode)
 
-// AppRegistry.registerComponent('AwesomeProject', () => rootNode)
-// AppRegistry.registerComponent(
-//     'AwesomeProject', () => <Relay.RootContainer Component={Bar} route={queries} />)
+// AppRegistry.registerComponent('AwesomeProject', () => BarMapView)

@@ -11,14 +11,17 @@ import _ from 'lodash'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 
+import { DiscoverPage } from './DiscoverPage.js'
 import { BarPage } from './BarPage.js'
 import { MenuPage } from './MenuPage.js'
 
 export class Main extends Component {
 
     render = () => {
-        return <ScrollableTabView renderTabBar={this.renderTabBar}>
-            <Text tabLabel='Discover'>discover bars</Text>
+        return <ScrollableTabView renderTabBar={this.renderTabBar} style={{flex: 1}}>
+            <View tabLabel='Discover' style={{flex: 1}}>
+                <DiscoverPage />
+            </View>
             <ScrollView tabLabel='Bar'>
                 <BarPage />
             </ScrollView>
