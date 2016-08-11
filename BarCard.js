@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import Dimensions from 'Dimensions';
 import _ from 'lodash'
+import { transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
@@ -23,8 +24,12 @@ const white = 'rgba(255, 255, 255, 0.80)'
     */
 
     handleCardPress = () => {
-        store.setBarID(this.props.bar.id)
-        // TODO: switch to bar page
+        transaction(() => {
+            store.setBarID(this.props.bar.id)
+            store.setCurrentTab(1)
+            // this.props.tabChange(1)
+        })
+
     }
 
     render = () => {

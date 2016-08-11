@@ -17,6 +17,9 @@ import { config } from './Config.js'
 
 
 @observer export class DiscoverPage extends Component {
+    /* properties:
+        tabChange: (i) => void
+    */
     render = () => {
         const barList = store.barList || []
         if (!barList.length)
@@ -28,7 +31,7 @@ import { config } from './Config.js'
                 <Text style={{marginLeft: 10, fontSize: 20, color: config.theme.primary.medium}}>
                     Nearby Bars
                 </Text>
-                {barList.slice(0, 3).map((bar, i) => <BarCard key={i} bar={bar} />)}
+                {barList.slice(0, 3).map((bar, i) => <BarCard key={i} bar={bar} tabChange={this.props.tabChange} />)}
             </View>
         </ScrollView>
     }

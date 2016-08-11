@@ -10,17 +10,25 @@ import {
 import _ from 'lodash'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
+import { observer } from 'mobx-react/native'
 
 import { DiscoverPage } from './DiscoverPage.js'
 import { BarPage } from './BarPage.js'
 import { MenuPage } from './MenuPage.js'
+import { store } from './Store.js'
 
-export class Main extends Component {
+@observer export class Main extends Component {
 
     render = () => {
-        return <ScrollableTabView renderTabBar={this.renderTabBar} style={{flex: 1}}>
+        return <ScrollableTabView
+                ref={(tabView) => { store.tabView = tabView }}
+                renderTabBar={this.renderTabBar}
+                style={{flex: 1}}
+                /* NOTE: This is buggy, do not use! */
+                /*page={store.currentTab}*/
+                >
             <View tabLabel='Discover' style={{flex: 1}}>
-                <DiscoverPage />
+                <DiscoverPage tabChange={(i) => this.setState({tab: i})} />
             </View>
             <ScrollView tabLabel='Bar' /* contentContainerStyle={{flex: 1}} */>
                 <BarPage />

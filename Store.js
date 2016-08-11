@@ -58,6 +58,8 @@ export class Store {
     @observable bar   = null
     @observable order = null
 
+    @observable tabView = null
+
     constructor(bar, menu, order) {
         this.bar   = bar
         this.order = order
@@ -66,6 +68,10 @@ export class Store {
     initialize = () => {
         // TODO: Load saved state from local storage
         this.setBarList()
+    }
+
+    setCurrentTab = (i) => {
+        this.tabView.goToPage(i)
     }
 
     setBarList = (location) => {

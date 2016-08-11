@@ -35,7 +35,7 @@ import { store } from './Store.js'
     }
 
     renderNoBarSelected = () => {
-        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        return <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
             <Text>Please select a bar first.</Text>
         </View>
     }
