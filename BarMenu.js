@@ -33,81 +33,104 @@ const menuPadding = 10
 @observer class BarMenu extends SizeTracker {
     /* properties:
         categories: [Category]
+        bar: schema.Bar
     */
 
     render = () => {
-        const categories = this.props.categories
-        const evens = _.filter(categories, (x, i) => i % 2 == 0)
-        const odds  = _.filter(categories, (x, i) => i % 2 == 1)
-        const rows  = _.zip(evens, odds)
-        return <View style={[styles.vertical, {padding: menuPadding}]}
-                     onLayout={this.handleLayoutChange}>
+        const bar = this.props.bar
+        const menu = bar.menu
+        console.log("menu!", menu)
+        const rows =
+            [ [ { name: "Beer", tag: '#beer', submenu: menu.beer }
+              , { name: "Wine", tag: "#wine", submenu: menu.wine }
+              ]
+            , [ { name: "Spirits", tag: '#spirits', submenu: menu.spirits }
+              , { name: "Cocktails", tag: '#cocktails', submenu: menu.cocktails }
+              ]
+            , [ { name: "Water", tag: '#water', submenu: menu.water } ]
+            // , [ { name: "Snacks", tag: '#snacks', submenu: menu.snacks }
+            //   , { name: "Food", tag: '#food', submenu: menu.food }
+            //   ]
+            ]
+        return <View
+                style={
+                    { justifyContent: 'center'
+                    , alignItems: 'center'
+                    , padding: menuPadding
+                    }}
+                onLayout={this.handleLayoutChange}
+                >
             { rows.map(this.renderRow) }
         </View>
     }
 
-    renderRow = (rowCategories, i) => {
+    renderRow = (row, i) => {
         const rowWidth = this.state.width - menuPadding * 2
-        rowCategories = rowCategories.filter((c) => c !== undefined)
-        return <CardRow key={i} categories={rowCategories} rowWidth={rowWidth} />
+        return <CardRow key={i} row={row} rowWidth={rowWidth} />
     }
+
 }
 
 @observer class CardRow extends Component {
     /* properties:
-        categories: [Category]
-            categories to display in cards
+        row: [{name: str, tag: str, submenu: schema.SubMenu}]
+            list of submenus to show in a row
         rowWidth: int
     */
     render = () => {
         return <View style={styles.horizontal}>
-            {this.props.categories.map(this.renderCategory)}
+            {this.props.row.map(this.renderSubMenu)}
         </View>
     }
 
-    renderCategory = (category, i) => {
-        const n = this.props.categories.length
+    renderSubMenu = (item, i) => {
+        const n = this.props.row.length
         const margin = 10
         const cardSpace = this.props.rowWidth - 4 * margin
         const cardWidth =  cardSpace / 2
+        // Sanity check
         if (!cardWidth) {
             throw Error(this.props.rowWidth)
         }
-        const cardStyle = {
-            margin: margin,
-            width:  cardWidth,
-            height: cardWidth,
-            borderRadius: 20,
-        }
-        return <Card key={i} category={category} style={cardStyle} />
+        return <Card
+                    key={i}
+                    name={item.name}
+                    tag={item.tag}
+                    submenu={item.submenu}
+                    style={
+                        { margin: margin
+                        , width:  cardWidth
+                        , height: cardWidth
+                        , borderRadius: 20
+                        }
+                    }
+                    />
     }
 }
 
 @observer class Card extends Component {
     /* properties:
-        category: Category
+        name: str
+            e.g. "Beer", "Wine"
+        tag: str
+            e.g. "#beer", "#wine" etc
+        submenu: schema.SubMenu
         style: style object
     */
-
-    constructor(props) {
-        super(props)
-        this.state = {active: false}
-    }
-
     render = () => {
-        const category = this.props.category
+        const submenu = this.props.submenu
         const style = this.props.style
 
         return <TouchableOpacity onPress={this.handleCardPress}>
             <View style={styles.vertical}>
-                <Image source={category.source} style={style} />
-                <Text>{category.title}</Text>
+                <Image source={{uri: submenu.image}} style={style} />
+                <Text>{this.props.name}</Text>
             </View>
         </TouchableOpacity>
     }
 
     handleCardPress = () => {
-        this.setState({active: true})
+        // TODO: update store
     }
 
 }
@@ -144,6 +167,6 @@ const waterCategory = new Category("Water", {uri: water})
 
 const categories = [beerCategory, wineCategory, spiritCategory, cocktailCategory, waterCategory]
 
-export const SampleBarMenu = () => <BarMenu categories={categories} />
+export const sampleBarMenu = (bar) => <BarMenu bar={bar} categories={categories} />
 
 export { BarMenu }

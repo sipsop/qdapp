@@ -16,39 +16,41 @@ import Swiper from 'react-native-swiper'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { SampleBarMenu } from './BarMenu.js'
+import { DownloadResultView } from './HTTP.js'
+import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
-import { SizeTracker } from './SizeTracker.js'
+import { Button } from './Button.js'
 import { store } from './Store.js'
 
-@observer export class BarPage extends SizeTracker {
+@observer export class BarPage extends DownloadResultView {
     /* properties:
         width: int
         height: int
     */
 
     constructor(props) {
-        super(props)
+        super(props, "Error downloading bar page")
         const { height, width} = Dimensions.get('screen')
         this.state = {width: width, height: height} // approximate width and height
     }
 
-    renderNoBarSelected = () => {
-        return <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 200}}>
-            <Text>Please select a bar first.</Text>
+    getDownloadResult = () => store.bar
+
+    renderNotStarted = () =>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Button
+                label="Please select a bar first"
+                onPress={() => {store.setCurrentTab(0)}}
+                />
         </View>
-    }
 
-    render() {
+    renderFinished = (bar) => {
         const imageHeight = this.state.height / 2
-        if (!store.bar)
-            return this.renderNoBarSelected()
-
         return (
-            <View style={{flex: 1, flexDirection: 'column'}}>
+            <ScrollView style={{flex: 1, flexDirection: 'column'}}>
                 <ImageSwiper showButtons={true} height={imageHeight}>
-                    {store.bar.images.map((url, i) =>
+                    {bar.images.map((url, i) =>
                         <Image
                             source={{uri: url}}
                             key={i}
@@ -68,13 +70,13 @@ import { store } from './Store.js'
                             , 'rgba(0, 0, 0, 0.95)'
                             ]}
                         >
-                    <BarCardFooter bar={store.bar} />
+                    <BarCardFooter bar={bar} />
                 </LinearGradient>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 20}}>
                     <Text style={{fontSize: 18}}>Menu</Text>
                 </View>
-                <SampleBarMenu />
-            </View>
+                {sampleBarMenu(bar)}
+            </ScrollView>
         )
     }
 }

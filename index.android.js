@@ -43,7 +43,7 @@ class App extends Component {
     }
 }
 
-// store.initialize()
+store.barList.downloadStarted()
 setTimeout(store.initialize, 500)
 AppRegistry.registerComponent('AwesomeProject', () => App);
 

@@ -1,5 +1,6 @@
 import { observable, transaction } from 'mobx'
 import { Alert } from 'react-native'
+import { emptyResult, graphQL } from './HTTP.js'
 
 export class OrderItem {
 
@@ -50,30 +51,30 @@ export class Order {
     }
 }
 
-class Errors {
-
-    @observable barInfoError = null
-
-    handleBarInfoError = (error) => {
-        this.barInfoError = "" + error
-    }
-
-}
-
 export class Store {
 
+    // [ lat, lon ]
     @observable location = null
+
+    // DownloadResult[schema.Bar]
+    @observable bar   = null
+
+    // DownloadResult[ List[schema.Bar] ]
     @observable barList = null
 
-    @observable bar   = null
+    // Order
     @observable order = null
 
+    // ScrollableTabView
     @observable tabView = null
-    @observable errors = new Errors()
 
-    constructor(bar, menu, order) {
-        this.bar   = bar
-        this.order = order
+    constructor() {
+        this.bar     = emptyResult()
+        this.barList = emptyResult()
+    }
+
+    setCurrentTab = (i) => {
+        this.tabView.goToPage(i)
     }
 
     initialize = () => {
@@ -81,25 +82,8 @@ export class Store {
         this.setBarList()
     }
 
-    setCurrentTab = (i) => {
-        this.tabView.goToPage(i)
-    }
-
-    setBarList = (location) => {
-        const loc = location || this.location
-        this.getBarInfo("1")
-            .then((bar) => {
-                transaction(() => {
-                    this.barList = [bar]
-                    this.errors.barInfoError = null
-                })
-            })
-            .catch(this.errors.handleBarInfoError)
-    }
-
     getBarInfo(barID, menu) {
-        // return graphQL('query { bar (id: "1") { id, name } }')
-        const menuQuery = !menu ? "" : `
+        const menuQuery = !menu ? '' : `
             menu {
                 beer {
                     ...SubMenuFragment
@@ -116,15 +100,15 @@ export class Store {
                 water {
                     ...SubMenuFragment
                 }
-                snacks {
-                    ...SubMenuFragment
-                }
-                food {
-                    ...SubMenuFragment
-                }
             }
         `
-        return graphQL(`
+        const fragments = `
+            fragment PriceFragment on Price {
+                currency
+                option
+                price
+            }
+
             fragment SubMenuFragment on SubMenu {
                 image
                 menuItems {
@@ -132,16 +116,22 @@ export class Store {
                     desc
                     images
                     tags
-                    price
+                    price {
+                        ...PriceFragment
+                    }
                     options {
                         name
                         optionList
-                        prices
+                        prices {
+                            ...PriceFragment
+                        }
                         default
                     }
                 }
             }
+        `
 
+        var query = `
             query {
                 bar(id: "${barID}") {
                     id
@@ -170,14 +160,34 @@ export class Store {
                     }
                     ${menuQuery}
                 }
-            }`)
-            .then((data) => data.bar)
+            }
+            `
+            if (menuQuery)
+                query += fragments
+            return graphQL(query).then((downloadResult) => {
+                return downloadResult.update((data) => data.bar)
+            })
     }
 
     setBarID(barID) {
+        this.bar = emptyResult().downloadStarted()
         this.getBarInfo(barID, true)
-            .then((bar) => { this.bar = bar })
-            .catch(this.handleBarInfoError)
+            .then((downloadResult) => {
+                this.bar = downloadResult
+            }).catch((error) => {
+                this.bar = emptyResult().downloadError(error.message)
+            })
+    }
+
+    setBarList = (location) => {
+        const loc = location || this.location
+        this.barList.downloadStarted()
+        this.getBarInfo("1")
+            .then((downloadResult) => {
+                this.barList = downloadResult.update((value) => [value])
+            }).catch((error) => {
+                this.barList = emptyResult().downloadError(error.message)
+            })
     }
 
     loadFromLocalStorage = () => {
@@ -190,21 +200,5 @@ export class Store {
 }
 
 const popup = (title, message) => Alert.alert(title, message)
-
-const HOST = 'http://192.168.0.6:5000'
-
-const graphQL = (query) => {
-    const httpOptions = {
-        method: 'POST',
-        headers: {
-            // 'Accept': 'application/json',
-            'Content-Type': 'application/graphql',
-        },
-        body: query,
-    }
-    return fetch(HOST + '/graphql', httpOptions)
-        .then((response) => response.json())
-        .then((data) => data.data)
-}
 
 export const store = new Store()

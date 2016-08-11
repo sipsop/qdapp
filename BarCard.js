@@ -37,6 +37,9 @@ const white = 'rgba(255, 255, 255, 0.80)'
         const imageHeight = 250
         const radius = 5
 
+        // console.log("barcard: ", bar, bar.id, bar.name, bar.desc)
+        // return <Text>card here... {bar.id} {bar.name}</Text>
+
         const imageStyle = {
             flex: 0,
             height: imageHeight,

@@ -83,13 +83,13 @@ class SubMenu(graphene.ObjectType):
     menuItems = graphene.List(MenuItem)
 
 class Menu(graphene.ObjectType):
-    beer      = graphene.Field(SubMenu)
-    wine      = graphene.Field(SubMenu)
-    spirits   = graphene.Field(SubMenu)
-    cocktails = graphene.Field(SubMenu)
-    water     = graphene.Field(SubMenu)
-    snacks    = graphene.Field(SubMenu)
-    food      = graphene.Field(SubMenu)
+    beer      = graphene.NonNull(SubMenu)
+    wine      = graphene.NonNull(SubMenu)
+    spirits   = graphene.NonNull(SubMenu)
+    cocktails = graphene.NonNull(SubMenu)
+    water     = graphene.NonNull(SubMenu)
+    # snacks    = graphene.NonNull(SubMenu)
+    # food      = graphene.NonNull(SubMenu)
 
 class Day(graphene.Enum):
     Sunday    = 0
@@ -211,9 +211,12 @@ menu = Menu(
     cocktails=SubMenu(
         image=cocktails,
     ),
-    snacks=SubMenu(
-        image=snacks,
+    water=SubMenu(
+        image=water,
     ),
+    # snacks=SubMenu(
+    #     image=snacks,
+    # ),
 )
 
 
@@ -234,8 +237,13 @@ query = '''
         }
     }
 '''
+# result = schema.execute(query)
+# print(result.data['bar'])
+
+print("===========================")
 result = schema.execute(query)
-print(result.data['bar'])
+print(result.data)
+print("===========================")
 
 from flask import Flask
 from flask_graphql import GraphQLView
