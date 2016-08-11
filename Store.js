@@ -97,9 +97,51 @@ export class Store {
             .catch(this.errors.handleBarInfoError)
     }
 
-    getBarInfo(barID) {
+    getBarInfo(barID, menu) {
         // return graphQL('query { bar (id: "1") { id, name } }')
+        const menuQuery = !menu ? "" : `
+            menu {
+                beer {
+                    ...SubMenuFragment
+                }
+                wine {
+                    ...SubMenuFragment
+                }
+                spirits {
+                    ...SubMenuFragment
+                }
+                cocktails {
+                    ...SubMenuFragment
+                }
+                water {
+                    ...SubMenuFragment
+                }
+                snacks {
+                    ...SubMenuFragment
+                }
+                food {
+                    ...SubMenuFragment
+                }
+            }
+        `
         return graphQL(`
+            fragment SubMenuFragment on SubMenu {
+                image
+                menuItems {
+                    name
+                    desc
+                    images
+                    tags
+                    price
+                    options {
+                        name
+                        optionList
+                        prices
+                        default
+                    }
+                }
+            }
+
             query {
                 bar(id: "${barID}") {
                     id
@@ -126,13 +168,14 @@ export class Store {
                         number
                         postcode
                     }
+                    ${menuQuery}
                 }
             }`)
             .then((data) => data.bar)
     }
 
     setBarID(barID) {
-        this.getBarInfo(barID)
+        this.getBarInfo(barID, true)
             .then((bar) => { this.bar = bar })
             .catch(this.handleBarInfoError)
     }

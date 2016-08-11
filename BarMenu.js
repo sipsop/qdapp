@@ -21,6 +21,7 @@ export class Category {
     constructor(title, source) {
         this.title = title
         this.source = source
+        // this.menuItems = menuItems
     }
 }
 
@@ -29,15 +30,13 @@ const menuPadding = 10
 
 // https://github.com/leecade/react-native-swiper
 
-// store.setBarID("1")
-
 @observer class BarMenu extends SizeTracker {
     /* properties:
         categories: [Category]
     */
 
     render = () => {
-        const cateogires = this.props.categories
+        const categories = this.props.categories
         const evens = _.filter(categories, (x, i) => i % 2 == 0)
         const odds  = _.filter(categories, (x, i) => i % 2 == 1)
         const rows  = _.zip(evens, odds)
@@ -135,6 +134,7 @@ const spirits = "https://biotechinasia.files.wordpress.com/2015/10/two-whisky-gl
 // const cocktails = "http://binout.github.io/daiquiri/img/daiquiri.jpg"
 const cocktails = "http://notable.ca/wp-content/uploads/2015/06/canada-day-cocktails.jpg"
 const water = "http://arogyam.zest.md/uploads/gallery/df4fe8a8bcd5c95cdb640aa9793bb32b/images/201212042159565.jpg"
+const snacks = "https://www.google.co.uk/search?q=peanuts&client=ubuntu&hs=sBq&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiT_47KnLnOAhXJuRoKHaNqD7QQ_AUICCgB&biw=1920&bih=919#tbm=isch&q=snacks&imgrc=sjXgiZ2yIgbsCM%3A"
 
 const beerCategory = new Category("Beers", {uri: beer})
 const wineCategory = new Category("Wines", {uri: wine})
