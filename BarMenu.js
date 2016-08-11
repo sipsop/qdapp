@@ -37,9 +37,6 @@ const menuPadding = 10
     */
 
     render = () => {
-        if (!store.bar)
-            return this.renderNoBarSelected()
-
         const cateogires = this.props.categories
         const evens = _.filter(categories, (x, i) => i % 2 == 0)
         const odds  = _.filter(categories, (x, i) => i % 2 == 1)
@@ -50,12 +47,6 @@ const menuPadding = 10
         </View>
     }
 
-    renderNoBarSelected = () => {
-        return <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Please select a bar first.</Text>
-        </View>
-    }
-
     renderRow = (rowCategories, i) => {
         const rowWidth = this.state.width - menuPadding * 2
         rowCategories = rowCategories.filter((c) => c !== undefined)
@@ -63,7 +54,7 @@ const menuPadding = 10
     }
 }
 
-class CardRow extends Component {
+@observer class CardRow extends Component {
     /* properties:
         categories: [Category]
             categories to display in cards
@@ -93,7 +84,7 @@ class CardRow extends Component {
     }
 }
 
-class Card extends Component {
+@observer class Card extends Component {
     /* properties:
         category: Category
         style: style object

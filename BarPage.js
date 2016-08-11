@@ -12,28 +12,17 @@ import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
 // import Carousel from 'react-native-carousel'
-import Carousel from 'react-native-carousel-control'
+// import Carousel from 'react-native-carousel-control'
+import { observer } from 'mobx-react/native'
+import LinearGradient from 'react-native-linear-gradient'
 
 import { SampleBarMenu } from './BarMenu.js'
+import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { SizeTracker } from './SizeTracker.js'
+import { store } from './Store.js'
 
-class Images extends Component {
-    /* properties:
-        height: int
-    */
-    render = () => {
-        const height = this.props.height
-        const outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
-        const insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
-        return <ImageSwiper showButtons={true} height={height}>
-            <Image source={{uri: outsideURL}} style={{flex: 1, height: height}} />
-            <Image source={{uri: insideURL}} style={{flex: 1, height: height}} />
-        </ImageSwiper>
-    }
-}
-
-export class BarPage extends SizeTracker {
+@observer export class BarPage extends SizeTracker {
     /* properties:
         width: int
         height: int
@@ -45,81 +34,50 @@ export class BarPage extends SizeTracker {
         this.state = {width: width, height: height} // approximate width and height
     }
 
+    renderNoBarSelected = () => {
+        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Please select a bar first.</Text>
+        </View>
+    }
+
     render() {
         const imageHeight = this.state.height / 2
+        if (!store.bar)
+            return this.renderNoBarSelected()
 
         return (
             <View style={{flex: 1, flexDirection: 'column'}}>
-                <Images height={imageHeight} />
-                <View style={contentStyle.title}>
-                    <Text style={barTitleStyle.barTitleText}>
-                        The Eagle
-                    </Text>
-                </View>
-                <View style={contentStyle.menu}>
-                    <Text style={contentStyle.menuText}>Menu</Text>
+                <ImageSwiper showButtons={true} height={imageHeight}>
+                    {store.bar.images.map((url, i) =>
+                        <Image
+                            source={{uri: url}}
+                            key={i}
+                            style={{flex: 1, height: imageHeight}}
+                            />
+                        )
+                    }
+                </ImageSwiper>
+                <LinearGradient
+                        style={
+                            { flexDirection:    'row'
+                            , justifyContent:   'flex-end'
+                            }}
+                        colors={
+                            [ 'rgba(0, 0, 0, 0.95)'
+                            , 'rgba(0, 0, 0, 0.8)'
+                            , 'rgba(0, 0, 0, 0.95)'
+                            ]}
+                        >
+                    <BarCardFooter bar={store.bar} />
+                </LinearGradient>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 20}}>
+                    <Text style={{fontSize: 18}}>Menu</Text>
                 </View>
                 <SampleBarMenu />
             </View>
         )
     }
 }
-
-// const beerImg = "http://cdn.funcheap.com/wp-content/uploads/2016/06/beer1.jpg"
-const beerImg = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
-
-var carouselStyles = StyleSheet.create({
-  container: {
-    width: 400,
-    height: 200,
-    // flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'transparent',
-    borderWidth: 1,
-    margin: 10,
-  },
-})
-
-const contentStyle = StyleSheet.create({
-    main: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        backgroundColor: '#D7CCC8',
-    },
-    picture: {
-        flex: 1,
-        flexDirection: 'row',
-        height: 400,
-    },
-    title: {
-        // flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        height: 50, // TODO: remove
-        backgroundColor: "#B0BEC5",
-    },
-    fill: {
-        flex: 1,
-    },
-    menu: {
-        flexDirection:  'row',
-        justifyContent: 'center',
-        marginTop:      20,
-    },
-    menuText: {
-        fontSize: 18,
-    },
-});
-
-const barImageStyle = StyleSheet.create({
-    barImage: {
-        flex: 1,
-        flexDirection: 'row',
-    }
-})
 
 const barTitleStyle = StyleSheet.create({
     // children
@@ -128,6 +86,7 @@ const barTitleStyle = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         margin: 10,
+        color: 'rgba(255, 255, 255, 0.80)'
     },
     barTitleInfo: {
         flex: 1,

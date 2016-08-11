@@ -22,10 +22,10 @@ export class Main extends Component {
             <View tabLabel='Discover' style={{flex: 1}}>
                 <DiscoverPage />
             </View>
-            <ScrollView tabLabel='Bar'>
+            <ScrollView tabLabel='Bar' /* contentContainerStyle={{flex: 1}} */>
                 <BarPage />
             </ScrollView>
-            <ScrollView tabLabel='Menu'>
+            <ScrollView tabLabel='Menu' style={{flex: 1}}>
                 <MenuPage />
             </ScrollView>
             <Text tabLabel='Order'>review order</Text>
