@@ -27,7 +27,6 @@ const white = 'rgba(255, 255, 255, 0.80)'
         transaction(() => {
             store.setBarID(this.props.bar.id)
             store.setCurrentTab(1)
-            // this.props.tabChange(1)
         })
 
     }

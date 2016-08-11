@@ -28,7 +28,7 @@ import { store } from './Store.js'
                 /*page={store.currentTab}*/
                 >
             <View tabLabel='Discover' style={{flex: 1}}>
-                <DiscoverPage tabChange={(i) => this.setState({tab: i})} />
+                <DiscoverPage />
             </View>
             <ScrollView tabLabel='Bar' /* contentContainerStyle={{flex: 1}} */>
                 <BarPage />

@@ -1,4 +1,4 @@
-import { observable } from 'mobx'
+import { observable, transaction } from 'mobx'
 import { Alert } from 'react-native'
 
 export class OrderItem {
@@ -50,6 +50,16 @@ export class Order {
     }
 }
 
+class Errors {
+
+    @observable barInfoError = null
+
+    handleBarInfoError = (error) => {
+        this.barInfoError = "" + error
+    }
+
+}
+
 export class Store {
 
     @observable location = null
@@ -59,6 +69,7 @@ export class Store {
     @observable order = null
 
     @observable tabView = null
+    @observable errors = new Errors()
 
     constructor(bar, menu, order) {
         this.bar   = bar
@@ -77,14 +88,20 @@ export class Store {
     setBarList = (location) => {
         const loc = location || this.location
         this.getBarInfo("1")
-            .then((bar) => { this.barList = [bar] })
+            .then((bar) => {
+                transaction(() => {
+                    this.barList = [bar]
+                    this.errors.barInfoError = null
+                })
+            })
+            .catch(this.errors.handleBarInfoError)
     }
 
     getBarInfo(barID) {
         // return graphQL('query { bar (id: "1") { id, name } }')
         return graphQL(`
             query {
-                bar(id: "1") {
+                bar(id: "${barID}") {
                     id
                     name
                     desc
@@ -116,11 +133,8 @@ export class Store {
 
     setBarID(barID) {
         this.getBarInfo(barID)
-            .then((bar) => {
-                this.bar = bar
-            }).catch((error) => {
-                popup('Oops!', 'Failed to fetch bar info, please try again later. ' + error)
-            })
+            .then((bar) => { this.bar = bar })
+            .catch(this.handleBarInfoError)
     }
 
     loadFromLocalStorage = () => {
