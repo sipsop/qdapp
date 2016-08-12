@@ -1,6 +1,7 @@
-import { observable, transaction } from 'mobx'
+import { observable, transaction, computed } from 'mobx'
 import { Alert } from 'react-native'
 import { emptyResult, graphQL } from './HTTP.js'
+import _ from 'lodash'
 
 export class OrderItem {
 
@@ -183,6 +184,29 @@ export class Store {
             }).catch((error) => {
                 this.bar = emptyResult().downloadError(error.message)
             })
+    }
+
+    @computed get allMenuItems() {
+        const menu  = this.bar.menu
+        const subMenus = (
+            [ ['#beer', menu.beer]
+            , ['#wine', menu.wine]
+            , ['#spirits', menu.spirits]
+            , ['#cocktails', menu.cocktails]
+            , ['#water', menu.water]
+            // , menu.snacks
+            // , menu.food
+            ])
+        const menuItems = subMenus.map((item) => {
+            const tag = item[0]
+            const subMenu = item[1]
+            return subMenu.menuItems.map(menuItem => {
+                menuItem.tags.push(tag)
+                return menuItem
+            })
+        })
+
+        return _.flatten(menuItems)
     }
 
     setBarList = (location) => {

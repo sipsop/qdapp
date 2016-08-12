@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
 import _ from 'lodash'
-import { observable, computed } from 'mobx'
+import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { OkCancelModal } from './Modals.js'
@@ -147,10 +147,11 @@ export class PickerItem {
     }
 
     renderLabels = () => {
-        const labels = this.props.pickerItems.map((pickerItem, i) => {
-            const itemIndex = this.props.initialSelection[i]
-            return pickerItem.labels[itemIndex]
-        })
-        return _.join(labels, ' + ')
+        // const labels = this.props.pickerItems.map((pickerItem, i) => {
+        //     const itemIndex = this.props.initialSelection[i]
+        //     return pickerItem.labels[itemIndex]
+        // })
+        // return _.join(labels, ' + ')
+        return "pint?"
     }
 }

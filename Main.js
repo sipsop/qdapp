@@ -33,9 +33,9 @@ import { store } from './Store.js'
             <View tabLabel='Bar' style={{flex: 1}}>
                 <BarPage />
             </View>
-            <ScrollView tabLabel='Menu' style={{flex: 1}}>
+            <View tabLabel='Menu' style={{flex: 1}}>
                 <MenuPage />
-            </ScrollView>
+            </View>
             <Text tabLabel='Order'>review order</Text>
         </ScrollableTabView>
     }

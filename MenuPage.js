@@ -25,93 +25,71 @@ import WheelPicker from 'react-native-picker'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { DownloadResultView } from './HTTP.js'
 import { SizeTracker } from './SizeTracker.js'
-import { PickerCollection } from './Pickers.js'
+import { PickerCollection, PickerItem } from './Pickers.js'
+import { Button } from './Button.js'
+import { TagView } from './Tags.js'
 import { min, max } from './Curry.js'
+import { store } from './Store.js'
 
-export class MenuPage extends SizeTracker {
+
+@observer
+export class MenuPage extends DownloadResultView {
     /* properties:
-        menu: [MenuItem]
     */
+
     constructor(props) {
-        super(props)
-        // const { height, width} = Dimensions.get('screen')
-        // this.state = {width: width, height: height} // approximate width and height
+        super(props, "Error downloading menu page")
     }
 
-    render() {
-        const imageHeight = this.state.height / 2
+    refreshPage = () => {
+        if (store.barID) {
+            store.setBarID(store.barID)
+        }
+    }
+    getDownloadResult = () => store.bar
 
-        return (
-            <View style={{flex: 1}}>
-                {/*
-                <Carousel style={{flex: 1}}>
-                    <View style={carouselStyles.container}>
-                        <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                    </View>
-                    <View style={carouselStyles.container}>
-                        <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                    </View>
-                    <View style={carouselStyles.container}>
-                        <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
-                    </View>
-                </Carousel>
-                */}
-                <MenuItem />
-            </View>
-        )
+    renderNotStarted = () =>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Button
+                label="Please select a bar first"
+                onPress={() => {store.setCurrentTab(0)}}
+                />
+        </View>
+
+    renderFinished = (bar) => {
+        return <MenuItem bar={bar} />
     }
 }
 
-// const beerImg = "http://cdn.funcheap.com/wp-content/uploads/2016/06/beer1.jpg"
 const beerImg = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
 
-var carouselStyles = StyleSheet.create({
-    container: {
-        width: 400,
-        height: 200,
-        // flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        // backgroundColor: 'transparent',
-        borderWidth: 1,
-        margin: 10,
-    },
-})
-
+@observer
 class MenuItem extends Component {
-
-    constructor(props) {
-        super()
-        this.state = { selected: undefined }
-    }
+    /* properties:
+        bar: schema.Bar
+    */
 
     render = () => {
         const sizes = ["pint", "half-pint"]
         const prices = [3.60, 2.40]
         const tops = ["(+top)", "shandy", "lime", "blackcurrant"]
         return <View style={menuItemStyle.menuItemView}>
-            <PrimaryMenuItem />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
-            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
-        </View>
-    }
-}
-
-class PrimaryMenuItem extends Component {
-    render = () => {
-        return <View style={menuItemStyle.primaryMenuItemView}>
-            <Image source={{uri: beerImg}} style={menuItemStyle.image} />
-            <View style={menuItemStyle.contentView}>
-                <MenuItemHeader />
+            <View style={menuItemStyle.primaryMenuItemView}>
+                <Image source={{uri: beerImg}} style={menuItemStyle.image} />
+                <View style={menuItemStyle.contentView}>
+                    <MenuItemHeader />
+                </View>
             </View>
+            {/*
+            <DrinkSelection drinkSizes={sizes} drinkPrices={prices} drinkTops={tops} drinkTopPrices={[0, 0, 0, 0]} />
+            */}
         </View>
     }
 }
 
-@observer
-class DrinkSelection extends Component {
+export class DrinkSelection extends Component {
     /* properties:
         drinkSizes: [str]
             pint, half-pint, shot, double-shot, bottle, etc
@@ -205,18 +183,20 @@ class DrinkSelection extends Component {
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={30} color="#900" />
             </TouchableOpacity>
+            {/*
             <PickerCollection
-                pickerItems={[sizeItem, topsItem]}
+                pickerItems={[this.sizeItem, this.topsItem]}
                 handleItemChanges={[this.handleDrinkSizeChange, this.handleDrinkTopChange]}
                 initialSelection={[this.currentDrinkSize, this.currentDrinkTop]}
                 wheelPicker={true}
                 />
             <PickerCollection
-                pickerItems={[numberItem]}
+                pickerItems={[this.numberItem]}
                 handleItemChanges={[this.handleNumberChange]}
                 initialSelection={[this.currentNumber]}
                 wheelPicker={false}
                 />
+            */}
             <Text style={{marginLeft: 10, textAlign: 'right'}}>
                 {'£' + this.total.toFixed(2)}
             </Text>
