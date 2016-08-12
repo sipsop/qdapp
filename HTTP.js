@@ -99,6 +99,10 @@ export const emptyResult = () => new DownloadResult()
         throw Error('NotImplemented')
     }
 
+    refreshPage = () => {
+        throw Error('NotImplemented')
+    }
+
     renderNotStarted = () => {
         throw Error('NotImplemented')
     }

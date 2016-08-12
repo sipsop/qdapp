@@ -6,7 +6,7 @@ from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import graphene
 
-ID = graphene.ID().NonNull
+ID  = graphene.ID().NonNull
 URL = graphene.String().NonNull
 
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
@@ -80,7 +80,7 @@ class MenuItem(graphene.ObjectType):
 
 class SubMenu(graphene.ObjectType):
     image     = URL
-    menuItems = graphene.List(MenuItem)
+    menuItems = graphene.List(MenuItem).NonNull
 
 class Menu(graphene.ObjectType):
     beer      = graphene.NonNull(SubMenu)
@@ -130,10 +130,44 @@ class Bar(graphene.ObjectType):
     def resolve_menu(self, args, info):
         return menu
 
+class TagInfo(graphene.ObjectType):
+    tagID    = graphene.String().NonNull
+    tagName  = graphene.String().NonNull
+    excludes = graphene.List(ID).NonNull
+
+class TagEdge(graphene.ObjectType):
+    srcID = graphene.String().NonNull
+    dstID = graphene.String().NonNull
+
+class Tags(graphene.ObjectType):
+    tagInfo  = graphene.List(TagInfo).NonNull
+    tagGraph = graphene.List(TagEdge).NonNull
+
+menuTags = Tags(
+    tagInfo=[
+        TagInfo('0', '#beer',       excludes=['1', '2', '3', '4']),
+        TagInfo('1', '#wine',       excludes=['0', '2', '3', '4']),
+        TagInfo('2', '#spirits',    excludes=['0', '1', '3', '4']),
+        TagInfo('3', '#cocktails',  excludes=['0', '1', '2', '4']),
+        TagInfo('4', '#water',      excludes=['0', '1', '2', '3']),
+        TagInfo('20', '#stout',     excludes=['21']),
+        TagInfo('21', '#ale',       excludes=['20']),
+        TagInfo('22', '#tap',       excludes=['23']),
+        TagInfo('23', '#bottle',    excludes=['22']),
+    ],
+    tagGraph=[
+        TagEdge(srcID='0', dstID='20'),
+        TagEdge(srcID='0', dstID='21'),
+        TagEdge(srcID='0', dstID='22'),
+        TagEdge(srcID='0', dstID='23'),
+    ],
+)
 
 class Query(graphene.ObjectType):
 
-    bar = graphene.Field(Bar, id=ID)
+    bar  = graphene.Field(Bar, id=ID)
+    barListTags = graphene.Field(Tags)
+    menuTags = graphene.Field(Tags)
 
     def resolve_bar(self, args, info):
         id = args['id']
@@ -165,6 +199,9 @@ class Query(graphene.ObjectType):
                 postcode='CB2 3QN',
                 )
             )
+
+    def resolve_menuTags(self, args, info):
+        return menuTags
 
 
 beer = "http://www.menshealth.com/sites/menshealth.com/files/styles/slideshow-desktop/public/images/slideshow2/beer-intro.jpg?itok=hhBQBwWj"
@@ -204,15 +241,19 @@ menu = Menu(
     ),
     wine=SubMenu(
         image=wine,
+        menuItems=[],
     ),
     spirits=SubMenu(
         image=spirits,
+        menuItems=[],
     ),
     cocktails=SubMenu(
         image=cocktails,
+        menuItems=[],
     ),
     water=SubMenu(
         image=water,
+        menuItems=[],
     ),
     # snacks=SubMenu(
     #     image=snacks,

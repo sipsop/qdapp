@@ -120,6 +120,17 @@ export function unique(xs) {
     }
 }
 
+export const and = (x, y) => x && y
+export const or  = (x, y) => x || y
+
+export const all = (xs) => {
+    return fold(and, true, xs)
+}
+
+export const any = (xs) => {
+    return fold(or, false, xs)
+}
+
 /* map((x) => x * 2, [1,2,3]) -> [2,3,6] */
 export function map(f, xs) {
     return xs.map(f)

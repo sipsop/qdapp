@@ -8,23 +8,40 @@ import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import { observable, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
+
 import { Map, mapCreate } from './Map.js'
+import { store } from './Store.js'
+import { DownloadResult, DownloadResultView, emptyResult, graphQL } from './HTTP.js'
+import { all, any } from './Curry.js'
 
 const tagQuery = `
     query tags {
-        tagInfo {
-            id
-            tagName
-            excludes
-        }
-        tagGraph {
-            srcID
-            dstID
+        menuTags {
+            tagInfo {
+                tagID
+                tagName
+                excludes
+            }
+            tagGraph {
+                srcID
+                dstID
+            }
         }
     }
 `
 
-class TagList {
+export const roots =
+    [ ('0', '#beer')
+    , ('1', '#wine')
+    , ('2', '#spirits')
+    , ('3', '#cocktails')
+    , ('4', '#water')
+    // , ('5', '#soda')
+    // , ('6', '#snacks')
+    // , ('7', '#food')
+    ]
+
+export class TagStore {
     /*
         A tag like #beer is given a unique stamp:
 
@@ -64,27 +81,32 @@ class TagList {
 
     */
 
+    /* DownloadResult[ schema.Tags ] */
     @observable tagDownloadResult = null
+    /* [TagID] */
     @observable tagSelection      = null
 
     constructor() {
         this.tagDownloadResult   = emptyResult()
-        this.tagSelection        = []
+        this.tagSelection        = ['0']
         this.tagSelectionHistory = new Map()
-        this.fetchTags()
     }
 
     fetchTags = () => {
         this.tagDownloadResult.downloadStarted()
         graphQL(tagQuery)
-            .then(this.tagDownloadResult.downloadFinished)
-            .catch((error) => {
+            .then((downloadResult) => {
+                // console.log("//=========================================\\")
+                // console.log("Downloaded tags:", downloadResult.value)
+                // console.log("\\=========================================//")
+                this.tagDownloadResult = downloadResult.update(data => data.menuTags)
+            }).catch((error) => {
                 this.tagDownloadResult.downloadError(error.message)
             })
     }
 
     @computed get tags() {
-        return this.downloadResult.value.tags
+        return this.tagDownloadResult.value
     }
 
     @computed get tagGraph() {
@@ -94,14 +116,38 @@ class TagList {
 
     @computed get tagNames() {
         const tagNames = this.tags.tagInfo.map(
-            tagInfo => [tagInfo.id, tagInfo.tagName])
+            tagInfo => [tagInfo.tagID, tagInfo.tagName])
         return new Map(tagNames)
     }
 
     @computed get tagExcludes() {
         const tagExcludes = this.tags.tagInfo.map(tagInfo =>
-            [tagInfo.id, tagInfo.excludes])
+            [tagInfo.tagID, tagInfo.excludes])
         return new Map(tagExcludes)
+    }
+
+    // @computed get allMenuItems() {
+    getAllMenuItems = () => {
+        const menu  = store.bar.value.menu
+        const subMenus = (
+            [ ['#beer', menu.beer]
+            , ['#wine', menu.wine]
+            , ['#spirits', menu.spirits]
+            , ['#cocktails', menu.cocktails]
+            , ['#water', menu.water]
+            // , menu.snacks
+            // , menu.food
+            ])
+        const menuItems = subMenus.map((item) => {
+            const tag = item[0]
+            const subMenu = item[1]
+            return subMenu.menuItems.map(menuItem => {
+                menuItem.tags.push(tag)
+                return menuItem
+            })
+        })
+
+        return _.flatten(menuItems)
     }
 
     /* Push a new tag when selected by the user */
@@ -123,9 +169,11 @@ class TagList {
         excluded.forEach((excludedTagID, i) => {
             const reachableTags = reachables[i]
             this._saveExcludedTag(exlcudedTagID, reachableTags)
-        }
+        })
         /* Remove all excluded tags and their descendents */
         this._clearTags(_.union(reachables))
+
+        /* TODO: Restore history */
     }
 
     /* Pop a tag when deselected/cleared */
@@ -139,6 +187,10 @@ class TagList {
             tagIDs.forEach(this.popTag)
         })
     }
+
+    getChildren = (tagID) => this.tagGraph.get(tagID)
+
+    getTagName = (tagID) => this.tagNames.get(tagID)
 
     _clearTags = (tagIDs) => {
         this.tagSelection = this.tagSelection.filter(
@@ -156,8 +208,7 @@ class TagList {
         const result = []
         const reachable = (tagID) => {
             result.push(tagID)
-            const children = this.tagGraph.get(tagID)
-            children.forEach(reachable)
+            this.getChildren(tagID).forEach(reachable)
         }
         reachable(tagID)
         return result
@@ -166,6 +217,89 @@ class TagList {
 }
 
 @observer
-export class TagView extends Component {
-    render = () => <View />
+export class TagView extends DownloadResultView {
+
+    constructor(props) {
+        super(props, "Error downloading tags")
+    }
+
+    // @computed get rows() {
+    getRows = () => {
+        /* Check if the given menuItem has the given tag */
+        const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
+
+        /* Check if one of the given menu items has the given tag */
+        const someItemHasTag = (menuItems, tagID) =>
+            _.find(menuItems, menuItem => hasTag(menuItem, tagID))
+
+        /* Get all applicable tags */
+        const childRow = (parentRow) => {
+            const selected = _.intersection(parentRow, tagSelection)
+            const childRow = _.union(selected.map(tagStore.getChildren))
+            return childRow.filter(someItemHasTag)
+        }
+
+        /* Filter out any menu items that do not match the selected tags */
+        filterSelection = (childRow, menuItems) => {
+            tagSelection = _.intersection(tagStore.tagSelection, parentRow)
+            menuItems = menuItems.filter(
+                menuItem => all(
+                    tagSelection.map(tagID => hasTag(menuItem, tagID))
+                )
+            )
+        }
+
+        var menuItems = tagStore.getAllMenuItems()
+        var parentRow = roots.map(root => root[0])
+        var rows = []
+        while (parentRow.size > 0) {
+            rows.push(parentRow)
+            row = childRow(parentRow)
+            menuItems = filterSelection(row, menuItems)
+            parentRow = row
+        }
+        return { rows: rows, menuItems: menuItems }
+    }
+
+    getDownloadResult = () => tagStore.tagDownloadResult
+    refreshPage = () => tagStore.fetchTags()
+    renderNotStarted = () => <View />
+
+    renderFinished = (tags) => {
+        // const menuItems = tagStore.getAllMenuItems()
+        // return <View>
+        //     {menuItems.map((menuItem, i) => <Text key={i}>{menuItem.name + ": " + menuItem.tags}</Text>)}
+        // </View>
+        const { rows, menuItems } = this.getRows()
+
+        return <View>
+            {rows.map((rowOfTags, i) =>
+                <TagRow key={i} rowOfTags={rowOfTags} />
+                )
+            }
+        </View>
+    }
+
 }
+
+@observer
+export class TagRow extends Component {
+    /* properties:
+        rowOfTags: [TagID]
+    */
+    render = () => {
+        const tags = this.props.rowOfTags
+        return <View style={{flex: 1, flexDirection: 'row'}}>
+            {tags.map(
+                (tagID, i) =>
+                    <Text key={i}>
+                        {tagStore.getTagName(tagID)}
+                    </Text>
+                )
+            }
+        </View>
+    }
+}
+
+export const tagStore = new TagStore()
+tagStore.fetchTags()

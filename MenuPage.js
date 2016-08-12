@@ -59,7 +59,10 @@ export class MenuPage extends DownloadResultView {
         </View>
 
     renderFinished = (bar) => {
-        return <MenuItem bar={bar} />
+        return <View>
+            <TagView />
+            <MenuItem bar={bar} />
+        </View>
     }
 }
 
