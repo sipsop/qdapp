@@ -122,7 +122,7 @@ export const emptyResult = () => new DownloadResult()
             <Text style={{textAlign: 'center', marginBottom: 20}}>
                  {message}
             </Text>
-            <TouchableOpacity onPress={store.initialize}>
+            <TouchableOpacity onPress={this.refreshPage}>
                 <Text style={{fontSize: 20}}>Refresh</Text>
             </TouchableOpacity>
         </View>

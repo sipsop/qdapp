@@ -43,7 +43,8 @@ export class MenuPage extends SizeTracker {
         const imageHeight = this.state.height / 2
 
         return (
-            <View>
+            <View style={{flex: 1}}>
+                {/*
                 <Carousel style={{flex: 1}}>
                     <View style={carouselStyles.container}>
                         <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
@@ -55,9 +56,8 @@ export class MenuPage extends SizeTracker {
                         <Image source={{uri: beerImg}} style={{width: 400, height: 400}} />
                     </View>
                 </Carousel>
-                <View style={{flex: 1}}>
-                    <MenuItem />
-                </View>
+                */}
+                <MenuItem />
             </View>
         )
     }

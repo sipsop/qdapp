@@ -35,6 +35,11 @@ import { store } from './Store.js'
         this.state = {width: width, height: height} // approximate width and height
     }
 
+    refreshPage = () => {
+        if (store.barID) {
+            store.setBarID(store.barID)
+        }
+    }
     getDownloadResult = () => store.bar
 
     renderNotStarted = () =>

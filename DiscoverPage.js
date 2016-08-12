@@ -19,6 +19,7 @@ import { config } from './Config.js'
         super(props, "Error downloading list of bars:")
     }
 
+    refreshPage = store.initialize
     getDownloadResult = () => store.barList
     renderNotStarted  = () => <View />
 

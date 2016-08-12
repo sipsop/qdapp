@@ -59,6 +59,9 @@ export class Store {
     // DownloadResult[schema.Bar]
     @observable bar   = null
 
+    // BarID
+    @observable barID = null
+
     // DownloadResult[ List[schema.Bar] ]
     @observable barList = null
 
@@ -170,7 +173,10 @@ export class Store {
     }
 
     setBarID(barID) {
-        this.bar = emptyResult().downloadStarted()
+        transaction(() => {
+            this.bar = emptyResult().downloadStarted()
+            this.barID = barID
+        })
         this.getBarInfo(barID, true)
             .then((downloadResult) => {
                 this.bar = downloadResult
