@@ -104,45 +104,65 @@ class TagList {
         return new Map(tagExcludes)
     }
 
+    /* Push a new tag when selected by the user */
     pushTag = (tagID) => {
         if (_.includes(this.tagSelection, tagID)) {
             /* Tag already included, all done */
             return
         }
+
+        /* Figure out which tags should be excluded */
         const excludes = this.tagExcludes.get(tagID)
+        const excluded = this.tagSelection.filter(
+            (tagID) => _.includes(excludes, tagID))
 
-        // Find excluded tags and save them in the tagSelectionHistory
-        this.tagSelection.filter((tagID) => _.includes(excludes, tagID))
-                         .forEach((tagID) => this.excludeTag(tagID))
+        /* Get the set of reachable tags for each of the excluded tags */
+        const reachables = excluded.map(this._findReachable)
 
-        // Update tag selection
-        this.tagSelection = this.tagSelection
-                        .filter((tagID) => !_.includes(excludes, tagID))
+        /* Save the history for each excluded tag */
+        excluded.forEach((excludedTagID, i) => {
+            const reachableTags = reachables[i]
+            this._saveExcludedTag(exlcudedTagID, reachableTags)
+        }
+        /* Remove all excluded tags and their descendents */
+        this._clearTags(_.union(reachables))
+    }
+
+    /* Pop a tag when deselected/cleared */
+    popTag = (tagID) => {
+        const reachableTags = this._findReachable(tagID)
+        this._clearTags(reachableTags)
+    }
+
+    popTags = (tagIDs) => {
+        transaction(() => {
+            tagIDs.forEach(this.popTag)
+        })
+    }
+
+    _clearTags = (tagIDs) => {
+        this.tagSelection = this.tagSelection.filter(
+            (tagID) => !_.includes(tagIDs, tagID))
     }
 
     /* Save excluded tag in history for when it is re-selected */
-    saveExcludedTag = (excludedTagID) => {
-        const reachableTags = this.findReachable(excludedTagID)
+    _saveExcludedTag = (excludedTagID, reachableTags) => {
         const tagSubSelection = _.intersection(reachableTags, this.tagSelection)
         this.tagSelectionHistory.set(excludedTagID, tagSubSelection)
     }
 
     /* Find all reachable tag IDs from the given tag ID */
-    findReachable = (tagID) => {
+    _findReachable = (tagID) => {
         const result = []
         const reachable = (tagID) => {
-            
+            result.push(tagID)
+            const children = this.tagGraph.get(tagID)
+            children.forEach(reachable)
         }
+        reachable(tagID)
+        return result
     }
 
-    _setRootTag = (tag) => {
-        this.tagSelection = [[tag]]
-    }
-
-    /* Truncate selection at 'tag' */
-    truncateSelect = (tag) => {
-
-    }
 }
 
 @observer
