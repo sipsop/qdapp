@@ -14,8 +14,9 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { ImageSwiper } from './ImageSwiper.js'
 import { store } from './Store.js'
+import { config } from './Config.js'
 
-const white = 'rgba(255, 255, 255, 0.80)'
+const white = 'rgba(255, 255, 255, 1.0)'
 
 @observer export class BarCard extends Component {
     /* properties:
@@ -95,87 +96,13 @@ const white = 'rgba(255, 255, 255, 0.80)'
 
         // return <BarInfo bar={bar} />
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
-            <View style={{flex : 1}}>
+            <View style={{flex : 1, marginLeft: 5}}>
                 <BarInfo bar={bar} />
             </View>
-            <View style={{justifyContent: 'flex-end'}}>
+            <View style={{justifyContent: 'flex-end', marginRight: 5}}>
                 <PlaceInfo bar={bar} />
             </View>
         </View>
-
-        // return <View style={{justifyContent: 'flex-end'}}>
-        //     <View style={{flex: 1, flexDirection: 'row'}}>
-        //         <View style={{flex: 3, justifyContent: 'flex-end'}}>
-        //             <Text style={{fontSize: 10, color: "rgba(255, 255, 255, 0.70)"}}>
-        //                 #pub #food #garden
-        //             </Text>
-        //         </View>
-        //         <TouchableOpacity style={{flex: 2}}>
-        //             <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-        //                 <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
-        //             </View>
-        //         </TouchableOpacity>
-        //         {/*
-        //         <TouchableOpacity style={{flex: 1}}>
-        //             <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-        //                 <Icon name="clock-o" size={25} color="rgba(255, 255, 255, 0.60)" />
-        //             </View>
-        //         </TouchableOpacity>
-        //         */}
-        //     </View>
-        //     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-        //         <View style={{flex: 3}}>
-        //             <Text style={{fontSize: 25, color: white}}>{bar.name}</Text>
-        //         </View>
-        //         <View style={{flex: 2, alignItems: 'center'}}>
-        //             <Text style={{color: white}}>{bar.address.city}</Text>
-        //         </View>
-        //         {/*
-        //         <View style={{flex: 1, alignItems: 'center'}}>
-        //             <Text style={{fontSize: 12, color: white}}>
-        //                 11.00 - 23.30
-        //             </Text>
-        //         </View>
-        //         */}
-        //     </View>
-        // </View>
-
-        /*
-        const footerStyle = {
-            flexDirection: 'row',
-            // alignItems: 'center',
-            borderWidth: 1,
-            // borderLeftWidth: 1,
-            // borderBottomWidth: 1,
-            // borderRightWidth: 1,
-            borderBottomLeftRadius: 5,
-            borderBottomRightRadius: 5,
-        }
-
-
-        return <View style={footerStyle}>
-            <TouchableOpacity style={{flex: 1}} onPress={this.props.onCardPress}>
-                <Text style={{fontSize: 20}}>{bar.name}</Text>
-                <Text style={{fontSize: 10, color: "rgba(0, 0, 0, 0.50)"}}>#pub #food #garden</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{flex: 1}} onPress={this.handleFocusBarOnMap}>
-                <View style={{flex: 1, alignItems: 'center'}}>
-                    <Text style={{marginRight: 5}}>{bar.address.city}</Text>
-                    <Icon name="map-marker" size={25} color="rgb(181, 42, 11)" />
-                </View>
-            </TouchableOpacity>
-            <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <TouchableOpacity onPress={this.handleShowOpeningTimes}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{textAlign: 'right', fontSize: 12, color: 'rgba(0, 0, 0, 0.50)', marginRight: 5}}>
-                            11.00 - 23.30
-                        </Text>
-                        <Icon name="clock-o" size={20} color="rgba(0, 0, 0, 0.50)" />
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </View>
-        */
     }
 }
 
@@ -193,7 +120,11 @@ const white = 'rgba(255, 255, 255, 0.80)'
                 */}
                 <TimeInfo bar={this.props.bar} />
             </View>
-            <Text style={{fontSize: 25, color: white}}>
+            <Text style={
+                    { fontFamily: 'Roboto'
+                    , fontSize: 25
+                    , color: config.theme.primary.medium
+                    }}>
                 {this.props.bar.name}
             </Text>
         </View>

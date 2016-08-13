@@ -39,7 +39,6 @@ const menuPadding = 10
     render = () => {
         const bar = this.props.bar
         const menu = bar.menu
-        console.log("menu!", menu)
         const rows =
             [ [ { name: "Beer", tag: '#beer', submenu: menu.beer }
               , { name: "Wine", tag: "#wine", submenu: menu.wine }
@@ -130,7 +129,8 @@ const menuPadding = 10
     }
 
     handleCardPress = () => {
-        // TODO: update store
+        store.setCurrentTab(2)
+        // TODO: push this.props.tag
     }
 
 }

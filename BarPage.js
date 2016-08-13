@@ -49,10 +49,10 @@ import { store } from './Store.js'
         </View>
 
     renderFinished = (bar) => {
-        const imageHeight = this.state.height / 2
+        const imageHeight = 300 // this.state.height / 2.5
         return (
             <ScrollView style={{flex: 1, flexDirection: 'column'}}>
-                <ImageSwiper showButtons={true} height={imageHeight}>
+                <ImageSwiper /* showButtons={true} */ height={imageHeight}>
                     {bar.images.map((url, i) =>
                         <Image
                             source={{uri: url}}
