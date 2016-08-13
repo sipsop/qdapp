@@ -134,14 +134,21 @@ const white = 'rgba(255, 255, 255, 1.0)'
     /* properties:
         bar: schema.Bar
     */
+
+    handlePress = () => {
+        store.setCurrentTab(0)
+        // TODO: Scroll to top
+    }
+
     render = () => {
         return <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this.handlePress}>
                 <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
                 </View>
-                <T style={{color: white}}>
-                    {this.props.bar.address.city}
+                <T style={{/*fontFamily: 'monospace', */ color: white, fontSize: 14}}>
+                    MAP
+                    {/*this.props.bar.address.city*/}
                 </T>
             </TouchableOpacity>
         </View>
@@ -155,7 +162,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     render = () => {
         return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
             <Icon name="clock-o" size={15} color={white} />
-            <T style={{marginLeft: 5, fontSize: 10, color: white}}>
+            <T style={{marginLeft: 5, fontSize: 11, color: white}}>
                 11.00 - 23.30
             </T>
         </View>
