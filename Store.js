@@ -168,9 +168,10 @@ export class Store {
             `
             if (menuQuery)
                 query += fragments
-            return graphQL(query).then((downloadResult) => {
-                return downloadResult.update((data) => data.bar)
-            })
+            return graphQL(query)
+                .then((downloadResult) => {
+                    return downloadResult.update((data) => data.bar)
+                })
     }
 
     setBarID(barID) {
@@ -179,22 +180,26 @@ export class Store {
             this.barID = barID
         })
         this.getBarInfo(barID, true)
-            .then((downloadResult) => {
-                this.bar = downloadResult
-            }).catch((error) => {
+            .catch((error) => {
                 this.bar = emptyResult().downloadError(error.message)
             })
+            .then((downloadResult) => {
+                this.bar = downloadResult
+            })
+            .catch(console.error)
     }
 
     setBarList = (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
         this.getBarInfo("1")
-            .then((downloadResult) => {
-                this.barList = downloadResult.update((value) => [value])
-            }).catch((error) => {
+            .catch((error) => {
                 this.barList = emptyResult().downloadError(error.message)
             })
+            .then((downloadResult) => {
+                this.barList = downloadResult.update((value) => [value])
+            })
+            .catch(console.error)
     }
 
     loadFromLocalStorage = () => {
