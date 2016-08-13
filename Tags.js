@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Text,
   View,
   TouchableOpacity,
 } from 'react-native'
@@ -9,6 +8,7 @@ import _ from 'lodash'
 import { observable, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store } from './Store.js'
 import { DownloadResult, DownloadResultView, emptyResult, graphQL } from './HTTP.js'
@@ -268,11 +268,14 @@ export class TagView extends DownloadResultView {
     renderFinished = (tags) => {
         // const menuItems = tagStore.getAllMenuItems()
         // return <View>
-        //     {menuItems.map((menuItem, i) => <Text key={i}>{menuItem.name + ": " + menuItem.tags}</Text>)}
+        //     {menuItems.map((menuItem, i) => <T key={i}>{menuItem.name + ": " + menuItem.tags}</T>)}
         // </View>
         const { rows, menuItems } = this.getRows()
 
+        console.log("Got rows:", rows)
+
         return <View>
+            <T>Tags here!</T>
             {rows.map((rowOfTags, i) =>
                 <TagRow key={i} rowOfTags={rowOfTags} />
                 )
@@ -292,9 +295,9 @@ export class TagRow extends Component {
         return <View style={{flex: 1, flexDirection: 'row'}}>
             {tags.map(
                 (tagID, i) =>
-                    <Text key={i}>
+                    <T key={i}>
                         {tagStore.getTagName(tagID)}
-                    </Text>
+                    </T>
                 )
             }
         </View>

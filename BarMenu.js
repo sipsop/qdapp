@@ -3,7 +3,6 @@ import {
   AppRegistry,
   Image,
   StyleSheet,
-  Text,
   View,
   ScrollView,
   ListView,
@@ -13,6 +12,7 @@ import Dimensions from 'Dimensions';
 import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
+import { T } from './AppText.js'
 import { SizeTracker } from './SizeTracker.js'
 import { store } from './Store.js'
 
@@ -123,7 +123,7 @@ const menuPadding = 10
         return <TouchableOpacity onPress={this.handleCardPress}>
             <View style={styles.vertical}>
                 <Image source={{uri: submenu.image}} style={style} />
-                <Text>{this.props.name}</Text>
+                <T>{this.props.name}</T>
             </View>
         </TouchableOpacity>
     }

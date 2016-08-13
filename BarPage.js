@@ -3,7 +3,6 @@ import {
   AppRegistry,
   Image,
   StyleSheet,
-  Text,
   View,
   ScrollView,
   ListView,
@@ -19,6 +18,7 @@ import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { Button } from './Button.js'
+import { T } from './AppText.js'
 import { store } from './Store.js'
 
 @observer export class BarPage extends DownloadResultView {
@@ -76,7 +76,7 @@ import { store } from './Store.js'
                     <BarCardFooter bar={bar} />
                 </LinearGradient>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 20}}>
-                    <Text style={{fontSize: 18}}>Menu</Text>
+                    <T style={{fontSize: 18}}>Menu</T>
                 </View>
                 {sampleBarMenu(bar)}
             </ScrollView>

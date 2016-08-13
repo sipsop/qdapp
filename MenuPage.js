@@ -3,7 +3,6 @@ import {
   AppRegistry,
   Image,
   StyleSheet,
-  Text,
   TextInput,
   View,
   ScrollView,
@@ -20,6 +19,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { T } from './AppText.js'
 import { DownloadResultView } from './HTTP.js'
 import { SizeTracker } from './SizeTracker.js'
 import { PickerCollection, PickerItem } from './Pickers.js'
@@ -195,9 +195,9 @@ export class DrinkSelection extends Component {
                 wheelPicker={false}
                 />
             */}
-            <Text style={{marginLeft: 10, textAlign: 'right'}}>
+            <T style={{marginLeft: 10, textAlign: 'right'}}>
                 {'£' + this.total.toFixed(2)}
-            </Text>
+            </T>
             <TouchableOpacity onPress={this.handleIncrease} style={{flex: 0, width: 40, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="plus" size={30} color="rgb(51, 162, 37)" />
             </TouchableOpacity>
@@ -209,19 +209,19 @@ class MenuItemHeader extends Component {
     render = () => {
         return <View style={{flex: 0, height: 60, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-start' }}>
             <View style={{flex: 1, flexWrap: 'wrap'}}>
-                <Text lineBreakMode='tail' numberOfLines={1} style={menuItemStyle.titleText}>
+                <T lineBreakMode='tail' numberOfLines={1} style={menuItemStyle.titleText}>
                     Guiness
                     {/*Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Stout*/}
-                </Text>
-                <Text style={menuItemStyle.keywordText}>
+                </T>
+                <T style={menuItemStyle.keywordText}>
                     #stout #dry #irish
-                </Text>
-                <Text style={menuItemStyle.infoText} numberOfLines={1}>
+                </T>
+                <T style={menuItemStyle.infoText} numberOfLines={1}>
                     Guinness is an Irish dry stout.
-                </Text>
+                </T>
             </View>
             <View>
-                <Text style={{fontWeight: 'bold'}}>£3.60</Text>
+                <T style={{fontWeight: 'bold'}}>£3.60</T>
                 <TouchableOpacity>
                     <View style={{flex: 0, width: 40, height: 40, justifyContent: 'center', marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
                         <Icon name="heart-o" size={30} color="#900" />

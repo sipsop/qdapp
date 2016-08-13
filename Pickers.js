@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  Text,
   View,
   ScrollView,
   Modal,
@@ -17,6 +16,7 @@ import _ from 'lodash'
 import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { T } from './AppText.js'
 import { OkCancelModal } from './Modals.js'
 
 // export const Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
@@ -103,9 +103,9 @@ export class PickerItem {
             </OkCancelModal>
             <TouchableOpacity onPress={this.showModal}>
                 <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
-                    <Text lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
+                    <T lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
                         {this.renderLabels()}
-                    </Text>
+                    </T>
                     <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
                 </View>
             </TouchableOpacity>
@@ -114,7 +114,7 @@ export class PickerItem {
 
     renderPicker = (pickerItem, i) => {
         const handleChange = (itemIndex) => this.handleItemChange(i, itemIndex)
-        return <Text>Picker here</Text>
+        return <T>Picker here</T>
 
         if (this.props.wheelPicker) {
             const itemIndex = this.selection[i]
@@ -133,7 +133,7 @@ export class PickerItem {
     }
 
     renderWheelPickerItem = (label, i) => {
-        return <Text>Picker here</Text>
+        return <T>Picker here</T>
         return <Picker.Item key={i} value={i} label={label} />
     }
 
@@ -143,7 +143,7 @@ export class PickerItem {
                     key={i}
                     /*onPress={(itemIndex) => { handleChange(itemIndex); this.closeModal() }}*/
                     >
-            <Text style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</Text>
+            <T style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</T>
         </TouchableOpacity>
     }
 

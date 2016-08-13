@@ -1,5 +1,25 @@
 import _ from 'lodash'
 
+export const merge = (o1, o2) => {
+    return mergeAll([o1, o2])
+}
+
+export const mergeAll = (objects) => {
+    const result = {}
+    objects.forEach(obj => {
+        if (obj) { // ignore null and undefined
+            copyObject(obj, result)
+        }
+    })
+    return result
+}
+
+const copyObject = (src, dst) => {
+    Object.entries(src).map(entry => {
+        dst[entry[0]] = entry[1]
+    })
+}
+
 export function compose(f, g) {
     return (x) => f(g(x))
 }

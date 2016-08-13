@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   Image,
-  Text,
   View,
   TouchableOpacity,
 } from 'react-native';
@@ -12,6 +11,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
+import { T } from './AppText.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
@@ -39,7 +39,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
         const radius = 5
 
         // console.log("barcard: ", bar, bar.id, bar.name, bar.desc)
-        // return <Text>card here... {bar.id} {bar.name}</Text>
+        // return <T>card here... {bar.id} {bar.name}</T>
 
         const imageStyle = {
             flex: 0,
@@ -114,19 +114,18 @@ const white = 'rgba(255, 255, 255, 1.0)'
         return <View style={{justifyContent: 'flex-end'}}>
             <View style={{flex: 1, justifyContent: 'flex-end'}}>
                 {/*
-                <Text style={{fontSize: 10, color: "rgba(255, 255, 255, 0.70)"}}>
+                <T style={{fontSize: 10, color: "rgba(255, 255, 255, 0.70)"}}>
                     #pub #food #garden
-                </Text>
+                </T>
                 */}
                 <TimeInfo bar={this.props.bar} />
             </View>
-            <Text style={
-                    { fontFamily: 'Roboto'
-                    , fontSize: 25
+            <T style={
+                    { fontSize: 25
                     , color: config.theme.primary.medium
                     }}>
                 {this.props.bar.name}
-            </Text>
+            </T>
         </View>
     }
 }
@@ -141,9 +140,9 @@ const white = 'rgba(255, 255, 255, 1.0)'
                 <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
                 </View>
-                <Text style={{color: white}}>
+                <T style={{color: white}}>
                     {this.props.bar.address.city}
-                </Text>
+                </T>
             </TouchableOpacity>
         </View>
     }
@@ -156,9 +155,9 @@ const white = 'rgba(255, 255, 255, 1.0)'
     render = () => {
         return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
             <Icon name="clock-o" size={15} color={white} />
-            <Text style={{marginLeft: 5, fontSize: 10, color: white}}>
+            <T style={{marginLeft: 5, fontSize: 10, color: white}}>
                 11.00 - 23.30
-            </Text>
+            </T>
         </View>
     }
 }
