@@ -11,17 +11,12 @@ import {
   Picker,
   Modal,
   TouchableOpacity,
-  // Slider,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import { observable, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-// import Carousel from 'react-native-carousel'
-import Carousel from 'react-native-carousel-control'
-import Slider from 'react-native-slider'
-import WheelPicker from 'react-native-picker'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 

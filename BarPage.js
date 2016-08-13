@@ -11,8 +11,6 @@ import {
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
-// import Carousel from 'react-native-carousel'
-// import Carousel from 'react-native-carousel-control'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 

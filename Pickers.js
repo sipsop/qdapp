@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
-import PickerAndroid from 'react-native-picker-android';
+// import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
 import _ from 'lodash'
 import { observable, computed, autorun } from 'mobx'
@@ -19,8 +19,7 @@ import { observer } from 'mobx-react/native'
 
 import { OkCancelModal } from './Modals.js'
 
-
-export const Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
+// export const Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
 
 
 export class PickerItem {
@@ -115,6 +114,7 @@ export class PickerItem {
 
     renderPicker = (pickerItem, i) => {
         const handleChange = (itemIndex) => this.handleItemChange(i, itemIndex)
+        return <Text>Picker here</Text>
 
         if (this.props.wheelPicker) {
             const itemIndex = this.selection[i]
@@ -133,6 +133,7 @@ export class PickerItem {
     }
 
     renderWheelPickerItem = (label, i) => {
+        return <Text>Picker here</Text>
         return <Picker.Item key={i} value={i} label={label} />
     }
 
