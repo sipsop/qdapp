@@ -21,6 +21,24 @@
     $ ( cd ios; pod install )
 ```
 
+If this fails to build with a compile error of react-native-maps, try the following:
+
+```
+Change
+
+AIRMap.h line 12
+From #import 
+To #import "RCTComponent.h"
+
+and
+
+AIRMapCallout.h line 7
+From #import "React/RCTView.h"
+To #import "RCTView.h"
+```
+
+see https://github.com/lelandrichardson/react-native-maps/issues/371
+
 Now build the app and run it in a simulator:
 
 ```bash
