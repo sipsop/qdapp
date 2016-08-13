@@ -20,7 +20,15 @@ export class ImageSwiper extends Component {
         children: [Image]
         width: int
             optional width (otherwise it takes up the full screen width)
+        autoplay: bool
+        autoplayTimeout: float
     */
+
+    static defaultProps = {
+        showButtons:        false,
+        autoplay:           false,
+        autoplayTimeout:    4.0,   // timeout in seconds
+    }
 
     render = () => {
         const dot = <View style={dotStyles.dotStyle} />
@@ -35,6 +43,8 @@ export class ImageSwiper extends Component {
                     prevButton={prevButton}
                     nextButton={nextButton}
                     width={this.props.width}
+                    autoplay={this.props.autoplay}
+                    autoplayTimeout={this.props.autoplayTimeout}
                     >
             {this.props.children}
         </Swiper>

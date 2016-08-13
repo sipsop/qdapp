@@ -10,6 +10,7 @@ import {
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
+import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
@@ -27,10 +28,24 @@ import { store } from './Store.js'
         height: int
     */
 
+    @observable autoplay = true
+
     constructor(props) {
         super(props, "Error downloading bar page")
         const { height, width} = Dimensions.get('screen')
         this.state = {width: width, height: height} // approximate width and height
+        this.timer = undefined
+        autorun(() => {
+            /* Whenever store.bar changes, reinitialize autoplay to `true`
+               and cancel any timers that are going to set it to `false`
+            */
+            store.bar
+            this.autoplay = true
+            if (this.timer) {
+                clearTimeout(this.timer)
+                this.timer = undefined
+            }
+        })
     }
 
     refreshPage = () => {
@@ -49,10 +64,22 @@ import { store } from './Store.js'
         </View>
 
     renderFinished = (bar) => {
-        const imageHeight = 300 // this.state.height / 2.5
+        const imageHeight = 300
+        const timeout = 3.0 // switch to next image after 3 seconds
+        if (this.autoplay) {
+            this.timer = setTimeout(
+                () => { this.autoplay = false },
+                (timeout * bar.images.length) * 1000,
+            )
+        }
         return (
             <ScrollView style={{flex: 1, flexDirection: 'column'}}>
-                <ImageSwiper /* showButtons={true} */ height={imageHeight}>
+                <ImageSwiper
+                    /* showButtons={true} */
+                    height={imageHeight}
+                    autoplay={this.autoplay}
+                    autoplayTimeout={timeout}
+                    >
                     {bar.images.map((url, i) =>
                         <Image
                             source={{uri: url}}
@@ -83,20 +110,3 @@ import { store } from './Store.js'
         )
     }
 }
-
-const barTitleStyle = StyleSheet.create({
-    // children
-    barTitleText: {
-        flex: 1,
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-        color: 'rgba(255, 255, 255, 0.80)'
-    },
-    barTitleInfo: {
-        flex: 1,
-        fontSize: 15,
-        textAlign: 'center',
-        margin: 10,
-    },
-});
