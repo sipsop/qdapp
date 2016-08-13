@@ -180,26 +180,32 @@ export class Store {
             this.barID = barID
         })
         this.getBarInfo(barID, true)
+            .then((downloadResult) => {
+                try {
+                    this.bar = downloadResult
+                } catch (err) {
+                    console.log(err)
+                }
+            })
             .catch((error) => {
                 this.bar = emptyResult().downloadError(error.message)
             })
-            .then((downloadResult) => {
-                this.bar = downloadResult
-            })
-            .catch(console.error)
     }
 
     setBarList = (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
         this.getBarInfo("1")
+            .then((downloadResult) => {
+                try {
+                    this.barList = downloadResult.update((value) => [value])
+                } catch (err) {
+                    console.log(err)
+                }
+            })
             .catch((error) => {
                 this.barList = emptyResult().downloadError(error.message)
             })
-            .then((downloadResult) => {
-                this.barList = downloadResult.update((value) => [value])
-            })
-            .catch(console.error)
     }
 
     loadFromLocalStorage = () => {
