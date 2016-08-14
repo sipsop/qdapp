@@ -55,8 +55,6 @@ export class Category {
                 style={
                     { justifyContent: 'center'
                     , alignItems: 'center'
-                    , marginTop: 10
-                    , marginBottom: 10
                     , marginLeft: 5
                     , marginRight: 5
                     }}

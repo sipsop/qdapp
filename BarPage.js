@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
   ListView,
+  TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
@@ -13,6 +14,7 @@ import Swiper from 'react-native-swiper'
 import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { DownloadResultView } from './HTTP.js'
 import { sampleBarMenu } from './BarMenu.js'
@@ -74,7 +76,7 @@ import { config } from './Config.js'
             )
         }
         return (
-            <ScrollView style={{flex: 1, flexDirection: 'column'}}>
+            <ScrollView>
                 <ImageSwiper
                     /* showButtons={true} */
                     height={imageHeight}
@@ -86,10 +88,18 @@ import { config } from './Config.js'
                             source={{uri: url}}
                             key={i}
                             style={{flex: 1, height: imageHeight}}
-                            />
+                            >
+                            <View style={{flex: 1}} />
+                            <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
+                                <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                                    <BarCardFooter bar={bar} showMapButton={false} />
+                                </View>
+                            </LinearGradient>
+                        </Image>
                         )
                     }
                 </ImageSwiper>
+                {/*
                 <LinearGradient
                         style={
                             { flexDirection:    'row'
@@ -101,23 +111,60 @@ import { config } from './Config.js'
                             , 'rgba(0, 0, 0, 0.95)'
                             ]}
                         >
-                    <BarCardFooter bar={bar} />
+                    <BarCardFooter bar={bar} showMapButton={false} />
                 </LinearGradient>
+                */}
                 <View style={
                         { flex: 1
                         , flexDirection: 'row'
-                        , justifyContent: 'center'
-                        , marginTop: 20
+                        , marginTop: 5
+                        /*
+                        , marginBottom: 5
+                        */
                         }
                     }>
-                    <T style={
-                        { fontSize: 20
-                        , color: config.theme.primary.medium
-                        }
-                    }>
-                        Menu
-                    </T>
+                    <TouchableOpacity
+                            style={{flex: 1}}
+                            onPress={this.handleShowOpeningTimes}
+                            >
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                            <Icon name="clock-o" size={40} color="rgb(1, 68, 139)" />
+                            <T style={{color: '#000000'}}>TIMES</T>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                            style={{flex: 1}}
+                            onPress={this.handleFocus}
+                            >
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                            <Icon
+                                name="heart-o"
+                                size={40}
+                                color={config.theme.primary.medium}
+                                />
+                            <T style={{color: '#000000'}}>SAVE</T>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                            style={{flex: 1}}
+                            onPress={this.handleFocusBarOnMap}
+                            >
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                            <Icon name="map-marker" size={40} color="rgb(181, 42, 11)" />
+                            <T style={{color: '#000000'}}>MAP</T>
+                        </View>
+                    </TouchableOpacity>
                 </View>
+                {/*
+                <T style={
+                    { fontSize: 20
+                    , color: config.theme.primary.medium
+                    , textAlign: 'center'
+                    }
+                }>
+                    Menu
+                </T>
+                */}
                 {sampleBarMenu(bar)}
             </ScrollView>
         )

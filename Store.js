@@ -184,6 +184,9 @@ export class Store {
             this.barID = barID
         })
         this.getBarInfo(barID, true)
+            .catch((error) => {
+                this.bar = emptyResult().downloadError(error.message)
+            })
             .then((downloadResult) => {
                 try {
                     this.bar = downloadResult
@@ -191,24 +194,21 @@ export class Store {
                     console.log(err)
                 }
             })
-            .catch((error) => {
-                this.bar = emptyResult().downloadError(error.message)
-            })
     }
 
     setBarList = (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
         this.getBarInfo("1")
+            .catch((error) => {
+                this.barList = emptyResult().downloadError(error.message)
+            })
             .then((downloadResult) => {
                 try {
                     this.barList = downloadResult.update((value) => [value])
                 } catch (err) {
                     console.log(err)
                 }
-            })
-            .catch((error) => {
-                this.barList = emptyResult().downloadError(error.message)
             })
     }
 

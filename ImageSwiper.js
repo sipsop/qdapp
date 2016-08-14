@@ -60,7 +60,7 @@ const dotStyles = StyleSheet.create({
         marginLeft: 3,
         marginRight: 3,
         marginTop: 3,
-        marginBottom: 3,
+        marginBottom: 10,
     },
     activeDotStyle: {
         backgroundColor: 'rgba(236, 230, 223, 0.9)',
@@ -70,7 +70,7 @@ const dotStyles = StyleSheet.create({
         marginLeft: 3,
         marginRight: 3,
         marginTop: 3,
-        marginBottom: 3,
+        marginBottom: 10,
     }
 })
 

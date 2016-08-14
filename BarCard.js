@@ -65,11 +65,6 @@ const white = 'rgba(255, 255, 255, 1.0)'
                     </View>
                 </Image>
             </TouchableOpacity>
-            {/*
-            <ImageSwiper height={250} showButtons={true} width={width - 20}>
-                {bar.images.map(renderImage)}
-            </ImageSwiper>
-            */}
         </View>
     }
 
@@ -78,30 +73,32 @@ const white = 'rgba(255, 255, 255, 1.0)'
 @observer export class BarCardFooter extends Component {
     /* properties:
         bar: schema.Bar
+        showMapButton: bool
         onCardPress:
             callback for when this card is pressed
     */
+
+    static defaultProps = {
+        showMapButton: true,
+    }
 
     handleFocusBarOnMap = () => {
         // Update currently selected bar on map
     }
 
-    handleShowOpeningTimes = () => {
-        // show opening times modal window
-    }
-
     render = () => {
         const bar = this.props.bar
-        const white = 'rgba(255, 255, 255, 0.80)'
+        const mapButton = (
+            <View style={{justifyContent: 'flex-end', marginRight: 5}}>
+                  <PlaceInfo bar={bar} />
+            </View>
+        )
 
-        // return <BarInfo bar={bar} />
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
             <View style={{flex : 1, marginLeft: 5}}>
                 <BarInfo bar={bar} />
             </View>
-            <View style={{justifyContent: 'flex-end', marginRight: 5}}>
-                <PlaceInfo bar={bar} />
-            </View>
+            {this.props.showMapButton ? mapButton : undefined}
         </View>
     }
 }
@@ -113,11 +110,6 @@ const white = 'rgba(255, 255, 255, 1.0)'
     render = () => {
         return <View style={{justifyContent: 'flex-end'}}>
             <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                {/*
-                <T style={{fontSize: 10, color: "rgba(255, 255, 255, 0.70)"}}>
-                    #pub #food #garden
-                </T>
-                */}
                 <TimeInfo bar={this.props.bar} />
             </View>
             <T style={
@@ -146,7 +138,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
                 <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
                 </View>
-                <T style={{/*fontFamily: 'monospace', */ color: white, fontSize: 14}}>
+                <T style={{color: white, fontSize: 14}}>
                     MAP
                     {/*this.props.bar.address.city*/}
                 </T>
