@@ -21,6 +21,7 @@ import { ImageSwiper } from './ImageSwiper.js'
 import { Button } from './Button.js'
 import { T } from './AppText.js'
 import { store } from './Store.js'
+import { config } from './Config.js'
 
 @observer export class BarPage extends DownloadResultView {
     /* properties:
@@ -102,8 +103,20 @@ import { store } from './Store.js'
                         >
                     <BarCardFooter bar={bar} />
                 </LinearGradient>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 20}}>
-                    <T style={{fontSize: 18}}>Menu</T>
+                <View style={
+                        { flex: 1
+                        , flexDirection: 'row'
+                        , justifyContent: 'center'
+                        , marginTop: 20
+                        }
+                    }>
+                    <T style={
+                        { fontSize: 20
+                        , color: config.theme.primary.medium
+                        }
+                    }>
+                        Menu
+                    </T>
                 </View>
                 {sampleBarMenu(bar)}
             </ScrollView>

@@ -9,12 +9,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Dimensions from 'Dimensions';
+import LinearGradient from 'react-native-linear-gradient'
 import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
 import { T } from './AppText.js'
 import { SizeTracker } from './SizeTracker.js'
 import { store } from './Store.js'
+import { merge } from './Curry.js'
 
 
 export class Category {
@@ -25,8 +27,6 @@ export class Category {
     }
 }
 
-
-const menuPadding = 10
 
 // https://github.com/leecade/react-native-swiper
 
@@ -55,7 +55,10 @@ const menuPadding = 10
                 style={
                     { justifyContent: 'center'
                     , alignItems: 'center'
-                    , padding: menuPadding
+                    , marginTop: 10
+                    , marginBottom: 10
+                    , marginLeft: 5
+                    , marginRight: 5
                     }}
                 onLayout={this.handleLayoutChange}
                 >
@@ -64,7 +67,7 @@ const menuPadding = 10
     }
 
     renderRow = (row, i) => {
-        const rowWidth = this.state.width - menuPadding * 2
+        const rowWidth = this.state.width // - menuPadding * 2
         return <CardRow key={i} row={row} rowWidth={rowWidth} />
     }
 
@@ -77,14 +80,18 @@ const menuPadding = 10
         rowWidth: int
     */
     render = () => {
-        return <View style={styles.horizontal}>
+        return <View style={
+                { flexDirection: 'row'
+                , justifyContent: 'space-around'
+                }
+            }>
             {this.props.row.map(this.renderSubMenu)}
         </View>
     }
 
     renderSubMenu = (item, i) => {
         const n = this.props.row.length
-        const margin = 10
+        const margin = 5
         const cardSpace = this.props.rowWidth - 4 * margin
         const cardWidth =  cardSpace / 2
         // Sanity check
@@ -100,7 +107,6 @@ const menuPadding = 10
                         { margin: margin
                         , width:  cardWidth
                         , height: cardWidth
-                        , borderRadius: 20
                         }
                     }
                     />
@@ -118,13 +124,34 @@ const menuPadding = 10
     */
     render = () => {
         const submenu = this.props.submenu
-        const style = this.props.style
+        const radius = 20
+        const style = merge({borderRadius: radius}, this.props.style)
 
         return <TouchableOpacity onPress={this.handleCardPress}>
-            <View style={styles.vertical}>
-                <Image source={{uri: submenu.image}} style={style} />
-                <T>{this.props.name}</T>
-            </View>
+            <Image source={{uri: submenu.image}} style={style}>
+                {/* Push footer to bottom */}
+                <View style={{flex: 1, borderRadius: radius}} />
+                <LinearGradient
+                        style={{flex: 1, borderRadius: radius}}
+                        colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}
+                        >
+                    <View style={
+                            { flex: 1
+                            , justifyContent: 'flex-end'
+                            , alignItems: 'center'
+                            , borderRadius: radius
+                            }
+                        }>
+                        <T style={
+                                { fontSize: 20
+                                , color: 'rgba(255, 255, 255, 95)'
+                                , marginBottom: 5
+                                }}>
+                            {this.props.name}
+                        </T>
+                    </View>
+                </LinearGradient>
+            </Image>
         </TouchableOpacity>
     }
 
@@ -134,19 +161,6 @@ const menuPadding = 10
     }
 
 }
-
-const styles = StyleSheet.create({
-    vertical: {
-        flexDirection:  'column',
-        justifyContent: 'center',
-        alignItems:     'center',
-    },
-    horizontal: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-})
-
 
 /* Testing */
 
