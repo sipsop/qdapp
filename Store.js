@@ -175,6 +175,10 @@ export class Store {
     }
 
     setBarID(barID) {
+        if (this.bar.value && this.bar.value.id === barID) {
+            /* All done */
+            return
+        }
         transaction(() => {
             this.bar = emptyResult().downloadStarted()
             this.barID = barID
