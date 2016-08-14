@@ -143,6 +143,8 @@ export class Store {
                     desc
                     images
                     tags
+                    phone
+                    website
                     openingTimes {
                         day
                         openTime {

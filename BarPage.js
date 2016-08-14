@@ -24,6 +24,7 @@ import { Button } from './Button.js'
 import { T } from './AppText.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
+import { merge } from './Curry.js'
 
 @observer export class BarPage extends DownloadResultView {
     /* properties:
@@ -49,6 +50,10 @@ import { config } from './Config.js'
                 this.timer = undefined
             }
         })
+    }
+
+    handleFocusBarOnMap = () => {
+
     }
 
     refreshPage = () => {
@@ -115,26 +120,31 @@ import { config } from './Config.js'
                 </LinearGradient>
                 */}
                 <View style={
-                        { flex: 1
-                        , flexDirection: 'row'
-                        , marginTop: 5
-                        /*
-                        , marginBottom: 5
-                        */
-                        }
+                        merge(styles.bottomBorder,
+                            { flex: 1
+                            , flexDirection: 'row'
+                            , paddingTop: 5
+                            , paddingBottom: 5
+                            }
+                        )
                     }>
                     <TouchableOpacity
                             style={{flex: 1}}
                             onPress={this.handleShowOpeningTimes}
                             >
                         <View style={{flex: 1, alignItems: 'center'}}>
-                            <Icon name="clock-o" size={40} color="rgb(1, 68, 139)" />
+                            {/*<Icon name="clock-o" size={40} color="rgb(1, 68, 139)" />*/}
+                            <Icon
+                                name="clock-o"
+                                size={40}
+                                color={config.theme.secondary.medium}
+                                />
                             <T style={{color: '#000000'}}>TIMES</T>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity
                             style={{flex: 1}}
-                            onPress={this.handleFocus}
+                            onPress={this.handleFavorite}
                             >
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <Icon
@@ -157,16 +167,88 @@ import { config } from './Config.js'
                 </View>
                 {/*
                 <T style={
-                    { fontSize: 20
-                    , color: config.theme.primary.medium
-                    , textAlign: 'center'
-                    }
-                }>
+                        { marginLeft: 10
+                        , fontSize: 20
+                        , color: config.theme.primary.medium
+                        }}>
                     Menu
                 </T>
                 */}
-                {sampleBarMenu(bar)}
+                <View style={styles.bottomBorder}>
+                    {sampleBarMenu(bar)}
+                </View>
+                <InfoItem
+                    iconName="map-marker"
+                    info={formatAddress(bar.address)}
+                    onClick={this.handleFocusBarOnMap}
+                    />
+                {bar.phone ?
+                    <InfoItem
+                        iconName="phone"
+                        info={bar.phone}
+                        onClick={() => undefined}
+                        />
+                    : undefined
+                }
+                {bar.website ?
+                    <InfoItem
+                        /* iconName="chrome" */
+                        /* iconName="external-link" */
+                        iconName="firefox"
+                        info={bar.website}
+                        onClick={() => undefined}
+                        />
+                    : undefined
+                }
             </ScrollView>
         )
+    }
+}
+
+const formatAddress = (address) => {
+    return `${address.number} ${address.street}, ${address.city}, ${address.postcode}`
+}
+
+class InfoItem extends Component {
+    /* properties:
+        iconName: str
+        info: str
+        onClick: callback when the info item is clicked (or undefined)
+    */
+    render = () => {
+        var info = (
+            <View style={
+                    { flexDirection: 'row'
+                    , justifyContent: 'flex-start'
+                    , alignItems: 'center'
+                    , minHeight: 50
+                    }
+                }>
+                <View style={{width: 70, alignItems: 'center'}}>
+                    <Icon
+                        name={this.props.iconName}
+                        size={30}
+                        color={config.theme.secondary.medium}
+                        />
+                </View>
+                <T style={{fontSize: 15, color: 'rgba(0, 0, 0, 0.6)'}}>
+                    {this.props.info}
+                </T>
+            </View>
+        )
+
+        if (this.props.onClick) {
+            info = <TouchableOpacity onPress={this.props.onClick}>
+                {info}
+            </TouchableOpacity>
+        }
+        return info
+    }
+}
+
+const styles = {
+    bottomBorder: {
+        borderBottomWidth: 0.5,
+        borderColor: 'rgba(0, 0, 0, 0.2)',
     }
 }

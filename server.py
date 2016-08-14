@@ -123,6 +123,8 @@ class Bar(graphene.ObjectType):
     desc   = graphene.String()
     images = graphene.List(URL).NonNull
     tags   = graphene.List(graphene.String().NonNull)
+    phone  = graphene.String()
+    website = graphene.String()
     openingTimes = graphene.List(OpeningTime).NonNull
     address = graphene.NonNull(Address)
     menu   = graphene.Field(Menu)
@@ -183,6 +185,8 @@ class Query(graphene.ObjectType):
             ''',
             images=[outsideURL, insideURL],
             tags=['#pub', '#traditional', '#lunch', '#dinner'],
+            phone="01223 505020",
+            website="www.eagle-cambridge.co.uk",
             openingTimes=[
                 OpeningTime(
                     day=Day.Friday,
