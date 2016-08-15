@@ -26,25 +26,15 @@ import { intersperse, merge } from './Curry.js'
 @observer
 export class ButtonRow extends Component {
     /* properties:
-        labelGroups: [[str]]
-        index: int
+        rowNumber: int
+        clearRow() -> void
+            callback invoked to clear the row
     */
 
     render = () => {
-        const labelGroups = this.props.labelGroups
-        const backgroundColor = this.props.index % 2 == 0
+        const backgroundColor = this.props.rowNumber % 2 == 0
             ? config.theme.primary.medium
             : config.theme.primary.dark
-
-        const lastIdx = labelGroups.length - 1
-
-        const groups = labelGroups.map((labels, i) =>
-            <ButtonGroup
-                key={i}
-                labels={labels}
-                showBar={i < lastIdx}
-                />
-        )
 
         return (
             <View style={
@@ -57,9 +47,9 @@ export class ButtonRow extends Component {
                     }
                 }>
                 <View style={{flexDirection: 'row', flex: 1}}>
-                    {groups}
+                    {this.props.children}
                 </View>
-                <TouchableOpacity onPress={this.handleClearRow}>
+                <TouchableOpacity onPress={this.props.clearRow}>
                     <EvilIcon name="close-o" size={35} color="#ffffff" />
                 </TouchableOpacity>
             </View>
@@ -72,42 +62,14 @@ export class ButtonGroup extends Component {
     /* properties:
         labels: [str]
         showBar: bool
+        toggleButton(label) -> void
+        renderLabel: str -> Component
+        isActive(label) -> bool
     */
-
-    @observable activeLabels = null
-
-    constructor(props) {
-        super(props)
-        /* NOTE Maps do not seem to trigger updates from MobX */
-        this.activeLabels = []
-    }
-
-    toggleButton = (label) => {
-        if (this.isActive(label)) {
-            const i = _.find(this.activeLabels, label)
-            this.activeLabels.splice(i, 1)
-        } else {
-            this.activeLabels.push(label)
-        }
-    }
-
-    _isActive = (label) => {
-        return _.includes(this.activeLabels, label)
-    }
-
-    isActive = (label) => {
-        console.log("is active", label, this._isActive(label))
-        return this._isActive(label)
-    }
-
-    handleClearRow = () => {
-        this.activeLabels.clear()
-    }
-
     render = () => {
         const labels = this.props.labels
         return (
-            <View style={{flex: 1, height: 30, borderRightWidth: 0.5, borderColor: '#fff', paddingLeft: 5, paddingRight: 5, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 30, borderRightWidth: 0.5, borderColor: '#fff', paddingLeft: 5, paddingRight: 5}}>
                 <ScrollView
                         horizontal={true}
                         style={{height: 30}}
@@ -118,8 +80,9 @@ export class ButtonGroup extends Component {
                             <SelectableButton
                                 key={i}
                                 label={label}
-                                onPress={() => this.toggleButton(label)}
-                                active={this.isActive(label)}
+                                onPress={() => this.props.toggleButton(label)}
+                                active={this.props.isActive(label)}
+                                renderLabel={this.props.renderLabel}
                                 />
                         )
                     }
@@ -135,20 +98,22 @@ export class SelectableButton extends Component {
         label: str
         active: bool
         onPress: callback
+        renderLabel: str -> Component
     */
     render = () => {
         const active = this.props.active
         return (
-            <View style={{minWidth: 60}}>
+            <View style={{paddingLeft: 15, paddingRight: 15}}>
                 <TouchableOpacity onPress={this.props.onPress}>
                     <T style={
-                            { textAlign: 'center'
-                            , fontSize: 16
+                            { /*textAlign: 'center'
+                            , */ fontSize: 16
                             , color: '#fff'
                             , textDecorationLine: active ? 'underline' : 'none'
+                            , borderWidth: 1
                             }
                         }>
-                        {this.props.label}
+                        {this.props.renderLabel(this.props.label)}
                     </T>
                 </TouchableOpacity>
             </View>
