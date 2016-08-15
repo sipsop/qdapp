@@ -260,7 +260,8 @@ export class TagView extends DownloadResultView {
     @computed get rows() {
         /* Check if one of the given menu items has the given tag */
         const someItemHasTag = (tagID) => {
-            return !!_.find(menuItems, menuItem => hasTag(menuItem, tagID))
+            const haveTag = menuItems.map(menuItem => hasTag(menuItem, tagID))
+            return any(haveTag) && !all(haveTag)
         }
 
         /* Get all applicable tags */

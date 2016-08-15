@@ -279,6 +279,14 @@ menu = Menu(
                 price=Price.pounds(3.20),
                 options=[option(Price.pounds(3.20), Price.pounds(2.30))],
             ),
+            MenuItem(
+                name="Hoppy Heineken",
+                desc="Heineken blah",
+                images=[heineken],
+                tags=['0', '22', '31', '41'],
+                price=Price.pounds(3.20),
+                options=[option(Price.pounds(3.20), Price.pounds(2.30))],
+            ),
         ],
     ),
     wine=SubMenu(
