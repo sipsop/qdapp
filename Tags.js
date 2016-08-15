@@ -7,7 +7,10 @@ import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import { observable, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { ButtonRow } from './ButtonRow.js'
 import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store } from './Store.js'
@@ -225,7 +228,17 @@ export class TagStore {
         reachable(tagID)
         return result
     }
+}
 
+/* Check if the given menuItem has the given tag */
+const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
+
+const filterMenuItems = (menuItems, tagSelection) => {
+    return menuItems.filter(
+        menuItem => all(
+            tagSelection.map(tagID => hasTag(menuItem, tagID))
+        )
+    )
 }
 
 @observer
@@ -278,35 +291,42 @@ export class TagView extends DownloadResultView {
         console.log("Got items:", menuItems)
 
         return <View>
+            <ButtonRow labelGroups={[['beer', 'wine', 'cocktails', 'spirits', 'water', 'snacks', 'food']]} index={0} />
+            <ButtonRow labelGroups={[['stout', 'lager'], ['tap', 'bottle']]} index={1} />
+            <ButtonRow labelGroups={[['fruity', 'chocolate', 'pale', 'dark', 'hops']]} index={2} />
+            {/*
             {rows.map((rowOfTags, i) =>
                 <TagRow key={i} rowOfTags={rowOfTags} />
                 )
             }
+            */}
         </View>
     }
 
 }
-
-/* Check if the given menuItem has the given tag */
-const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
-
-const filterMenuItems = (menuItems, tagSelection) =>
-    menuItems.filter(
-        menuItem => all(
-            tagSelection.map(tagID => hasTag(menuItem, tagID))
-        )
-    )
 
 @observer
 export class TagRow extends Component {
     /* properties:
         rowOfTags: [TagID]
     */
+
+    clearRow = () => {
+        const tagIDs = this.props.rowOfTags
+        tagStore.popTags(tagIDs)
+    }
+
     render = () => {
-        const tags = this.props.rowOfTags
+        const tagIDs = this.props.rowOfTags
         return <View style={{flex: 1, flexDirection: 'row', marginBottom: 10}}>
+            <TouchableOpacity
+                    style={{borderWidth: 1}}
+                    onPress={this.clearRow}
+                    >
+                <EvilIcon name="close-o" size={30} />
+            </TouchableOpacity>
             {
-                tags.map(
+                tagIDs.map(
                     (tagID, i) => <TagButton key={i} tagID={tagID} />
                 )
             }
@@ -327,9 +347,24 @@ class TagButton extends Component {
     render = () => {
         const tagID = this.props.tagID
         const tagName = tagStore.getTagName(tagID)
-        return <TouchableOpacity onPress={this.handleTagPress}>
-            <T style={{fontSize: 18}}> {tagName}</T>
-        </TouchableOpacity>
+        return (
+                <TouchableOpacity
+                        onPress={this.handleTagPress}
+                        style={
+                            { flex: 1
+                            , borderWidth: 1
+                            , borderRadius: 5
+                            , margin: 5
+                            , flexWrap: 'nowrap'
+                            , justifyContent: 'center'
+                            }
+                        }
+                        >
+                    <T style={{fontSize: 18, textAlign: 'center'}} numberOfLines={1}>
+                        {tagName}
+                    </T>
+                </TouchableOpacity>
+        )
     }
 }
 

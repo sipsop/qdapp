@@ -147,17 +147,17 @@ class Tags(graphene.ObjectType):
 
 menuTags = Tags(
     tagInfo=[
-        TagInfo('0', '#beer',       excludes=['1', '2', '3', '4']),
-        TagInfo('1', '#wine',       excludes=['0', '2', '3', '4']),
-        TagInfo('2', '#spirits',    excludes=['0', '1', '3', '4']),
-        TagInfo('3', '#cocktails',  excludes=['0', '1', '2', '4']),
-        TagInfo('4', '#water',      excludes=['0', '1', '2', '3']),
-        TagInfo('20', '#stout',     excludes=['21', '22']),
-        TagInfo('21', '#ale',       excludes=['20', '22']),
-        TagInfo('22', '#lager',     excludes=['20', '21']),
-        TagInfo('30', '#tap',       excludes=['31', '32']),
-        TagInfo('31', '#bottle',    excludes=['30', '32']),
-        TagInfo('32', '#can',       excludes=['30', '31'])
+        TagInfo('0', 'beer',       excludes=['1', '2', '3', '4']),
+        TagInfo('1', 'wine',       excludes=['0', '2', '3', '4']),
+        TagInfo('2', 'spirits',    excludes=['0', '1', '3', '4']),
+        TagInfo('3', 'cocktails',  excludes=['0', '1', '2', '4']),
+        TagInfo('4', 'water',      excludes=['0', '1', '2', '3']),
+        TagInfo('20', 'stout',     excludes=['21', '22']),
+        TagInfo('21', 'ale',       excludes=['20', '22']),
+        TagInfo('22', 'lager',     excludes=['20', '21']),
+        TagInfo('30', 'tap',       excludes=['31', '32']),
+        TagInfo('31', 'bottle',    excludes=['30', '32']),
+        TagInfo('32', 'can',       excludes=['30', '31'])
     ],
     tagGraph=[
         TagEdge(srcID='0', dstID='20'),
