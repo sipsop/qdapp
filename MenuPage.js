@@ -27,6 +27,7 @@ import { Button } from './Button.js'
 import { TagView } from './Tags.js'
 import { min, max } from './Curry.js'
 import { store } from './Store.js'
+import { tagStore } from './Tags.js'
 
 
 @observer
@@ -56,7 +57,11 @@ export class MenuPage extends DownloadResultView {
     renderFinished = (bar) => {
         return <View>
             <TagView />
-            <MenuItem bar={bar} />
+            {
+                tagStore.getActiveMenuItems().map(
+                    (menuItem, i) => <MenuItem key={i} item={menuItem} />
+                )
+            }
         </View>
     }
 }
@@ -66,18 +71,21 @@ const beerImg = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--
 @observer
 class MenuItem extends Component {
     /* properties:
-        bar: schema.Bar
+        item: scheme.MenuItem
     */
 
     render = () => {
-        const sizes = ["pint", "half-pint"]
-        const prices = [3.60, 2.40]
-        const tops = ["(+top)", "shandy", "lime", "blackcurrant"]
+        // const sizes = ["pint", "half-pint"]
+        // const prices = [3.60, 2.40]
+        // const tops = ["(+top)", "shandy", "lime", "blackcurrant"]
+        const item = this.props.item
+        const image = item.images[0]
+
         return <View style={menuItemStyle.menuItemView}>
             <View style={menuItemStyle.primaryMenuItemView}>
-                <Image source={{uri: beerImg}} style={menuItemStyle.image} />
+                <Image source={{uri: image}} style={menuItemStyle.image} />
                 <View style={menuItemStyle.contentView}>
-                    <MenuItemHeader />
+                    <MenuItemHeader item={item} />
                 </View>
             </View>
             {/*
@@ -206,22 +214,30 @@ export class DrinkSelection extends Component {
 }
 
 class MenuItemHeader extends Component {
+    /* properties:
+        item: schema.MenuItem
+    */
     render = () => {
+        const item = this.props.item
         return <View style={{flex: 0, height: 60, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-start' }}>
             <View style={{flex: 1, flexWrap: 'wrap'}}>
                 <T lineBreakMode='tail' numberOfLines={1} style={menuItemStyle.titleText}>
-                    Guiness
+                    {item.name}
                     {/*Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Stout*/}
                 </T>
                 <T style={menuItemStyle.keywordText}>
-                    #stout #dry #irish
+                    {   _.join(
+                            item.tags.map(tagID => tagStore.getTagName(tagID)),
+                            ' '
+                        )
+                    }
                 </T>
                 <T style={menuItemStyle.infoText} numberOfLines={1}>
-                    Guinness is an Irish dry stout.
+                    {item.desc}
                 </T>
             </View>
             <View>
-                <T style={{fontWeight: 'bold'}}>£3.60</T>
+                <Price price={item.price} style={{fontWeight: 'bold'}} />
                 <TouchableOpacity>
                     <View style={{flex: 0, width: 40, height: 40, justifyContent: 'center', marginTop: 10, marginBottom: 10, alignItems: 'center'}}>
                         <Icon name="heart-o" size={30} color="#900" />
@@ -229,6 +245,42 @@ class MenuItemHeader extends Component {
                 </TouchableOpacity>
             </View>
         </View>
+    }
+}
+
+@observer
+class Price extends Component {
+    /* properties:
+        price: schema.Price
+    */
+    render = () => {
+        const price = this.props.price
+        var prefix = ""
+        if (price.option == 'Relative') {
+            if (price.price == 0.0) {
+                return <T />
+            } else if (price.price < 0) {
+                prefix = "- "
+            } else {
+                prefix = "+ "
+            }
+        }
+
+        return <T style={this.props.style}>
+            {prefix}{this.getCurrencySymbol(price.currency)}{price.price.toFixed(2)}
+        </T>
+    }
+
+    getCurrencySymbol = (symbol) => {
+            if (symbol == 'Sterling') {
+                return '£'
+            } else if (symbol == 'Euros') {
+                return '€'
+            } else if (symbol == 'Dollars') {
+                return '$'
+            } else {
+                throw Error('Unknown currency symbol:' + symbol)
+            }
     }
 }
 

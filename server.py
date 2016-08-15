@@ -152,16 +152,19 @@ menuTags = Tags(
         TagInfo('2', '#spirits',    excludes=['0', '1', '3', '4']),
         TagInfo('3', '#cocktails',  excludes=['0', '1', '2', '4']),
         TagInfo('4', '#water',      excludes=['0', '1', '2', '3']),
-        TagInfo('20', '#stout',     excludes=['21']),
-        TagInfo('21', '#ale',       excludes=['20']),
-        TagInfo('22', '#tap',       excludes=['23']),
-        TagInfo('23', '#bottle',    excludes=['22']),
+        TagInfo('20', '#stout',     excludes=['21', '22']),
+        TagInfo('21', '#ale',       excludes=['20', '22']),
+        TagInfo('22', '#lager',     excludes=['20', '21']),
+        TagInfo('30', '#tap',       excludes=['31', '32']),
+        TagInfo('31', '#bottle',    excludes=['30', '32']),
+        TagInfo('32', '#can',       excludes=['30', '31'])
     ],
     tagGraph=[
         TagEdge(srcID='0', dstID='20'),
         TagEdge(srcID='0', dstID='21'),
         TagEdge(srcID='0', dstID='22'),
-        TagEdge(srcID='0', dstID='23'),
+        TagEdge(srcID='0', dstID='30'),
+        TagEdge(srcID='0', dstID='31'),
     ],
 )
 
@@ -214,7 +217,22 @@ spirits = "https://biotechinasia.files.wordpress.com/2015/10/two-whisky-glasses.
 cocktails = "http://notable.ca/wp-content/uploads/2015/06/canada-day-cocktails.jpg"
 water = "http://arogyam.zest.md/uploads/gallery/df4fe8a8bcd5c95cdb640aa9793bb32b/images/201212042159565.jpg"
 snacks = "https://www.google.co.uk/search?q=peanuts&client=ubuntu&hs=sBq&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiT_47KnLnOAhXJuRoKHaNqD7QQ_AUICCgB&biw=1920&bih=919#tbm=isch&q=snacks&imgrc=sjXgiZ2yIgbsCM%3A"
+
 guiness = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
+heineken = "https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg"
+
+def option(price1, price2):
+    return MenuItemOption(
+        name="Size",
+        optionList=[
+            "pint",
+            "half-pint",
+        ],
+        prices=[
+            price1, price2
+        ],
+        default="pint",
+    )
 
 menu = Menu(
     beer=SubMenu(
@@ -224,22 +242,17 @@ menu = Menu(
                 name="Guiness",
                 desc="Guiness is a dry irish stout",
                 images=[guiness],
-                tags=["#stout", "#irish"],
+                tags=['0', '20', '30'],
                 price=Price.pounds(3.40),
-                options=[
-                    MenuItemOption(
-                        name="Size",
-                        optionList=[
-                            "pint",
-                            "half-pint",
-                        ],
-                        prices=[
-                            Price.pounds(3.40),
-                            Price.pounds(2.60),
-                        ],
-                        default="pint",
-                    ),
-                ],
+                options=[option(Price.pounds(3.40), Price.pounds(2.60))],
+            ),
+            MenuItem(
+                name="Heineken",
+                desc="Heineken is a pale lager",
+                images=[heineken],
+                tags=['0', '22', '31'],
+                price=Price.pounds(3.20),
+                options=[option(Price.pounds(3.20), Price.pounds(2.30))],
             ),
         ],
     ),

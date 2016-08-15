@@ -30,16 +30,8 @@ const tagQuery = `
     }
 `
 
-export const roots =
-    [ ('0', '#beer')
-    , ('1', '#wine')
-    , ('2', '#spirits')
-    , ('3', '#cocktails')
-    , ('4', '#water')
-    // , ('5', '#soda')
-    // , ('6', '#snacks')
-    // , ('7', '#food')
-    ]
+/* Root tags: beer, wine, spirits, cocktails, water, ... */
+export const rootIDs = [ '0', '1', '2', '3', '4' ]
 
 export class TagStore {
     /*
@@ -96,11 +88,13 @@ export class TagStore {
         this.tagDownloadResult.downloadStarted()
         graphQL(tagQuery)
             .then((downloadResult) => {
-                // console.log("//=========================================\\")
-                // console.log("Downloaded tags:", downloadResult.value)
-                // console.log("\\=========================================//")
-                this.tagDownloadResult = downloadResult.update(data => data.menuTags)
-            }).catch((error) => {
+                try {
+                    this.tagDownloadResult = downloadResult.update(data => data.menuTags)
+                } catch (err) {
+                    console.error(err)
+                }
+            })
+            .catch((error) => {
                 this.tagDownloadResult.downloadError(error.message)
             })
     }
@@ -110,8 +104,14 @@ export class TagStore {
     }
 
     @computed get tagGraph() {
-        const edges = this.tags.tagGraph.map((edge) => [edge.srcID, edge.dstID])
-        return new Map(edges)
+        const result = new Map()
+        const edges = this.tags.tagGraph.forEach((edge) => {
+            if (!result.has(edge.srcID))
+                result.set(edge.srcID, [])
+            const dstIDs = result.get(edge.srcID)
+            dstIDs.push(edge.dstID)
+        })
+        return result
     }
 
     @computed get tagNames() {
@@ -127,31 +127,28 @@ export class TagStore {
     }
 
     // @computed get allMenuItems() {
-    getAllMenuItems = () => {
+    @computed get allMenuItems() {
         const menu  = store.bar.value.menu
         const subMenus = (
-            [ ['#beer', menu.beer]
-            , ['#wine', menu.wine]
-            , ['#spirits', menu.spirits]
-            , ['#cocktails', menu.cocktails]
-            , ['#water', menu.water]
+            [ menu.beer
+            , menu.wine
+            , menu.spirits
+            , menu.cocktails
+            , menu.water
             // , menu.snacks
             // , menu.food
             ])
-        const menuItems = subMenus.map((item) => {
-            const tag = item[0]
-            const subMenu = item[1]
-            return subMenu.menuItems.map(menuItem => {
-                menuItem.tags.push(tag)
-                return menuItem
-            })
-        })
-
+        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
         return _.flatten(menuItems)
+    }
+
+    getActiveMenuItems = () => {
+        return filterMenuItems(this.allMenuItems, this.tagSelection)
     }
 
     /* Push a new tag when selected by the user */
     pushTag = (tagID) => {
+        console.log("Pushing tag...", tagID, this.tagSelection)
         if (_.includes(this.tagSelection, tagID)) {
             /* Tag already included, all done */
             return
@@ -163,15 +160,25 @@ export class TagStore {
             (tagID) => _.includes(excludes, tagID))
 
         /* Get the set of reachable tags for each of the excluded tags */
-        const reachables = excluded.map(this._findReachable)
+        const reachableExcluded = _.flatten(excluded.map(this._findReachable))
 
         /* Save the history for each excluded tag */
         excluded.forEach((excludedTagID, i) => {
-            const reachableTags = reachables[i]
-            this._saveExcludedTag(exlcudedTagID, reachableTags)
+            const reachableTags = reachableExcluded[i]
+            this._saveExcludedTag(excludedTagID, reachableTags)
         })
         /* Remove all excluded tags and their descendents */
-        this._clearTags(_.union(reachables))
+
+        transaction(() => {
+            this._clearTags(_.union(reachableExcluded))
+            this.tagSelection.push(tagID)
+        })
+
+        console.log("excludes:", excludes)
+        console.log("excluded:", excluded)
+        console.log("reachableExcluded:", reachableExcluded)
+        console.log("New tag selection:", this.tagSelection)
+        console.log("New menu item list", this.getActiveMenuItems().map(menuItem => menuItem.name))
 
         /* TODO: Restore history */
     }
@@ -188,7 +195,12 @@ export class TagStore {
         })
     }
 
-    getChildren = (tagID) => this.tagGraph.get(tagID)
+    getChildren = (tagID) => {
+        var result = this.tagGraph.get(tagID)
+        if (!result)
+            result = []
+        return result
+    }
 
     getTagName = (tagID) => this.tagNames.get(tagID)
 
@@ -225,37 +237,27 @@ export class TagView extends DownloadResultView {
 
     // @computed get rows() {
     getRows = () => {
-        /* Check if the given menuItem has the given tag */
-        const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
-
         /* Check if one of the given menu items has the given tag */
-        const someItemHasTag = (menuItems, tagID) =>
-            _.find(menuItems, menuItem => hasTag(menuItem, tagID))
+        const someItemHasTag = (tagID) => {
+            return !!_.find(menuItems, menuItem => hasTag(menuItem, tagID))
+        }
 
         /* Get all applicable tags */
         const childRow = (parentRow) => {
-            const selected = _.intersection(parentRow, tagSelection)
-            const childRow = _.union(selected.map(tagStore.getChildren))
+            const selected = _.intersection(parentRow, tagStore.tagSelection)
+            const childRow = _.flatten(selected.map(tagStore.getChildren))
             return childRow.filter(someItemHasTag)
         }
 
-        /* Filter out any menu items that do not match the selected tags */
-        filterSelection = (childRow, menuItems) => {
-            tagSelection = _.intersection(tagStore.tagSelection, parentRow)
-            menuItems = menuItems.filter(
-                menuItem => all(
-                    tagSelection.map(tagID => hasTag(menuItem, tagID))
-                )
-            )
-        }
-
-        var menuItems = tagStore.getAllMenuItems()
-        var parentRow = roots.map(root => root[0])
+        var menuItems = tagStore.allMenuItems
+        var parentRow = rootIDs
         var rows = []
-        while (parentRow.size > 0) {
+        while (parentRow.length > 0) {
             rows.push(parentRow)
             row = childRow(parentRow)
-            menuItems = filterSelection(row, menuItems)
+            /* Filter out any menu items that do not match the selected tags */
+            tagSelection = _.intersection(tagStore.tagSelection, row)
+            menuItems = filterMenuItems(menuItems, tagSelection)
             parentRow = row
         }
         return { rows: rows, menuItems: menuItems }
@@ -273,9 +275,9 @@ export class TagView extends DownloadResultView {
         const { rows, menuItems } = this.getRows()
 
         console.log("Got rows:", rows)
+        console.log("Got items:", menuItems)
 
         return <View>
-            <T>Tags here!</T>
             {rows.map((rowOfTags, i) =>
                 <TagRow key={i} rowOfTags={rowOfTags} />
                 )
@@ -285,6 +287,16 @@ export class TagView extends DownloadResultView {
 
 }
 
+/* Check if the given menuItem has the given tag */
+const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
+
+const filterMenuItems = (menuItems, tagSelection) =>
+    menuItems.filter(
+        menuItem => all(
+            tagSelection.map(tagID => hasTag(menuItem, tagID))
+        )
+    )
+
 @observer
 export class TagRow extends Component {
     /* properties:
@@ -292,17 +304,37 @@ export class TagRow extends Component {
     */
     render = () => {
         const tags = this.props.rowOfTags
-        return <View style={{flex: 1, flexDirection: 'row'}}>
-            {tags.map(
-                (tagID, i) =>
-                    <T key={i}>
-                        {tagStore.getTagName(tagID)}
-                    </T>
+        return <View style={{flex: 1, flexDirection: 'row', marginBottom: 10}}>
+            {
+                tags.map(
+                    (tagID, i) => <TagButton key={i} tagID={tagID} />
                 )
             }
         </View>
     }
 }
 
+@observer
+class TagButton extends Component {
+    /* properties:
+        tagID: schema.TagID
+    */
+
+    handleTagPress = () => {
+        tagStore.pushTag(this.props.tagID)
+    }
+
+    render = () => {
+        const tagID = this.props.tagID
+        const tagName = tagStore.getTagName(tagID)
+        return <TouchableOpacity onPress={this.handleTagPress}>
+            <T style={{fontSize: 18}}> {tagName}</T>
+        </TouchableOpacity>
+    }
+}
+
 export const tagStore = new TagStore()
+// force observable for debugging
+// TODO: remove this
+tagStore.tagSelection[0]
 tagStore.fetchTags()
