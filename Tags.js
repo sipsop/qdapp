@@ -123,7 +123,7 @@ export class TagStore {
         return new Map(tagNames)
     }
 
-    @computed get tagExcludes() {
+    getTagExcludes = () => {
         const tagExcludes = this.tags.tagInfo.map(tagInfo =>
             [tagInfo.tagID, tagInfo.excludes])
         return new Map(tagExcludes)
@@ -149,6 +149,13 @@ export class TagStore {
         return filterMenuItems(this.allMenuItems, this.tagSelection)
     }
 
+    getExcludedTags = (tagID) => {
+        /* Figure out which tags should be excluded */
+        const excludes = this.getTagExcludes().get(tagID)
+        return this.tagSelection.filter(
+            (tagID) => _.includes(excludes, tagID))
+    }
+
     /* Push a new tag when selected by the user */
     pushTag = (tagID) => {
         console.log("Pushing tag...", tagID, this.tagSelection)
@@ -157,10 +164,7 @@ export class TagStore {
             return
         }
 
-        /* Figure out which tags should be excluded */
-        const excludes = this.tagExcludes.get(tagID)
-        const excluded = this.tagSelection.filter(
-            (tagID) => _.includes(excludes, tagID))
+        const excluded = this.getExcludedTags(tagID)
 
         /* Get the set of reachable tags for each of the excluded tags */
         const reachableExcluded = excluded.map(this._findReachable)
@@ -174,19 +178,10 @@ export class TagStore {
 
         transaction(() => {
             this._clearTags(_.flatten(reachableExcluded))
-            // this.tagSelection.push(tagID)
-            const tagsFromHistory = this.tagSelectionHistory.get(tagID)
-
-            if (tagsFromHistory) {
-                /* Restore previous selection from history */
-                tagsFromHistory.forEach((tagID) => { this.tagSelection.push(tagID) })
-            } else {
-                /* No history available, push only the tag */
-                this.tagSelection.push(tagID)
-            }
+            this.tagSelection.push(tagID)
+            // this._restoreHistory(tagID)
         })
 
-        // console.log("excludes:", excludes)
         // console.log("excluded:", excluded)
         // console.log("reachableExcluded:", reachableExcluded)
         // console.log("New tag selection:", this.tagSelection)
@@ -222,8 +217,22 @@ export class TagStore {
     /* Save excluded tag in history for when it is re-selected */
     _saveExcludedTag = (excludedTagID, reachableTags) => {
         const tagSubSelection = _.intersection(reachableTags, this.tagSelection)
-        console.log("SAVING HISTORY>>>", excludedTagID, reachableTags, tagSubSelection)
         this.tagSelectionHistory.set(excludedTagID, tagSubSelection)
+    }
+
+    /* Restore history */
+    _restoreHistory = () => {
+        transaction(() => {
+            const tagsFromHistory = this.tagSelectionHistory.get(tagID)
+            if (tagsFromHistory) {
+                /* Restore previous selection from history */
+                tagsFromHistory.forEach((tagID) => { this.tagSelection.push(tagID) })
+            } else {
+                /* No history available, push only the tag */
+                this.tagSelection.push(tagID)
+            }
+
+        })
     }
 
     /* Find all reachable tag IDs from the given tag ID */
@@ -249,6 +258,12 @@ const filterMenuItems = (menuItems, tagSelection) => {
     )
 }
 
+/* Check if at least one but not all of the given menu items has the given tag */
+const isEnabled = (tagID, menuItems) => {
+    const haveTag = menuItems.map(menuItem => hasTag(menuItem, tagID))
+    return any(haveTag) && !all(haveTag)
+}
+
 @observer
 export class TagView extends DownloadResultView {
 
@@ -256,19 +271,12 @@ export class TagView extends DownloadResultView {
         super(props, "Error downloading tags")
     }
 
-    // getRows = () => {
     @computed get rows() {
-        /* Check if one of the given menu items has the given tag */
-        const someItemHasTag = (tagID) => {
-            const haveTag = menuItems.map(menuItem => hasTag(menuItem, tagID))
-            return any(haveTag) && !all(haveTag)
-        }
-
         /* Get all applicable tags */
         const childRow = (parentRow) => {
             const selected = _.intersection(parentRow, tagStore.tagSelection)
             const childRow = _.flatten(selected.map(tagStore.getChildren))
-            return childRow.filter(someItemHasTag)
+            return childRow.filter(tagID => isEnabled(tagID, menuItems))
         }
 
         var menuItems = tagStore.allMenuItems
@@ -285,6 +293,10 @@ export class TagView extends DownloadResultView {
         return { rows: rows, menuItems: menuItems }
     }
 
+    getAllExcludedTags() {
+        // return _.union(_.flatten(tagStore.tagSelection.map(tagStore.tagExcludes.get)))
+    }
+
     getDownloadResult = () => tagStore.tagDownloadResult
     refreshPage = () => tagStore.fetchTags()
     renderNotStarted = () => <View />
@@ -299,6 +311,8 @@ export class TagView extends DownloadResultView {
         console.log("Got rows:", rows)
         console.log(tags)
 
+        const excludedTags = this.getAllExcludedTags()
+
         return <View>
             {/*
             <ButtonRow labelGroups={[['beer', 'wine', 'cocktails', 'spirits', 'water', 'snacks', 'food']]} index={0} />
@@ -306,7 +320,14 @@ export class TagView extends DownloadResultView {
             <ButtonRow labelGroups={[['fruity', 'chocolate', 'pale', 'dark', 'hops']]} index={2} />
             */}
             {rows.map((rowOfTags, i) =>
-                <TagRow key={i} rowNumber={i} rowOfTags={rowOfTags} />
+                <TagRow
+                    key={i}
+                    rowNumber={i}
+                    rowOfTags={rowOfTags}
+                    menuItems={menuItems}
+                    isExcluded={tagID => false}
+                    /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
+                    />
                 )
             }
         </View>
@@ -319,6 +340,8 @@ export class TagRow extends Component {
     /* properties:
         rowNumber: int
         rowOfTags: [TagID]
+        menuItems: [schema.MenuItem]
+        isExcluded(tagID) -> bool
     */
 
     toggleButton = (tagID) => {
@@ -329,8 +352,14 @@ export class TagRow extends Component {
         }
     }
 
-    isActive = (label) => {
-        return _.includes(tagStore.tagSelection, label)
+    isActive = (tagID) => {
+        return _.includes(tagStore.tagSelection, tagID)
+    }
+
+    isEnabled = (tagID) => {
+        // TODO: Check whether the button would have a "useful" effect
+        // (i.e. produce a distinct, non-empty list)
+        return true
     }
 
     clearRow = () => {
@@ -351,47 +380,11 @@ export class TagRow extends Component {
                 renderLabel={tagStore.getTagName}
                 toggleButton={this.toggleButton}
                 isActive={this.isActive}
+                isDisabled={tagID => !this.isEnabled(tagID)}
                 />
         </ButtonRow>
     }
 }
 
-@observer
-class TagButton extends Component {
-    /* properties:
-        tagID: schema.TagID
-    */
-
-    handleTagPress = () => {
-        tagStore.pushTag(this.props.tagID)
-    }
-
-    render = () => {
-        const tagID = this.props.tagID
-        const tagName = tagStore.getTagName(tagID)
-        return (
-                <TouchableOpacity
-                        onPress={this.handleTagPress}
-                        style={
-                            { flex: 1
-                            , borderWidth: 1
-                            , borderRadius: 5
-                            , margin: 5
-                            , flexWrap: 'nowrap'
-                            , justifyContent: 'center'
-                            }
-                        }
-                        >
-                    <T style={{fontSize: 18, textAlign: 'center'}} numberOfLines={1}>
-                        {tagName}
-                    </T>
-                </TouchableOpacity>
-        )
-    }
-}
-
 export const tagStore = new TagStore()
-// force observable for debugging
-// TODO: remove this
-tagStore.tagSelection[0]
 tagStore.fetchTags()
