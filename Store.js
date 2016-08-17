@@ -116,6 +116,7 @@ export class Store {
             fragment SubMenuFragment on SubMenu {
                 image
                 menuItems {
+                    id
                     name
                     desc
                     images
@@ -125,11 +126,12 @@ export class Store {
                     }
                     options {
                         name
+                        optionType
                         optionList
                         prices {
                             ...PriceFragment
                         }
-                        default
+                        defaultOption
                     }
                 }
             }

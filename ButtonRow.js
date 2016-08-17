@@ -23,6 +23,10 @@ import { store } from './Store.js'
 import { config } from './Config.js'
 import { intersperse, merge } from './Curry.js'
 
+const rowHeight     = 55
+const buttonHeight  = 45
+const iconHeight    = 45
+
 @observer
 export class ButtonRow extends Component {
     /* properties:
@@ -43,14 +47,14 @@ export class ButtonRow extends Component {
                     , flexDirection: 'row'
                     , justifyContent: 'flex-start'
                     , alignItems: 'center'
-                    , height: 40
+                    , height: rowHeight
                     }
                 }>
                 <View style={{flexDirection: 'row', flex: 1}}>
                     {this.props.children}
                 </View>
                 <TouchableOpacity onPress={this.props.clearRow}>
-                    <EvilIcon name="close-o" size={35} color="#ffffff" />
+                    <EvilIcon name="close-o" size={iconHeight} color="#ffffff" />
                 </TouchableOpacity>
             </View>
         )
@@ -71,10 +75,10 @@ export class ButtonGroup extends Component {
     render = () => {
         const labels = this.props.labels
         return (
-            <View style={{flex: 1, height: 40, /* borderRightWidth: 0.5, borderColor: '#fff',*/ paddingLeft: 5, paddingRight: 5}}>
+            <View style={{flex: 1, height: rowHeight, /* borderRightWidth: 0.5, borderColor: '#fff',*/ paddingLeft: 5, paddingRight: 5}}>
                 <ScrollView
                         horizontal={true}
-                        style={{height: 40}}
+                        style={{height: rowHeight}}
                         contentContainerStyle={{alignItems: 'center'}}
                         >
                     {
@@ -161,7 +165,7 @@ export class SelectableButton extends Component {
         }
 
         return <View style={
-                { height: 30
+                { height: buttonHeight
                 , justifyContent: 'center'
                 , borderWidth: 0.5
                 , borderColor: '#fff'

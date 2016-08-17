@@ -6,7 +6,8 @@ from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import graphene
 
-ID  = graphene.ID().NonNull
+# ID  = graphene.ID().NonNull
+ID  = graphene.String().NonNull
 URL = graphene.String().NonNull
 
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
@@ -54,10 +55,18 @@ class Price(graphene.ObjectType):
             option=PriceOption.Absolute,
             price=price)
 
+class OptionType(graphene.Enum):
+    Single     = 0
+    ZeroOrMore = 1
+    OneOrMore  = 2
+
 
 class MenuItemOption(graphene.ObjectType):
     # menu option name (e.g. "Size")
     name    = graphene.String().NonNull
+
+    # type of option list
+    optionType = graphene.NonNull(OptionType)
 
     # List of options to choose from, e.g. ["pint", "half-pint"]
     optionList = graphene.List(graphene.String()).NonNull
@@ -65,11 +74,11 @@ class MenuItemOption(graphene.ObjectType):
     # List of prices for each option, e.g. [Price(3.40), Price(2.60)]
     prices  = graphene.List(Price).NonNull
 
-    # Default option, e.g. "pint". If not present, pick the first entry
-    # from `options`.
-    default = graphene.String()
+    # Index of the default option. If there is no default, this is null
+    defaultOption = graphene.Int()
 
 class MenuItem(graphene.ObjectType):
+    id      = ID
     name    = graphene.String().NonNull
     desc    = graphene.String()
     images  = graphene.List(URL)
@@ -159,8 +168,8 @@ menuTags = Tags(
         TagInfo('31', 'bottle',    excludes=['30', '32']),
         TagInfo('32', 'can',       excludes=['30', '31']),
         TagInfo('40', 'hops',      excludes=[]),
-        TagInfo('41', 'light',     excludes=[]),
-        TagInfo('42', 'dark',      excludes=[]),
+        TagInfo('41', 'light',     excludes=['42']),
+        TagInfo('42', 'dark',      excludes=['41']),
         TagInfo('43', 'fruity',    excludes=[]),
         TagInfo('44', 'chocolate', excludes=[]),
         TagInfo('45', 'bacon', excludes=[]),
@@ -245,10 +254,12 @@ snacks = "https://www.google.co.uk/search?q=peanuts&client=ubuntu&hs=sBq&source=
 
 guiness = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
 heineken = "https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg"
+rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPntmIjnA4/s1600/PB170236.JPG"
 
 def option(price1, price2):
     return MenuItemOption(
         name="Size",
+        optionType=OptionType.Single,
         optionList=[
             "pint",
             "half-pint",
@@ -256,7 +267,7 @@ def option(price1, price2):
         prices=[
             price1, price2
         ],
-        default="pint",
+        defaultOption=0,
     )
 
 menu = Menu(
@@ -264,14 +275,16 @@ menu = Menu(
         image=beer,
         menuItems=[
             MenuItem(
+                id='1',
                 name="Guiness",
-                desc="Guiness is a dry irish stout",
+                desc="Guiness is a dry irish stout from Dublin, Ireland.",
                 images=[guiness],
                 tags=['0', '20', '30', '42'],
                 price=Price.pounds(3.40),
                 options=[option(Price.pounds(3.40), Price.pounds(2.60))],
             ),
             MenuItem(
+                id='2',
                 name="Heineken",
                 desc="Heineken is a pale lager",
                 images=[heineken],
@@ -280,12 +293,13 @@ menu = Menu(
                 options=[option(Price.pounds(3.20), Price.pounds(2.30))],
             ),
             MenuItem(
-                name="Hoppy Heineken",
-                desc="Heineken blah",
-                images=[heineken],
-                tags=['0', '22', '31', '41'],
+                id='3',
+                name="Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Lager",
+                desc="This beer has a rather long name...",
+                images=[rockBottom],
+                tags=['0', '22', '31', '42'],
                 price=Price.pounds(3.20),
-                options=[option(Price.pounds(3.20), Price.pounds(2.30))],
+                options=[option(Price.pounds(4.20), Price.pounds(3.40))],
             ),
         ],
     ),

@@ -8,6 +8,7 @@ import {
 import { observable, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { PureComponent } from './Component.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 
@@ -68,7 +69,7 @@ export class DownloadResult {
 export const emptyResult = () => new DownloadResult()
 
 /* React Component for rendering a downloadResult in its different states */
-@observer export class DownloadResultView extends Component {
+@observer export class DownloadResultView extends PureComponent {
     /* props:
         downloadResult: DownloadResult
     */

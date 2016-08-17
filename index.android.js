@@ -42,6 +42,7 @@ class App extends Component {
 store.barList.downloadStarted()
 store.initialize()
 // setTimeout(store.initialize, 500)
+store.setBarID("1")
 AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing

@@ -12,6 +12,7 @@
     "mobx": "^2.4.1",
     "mobx-react": "^3.5.3",
     "react": "^15.2.1",
+    "react-addons-pure-render-mixin": "^15.3.0",
     "react-native": "^0.31.0",
     "react-native-linear-gradient": "^1.5.12",
     "react-native-maps": "^0.7.1",

@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { Text } from 'react-native'
 import { merge } from './Curry.js'
 
-export class T extends Component {
+import { PureComponent } from './Component.js'
+
+export class T extends PureComponent {
     /* properties:
         style
         numberOfLines

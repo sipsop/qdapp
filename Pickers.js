@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   AppRegistry,
   StyleSheet,
@@ -16,50 +16,47 @@ import _ from 'lodash'
 import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { PureComponent } from './Component.js'
+import { Selector } from './Selector.js'
 import { T } from './AppText.js'
+import { Price } from './Price.js'
 import { OkCancelModal } from './Modals.js'
-
-// export const Picker = Platform.OS === 'ios' ? PickerIOS : PickerAndroid
-
 
 export class PickerItem {
     /* Attributes:
         title: str
         labels: [str]
             list of labels, displayed in the "button"
-        modalLabels: [str]
-            list of labels displayed in the modal picker
+        prices: [schema.Price]
+            price corresponding to each label
+        defaultOption: int
+            index of default option
+        selection: [int]
+            currently selected items for this PickerItem
+        multiple: bool
+            whether multiple items may be selected
     */
 
-    @observable title = null
-    @observable labels = null
-    @observable modalLabels = null
-    @observable initial = null
+    @observable selected
 
-    constructor(title, labels, modalLabels, initial) {
+    constructor(title, labels, prices, defaultOption, selection, multiple) {
         this.title = title
         this.labels = labels
-        this.modalLabels = modalLabels
-        this.initial = initial
+        this.prices = prices
+        this.defaultOption = defaultOption
+        this.selected = selection
+        this.multiple = multiple
     }
 }
 
-@observer export class PickerCollection extends Component {
+@observer
+export class PickerCollection extends PureComponent {
     /* properties:
         pickerItems: [PickerItem]
-        handleItemChanges: [int => void]
-        initialSelection: [int]
-        wheelPicker: bool
+        onAcceptChanges([PickerItem]) -> void
     */
-    constructor(props) {
-        super(props)
-        autorun(() => {
-            this.currentSelection = this.pickerItems.map((pickerItem) => pickerItem.initial)
-        })
-    }
 
     @observable modalVisible = false
-    @observable currentSelection = null
 
     showModal = () => {
         this.modalVisible = true
@@ -67,40 +64,40 @@ export class PickerItem {
 
     closeModal = () => {
         this.modalVisible = false
-        this.currentSelection = null
     }
 
     okModal = () => {
-        this.props.handleItemChanges.forEach((f, i) => {
-            f(this.selection[i])
-        })
+        this.props.onAcceptChanges(this.props.pickerItems)
         this.closeModal()
     }
 
-    @computed get selection() {
-        if (this.currentSelection === null) {
-            return this.props.initialSelection
+    handleItemChange = (pickerItem, itemIndex) => {
+        if (pickerItem.multiple) {
+            if (!_.includes(pickerItem.selected, itemIndex)) {
+                pickerItem.selected.push(itemIndex)
+            }
+        } else {
+            pickerItem.selected[0] = itemIndex
         }
-        return this.currentSelection
-    }
-
-    handleItemChange = (i, itemIndex) => {
-        if (this.currentSelection === null) {
-            this.currentSelection = this.props.initialSelection.slice()
-        }
-        this.currentSelection[i] = itemIndex
     }
 
     render = () => {
+        const pickerItems = this.props.pickerItems
+        const showOkButton = this.props.pickerItems.length > 1
+                          || !this.props.pickerItems[0].multiple
+
         return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
+            {
             <OkCancelModal
-                visible={this.modalVisible}
-                cancelModal={this.closeModal}
-                okModal={this.okModal}
-                showOkButton={this.props.wheelPicker}
-                >
-                {this.props.pickerItems.map(this.renderPicker)}
+                    visible={this.modalVisible}
+                    cancelModal={this.closeModal}
+                    okModal={this.okModal}
+                    showOkButton={showOkButton}
+                    >
+                {pickerItems.map(this.renderPicker)}
             </OkCancelModal>
+            }
+            {/*pickerItems.map(this.renderPicker)*/}
             <TouchableOpacity onPress={this.showModal}>
                 <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
                     <T lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
@@ -113,46 +110,44 @@ export class PickerItem {
     }
 
     renderPicker = (pickerItem, i) => {
-        const handleChange = (itemIndex) => this.handleItemChange(i, itemIndex)
-        return <T>Picker here</T>
-
-        if (this.props.wheelPicker) {
-            const itemIndex = this.selection[i]
-            return <Picker  key={i}
-                            selectedValue={itemIndex}
-                            onValueChange={this.handleChange}>
-                {pickerItem.modalLabels.map(this.renderWheelPickerItem)}
-            </Picker>
-        } else {
-            return  <ScrollView key={i}>
-                <View style={{flex: 1, alignItems: 'center', margin: 25}}>
-                    {pickerItem.modalLabels.map((label, i) => this.renderScrollPickerItem(handleChange, label, i))}
-                </View>
-            </ScrollView>
-        }
-    }
-
-    renderWheelPickerItem = (label, i) => {
-        return <T>Picker here</T>
-        return <Picker.Item key={i} value={i} label={label} />
-    }
-
-    renderScrollPickerItem = (handleChange, label, i) => {
-        return <TouchableOpacity
-                    style={{flex: 1}}
+        const onSelect = itemIndex => this.handleItemChange(pickerItem, itemIndex)
+        return (
+            <Selector
                     key={i}
-                    /*onPress={(itemIndex) => { handleChange(itemIndex); this.closeModal() }}*/
+                    selected={pickerItem.selected}
+                    onSelect={onSelect}
                     >
-            <T style={{flex: 1, fontSize: 25, textAlign: 'center'}}>{label}</T>
-        </TouchableOpacity>
+                {
+                    _.zipWith( pickerItem.labels
+                             , pickerItem.prices
+                             , _.range(pickerItem.labels.length)
+                             , (label, price, i) => {
+                        return <View key={i} style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                            <View style={{flex: 1, justifyContent: 'center'}}>
+                                <T style={{fontSize: 20}}>{label}</T>
+                            </View>
+                            <Price price={price} style={{fontSize: 20}} />
+                        </View>
+                    })
+                }
+            </Selector>
+        )
     }
 
     renderLabels = () => {
-        // const labels = this.props.pickerItems.map((pickerItem, i) => {
-        //     const itemIndex = this.props.initialSelection[i]
-        //     return pickerItem.labels[itemIndex]
-        // })
-        // return _.join(labels, ' + ')
-        return "pint?"
+        /* Get all non-default labels */
+        const nonDefaultLabels = this.props.pickerItems.map((pickerItem, i) => {
+            if (pickerItem.selected.length == 1 &&
+                    pickerItem.selected[0] == pickerItem.defaultOption) {
+                return []
+            }
+            return pickerItem.selected.map(itemIndex => pickerItem.labels[itemIndex])
+        })
+        const labels = _.flatten(nonDefaultLabels)
+        if (labels.length === 0) {
+            const firstItem = this.props.pickerItems[0]
+            return firstItem.labels[0]
+        }
+        return _.join(_.flatten(nonDefaultLabels), ' + ')
     }
 }

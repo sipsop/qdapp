@@ -27,9 +27,7 @@ export class OkCancelModal extends Component {
         return <Modal visible={this.props.visible}
                       onRequestClose={this.props.cancelModal}>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', marginBottom: 20, backgroundColor: "#fff"}}>
-                <View>
-                    {this.props.children}
-                </View>
+                {this.props.children}
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                 {cancelButton}
