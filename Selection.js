@@ -21,8 +21,7 @@ export const updateSelection = (optionType, selection, index) => {
         else
             newSelection.push(index)
     } else if (optionType === 'ZeroOrMore' || optionType === 'OneOrMore') {
-        if (index != undefined)
-            newSelection.push(index)
+        newSelection.push(index)
     } else {
         throw Error("Unknown option type: " + optionType)
     }

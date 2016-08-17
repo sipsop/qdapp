@@ -85,6 +85,17 @@ class MenuItem extends PureComponent {
         super(props)
         this.orderItems = []
         this.defaultOrderItem = new OrderItem(props.menuItem)
+        autorun(() => {
+            const n = this.orderItems.length
+            if (n > 0 && !this.isDefaultOrderItem(this.orderItems[n - 1])) {
+                this.orderItems.push(new OrderItem(props.menuItem))
+            }
+        })
+    }
+
+    clearDefaultOrderItems = () => {
+        this.orderItems = this.orderItems.filter(
+            orderItem => !this.isDefaultOrderItem(orderItem))
     }
 
     isDefaultOrderItem = (orderItem) => {
@@ -103,8 +114,7 @@ class MenuItem extends PureComponent {
 
     toggleExpand = () => {
         transaction(() => {
-            this.orderItems = this.orderItems.filter(
-                orderItem => !this.isDefaultOrderItem(orderItem))
+            this.clearDefaultOrderItems()
             if (this.orderItems.length === 0) {
                 this.expanded = !this.expanded
                 if (this.expanded) {
@@ -164,8 +174,10 @@ class OrderItem {
     }
 }
 
-/* getDefaultOptions : [schema.MenuItemOption] -> [Int] */
+/* getMenuItemDefaultOptions : [schema.MenuItemOption] -> [Int] */
 const getMenuItemDefaultOptions = (menuItemOption) => {
+    if (menuItemOption.defaultOption == undefined)
+        return []
     return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
 }
 
@@ -307,9 +319,11 @@ export class OrderSelection extends PureComponent {
 
     constructor(props) {
         super(props)
+        const menuItem = props.menuItem
+        const orderItem = props.orderItem
+
         autorun(() => {
             transaction(() => {
-                const orderItem = props.orderItem
                 var   subTotal = orderItem.subTotal
                 if (!subTotal)
                     subTotal = 0.0
@@ -322,6 +336,17 @@ export class OrderSelection extends PureComponent {
                     'Single',                       /* optionType */
                 )
             })
+        })
+
+        this.optionPickerItems = menuItem.options.map((menuOptionItem, i) => {
+            return new PickerItem(
+                menuOptionItem.name,
+                menuOptionItem.optionList,
+                menuOptionItem.prices,
+                menuOptionItem.defaultOption || -1,
+                orderItem.selectedOptions[i],
+                menuOptionItem.optionType,
+            )
         })
     }
 
@@ -345,6 +370,10 @@ export class OrderSelection extends PureComponent {
         this.props.orderItem.amount = pickerItems[0].selected[0]
     }
 
+    handleAcceptOptions = (pickerItems) => {
+        this.props.orderItem.selectedOptions = pickerItems.map(pickerItem => pickerItem.selected)
+    }
+
     render = () => {
         const orderItem = this.props.orderItem
         const subTotal = orderItem.subTotal
@@ -357,18 +386,18 @@ export class OrderSelection extends PureComponent {
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={iconSize} color="#900" />
             </TouchableOpacity>
-            {/*
-            <PickerCollection
-                pickerItems={[this.sizeItem, this.topsItem]}
-                handleItemChanges={[this.handleDrinkSizeChange, this.handleDrinkTopChange]}
-                initialSelection={[this.currentDrinkSize, this.currentDrinkTop]}
-                wheelPicker={true}
-                />
-            */}
-            <PickerCollection
-                pickerItems={amountPickerItems}
-                onAcceptChanges={this.handleAcceptAmountChanges}
-                />
+            <View style={{flex: 2}}>
+                <PickerCollection
+                    pickerItems={this.optionPickerItems}
+                    onAcceptChanges={this.handleAcceptOptions}
+                    />
+            </View>
+            <View style={{flex: 1}}>
+                <PickerCollection
+                    pickerItems={amountPickerItems}
+                    onAcceptChanges={this.handleAcceptAmountChanges}
+                    />
+            </View>
             <T style={{marginLeft: 10, textAlign: 'right'}}>
                 {'£' + orderItem.total.toFixed(2)}
             </T>

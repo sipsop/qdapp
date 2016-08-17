@@ -271,6 +271,27 @@ def option(price1, price2):
         defaultOption=0,
     )
 
+zero = Price(
+    currency=Currency.Sterling,
+    option=PriceOption.Relative,
+    price=0.0,
+)
+top_option = MenuItemOption(
+    name="Choose a Top",
+    optionType=OptionType.Single,
+    optionList=[
+        "shandy",
+        "lime",
+        "blackcurrant",
+    ],
+    prices=[
+        zero,
+        zero,
+        zero,
+    ],
+    defaultOption=None,
+)
+
 menu = Menu(
     beer=SubMenu(
         image=beer,
@@ -282,7 +303,10 @@ menu = Menu(
                 images=[guiness],
                 tags=['0', '20', '30', '42'],
                 price=Price.pounds(3.40),
-                options=[option(Price.pounds(3.40), Price.pounds(2.60))],
+                options=[
+                    option(Price.pounds(3.40), Price.pounds(2.60)),
+                    top_option,
+                ],
             ),
             MenuItem(
                 id='2',
@@ -291,7 +315,10 @@ menu = Menu(
                 images=[heineken],
                 tags=['0', '22', '31', '40', '41'],
                 price=Price.pounds(3.20),
-                options=[option(Price.pounds(3.20), Price.pounds(2.30))],
+                options=[
+                    option(Price.pounds(3.20), Price.pounds(2.30)),
+                    top_option,
+                ],
             ),
             MenuItem(
                 id='3',
@@ -300,7 +327,10 @@ menu = Menu(
                 images=[rockBottom],
                 tags=['0', '22', '31', '42'],
                 price=Price.pounds(3.20),
-                options=[option(Price.pounds(4.20), Price.pounds(3.40))],
+                options=[
+                    option(Price.pounds(4.20), Price.pounds(3.40)),
+                    top_option,
+                ],
             ),
         ],
     ),

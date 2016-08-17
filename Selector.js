@@ -75,11 +75,14 @@ class SelectorItem extends PureComponent {
         return <View style={
                 { flex: 1
                 , flexDirection: 'row'
+                , alignItems: 'center'
                 , borderWidth: 1
                 , borderRadius: 5
                 // , backgroundColor: 'rgba(0, 0, 0, 0.25)'
                 , borderColor: config.theme.primary.dark
-                , margin: 5}}>
+                , margin: 5
+                }
+            }>
             <TouchableOpacity
                     style={{flex: 1, flexDirection: 'row'}}
                     onPress={this.props.onPress}

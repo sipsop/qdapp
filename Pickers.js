@@ -153,6 +153,20 @@ class PickerItemView extends PureComponent {
             this.props.confirmSelection()
     }
 
+    render = () => {
+        const pickerItem = this.props.pickerItem
+        return (
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                <Selector
+                        flags={this.flags}
+                        onSelect={this.handleItemChange}
+                        renderRow={this.renderRow}
+                        >
+                </Selector>
+            </View>
+        )
+    }
+
     renderRow = (i) => {
         const pickerItem = this.props.pickerItem
         const label = pickerItem.labels[i]
@@ -171,18 +185,6 @@ class PickerItemView extends PureComponent {
             <Price price={price} style={{fontSize: 20}} />
         </View>
     }
-
-    render = () => {
-        const pickerItem = this.props.pickerItem
-        return (
-            <Selector
-                    flags={this.flags}
-                    onSelect={this.handleItemChange}
-                    renderRow={this.renderRow}
-                    >
-            </Selector>
-        )
-    }
 }
 
 @observer
@@ -193,12 +195,17 @@ class PickerButton extends PureComponent {
             callback to trigger modal popup
     */
     render = () => {
-        return <TouchableOpacity onPress={this.props.showModal}>
-            <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
-                <T lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
-                    {this.renderLabels()}
-                </T>
-                <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
+        return <TouchableOpacity style={{flex: 1}} onPress={this.props.showModal}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                <View style={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 5}}>
+                    <T lineBreakMode='tail'
+                       numberOfLines={1}
+                       style={{flex: 1, fontSize: 16}}
+                       >
+                        {this.renderLabels()}
+                    </T>
+                    <Icon name="sort-down" size={30} style={{marginLeft: 5, marginTop: -5}} />
+                </View>
             </View>
         </TouchableOpacity>
     }
