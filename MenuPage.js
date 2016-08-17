@@ -291,7 +291,7 @@ const styles = {
     },
 }
 
-const N = 300
+const N = 50
 const iconBoxSize = 50
 const iconSize = 45
 
@@ -315,8 +315,8 @@ export class OrderSelection extends PureComponent {
                     subTotal = 0.0
                 this.amountPickerItem = new PickerItem(
                     "Number of Drinks:",
-                    _.range(N).map(i => "" + i),
-                    _.range(N).map(i => this.makeAbsPrice(i * subTotal)),
+                    _.range(N+1).map(i => "" + i),
+                    _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
                     -1,                             /* defaultOption */
                     [props.orderItem.amount || 0],  /* selection */
                     'Single',                       /* optionType */
@@ -334,7 +334,7 @@ export class OrderSelection extends PureComponent {
     }
 
     handleIncrease = () => {
-        this.props.orderItem.amount = min(50, this.props.orderItem.amount + 1)
+        this.props.orderItem.amount = min(N, this.props.orderItem.amount + 1)
     }
 
     handleDecrease = () => {

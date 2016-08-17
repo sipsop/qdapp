@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  ListView,
 } from 'react-native'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -15,6 +16,11 @@ import { observer } from 'mobx-react/native'
 
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
+import { config } from './Config.js'
+
+const dataSource = new ListView.DataSource({
+    rowHasChanged: (i, j) => i !== j,
+})
 
 @observer
 export class Selector extends PureComponent {
@@ -22,31 +28,29 @@ export class Selector extends PureComponent {
         children: [Component]
         flags: [Flag]
         onSelect(i) -> void
+        renderRow(rowIndex) -> Component
     */
 
-    render = () => {
-        var children = this.props.children
-        if (!Array.isArray(children))
-            children = [children]
-
-        return <ScrollView>
-            {_.zipWith(
-                children,
-                this.props.flags,
-                _.range(children.length),
-                this.renderSelectorItem,
-                )
-            }
-        </ScrollView>
+    constructor(props) {
+        super(props)
+        this.dataSource = dataSource.cloneWithRows(_.range(props.flags.length))
     }
 
-    renderSelectorItem = (child, flag, i) => {
+    render = () => {
+        return <ListView
+                    dataSource={this.dataSource}
+                    renderRow={this.renderSelectorItem}
+                    />
+    }
+
+    renderSelectorItem = (i) => {
+        const flag = this.props.flags[i]
         return <SelectorItem
                     key={i}
                     flag={flag}
                     onPress={() => this.props.onSelect(i)}
                     >
-                {child}
+                {this.props.renderRow(i)}
         </SelectorItem>
     }
 }
@@ -62,10 +66,20 @@ class SelectorItem extends PureComponent {
     render = () => {
         const selected = this.props.flag.get()
         const icon = selected
-            ? <Icon name="check" size={30} color="rgb(19, 179, 30)" />
+            ? <Icon name="check" size={30}
+                /* color="rgb(19, 179, 30)" */
+                color={config.theme.primary.medium}
+                />
             : undefined
 
-        return <View style={{flex: 1, flexDirection: 'row'}}>
+        return <View style={
+                { flex: 1
+                , flexDirection: 'row'
+                , borderWidth: 1
+                , borderRadius: 5
+                // , backgroundColor: 'rgba(0, 0, 0, 0.25)'
+                , borderColor: config.theme.primary.dark
+                , margin: 5}}>
             <TouchableOpacity
                     style={{flex: 1, flexDirection: 'row'}}
                     onPress={this.props.onPress}

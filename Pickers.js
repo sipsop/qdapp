@@ -6,7 +6,6 @@ import {
   ScrollView,
   Modal,
   TouchableOpacity,
-  Platform,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -88,7 +87,7 @@ export class PickerCollection extends PureComponent {
 
         var modal = undefined
         if (this.modalVisible) {
-            const showOkButton = pickerItems.length > 1 || !pickerItems[0].multiple
+            const showOkButton = pickerItems.length > 1 || pickerItems[0].optionType !== 'Single'
             modal = <OkCancelModal
                     visible={this.modalVisible}
                     cancelModal={this.closeModal}
@@ -98,7 +97,12 @@ export class PickerCollection extends PureComponent {
                 {
                     pickerItems.map(
                         (pickerItem, i) =>
-                            <PickerItemView key={i} pickerItem={pickerItem} />
+                            <PickerItemView
+                                key={i}
+                                pickerItem={pickerItem}
+                                confirmImmediately={!showOkButton}
+                                confirmSelection={this.okModal}
+                                />
                     )
                 }
               </OkCancelModal>
@@ -115,16 +119,21 @@ export class PickerCollection extends PureComponent {
 class PickerItemView extends PureComponent {
     /* properties:
         pickerItem: PickerItem
+        confirmImmediately: bool
+            whether to confirm the selection on a single press
+        confirmSelection() -> void
+            confirm a new selection by closing the modal
     */
 
     @observable flags
 
     constructor(props) {
         super(props)
+        const length = props.pickerItem.labels.length
 
         const pickerItem = this.props.pickerItem
         transaction(() => {
-            this.flags = getFlags(pickerItem.labels.length)
+            this.flags = getFlags(length)
             updateFlagsInPlace(pickerItem.selectedInModal, this.flags)
         })
 
@@ -140,6 +149,27 @@ class PickerItemView extends PureComponent {
             pickerItem.selectedInModal,
             itemIndex,
         )
+        if (this.props.confirmImmediately)
+            this.props.confirmSelection()
+    }
+
+    renderRow = (i) => {
+        const pickerItem = this.props.pickerItem
+        const label = pickerItem.labels[i]
+        const price = pickerItem.prices[i]
+        return <View key={i} style={
+                { flex: 1
+                , flexDirection: 'row'
+                , alignItems: 'center'
+                , paddingLeft: 10
+                , paddingRight: 10
+                }
+            }>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                <T style={{fontSize: 20}}>{label}</T>
+            </View>
+            <Price price={price} style={{fontSize: 20}} />
+        </View>
     }
 
     render = () => {
@@ -148,20 +178,8 @@ class PickerItemView extends PureComponent {
             <Selector
                     flags={this.flags}
                     onSelect={this.handleItemChange}
+                    renderRow={this.renderRow}
                     >
-                {
-                    _.zipWith( pickerItem.labels
-                             , pickerItem.prices
-                             , _.range(pickerItem.labels.length)
-                             , (label, price, i) => {
-                        return <View key={i} style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                            <View style={{flex: 1, justifyContent: 'center'}}>
-                                <T style={{fontSize: 20}}>{label}</T>
-                            </View>
-                            <Price price={price} style={{fontSize: 20}} />
-                        </View>
-                    })
-                }
             </Selector>
         )
     }
