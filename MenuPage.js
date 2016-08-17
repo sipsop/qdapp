@@ -19,6 +19,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { updateSelection } from './Selection.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Price, sumPrices } from './Price.js'
@@ -165,16 +166,7 @@ class OrderItem {
 
 /* getDefaultOptions : [schema.MenuItemOption] -> [Int] */
 const getMenuItemDefaultOptions = (menuItemOption) => {
-    if (menuItemOption.optionType === 'Single' ||
-            menuItemOption.optionType === 'OneOrMore') {
-        return [menuItemOption.default || 0]
-    } else if (menuItemOption.optionType === 'ZeroOrMore') {
-        if (menuItemOption.default)
-            return [menuItemOption.default]
-        return []
-    } else {
-        throw Error("Unknown option type: " + menuItemOption.optionType)
-    }
+    return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
 }
 
 @observer
@@ -299,7 +291,7 @@ const styles = {
     },
 }
 
-const N = 30
+const N = 300
 const iconBoxSize = 50
 const iconSize = 45
 
@@ -327,7 +319,7 @@ export class OrderSelection extends PureComponent {
                     _.range(N).map(i => this.makeAbsPrice(i * subTotal)),
                     -1,                             /* defaultOption */
                     [props.orderItem.amount || 0],  /* selection */
-                    false,                          /* multiple */
+                    'Single',                       /* optionType */
                 )
             })
         })

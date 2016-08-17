@@ -13,10 +13,11 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
 import _ from 'lodash'
-import { observable, computed, autorun } from 'mobx'
+import { observable, computed, autorun, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { PureComponent } from './Component.js'
+import { updateSelection, getFlags, updateFlagsInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
@@ -31,21 +32,27 @@ export class PickerItem {
             price corresponding to each label
         defaultOption: int
             index of default option
+            If there is no default, set to -1.
         selection: [int]
             currently selected items for this PickerItem
-        multiple: bool
-            whether multiple items may be selected
+        optionType: str
+            'Single' | 'ZeroOrMore' | 'OneOrMore'
     */
 
     @observable selected
+    @observable selectedInModal
 
-    constructor(title, labels, prices, defaultOption, selection, multiple) {
+    constructor(title, labels, prices, defaultOption, selection, optionType) {
         this.title = title
         this.labels = labels
         this.prices = prices
         this.defaultOption = defaultOption
         this.selected = selection
-        this.multiple = multiple
+        this.selectedInModal = this.selected.map(i => i)
+        this.optionType = optionType
+        autorun(() => {
+            this.selectedInModal = this.selected.map(i => i)
+        })
     }
 }
 
@@ -67,55 +74,80 @@ export class PickerCollection extends PureComponent {
     }
 
     okModal = () => {
-        this.props.onAcceptChanges(this.props.pickerItems)
-        this.closeModal()
-    }
-
-    handleItemChange = (pickerItem, itemIndex) => {
-        if (pickerItem.multiple) {
-            if (!_.includes(pickerItem.selected, itemIndex)) {
-                pickerItem.selected.push(itemIndex)
-            }
-        } else {
-            pickerItem.selected[0] = itemIndex
-        }
+        transaction(() => {
+            this.props.pickerItems.forEach(pickerItem => {
+                pickerItem.selected = pickerItem.selectedInModal
+            })
+            this.props.onAcceptChanges(this.props.pickerItems)
+            this.closeModal()
+        })
     }
 
     render = () => {
         const pickerItems = this.props.pickerItems
-        const showOkButton = this.props.pickerItems.length > 1
-                          || !this.props.pickerItems[0].multiple
 
-        return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
-            {
-            <OkCancelModal
+        var modal = undefined
+        if (this.modalVisible) {
+            const showOkButton = pickerItems.length > 1 || !pickerItems[0].multiple
+            modal = <OkCancelModal
                     visible={this.modalVisible}
                     cancelModal={this.closeModal}
                     okModal={this.okModal}
                     showOkButton={showOkButton}
                     >
-                {pickerItems.map(this.renderPicker)}
-            </OkCancelModal>
-            }
-            {/*pickerItems.map(this.renderPicker)*/}
-            <TouchableOpacity onPress={this.showModal}>
-                <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
-                    <T lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
-                        {this.renderLabels()}
-                    </T>
-                    <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
-                </View>
-            </TouchableOpacity>
+                {
+                    pickerItems.map(
+                        (pickerItem, i) =>
+                            <PickerItemView key={i} pickerItem={pickerItem} />
+                    )
+                }
+              </OkCancelModal>
+        }
+
+        return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
+            {modal}
+            <PickerButton pickerItems={pickerItems} showModal={this.showModal} />
         </View>
     }
+}
 
-    renderPicker = (pickerItem, i) => {
-        const onSelect = itemIndex => this.handleItemChange(pickerItem, itemIndex)
+@observer
+class PickerItemView extends PureComponent {
+    /* properties:
+        pickerItem: PickerItem
+    */
+
+    @observable flags
+
+    constructor(props) {
+        super(props)
+
+        const pickerItem = this.props.pickerItem
+        transaction(() => {
+            this.flags = getFlags(pickerItem.labels.length)
+            updateFlagsInPlace(pickerItem.selectedInModal, this.flags)
+        })
+
+        autorun(() => {
+            updateFlagsInPlace(pickerItem.selectedInModal, this.flags)
+        })
+    }
+
+    handleItemChange = (itemIndex) => {
+        const pickerItem = this.props.pickerItem
+        pickerItem.selectedInModal = updateSelection(
+            pickerItem.optionType,
+            pickerItem.selectedInModal,
+            itemIndex,
+        )
+    }
+
+    render = () => {
+        const pickerItem = this.props.pickerItem
         return (
             <Selector
-                    key={i}
-                    selected={pickerItem.selected}
-                    onSelect={onSelect}
+                    flags={this.flags}
+                    onSelect={this.handleItemChange}
                     >
                 {
                     _.zipWith( pickerItem.labels
@@ -132,6 +164,25 @@ export class PickerCollection extends PureComponent {
                 }
             </Selector>
         )
+    }
+}
+
+@observer
+class PickerButton extends PureComponent {
+    /* properties:
+        pickerItems: [PickerItem]
+        showModal() -> void
+            callback to trigger modal popup
+    */
+    render = () => {
+        return <TouchableOpacity onPress={this.props.showModal}>
+            <View style={{flex: 1, flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1}}>
+                <T lineBreakMode='tail' numberOfLines={1} style={{flex: 2}}>
+                    {this.renderLabels()}
+                </T>
+                <Icon name="sort-down" size={20} style={{marginLeft: 5, marginTop: -5}} />
+            </View>
+        </TouchableOpacity>
     }
 
     renderLabels = () => {

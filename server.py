@@ -75,6 +75,7 @@ class MenuItemOption(graphene.ObjectType):
     prices  = graphene.List(Price).NonNull
 
     # Index of the default option. If there is no default, this is null
+    # (only allowed when optionType == 'ZeroOrMore')
     defaultOption = graphene.Int()
 
 class MenuItem(graphene.ObjectType):
