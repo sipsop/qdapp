@@ -32,7 +32,12 @@ export class OkCancelModal extends Component {
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', marginBottom: 20, backgroundColor: "#fff"}}>
                 {this.props.children}
             </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <View style={
+                    { flexDirection: 'row'
+                    , justifyContent: 'space-around'
+                    , marginBottom: 20
+                    }
+            }>
                 {cancelButton}
                 {okButton}
             </View>

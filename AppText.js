@@ -8,14 +8,14 @@ export class T extends PureComponent {
     /* properties:
         style
         numberOfLines
-        lineBreakMode
+        ellipsizeMode
     */
     render = () => {
         const style = merge({fontFamily: 'Roboto'}, this.props.style)
         return <Text
             style={style}
             numberOfLines={this.props.numberOfLines}
-            lineBreakMode={this.props.lineBreakMode}
+            ellipsizeMode={this.props.ellipsizeMode}
             >
             {this.props.children}
         </Text>

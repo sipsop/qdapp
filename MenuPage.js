@@ -121,6 +121,7 @@ class MenuItem extends PureComponent {
                 this.orderItems.map((orderItem, i) => {
                     return <OrderSelection
                                 key={i}
+                                rowNumber={i}
                                 menuItem={menuItem}
                                 orderItem={orderItem}
                                 />
@@ -284,14 +285,17 @@ const styles = {
 }
 
 const N = 50
-const iconBoxSize = 50
-const iconSize = 45
+const rowHeight = 55
+const buttonHeight = 45
+const iconBoxSize = 60
+const iconSize = iconBoxSize
 
 @observer
 export class OrderSelection extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
         orderItem: schema.OrderItem
+        rowNumber: int
     */
 
     @observable optionPickerItems = null
@@ -367,22 +371,24 @@ export class OrderSelection extends PureComponent {
                     , flexDirection: 'row'
                     , justifyContent: 'flex-start'
                     , alignItems: 'center'
-                    , marginBottom: 5
+                    , height: rowHeight
                     }
                 }>
-            <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
+            <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={iconSize} color="#900" />
             </TouchableOpacity>
-            <View style={{flex: 2}}>
+            <View style={{flex: 2, height: buttonHeight}}>
                 <PickerCollection
                     pickerItems={this.optionPickerItems}
                     onAcceptChanges={this.handleAcceptOptions}
+                    rowNumber={this.props.rowNumber}
                     />
             </View>
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, height: buttonHeight}}>
                 <PickerCollection
                     pickerItems={amountPickerItems}
                     onAcceptChanges={this.handleAcceptAmountChanges}
+                    rowNumber={this.props.rowNumber}
                     />
             </View>
             <T style={{marginLeft: 10, textAlign: 'right', minWidth: 55}}>
@@ -390,7 +396,7 @@ export class OrderSelection extends PureComponent {
             </T>
             <TouchableOpacity
                     onPress={this.handleIncrease}
-                    style={{flex: 0, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}
+                    style={{flex: 0, width: iconBoxSize, height: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}
                     >
                 <EvilIcon name="plus" size={iconSize} color="rgb(51, 162, 37)" />
             </TouchableOpacity>

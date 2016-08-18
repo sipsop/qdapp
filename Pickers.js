@@ -61,6 +61,7 @@ export class PickerCollection extends PureComponent {
     /* properties:
         pickerItems: [PickerItem]
         onAcceptChanges([PickerItem]) -> void
+        rowNumber: int
     */
 
     @observable modalVisible = false
@@ -111,7 +112,11 @@ export class PickerCollection extends PureComponent {
 
         return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
             {modal}
-            <PickerButton pickerItems={pickerItems} showModal={this.showModal} />
+            <PickerButton
+                pickerItems={pickerItems}
+                showModal={this.showModal}
+                rowNumber={this.props.rowNumber}
+                />
         </View>
     }
 }
@@ -194,6 +199,7 @@ class PickerButton extends PureComponent {
         pickerItems: [PickerItem]
         showModal() -> void
             callback to trigger modal popup
+        rowNumber: int
     */
     render = () => {
         return <TouchableOpacity style={{flex: 1}} onPress={this.props.showModal}>
@@ -216,6 +222,10 @@ class PickerButton extends PureComponent {
     }
 
     renderButton2 = () => {
+        const buttonStyle = this.props.rowNumber % 2 === 0
+            ? { background: config.theme.primary.medium, border: config.theme.primary.dark }
+            : { background: config.theme.primary.dark, border: config.theme.primary.medium }
+
         return <View style={{flex: 1, justifyContent: 'center'}}>
             <View style={
                     { flex: 1
@@ -224,13 +234,13 @@ class PickerButton extends PureComponent {
                     , justifyContent: 'center'
                     , alignItems: 'center'
                     , borderWidth: 2
-                    , backgroundColor: config.theme.primary.dark
-                    , borderColor: config.theme.primary.medium
+                    , backgroundColor: buttonStyle.background
+                    , borderColor: buttonStyle.border
                     , borderRadius: 5
                     , padding: 5
                     }
                 }>
-                <T /*lineBreakMode='tail'*/
+                <T ellipsizeMode='tail'
                    numberOfLines={1}
                    style={{fontSize: 16, color: '#fff'}}
                    >
