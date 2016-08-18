@@ -11,7 +11,6 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native'
-import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import { observable, computed, transaction, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -32,6 +31,7 @@ import { TagView } from './Tags.js'
 import { min, max } from './Curry.js'
 import { store } from './Store.js'
 import { tagStore } from './Tags.js'
+import { size } from './Size.js'
 
 @observer
 export class MenuPage extends BarPageFetcher {
