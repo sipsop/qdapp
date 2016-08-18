@@ -97,17 +97,19 @@ export class PickerCollection extends PureComponent {
                     okModal={this.okModal}
                     showOkButton={showOkButton}
                     >
-                {
-                    pickerItems.map(
-                        (pickerItem, i) =>
-                            <PickerItemView
-                                key={i}
-                                pickerItem={pickerItem}
-                                confirmImmediately={!showOkButton}
-                                confirmSelection={this.okModal}
-                                />
-                    )
-                }
+                {/*<ScrollView>*/}
+                    {
+                        pickerItems.map(
+                            (pickerItem, i) =>
+                                <PickerItemView
+                                    key={i}
+                                    pickerItem={pickerItem}
+                                    confirmImmediately={!showOkButton}
+                                    confirmSelection={this.okModal}
+                                    />
+                        )
+                    }
+                {/*</ScrollView>*/}
               </OkCancelModal>
         }
 
@@ -164,6 +166,15 @@ class PickerItemView extends PureComponent {
         const pickerItem = this.props.pickerItem
         return (
             <View style={{flex: 1, justifyContent: 'center'}}>
+                <T style={
+                        { fontSize: 25
+                        , color: '#000'
+                        , textDecorationLine: 'underline'
+                        , marginLeft: 5
+                        }
+                    }>
+                    {pickerItem.title}
+                </T>
                 <Selector
                         flags={this.flags}
                         onSelect={this.handleItemChange}

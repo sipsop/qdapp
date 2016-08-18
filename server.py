@@ -276,6 +276,13 @@ zero = Price(
     option=PriceOption.Relative,
     price=0.0,
 )
+
+fiftyP = Price(
+    currency=Currency.Sterling,
+    option=PriceOption.Relative,
+    price=0.5,
+)
+
 top_option = MenuItemOption(
     name="Choose a Top",
     optionType=OptionType.Single,
@@ -283,9 +290,13 @@ top_option = MenuItemOption(
         "shandy",
         "lime",
         "blackcurrant",
+        "some other top",
+        "more options here",
     ],
     prices=[
         zero,
+        zero,
+        fiftyP,
         zero,
         zero,
     ],
