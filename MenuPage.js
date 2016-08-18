@@ -74,6 +74,7 @@ class MenuItem extends PureComponent {
     }
 
     clearDefaultOrderItems = () => {
+        throw Error("This completely messes up the state... TODO: Fix :)")
         this.orderItems = this.orderItems.filter(
             orderItem => !this.isDefaultOrderItem(orderItem))
     }
@@ -94,7 +95,7 @@ class MenuItem extends PureComponent {
 
     toggleExpand = () => {
         transaction(() => {
-            this.clearDefaultOrderItems()
+            // this.clearDefaultOrderItems()
             if (this.orderItems.length === 0) {
                 this.expanded = !this.expanded
                 if (this.expanded) {
@@ -313,30 +314,30 @@ export class OrderSelection extends PureComponent {
         const orderItem = props.orderItem
 
         autorun(() => {
-            transaction(() => {
-                var   subTotal = orderItem.subTotal
-                if (!subTotal)
-                    subTotal = 0.0
-                this.amountPickerItem = new PickerItem(
-                    "Number of Drinks:",
-                    _.range(N+1).map(i => "" + i),
-                    _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
-                    -1,                             /* defaultOption */
-                    [props.orderItem.amount || 0],  /* selection */
-                    'Single',                       /* optionType */
-                )
-            })
+            var   subTotal = orderItem.subTotal
+            if (!subTotal)
+                subTotal = 0.0
+            this.amountPickerItem = new PickerItem(
+                "Number of Drinks:",
+                _.range(N+1).map(i => "" + i),
+                _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
+                -1,                             /* defaultOption */
+                [props.orderItem.amount || 0],  /* selection */
+                'Single',                       /* optionType */
+            )
         })
 
-        this.optionPickerItems = menuItem.options.map((menuOptionItem, i) => {
-            return new PickerItem(
-                menuOptionItem.name,
-                menuOptionItem.optionList,
-                menuOptionItem.prices,
-                menuOptionItem.defaultOption || -1,
-                orderItem.selectedOptions[i],
-                menuOptionItem.optionType,
-            )
+        autorun(() => {
+            this.optionPickerItems = menuItem.options.map((menuOptionItem, i) => {
+                return new PickerItem(
+                    menuOptionItem.name,
+                    menuOptionItem.optionList,
+                    menuOptionItem.prices,
+                    menuOptionItem.defaultOption || -1,
+                    orderItem.selectedOptions[i],
+                    menuOptionItem.optionType,
+                )
+            })
         })
     }
 
