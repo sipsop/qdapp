@@ -47,6 +47,7 @@ export class TextButton extends Component {
         label: str
         style: style object
         prominent: bool
+        alignLeft: bool
     */
 
     static defaultProps = {
@@ -54,9 +55,19 @@ export class TextButton extends Component {
         borderWidth: 2,
         prominent: true,
         borderRadius: 5,
+        alignLeft: false,
     }
 
     render = () => {
+        var text = <T ellipsizeMode='tail'
+                        numberOfLines={1}
+                        style={{fontSize: this.props.fontSize, color: '#fff'}}
+                        >
+                        {this.props.label}
+                    </T>
+        if (this.props.alignLeft)
+            text = <View style={{flex: 1}}>{text}</View>
+
         return (
             <Button
                     primary={this.props.primary}
@@ -66,12 +77,7 @@ export class TextButton extends Component {
                     style={this.props.style}
                     prominent={this.props.prominent}
                     >
-                <T ellipsizeMode='tail'
-                   numberOfLines={1}
-                   style={{fontSize: this.props.fontSize, color: '#fff'}}
-                   >
-                    {this.props.label}
-                </T>
+                {text}
             </Button>
         )
     }

@@ -221,6 +221,7 @@ class PickerButton extends PureComponent {
                     onPress={this.props.showModal}
                     style={{flex: 1}}
                     primary={this.props.rowNumber % 2 === 0}
+                    alignLeft={true}
                     />
     }
 

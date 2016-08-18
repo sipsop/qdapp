@@ -235,12 +235,10 @@ const viewStyles = {
     },
     favIcon: {
         flex: 0,
-        /*
         width: 50,
         height: 50,
         marginTop: 10,
         marginBottom: 10,
-        */
         alignItems: 'center',
     },
 }
