@@ -108,6 +108,10 @@ class MenuItem extends PureComponent {
         const menuItem = this.props.menuItem
         const image = menuItem.images[0]
 
+        const marginBottom = this.orderItems.length > 0
+            ? 20
+            : 0
+
         return <View>
             <View style={styles.primaryMenuItemView}>
                 <TouchableOpacity onPress={this.toggleExpand}>
@@ -117,16 +121,18 @@ class MenuItem extends PureComponent {
                     <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
                 </View>
             </View>
-            {
-                this.orderItems.map((orderItem, i) => {
-                    return <OrderSelection
-                                key={i}
-                                rowNumber={i}
-                                menuItem={menuItem}
-                                orderItem={orderItem}
-                                />
-                })
-            }
+            <View style={{marginBottom: marginBottom}}>
+                {
+                    this.orderItems.map((orderItem, i) => {
+                        return <OrderSelection
+                                    key={i}
+                                    rowNumber={i}
+                                    menuItem={menuItem}
+                                    orderItem={orderItem}
+                                    />
+                    })
+                }
+            </View>
         </View>
     }
 }
