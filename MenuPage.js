@@ -36,15 +36,17 @@ import { tagStore } from './Tags.js'
 @observer
 export class MenuPage extends BarPageFetcher {
     renderFinished = (bar) => {
-        return <TagView>
-            <ScrollView style={{flex: 1, marginTop: 5}}>
-                {
-                    tagStore.getActiveMenuItems().map(
-                        (menuItem, i) => <MenuItem key={i} menuItem={menuItem} />
-                    )
-                }
-            </ScrollView>
-        </TagView>
+        return <ScrollView>
+            <TagView>
+                <View style={{flex: 1, marginTop: 5}}>
+                    {
+                        tagStore.getActiveMenuItems().map(
+                            (menuItem, i) => <MenuItem key={i} menuItem={menuItem} />
+                        )
+                    }
+                </View>
+            </TagView>
+        </ScrollView>
     }
 }
 
@@ -360,7 +362,14 @@ export class OrderSelection extends PureComponent {
             ? [this.amountPickerItem]
             : []
 
-        return <View style={{flex: 0, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+        return <View style={
+                    { flex: 0
+                    , flexDirection: 'row'
+                    , justifyContent: 'flex-start'
+                    , alignItems: 'center'
+                    , marginBottom: 5
+                    }
+                }>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
                 <EvilIcon name="minus" size={iconSize} color="#900" />
             </TouchableOpacity>
@@ -376,7 +385,7 @@ export class OrderSelection extends PureComponent {
                     onAcceptChanges={this.handleAcceptAmountChanges}
                     />
             </View>
-            <T style={{marginLeft: 10, textAlign: 'right'}}>
+            <T style={{marginLeft: 10, textAlign: 'right', minWidth: 55}}>
                 {'£' + orderItem.total.toFixed(2)}
             </T>
             <TouchableOpacity

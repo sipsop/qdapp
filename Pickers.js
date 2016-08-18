@@ -21,6 +21,7 @@ import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
 import { OkCancelModal } from './Modals.js'
+import { config } from './Config.js'
 
 export class PickerItem {
     /* Attributes:
@@ -196,18 +197,47 @@ class PickerButton extends PureComponent {
     */
     render = () => {
         return <TouchableOpacity style={{flex: 1}} onPress={this.props.showModal}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 5}}>
-                    <T lineBreakMode='tail'
-                       numberOfLines={1}
-                       style={{flex: 1, fontSize: 16}}
-                       >
-                        {this.renderLabels()}
-                    </T>
-                    <Icon name="sort-down" size={30} style={{marginLeft: 5, marginTop: -5}} />
-                </View>
-            </View>
+            {this.renderButton2()}
         </TouchableOpacity>
+    }
+
+    renderButton1 = () => {
+        return <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 5}}>
+                <T lineBreakMode='tail'
+                   numberOfLines={1}
+                   style={{flex: 1, fontSize: 16}}
+                   >
+                    {this.renderLabels()}
+                </T>
+                <Icon name="sort-down" size={30} style={{marginLeft: 5, marginTop: -5}} />
+            </View>
+        </View>
+    }
+
+    renderButton2 = () => {
+        return <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={
+                    { flex: 1
+                    // , flexWrap: 'wrap'
+                    , flexDirection: 'row'
+                    , justifyContent: 'center'
+                    , alignItems: 'center'
+                    , borderWidth: 2
+                    , backgroundColor: config.theme.primary.dark
+                    , borderColor: config.theme.primary.medium
+                    , borderRadius: 5
+                    , padding: 5
+                    }
+                }>
+                <T /*lineBreakMode='tail'*/
+                   numberOfLines={1}
+                   style={{fontSize: 16, color: '#fff'}}
+                   >
+                    {this.renderLabels()}
+                </T>
+            </View>
+        </View>
     }
 
     renderLabels = () => {
