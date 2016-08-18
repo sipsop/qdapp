@@ -21,8 +21,9 @@ import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
 import { OkCancelModal } from './Modals.js'
-import { config } from './Config.js'
 import { TextButton, Button } from './Button.js'
+import { store } from './Store.js'
+import { config } from './Config.js'
 
 export class PickerItem {
     /* Attributes:
@@ -63,9 +64,22 @@ export class PickerCollection extends PureComponent {
         pickerItems: [PickerItem]
         onAcceptChanges([PickerItem]) -> void
         rowNumber: int
+
+        showModal: bool
+            whether to show the choice modal window the first time
+        onFirstAccept() -> void:
+            called when the choice window is accepted the first time
+        onFirstCancel() -> void:
+            called when the choice window is cancelled on the first show
     */
 
     @observable modalVisible = false
+
+    constructor(props) {
+        super(props)
+        this.modalVisible = !!props.showModal
+        this.openCount = 0
+    }
 
     showModal = () => {
         this.modalVisible = true
@@ -73,6 +87,7 @@ export class PickerCollection extends PureComponent {
 
     closeModal = () => {
         this.modalVisible = false
+        this.openCount += 1
     }
 
     okModal = () => {
@@ -81,6 +96,16 @@ export class PickerCollection extends PureComponent {
                 pickerItem.selected = pickerItem.selectedInModal
             })
             this.props.onAcceptChanges(this.props.pickerItems)
+            if (this.openCount === 0 && this.props.onFirstAccept)
+                this.props.onFirstAccept()
+            this.closeModal()
+        })
+    }
+
+    cancelModal = () => {
+        transaction(() => {
+            if (this.openCount === 0 && this.props.onFirstCancel)
+                this.props.onFirstCancel()
             this.closeModal()
         })
     }
@@ -93,7 +118,7 @@ export class PickerCollection extends PureComponent {
             const showOkButton = pickerItems.length > 1 || pickerItems[0].optionType !== 'Single'
             modal = <OkCancelModal
                     visible={this.modalVisible}
-                    cancelModal={this.closeModal}
+                    cancelModal={this.cancelModal}
                     okModal={this.okModal}
                     showOkButton={showOkButton}
                     >

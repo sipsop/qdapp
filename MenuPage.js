@@ -8,13 +8,13 @@ import {
   ScrollView,
   ListView,
   Picker,
-  Modal,
   TouchableOpacity,
 } from 'react-native'
 import _ from 'lodash'
 import { observable, computed, transaction, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+// import Modal from 'react-native-modalbox'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
@@ -32,6 +32,7 @@ import { min, max } from './Curry.js'
 import { store } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
+import { config } from './Config.js'
 
 @observer
 export class MenuPage extends BarPageFetcher {
@@ -58,88 +59,138 @@ class MenuItem extends PureComponent {
         menuItem: scheme.MenuItem
     */
 
-    @observable expanded   = false
     @observable orderItems = null
 
     constructor(props) {
         super(props)
         this.orderItems = []
         this.defaultOrderItem = new OrderItem(props.menuItem)
-        autorun(() => {
-            const n = this.orderItems.length
-            if (n > 0 && !this.isDefaultOrderItem(this.orderItems[n - 1])) {
-                this.orderItems.push(new OrderItem(props.menuItem))
-            }
-        })
     }
 
-    clearDefaultOrderItems = () => {
-        throw Error("This completely messes up the state... TODO: Fix :)")
-        this.orderItems = this.orderItems.filter(
-            orderItem => !this.isDefaultOrderItem(orderItem))
+    hasDefaultOptions = (orderItem) => {
+        return this.hasSameOptions(this.defaultOrderItem, orderItem)
     }
 
-    isDefaultOrderItem = (orderItem) => {
-        const defaultOptions = this.props.menuItem.options.map(getMenuItemDefaultOptions)
-        /* force value for comparison ... */
-        const selectedOptions = orderItem.selectedOptions.map(
-            xs => xs.map(y => y)
-        )
-        return orderItem.amount === 0 &&
-            ( orderItem.selectedOptions.length === 0
-           || _.isEqual(selectedOptions, defaultOptions)
-            )
+    hasSameOptions = (orderItem1, orderItem2) => {
+        const options1 = orderItem1.selectedOptions.map(xs => xs.map(x => x))
+        const options2 = orderItem2.selectedOptions.map(xs => xs.map(x => x))
+        return _.isEqual(options1, options2)
     }
 
     getDefaultOrderItem = () => new OrderItem(this.props.menuItem)
 
     toggleExpand = () => {
         transaction(() => {
-            // this.clearDefaultOrderItems()
+            // store.haveNotifiedAboutCustomization = true
             if (this.orderItems.length === 0) {
-                this.expanded = !this.expanded
-                if (this.expanded) {
-                    this.orderItems.push(this.getDefaultOrderItem())
-                }
+                this.addRow()
             }
         })
+    }
+
+    addRow = () => {
+        this.orderItems.push(this.getDefaultOrderItem())
+    }
+
+    removeRow = (i) => {
+         this.orderItems.splice(i, 1)
+    }
+
+    /* If row `i` has the same options as row `j`, remove row `i`. */
+    removeRowIfSameOptions = (i, j) => {
+        if (this.orderItems.length > 1 &&
+                this.hasSameOptions(this.orderItems[i], this.orderItems[j]))
+            this.orderItems.splice(i, 1)
+    }
+
+    popRow = () => {
+        this.orderItems.pop()
     }
 
     render = () => {
         const menuItem = this.props.menuItem
         const image = menuItem.images[0]
 
-        const marginBottom = this.orderItems.length > 0
-            ? 20
-            : 0
+        const rowStyle =
+            { flex: 1
+            , justifyContent: 'center'
+            , alignItems: 'center'
+            , height: rowHeight
+            }
+
+        const buttonStyle =
+            { borderRadius: 5
+            , borderWidth: 1
+            , marginLeft: 5
+            , marginRight: 5
+            }
 
         return <View>
-            <View style={styles.primaryMenuItemView}>
-                <TouchableOpacity onPress={this.toggleExpand}>
+            <TouchableOpacity onPress={this.toggleExpand}>
+                <View style={styles.primaryMenuItemView}>
                     <Image source={{uri: image}} style={styles.image} />
-                </TouchableOpacity>
-                <View style={viewStyles.content}>
-                    <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
+                    <View style={viewStyles.content}>
+                        <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
+                    </View>
+                </View>
+            </TouchableOpacity>
+            <View style={{flexDirection: 'row'}}>
+                <View style={{flex: 1}}>
+                    {
+                        this.orderItems.map((orderItem, i) => {
+                            return <OrderSelection
+                                        key={i}
+                                        rowNumber={i}
+                                        menuItem={menuItem}
+                                        orderItem={orderItem}
+                                        removeRow={() => this.removeRow(i)}
+                                        removeRowIfSameOptions={() => this.removeRowIfSameOptions(i, i-1)}
+                                        />
+                        })
+                    }
+                </View>
+                <View>
+                    {
+                        this.orderItems.map((orderItem, i) => {
+                            return (
+                                <View key={i} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                                    <T style={{marginRight: 5, color: '#000'}}>
+                                        {'£' + orderItem.total.toFixed(2)}
+                                    </T>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
             </View>
-            <View style={{marginBottom: marginBottom}}>
-                {
-                    this.orderItems.map((orderItem, i) => {
-                        return <OrderSelection
-                                    key={i}
-                                    rowNumber={i}
-                                    menuItem={menuItem}
-                                    orderItem={orderItem}
-                                    />
-                    })
-                }
-            </View>
+            {
+                this.orderItems.length === 0
+                    ? undefined
+                    : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 20}]}>
+                        {/*
+                        <TouchableOpacity style={{flex: 1}} onPress={this.popRow}>
+                            <View style={[rowStyle, buttonStyle, {borderColor: RemoveColor}]}>
+                                <T style={{fontSize: 20, color: RemoveColor}}>
+                                    REMOVE ROW
+                                </T>
+                            </View>
+                        </TouchableOpacity>
+                        */}
+                        <TouchableOpacity style={{flex: 1}} onPress={this.addRow}>
+                            <View style={[rowStyle, buttonStyle, {borderColor: AddColor}]}>
+                                <T style={{fontSize: 20, color: AddColor}}>
+                                    MORE OPTIONS
+                                </T>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+            }
         </View>
     }
 }
 
 class OrderItem {
-    @observable amount = 0
+    @observable amount = 1
     @observable selectedOptions = null
 
     constructor(menuItem) {
@@ -180,35 +231,31 @@ class MenuItemHeader extends PureComponent {
         const menuItem = this.props.menuItem
         return <View style={viewStyles.header}>
             <View style={viewStyles.titleAndPrice}>
-                <ScrollView horizontal={true} style={styles.titleScrollView}>
-                    <T
-                        lineBreakMode='tail'
-                        numberOfLines={1}
-                        style={styles.titleText}
-                        >
-                        {menuItem.name}
-                    </T>
-                </ScrollView>
+                <T
+                    lineBreakMode='tail'
+                    numberOfLines={1}
+                    style={styles.titleText}
+                    >
+                    {menuItem.name}
+                </T>
                 <Price price={menuItem.price} style={styles.priceText} />
             </View>
             <View style={{flex: 1, flexDirection: 'row'}}>
-                <TouchableOpacity style={{flex: 1}} onPress={this.props.toggleExpand}>
-                    <View style={{flex: 1}}>
-                        <T style={styles.keywordText}>
-                            {   _.join(
-                                    menuItem.tags.map(tagID => '#' + tagStore.getTagName(tagID)),
-                                    ' '
-                                )
-                            }
-                        </T>
-                        <T style={styles.infoText} numberOfLines={3}>
-                            {menuItem.desc}
-                        </T>
-                    </View>
-                </TouchableOpacity>
+                <View style={{flex: 1}}>
+                    <T style={styles.keywordText}>
+                        {   _.join(
+                                menuItem.tags.map(tagID => '#' + tagStore.getTagName(tagID)),
+                                ' '
+                            )
+                        }
+                    </T>
+                    <T style={styles.infoText} numberOfLines={3}>
+                        {menuItem.desc}
+                    </T>
+                </View>
                 <TouchableOpacity>
                     <View style={viewStyles.favIcon}>
-                        <Icon name="heart-o" size={45} color="#900" />
+                        <Icon name="heart-o" size={45} color={config.theme.primary.medium} />
                     </View>
                 </TouchableOpacity>
             </View>
@@ -275,6 +322,7 @@ const styles = {
         fontWeight: 'bold',
         color: '#000',
         textDecorationLine: 'underline',
+        marginRight: 5,
     },
     priceText: {
         fontSize: 20,
@@ -296,6 +344,8 @@ const rowHeight = 55
 const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
+const RemoveColor = '#900'
+const AddColor = 'rgb(51, 162, 37)'
 
 @observer
 export class OrderSelection extends PureComponent {
@@ -303,6 +353,10 @@ export class OrderSelection extends PureComponent {
         menuItem: schema.MenuItem
         orderItem: schema.OrderItem
         rowNumber: int
+        removeRow() -> void
+            remove this row
+        removeRowIfSameOptions() -> void
+            remove the row iff it has the same options as the item before it
     */
 
     @observable optionPickerItems = null
@@ -322,7 +376,7 @@ export class OrderSelection extends PureComponent {
                 _.range(N+1).map(i => "" + i),
                 _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
                 -1,                             /* defaultOption */
-                [props.orderItem.amount || 0],  /* selection */
+                [props.orderItem.amount],       /* selection */
                 'Single',                       /* optionType */
             )
         })
@@ -379,18 +433,23 @@ export class OrderSelection extends PureComponent {
                     , justifyContent: 'flex-start'
                     , alignItems: 'center'
                     , height: rowHeight
+                    // , marginBottom: 20
                     }
                 }>
-            <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
-                <EvilIcon name="minus" size={iconSize} color="#900" />
-            </TouchableOpacity>
             <View style={{flex: 2, height: buttonHeight}}>
                 <PickerCollection
                     pickerItems={this.optionPickerItems}
                     onAcceptChanges={this.handleAcceptOptions}
                     rowNumber={this.props.rowNumber}
+                    showModal={true}
+                    onFirstAccept={this.props.removeRowIfSameOptions}
+                    onFirstCancel={this.props.removeRow}
                     />
             </View>
+            <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
+                {/*<Icon name="minus-circle" size={iconSize} color="#900" />*/}
+                <EvilIcon name="minus" size={iconSize} color={RemoveColor} />
+            </TouchableOpacity>
             <View style={{flex: 1, height: buttonHeight}}>
                 <PickerCollection
                     pickerItems={amountPickerItems}
@@ -398,14 +457,12 @@ export class OrderSelection extends PureComponent {
                     rowNumber={this.props.rowNumber}
                     />
             </View>
-            <T style={{marginLeft: 10, textAlign: 'right', minWidth: 55}}>
-                {'£' + orderItem.total.toFixed(2)}
-            </T>
             <TouchableOpacity
                     onPress={this.handleIncrease}
                     style={{flex: 0, width: iconBoxSize, height: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}
                     >
-                <EvilIcon name="plus" size={iconSize} color="rgb(51, 162, 37)" />
+                {/*<Icon name="plus-circle" size={iconSize} color="rgb(51, 162, 37)" />*/}
+                <EvilIcon name="plus" size={iconSize} color={AddColor} />
             </TouchableOpacity>
          </View>
     }

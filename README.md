@@ -161,3 +161,9 @@ https://github.com/meteor-factory/react-native-tinder-swipe-cards
 ### Spinners
 
 react-native-spinkit
+
+### Chat
+
+Entire chat implementation:
+
+    https://github.com/FaridSafi/react-native-gifted-chat
