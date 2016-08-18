@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
-export class Button extends Component {
+export class LargeButton extends Component {
     /* properties:
         label: str
         onPress: () => void

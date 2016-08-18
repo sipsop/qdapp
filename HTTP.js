@@ -8,6 +8,7 @@ import {
 import { observable, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { LargeButton } from './Button.js'
 import { PureComponent } from './Component.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
@@ -127,9 +128,7 @@ export const emptyResult = () => new DownloadResult()
             <Text style={{textAlign: 'center', marginBottom: 20}}>
                  {message}
             </Text>
-            <TouchableOpacity onPress={this.refreshPage}>
-                <Text style={{fontSize: 20}}>Refresh</Text>
-            </TouchableOpacity>
+            <LargeButton label="Refresh" onPress={this.refreshPage} />
         </View>
     }
 }

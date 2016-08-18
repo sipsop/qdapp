@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
+import { LargeButton } from './Button.js'
+
+
 export class OkCancelModal extends Component {
     /* properties:
         visible: bool
@@ -18,10 +21,10 @@ export class OkCancelModal extends Component {
     */
 
     render = () => {
-        const cancelButton = <ModalButton label="Cancel" onPress={this.props.cancelModal} />
+        const cancelButton = <LargeButton label="Cancel" onPress={this.props.cancelModal} />
         var okButton = undefined
         if (this.props.showOkButton) {
-            okButton = <ModalButton label="Ok" onPress={this.props.okModal} />
+            okButton = <LargeButton label="Ok" onPress={this.props.okModal} />
         }
 
         return <Modal visible={this.props.visible}
@@ -34,19 +37,5 @@ export class OkCancelModal extends Component {
                 {okButton}
             </View>
         </Modal>
-    }
-}
-
-class ModalButton extends Component {
-    /* properties:
-        label: str
-        onPress: () => void
-    */
-    render = () => {
-        return <TouchableOpacity style={{}} onPress={this.props.onPress}>
-            <Text style={{fontSize: 30, textAlign: 'center', textDecorationLine: 'underline'}}>
-                {this.props.label}
-            </Text>
-        </TouchableOpacity>
     }
 }

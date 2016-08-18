@@ -26,7 +26,7 @@ import { Price, sumPrices } from './Price.js'
 import { DownloadResultView } from './HTTP.js'
 import { SizeTracker } from './SizeTracker.js'
 import { PickerCollection, PickerItem } from './Pickers.js'
-import { Button } from './Button.js'
+import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { min, max } from './Curry.js'
 import { store } from './Store.js'
@@ -51,7 +51,7 @@ export class MenuPage extends DownloadResultView {
 
     renderNotStarted = () =>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Button
+            <LargeButton
                 label="Please select a bar first"
                 onPress={() => {store.setCurrentTab(0)}}
                 />

@@ -20,7 +20,7 @@ import { DownloadResultView } from './HTTP.js'
 import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
-import { Button } from './Button.js'
+import { LargeButton } from './Button.js'
 import { T } from './AppText.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
@@ -65,7 +65,7 @@ import { merge } from './Curry.js'
 
     renderNotStarted = () =>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Button
+            <LargeButton
                 label="Please select a bar first"
                 onPress={() => {store.setCurrentTab(0)}}
                 />
