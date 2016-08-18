@@ -158,7 +158,6 @@ export class TagStore {
 
     /* Push a new tag when selected by the user */
     pushTag = (tagID) => {
-        console.log("Pushing tag...", tagID, this.tagSelection)
         if (_.includes(this.tagSelection, tagID)) {
             /* Tag already included, all done */
             return
@@ -266,6 +265,9 @@ const isEnabled = (tagID, menuItems) => {
 
 @observer
 export class TagView extends DownloadResultView {
+    /* properties:
+        children: [Component]
+    */
 
     constructor(props) {
         super(props, "Error downloading tags")
@@ -308,28 +310,23 @@ export class TagView extends DownloadResultView {
         // </View>
         const { rows, menuItems } = this.rows
 
-        console.log("Got rows:", rows)
-        console.log(tags)
-
         const excludedTags = this.getAllExcludedTags()
 
-        return <View>
-            {/*
-            <ButtonRow labelGroups={[['beer', 'wine', 'cocktails', 'spirits', 'water', 'snacks', 'food']]} index={0} />
-            <ButtonRow labelGroups={[['stout', 'lager'], ['tap', 'bottle']]} index={1} />
-            <ButtonRow labelGroups={[['fruity', 'chocolate', 'pale', 'dark', 'hops']]} index={2} />
-            */}
-            {rows.map((rowOfTags, i) =>
-                <TagRow
-                    key={i}
-                    rowNumber={i}
-                    rowOfTags={rowOfTags}
-                    menuItems={menuItems}
-                    isExcluded={tagID => false}
-                    /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
-                    />
-                )
-            }
+        return <View style={{flex: 1}}>
+            <View>
+                {rows.map((rowOfTags, i) =>
+                    <TagRow
+                        key={i}
+                        rowNumber={i}
+                        rowOfTags={rowOfTags}
+                        menuItems={menuItems}
+                        isExcluded={tagID => false}
+                        /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
+                        />
+                    )
+                }
+            </View>
+            {this.props.children}
         </View>
     }
 

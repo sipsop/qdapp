@@ -26,7 +26,28 @@ import { store } from './Store.js'
 import { config } from './Config.js'
 import { merge } from './Curry.js'
 
-@observer export class BarPage extends DownloadResultView {
+export class BarPageFetcher extends DownloadResultView {
+    constructor(props) {
+        super(props, "Error downloading menu page")
+    }
+
+    refreshPage = () => {
+        if (store.barID) {
+            store.setBarID(store.barID)
+        }
+    }
+    getDownloadResult = () => store.bar
+
+    renderNotStarted = () =>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <LargeButton
+                label="Please select a bar first"
+                onPress={() => {store.setCurrentTab(0)}}
+                />
+        </View>
+}
+
+@observer export class BarPage extends BarPageFetcher {
     /* properties:
         width: int
         height: int
@@ -35,7 +56,7 @@ import { merge } from './Curry.js'
     @observable autoplay = true
 
     constructor(props) {
-        super(props, "Error downloading bar page")
+        super(props)
         const { height, width} = Dimensions.get('screen')
         this.state = {width: width, height: height} // approximate width and height
         this.timer = undefined

@@ -19,6 +19,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { BarPageFetcher } from './BarPage.js'
 import { updateSelection } from './Selection.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
@@ -32,41 +33,18 @@ import { min, max } from './Curry.js'
 import { store } from './Store.js'
 import { tagStore } from './Tags.js'
 
-
 @observer
-export class MenuPage extends DownloadResultView {
-    /* properties:
-    */
-
-    constructor(props) {
-        super(props, "Error downloading menu page")
-    }
-
-    refreshPage = () => {
-        if (store.barID) {
-            store.setBarID(store.barID)
-        }
-    }
-    getDownloadResult = () => store.bar
-
-    renderNotStarted = () =>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <LargeButton
-                label="Please select a bar first"
-                onPress={() => {store.setCurrentTab(0)}}
-                />
-        </View>
-
+export class MenuPage extends BarPageFetcher {
     renderFinished = (bar) => {
-        return <View>
-            <TagView />
-            <View style={{marginTop: 5}} />
-            {
-                tagStore.getActiveMenuItems().map(
-                    (menuItem, i) => <MenuItem key={i} menuItem={menuItem} />
-                )
-            }
-        </View>
+        return <TagView>
+            <ScrollView style={{flex: 1, marginTop: 5}}>
+                {
+                    tagStore.getActiveMenuItems().map(
+                        (menuItem, i) => <MenuItem key={i} menuItem={menuItem} />
+                    )
+                }
+            </ScrollView>
+        </TagView>
     }
 }
 
