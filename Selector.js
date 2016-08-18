@@ -16,6 +16,7 @@ import { observer } from 'mobx-react/native'
 
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
+import { Button } from './Button.js'
 import { config } from './Config.js'
 
 const dataSource = new ListView.DataSource({
@@ -47,6 +48,7 @@ export class Selector extends PureComponent {
         const flag = this.props.flags[i]
         return <SelectorItem
                     key={i}
+                    rowNumber={i}
                     flag={flag}
                     onPress={() => this.props.onSelect(i)}
                     >
@@ -62,38 +64,34 @@ class SelectorItem extends PureComponent {
             indicates whether this item is selected
         onPress() -> void
             callback when this item is pressed
+        rowNumber: int
     */
     render = () => {
         const selected = this.props.flag.get()
+        const primary = this.props.rowNumber % 2 === 0
+        /* color = "rgb(19, 179, 30)" */
+        const color = primary ? config.theme.primary.medium
+                              : config.theme.primary.dark
+
         const icon = selected
-            ? <Icon name="check" size={30}
-                /* color="rgb(19, 179, 30)" */
-                color={config.theme.primary.medium}
-                />
+            ? <Icon name="check" size={30} color={color} />
             : undefined
 
-        return <View style={
-                { flex: 1
-                , flexDirection: 'row'
-                , alignItems: 'center'
-                , borderWidth: 1
-                , borderRadius: 5
-                // , backgroundColor: 'rgba(0, 0, 0, 0.25)'
-                , borderColor: config.theme.primary.dark
-                , margin: 5
-                }
-            }>
-            <TouchableOpacity
-                    style={{flex: 1, flexDirection: 'row'}}
+        return (
+            <Button
+                    prominent={false}
+                    primary={primary}
                     onPress={this.props.onPress}
-                    >
+                    style={{flex: 1, margin: 5}}
+                >
                 <View style={{flex: 1, justifyContent: 'center'}}>
                     {this.props.children}
                 </View>
                 <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
                     {icon}
                 </View>
-            </TouchableOpacity>
-        </View>
+            </Button>
+        )
     }
+
 }

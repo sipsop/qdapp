@@ -22,6 +22,7 @@ import { T } from './AppText.js'
 import { Price } from './Price.js'
 import { OkCancelModal } from './Modals.js'
 import { config } from './Config.js'
+import { TextButton, Button } from './Button.js'
 
 export class PickerItem {
     /* Attributes:
@@ -177,6 +178,7 @@ class PickerItemView extends PureComponent {
         const pickerItem = this.props.pickerItem
         const label = pickerItem.labels[i]
         const price = pickerItem.prices[i]
+        const textStyle = {fontSize: 20, color: '#000'}
         return <View key={i} style={
                 { flex: 1
                 , flexDirection: 'row'
@@ -186,9 +188,9 @@ class PickerItemView extends PureComponent {
                 }
             }>
             <View style={{flex: 1, justifyContent: 'center'}}>
-                <T style={{fontSize: 20}}>{label}</T>
+                <T style={textStyle}>{label}</T>
             </View>
-            <Price price={price} style={{fontSize: 20}} />
+            <Price price={price} style={textStyle} />
         </View>
     }
 }
@@ -202,52 +204,13 @@ class PickerButton extends PureComponent {
         rowNumber: int
     */
     render = () => {
-        return <TouchableOpacity style={{flex: 1}} onPress={this.props.showModal}>
-            {this.renderButton2()}
-        </TouchableOpacity>
-    }
-
-    renderButton1 = () => {
-        return <View style={{flex: 1, justifyContent: 'center'}}>
-            <View style={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 5}}>
-                <T lineBreakMode='tail'
-                   numberOfLines={1}
-                   style={{flex: 1, fontSize: 16}}
-                   >
-                    {this.renderLabels()}
-                </T>
-                <Icon name="sort-down" size={30} style={{marginLeft: 5, marginTop: -5}} />
-            </View>
-        </View>
-    }
-
-    renderButton2 = () => {
-        const buttonStyle = this.props.rowNumber % 2 === 0
-            ? { background: config.theme.primary.medium, border: config.theme.primary.dark }
-            : { background: config.theme.primary.dark, border: config.theme.primary.medium }
-
-        return <View style={{flex: 1, justifyContent: 'center'}}>
-            <View style={
-                    { flex: 1
-                    // , flexWrap: 'wrap'
-                    , flexDirection: 'row'
-                    , justifyContent: 'center'
-                    , alignItems: 'center'
-                    , borderWidth: 2
-                    , backgroundColor: buttonStyle.background
-                    , borderColor: buttonStyle.border
-                    , borderRadius: 5
-                    , padding: 5
-                    }
-                }>
-                <T ellipsizeMode='tail'
-                   numberOfLines={1}
-                   style={{fontSize: 16, color: '#fff'}}
-                   >
-                    {this.renderLabels()}
-                </T>
-            </View>
-        </View>
+        return <TextButton
+                    label={this.renderLabels()}
+                    fontSize={16}
+                    onPress={this.props.showModal}
+                    style={{flex: 1}}
+                    primary={this.props.rowNumber % 2 === 0}
+                    />
     }
 
     renderLabels = () => {
