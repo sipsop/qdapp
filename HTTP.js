@@ -8,6 +8,7 @@ import {
 import { observable, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { Cache, cache } from './Cache.js'
 import { LargeButton } from './Button.js'
 import { PureComponent } from './Component.js'
 import { config } from './Config.js'
@@ -134,7 +135,7 @@ export const emptyResult = () => new DownloadResult()
 }
 
 /* Execute a GraphQL query */
-export const graphQL = (query) => {
+export const graphQL = (query, key) => {
     const httpOptions = {
         method: 'POST',
         headers: {
@@ -143,10 +144,19 @@ export const graphQL = (query) => {
         },
         body: query,
     }
+    /* TODO: This should try the cache first if the entry is not too old */
     return downloadJSON(HOST + '/graphql', httpOptions)
-               .then((downloadResult) =>
-                   downloadResult.update((data) => data.data)
-               )
+        .then((downloadResult) => {
+            const data = downloadResult.value.data
+            cache.set(key, data)
+            downloadResult.value = data
+            return downloadResult
+        })
+        .catch(error => {
+            console.log("Loading from cache...", error)
+            return cache.get(key)
+                .then(data => emptyResult().downloadFinished(data))
+        })
 }
 
 export const downloadJSON = (url, httpOptions) => {

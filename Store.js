@@ -158,9 +158,11 @@ export class Store {
                 }
             }
             `
+
+            key = `bar=${barID}:menu=${menu}`
             if (menuQuery)
                 query += fragments
-            return graphQL(query)
+            return graphQL(query, key)
                 .then((downloadResult) => {
                     return downloadResult.update((data) => data.bar)
                 })

@@ -7,6 +7,7 @@
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
   "dependencies": {
+    "@remobile/react-native-cache-image": "^1.0.0",
     "es6-map": "^0.1.4",
     "lodash": "^4.14.0",
     "merge": "^1.2.0",

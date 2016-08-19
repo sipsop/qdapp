@@ -89,7 +89,7 @@ export class TagStore {
 
     fetchTags = () => {
         this.tagDownloadResult.downloadStarted()
-        graphQL(tagQuery)
+        graphQL(tagQuery, "tags")
             .then((downloadResult) => {
                 try {
                     this.tagDownloadResult = downloadResult.update(data => data.menuTags)
