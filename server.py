@@ -292,14 +292,14 @@ top_option = MenuItemOption(
         "blackcurrant",
         "some other top",
         "more options here",
-    ],
+    ], #+ ["x%d" % i for i in range(100)],
     prices=[
         zero,
         zero,
         fiftyP,
         zero,
         zero,
-    ],
+    ], #+ [zero] * 100,
     defaultOption=None,
 )
 

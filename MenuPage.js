@@ -113,6 +113,37 @@ class MenuItem extends PureComponent {
         const menuItem = this.props.menuItem
         const image = menuItem.images[0]
 
+        return <View>
+            <TouchableOpacity onPress={this.toggleExpand}>
+                <View style={styles.primaryMenuItemView}>
+                    <Image source={{uri: image}} style={styles.image} />
+                    <View style={viewStyles.content}>
+                        <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
+                    </View>
+                </View>
+            </TouchableOpacity>
+            <OrderList
+                    menuItem={menuItem}
+                    orderItems={this.orderItems}
+                    addRow={this.addRow}
+                    removeRow={this.removeRow}
+                    removeRowIfSameOptions={this.removeRowIfSameOptions}
+                    />
+        </View>
+    }
+}
+
+@observer
+class OrderList extends PureComponent {
+    /* properties:
+        menuItem: MenuItem
+        orderItems: [OrderItem]
+        addRow() -> void
+        removeRow(i) -> void
+        removeRowIfSameOptions(i, j) -> void
+    */
+
+    render = () => {
         const rowStyle =
             { flex: 1
             , justifyContent: 'center'
@@ -128,45 +159,25 @@ class MenuItem extends PureComponent {
             }
 
         return <View>
-            <TouchableOpacity onPress={this.toggleExpand}>
-                <View style={styles.primaryMenuItemView}>
-                    <Image source={{uri: image}} style={styles.image} />
-                    <View style={viewStyles.content}>
-                        <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
-                    </View>
-                </View>
-            </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                     {
-                        this.orderItems.map((orderItem, i) => {
+                        this.props.orderItems.map((orderItem, i) => {
                             return <OrderSelection
                                         key={i}
                                         rowNumber={i}
-                                        menuItem={menuItem}
-                                        orderItems={this.orderItems}
-                                        removeRow={() => this.removeRow(i)}
-                                        removeRowIfSameOptions={() => this.removeRowIfSameOptions(i, i-1)}
+                                        menuItem={this.props.menuItem}
+                                        orderItem={orderItem}
+                                        removeRow={() => this.props.removeRow(i)}
+                                        removeRowIfSameOptions={() => this.props.removeRowIfSameOptions(i, i-1)}
                                         />
                         })
                     }
                 </View>
-                <View>
-                    {
-                        this.orderItems.map((orderItem, i) => {
-                            return (
-                                <View key={i} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                    <T style={{marginRight: 5, color: '#000'}}>
-                                        {'£' + orderItem.total.toFixed(2)}
-                                    </T>
-                                </View>
-                            )
-                        })
-                    }
-                </View>
+                <PriceColumn orderItems={this.props.orderItems} />
             </View>
             {
-                this.orderItems.length === 0
+                this.props.orderItems.length === 0
                     ? undefined
                     : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 20}]}>
                         {/*
@@ -178,7 +189,7 @@ class MenuItem extends PureComponent {
                             </View>
                         </TouchableOpacity>
                         */}
-                        <TouchableOpacity style={{flex: 1}} onPress={this.addRow}>
+                        <TouchableOpacity style={{flex: 1}} onPress={this.props.addRow}>
                             <View style={[rowStyle, buttonStyle, {borderColor: AddColor}]}>
                                 <T style={{fontSize: 20, color: AddColor}}>
                                     MORE OPTIONS
@@ -188,6 +199,40 @@ class MenuItem extends PureComponent {
                     </View>
             }
         </View>
+    }
+}
+
+@observer
+class PriceColumn extends PureComponent {
+    /* properties:
+        orderItems: [OrderItem]
+    */
+    render = () => {
+        return <View>
+            {
+                this.props.orderItems.map((orderItem, i) =>
+                    <PriceEntry key={i} rowNumber={i} orderItem={orderItem} />
+                )
+            }
+        </View>
+    }
+}
+
+@observer
+class PriceEntry extends PureComponent {
+    /* properties:
+        orderItem: OrderItem
+        rowNumber: Int
+    */
+    render = () => {
+        console.log("re-rendering price for orderItem", this.props.rowNumber)
+        return (
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <T style={{marginRight: 5, color: '#000'}}>
+                    {'£' + this.props.orderItem.total.toFixed(2)}
+                </T>
+            </View>
+        )
     }
 }
 
@@ -349,6 +394,8 @@ const iconSize = iconBoxSize
 const RemoveColor = '#900'
 const AddColor = 'rgb(51, 162, 37)'
 
+// spy(console.log)
+
 @observer
 export class OrderSelection extends PureComponent {
     /* properties:
@@ -361,24 +408,30 @@ export class OrderSelection extends PureComponent {
             remove the row iff it has the same options as the item before it
     */
 
-    constructor(props) {
-        super(props)
-        this.initialOrderItem = this.props.orderItems[this.props.rowNumber]
-    }
+    // constructor(props) {
+    //     super(props)
+    //     this.initialOrderItem = this.props.orderItems[this.props.rowNumber]
+    // }
 
-    @computed get orderItem() {
-        if (this.props.rowNumber < this.props.orderItems.length)
-            return this.props.orderItems[this.props.rowNumber]
-        // Some OrderItem has been removed, but the component will still
-        // be rendered until the parent is re-rendered. Stick with the initial
-        // OrderItem for now.
-        //
-        // TODO: Why is the parent not re-rendered first?
-        //
-        return this.initialOrderItem
+    // @computed get orderItem() {
+    //     console.log("recomputing OrderItem[", this.props.rowNumber, "]")
+    //     if (this.props.rowNumber < this.props.orderItems.length)
+    //         return this.props.orderItems[this.props.rowNumber]
+    //     // Some OrderItem has been removed, but the component will still
+    //     // be rendered until the parent is re-rendered. Stick with the initial
+    //     // OrderItem for now.
+    //     //
+    //     // TODO: Why is the parent not re-rendered first?
+    //     //
+    //     return this.initialOrderItem
+    // }
+
+    get orderItem() {
+        return this.props.orderItem
     }
 
     @computed get amountPickerItem() {
+        console.log("recomputing amountPickerItem", this.props.rowNumber)
         const subTotal = this.orderItem.subTotal || 0.0
         return new PickerItem(
             "Number of Drinks:",
@@ -391,6 +444,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get optionPickerItems() {
+        console.log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
         return menuItem.options.map((menuOptionItem, i) => {
             return new PickerItem(
@@ -398,7 +452,7 @@ export class OrderSelection extends PureComponent {
                 menuOptionItem.optionList,
                 menuOptionItem.prices,
                 menuOptionItem.defaultOption || -1,
-                this.orderItem.selectedOptions[i],
+                this.orderItem.selectedOptions[i].slice(), // NOTE: THe copy here is very important!
                 menuOptionItem.optionType,
             )
         })
@@ -433,6 +487,7 @@ export class OrderSelection extends PureComponent {
     }
 
     render = () => {
+        console.log("re-rendering OrderItem", this.props.rowNumber)
         return <View style={
                     { flex: 0
                     , flexDirection: 'row'

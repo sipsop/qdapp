@@ -12,6 +12,7 @@ import {
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
+import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { PureComponent } from './Component.js'
@@ -71,8 +72,13 @@ class SelectorItem extends PureComponent {
             callback when this item is pressed
         rowNumber: int
     */
+
+    @computed get isSelected() {
+        return this.props.isSelected()
+    }
+
     render = () => {
-        const selected = this.props.isSelected()
+        const selected = this.isSelected
         const primary = this.props.rowNumber % 2 === 0
         /* color = "rgb(19, 179, 30)" */
         const color = primary ? config.theme.primary.medium
