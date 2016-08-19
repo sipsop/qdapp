@@ -209,7 +209,7 @@ class OrderList extends PureComponent {
             {
                 this.props.orderItems.length === 0
                     ? undefined
-                    : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 20}]}>
+                    : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 30}]}>
                         {/*
                         <TouchableOpacity style={{flex: 1}} onPress={this.popRow}>
                             <View style={[rowStyle, buttonStyle, {borderColor: RemoveColor}]}>
