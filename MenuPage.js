@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -11,7 +13,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import _ from 'lodash'
-import { observable, computed, transaction, autorun } from 'mobx'
+import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 // import Modal from 'react-native-modalbox'
@@ -77,9 +79,9 @@ class MenuItem extends PureComponent {
         return _.isEqual(options1, options2)
     }
 
-    getDefaultOrderItem = () => new OrderItem(this.props.menuItem)
+    getDefaultOrderItem = () : OrderItem => new OrderItem(this.props.menuItem)
 
-    toggleExpand = () => {
+    toggleExpand = () : void => {
         transaction(() => {
             // store.haveNotifiedAboutCustomization = true
             if (this.orderItems.length === 0) {
@@ -88,22 +90,22 @@ class MenuItem extends PureComponent {
         })
     }
 
-    addRow = () => {
+    addRow = () : void => {
         this.orderItems.push(this.getDefaultOrderItem())
     }
 
-    removeRow = (i) => {
+    removeRow = (i : number) : void => {
          this.orderItems.splice(i, 1)
     }
 
     /* If row `i` has the same options as row `j`, remove row `i`. */
-    removeRowIfSameOptions = (i, j) => {
+    removeRowIfSameOptions = (i : number, j : number) : void => {
         if (this.orderItems.length > 1 &&
                 this.hasSameOptions(this.orderItems[i], this.orderItems[j]))
             this.orderItems.splice(i, 1)
     }
 
-    popRow = () => {
+    popRow = () : void => {
         this.orderItems.pop()
     }
 
@@ -142,7 +144,7 @@ class MenuItem extends PureComponent {
                                         key={i}
                                         rowNumber={i}
                                         menuItem={menuItem}
-                                        orderItem={orderItem}
+                                        orderItems={this.orderItems}
                                         removeRow={() => this.removeRow(i)}
                                         removeRowIfSameOptions={() => this.removeRowIfSameOptions(i, i-1)}
                                         />
@@ -190,7 +192,7 @@ class MenuItem extends PureComponent {
 }
 
 class OrderItem {
-    @observable amount = 1
+    @observable amount:number = 1
     @observable selectedOptions = null
 
     constructor(menuItem) {
@@ -351,7 +353,7 @@ const AddColor = 'rgb(51, 162, 37)'
 export class OrderSelection extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
-        orderItem: schema.OrderItem
+        orderItems: [schema.OrderItem]
         rowNumber: int
         removeRow() -> void
             remove this row
@@ -359,39 +361,46 @@ export class OrderSelection extends PureComponent {
             remove the row iff it has the same options as the item before it
     */
 
-    @observable optionPickerItems = null
-    @observable amountPickerItem = null
-
     constructor(props) {
         super(props)
-        const menuItem = props.menuItem
-        const orderItem = props.orderItem
+        this.initialOrderItem = this.props.orderItems[this.props.rowNumber]
+    }
 
-        autorun(() => {
-            var   subTotal = orderItem.subTotal
-            if (!subTotal)
-                subTotal = 0.0
-            this.amountPickerItem = new PickerItem(
-                "Number of Drinks:",
-                _.range(N+1).map(i => "" + i),
-                _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
-                -1,                             /* defaultOption */
-                [props.orderItem.amount],       /* selection */
-                'Single',                       /* optionType */
+    @computed get orderItem() {
+        if (this.props.rowNumber < this.props.orderItems.length)
+            return this.props.orderItems[this.props.rowNumber]
+        // Some OrderItem has been removed, but the component will still
+        // be rendered until the parent is re-rendered. Stick with the initial
+        // OrderItem for now.
+        //
+        // TODO: Why is the parent not re-rendered first?
+        //
+        return this.initialOrderItem
+    }
+
+    @computed get amountPickerItem() {
+        const subTotal = this.orderItem.subTotal || 0.0
+        return new PickerItem(
+            "Number of Drinks:",
+            _.range(N+1).map(i => "" + i),
+            _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
+            -1,                             /* defaultOption */
+            [this.orderItem.amount],             /* selection */
+            'Single',                       /* optionType */
+        )
+    }
+
+    @computed get optionPickerItems() {
+        const menuItem = this.props.menuItem
+        return menuItem.options.map((menuOptionItem, i) => {
+            return new PickerItem(
+                menuOptionItem.name,
+                menuOptionItem.optionList,
+                menuOptionItem.prices,
+                menuOptionItem.defaultOption || -1,
+                this.orderItem.selectedOptions[i],
+                menuOptionItem.optionType,
             )
-        })
-
-        autorun(() => {
-            this.optionPickerItems = menuItem.options.map((menuOptionItem, i) => {
-                return new PickerItem(
-                    menuOptionItem.name,
-                    menuOptionItem.optionList,
-                    menuOptionItem.prices,
-                    menuOptionItem.defaultOption || -1,
-                    orderItem.selectedOptions[i],
-                    menuOptionItem.optionType,
-                )
-            })
         })
     }
 
@@ -399,34 +408,31 @@ export class OrderSelection extends PureComponent {
         return {
             price: price,
             option: 'Absolute',
-            currency: this.props.orderItem.currency,
+            currency: this.orderItem.currency,
         }
     }
 
-    handleIncrease = () => {
-        this.props.orderItem.amount = min(N, this.props.orderItem.amount + 1)
+    @action handleIncrease = () => {
+        this.orderItem.amount = min(N, this.orderItem.amount + 1)
     }
 
-    handleDecrease = () => {
-        this.props.orderItem.amount = max(0, this.props.orderItem.amount - 1)
+    @action handleDecrease = () => {
+        if (this.orderItem.amount === 0)
+            this.props.removeRow()
+        else
+            this.orderItem.amount = max(0, this.orderItem.amount - 1)
     }
 
-    handleAcceptAmountChanges = (pickerItems) => {
-        this.props.orderItem.amount = pickerItems[0].selected[0]
+    @action handleAcceptAmountChanges = (allSelectedOptions : [[number]]) => {
+        const amountSelection : [number] = allSelectedOptions[0]
+        this.orderItem.amount = amountSelection[0]
     }
 
-    handleAcceptOptions = (pickerItems) => {
-        this.props.orderItem.selectedOptions = pickerItems.map(pickerItem => pickerItem.selected)
+    @action handleAcceptOptions = (allSelectedOptions : [[number]]) => {
+        this.orderItem.selectedOptions = allSelectedOptions
     }
 
     render = () => {
-        const orderItem = this.props.orderItem
-        const subTotal = orderItem.subTotal
-
-        const amountPickerItems = this.amountPickerItem
-            ? [this.amountPickerItem]
-            : []
-
         return <View style={
                     { flex: 0
                     , flexDirection: 'row'
@@ -452,7 +458,7 @@ export class OrderSelection extends PureComponent {
             </TouchableOpacity>
             <View style={{flex: 1, height: buttonHeight}}>
                 <PickerCollection
-                    pickerItems={amountPickerItems}
+                    pickerItems={[this.amountPickerItem]}
                     onAcceptChanges={this.handleAcceptAmountChanges}
                     rowNumber={this.props.rowNumber}
                     />

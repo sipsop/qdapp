@@ -18,6 +18,7 @@ import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Button } from './Button.js'
 import { config } from './Config.js'
+import { makeList } from './Curry.js'
 
 const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,
@@ -27,14 +28,15 @@ const dataSource = new ListView.DataSource({
 export class Selector extends PureComponent {
     /* properties:
         children: [Component]
-        flags: [Flag]
+        isSelected(i) -> bool
         onSelect(i) -> void
         renderRow(rowIndex) -> Component
     */
 
     constructor(props) {
         super(props)
-        this.dataSource = dataSource.cloneWithRows(_.range(props.flags.length))
+        children = makeList(props.children)
+        this.dataSource = dataSource.cloneWithRows(_.range(children.length))
     }
 
     render = () => {
@@ -45,14 +47,14 @@ export class Selector extends PureComponent {
     }
 
     renderSelectorItem = (i) => {
-        const flag = this.props.flags[i]
+        const children = makeList(this.props.children)
         return <SelectorItem
                     key={i}
                     rowNumber={i}
-                    flag={flag}
+                    isSelected={() => this.props.isSelected(i)}
                     onPress={() => this.props.onSelect(i)}
                     >
-                {this.props.renderRow(i)}
+                {children[i]}
         </SelectorItem>
     }
 }
@@ -60,14 +62,17 @@ export class Selector extends PureComponent {
 @observer
 class SelectorItem extends PureComponent {
     /* properties:
-        flag: Flag
-            indicates whether this item is selected
+        isSelected() -> bool
+            callback to indicate whether this item is selected.
+            This is a callback so that when we change the selection, only
+            the affected components need to be re-rendered (instead of the
+            entire Selector icon and all its children)
         onPress() -> void
             callback when this item is pressed
         rowNumber: int
     */
     render = () => {
-        const selected = this.props.flag.get()
+        const selected = this.props.isSelected()
         const primary = this.props.rowNumber % 2 === 0
         /* color = "rgb(19, 179, 30)" */
         const color = primary ? config.theme.primary.medium

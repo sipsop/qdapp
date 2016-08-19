@@ -15,56 +15,19 @@ import _ from 'lodash'
 /* updateSelection: schema.OptionType -> Selection -> Index -> Selection */
 export const updateSelection = (optionType, selection, index) => {
     newSelection = selection.slice()
-    if (optionType === 'Single') {
-        if (newSelection.length === 1)
-            newSelection[0] = index
-        else
-            newSelection.push(index)
-    } else if (optionType === 'ZeroOrMore' || optionType === 'OneOrMore') {
-        newSelection.push(index)
-    } else {
-        throw Error("Unknown option type: " + optionType)
-    }
+    updateSelectionInPlace(optionType, newSelection, index)
     return newSelection
 }
 
-/* selectionFromFlags : [Flag] -> Selection */
-/*
-export const selectionFromFlags = (flags) => {
-    const result = []
-    flags.forEach((flag, itemIndex) => {
-        if (flag.get()) {
-            result.push(itemIndex)
-        }
-    })
-    return result
-}
-*/
-
-/* selectionAsFlags : Int -> [Flag] */
-export const getFlags = (n) => {
-    return _.range(n).map(i => new Flag())
-}
-
-/* updateFlagsInPlace : Selection -> [Flag] -> void */
-export const updateFlagsInPlace = (selection, flags) => {
-    transaction(() => {
-        flags.forEach(flag => flag.set(false))
-        selection.forEach(itemIndex => flags[itemIndex].set(true))
-    })
-}
-
-/* Class holding a single boolean flag */
-export class Flag {
-    @observable flag = false
-
-    get = () => this.flag
-
-    set = (flag) => {
-        this.flag = flag
-    }
-
-    toggle = () => {
-        this.flag = !this.flag
+export const updateSelectionInPlace = (optionType, selection, index) => {
+    if (optionType === 'Single') {
+        if (selection.length === 1)
+            selection[0] = index
+        else
+            selection.push(index)
+    } else if (optionType === 'ZeroOrMore' || optionType === 'OneOrMore') {
+        selection.push(index)
+    } else {
+        throw Error("Unknown option type: " + optionType)
     }
 }

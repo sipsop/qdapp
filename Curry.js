@@ -1,5 +1,11 @@
 import _ from 'lodash'
 
+export const makeList = (xs) => {
+    if (Array.isArray(xs))
+        return xs
+    return [xs]
+}
+
 export const merge = (o1, o2) => {
     return mergeAll([o1, o2])
 }

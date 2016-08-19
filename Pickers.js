@@ -12,11 +12,11 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
 import _ from 'lodash'
-import { observable, computed, autorun, transaction } from 'mobx'
+import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { PureComponent } from './Component.js'
-import { updateSelection, getFlags, updateFlagsInPlace } from './Selection.js'
+import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
@@ -41,8 +41,8 @@ export class PickerItem {
             'Single' | 'ZeroOrMore' | 'OneOrMore'
     */
 
-    @observable selected
-    @observable selectedInModal
+    // @observable selected
+    // @observable selectedInModal
 
     constructor(title, labels, prices, defaultOption, selection, optionType) {
         this.title = title
@@ -50,11 +50,12 @@ export class PickerItem {
         this.prices = prices
         this.defaultOption = defaultOption
         this.selected = selection
-        this.selectedInModal = this.selected.map(i => i)
+        // this.selectedInModal = selection
+        // this.selectedInModal = this.selected.map(i => i)
         this.optionType = optionType
-        autorun(() => {
-            this.selectedInModal = this.selected.map(i => i)
-        })
+        // autorun(() => {
+        //     this.selectedInModal = this.selected.map(i => i)
+        // })
     }
 }
 
@@ -75,39 +76,41 @@ export class PickerCollection extends PureComponent {
 
     @observable modalVisible = false
 
+    // Selection for each picker item: [[0], [], [2, 3]]
+    @observable selectedInModal = null
+
     constructor(props) {
         super(props)
-        this.modalVisible = !!props.showModal
         this.openCount = 0
+        if (props.showModal)
+            this.showModal()
     }
 
-    showModal = () => {
+    @action showModal = () => {
         this.modalVisible = true
+        const pickerItems = this.props.pickerItems
+        this.selectedInModal = pickerItems.map(pickerItem => pickerItem.selected)
     }
 
-    closeModal = () => {
+    @action closeModal = () => {
         this.modalVisible = false
         this.openCount += 1
     }
 
-    okModal = () => {
-        transaction(() => {
-            this.props.pickerItems.forEach(pickerItem => {
-                pickerItem.selected = pickerItem.selectedInModal
-            })
-            this.props.onAcceptChanges(this.props.pickerItems)
-            if (this.openCount === 0 && this.props.onFirstAccept)
-                this.props.onFirstAccept()
-            this.closeModal()
-        })
+    @action okModal = () => {
+        // this.props.pickerItems.forEach(pickerItem => {
+        //     pickerItem.selected = pickerItem.selectedInModal
+        // })
+        this.props.onAcceptChanges(this.selectedInModal)
+        if (this.openCount === 0 && this.props.onFirstAccept)
+            this.props.onFirstAccept()
+        this.closeModal()
     }
 
-    cancelModal = () => {
-        transaction(() => {
-            if (this.openCount === 0 && this.props.onFirstCancel)
-                this.props.onFirstCancel()
-            this.closeModal()
-        })
+    @action cancelModal = () => {
+        if (this.openCount === 0 && this.props.onFirstCancel)
+            this.props.onFirstCancel()
+        this.closeModal()
     }
 
     render = () => {
@@ -128,6 +131,8 @@ export class PickerCollection extends PureComponent {
                             (pickerItem, i) =>
                                 <PickerItemView
                                     key={i}
+                                    itemNumber={i}
+                                    allSelectedOptions={this.selectedInModal}
                                     pickerItem={pickerItem}
                                     confirmImmediately={!showOkButton}
                                     confirmSelection={this.okModal}
@@ -152,6 +157,8 @@ export class PickerCollection extends PureComponent {
 @observer
 class PickerItemView extends PureComponent {
     /* properties:
+        itemNumber: Int
+        allSelectedOptions: [[Int]]
         pickerItem: PickerItem
         confirmImmediately: bool
             whether to confirm the selection on a single press
@@ -159,32 +166,23 @@ class PickerItemView extends PureComponent {
             confirm a new selection by closing the modal
     */
 
-    @observable flags
-
-    constructor(props) {
-        super(props)
-        const length = props.pickerItem.labels.length
-
-        const pickerItem = this.props.pickerItem
-        transaction(() => {
-            this.flags = getFlags(length)
-            updateFlagsInPlace(pickerItem.selectedInModal, this.flags)
-        })
-
-        autorun(() => {
-            updateFlagsInPlace(pickerItem.selectedInModal, this.flags)
-        })
+    @computed get selectedOptions() {
+        return this.props.allSelectedOptions[this.props.itemNumber]
     }
 
-    handleItemChange = (itemIndex) => {
+    @action handleItemChange = (itemIndex) => {
         const pickerItem = this.props.pickerItem
-        pickerItem.selectedInModal = updateSelection(
+        updateSelectionInPlace(
             pickerItem.optionType,
-            pickerItem.selectedInModal,
+            this.selectedOptions,
             itemIndex,
         )
         if (this.props.confirmImmediately)
             this.props.confirmSelection()
+    }
+
+    isSelected = (labelNumber) => {
+        return _.includes(this.selectedOptions, labelNumber)
     }
 
     render = () => {
@@ -201,19 +199,34 @@ class PickerItemView extends PureComponent {
                     {pickerItem.title}
                 </T>
                 <Selector
-                        flags={this.flags}
+                        isSelected={this.isSelected}
                         onSelect={this.handleItemChange}
                         renderRow={this.renderRow}
                         >
+                    {
+                        pickerItem.labels.map(
+                            (label, i) =>
+                                <LabelView
+                                    key={i}
+                                    label={label}
+                                    price={pickerItem.prices[i]}
+                                    />
+                        )
+                    }
                 </Selector>
             </View>
         )
     }
+}
 
-    renderRow = (i) => {
-        const pickerItem = this.props.pickerItem
-        const label = pickerItem.labels[i]
-        const price = pickerItem.prices[i]
+@observer
+class LabelView extends PureComponent {
+    /* properties:
+        label: str
+        price: Price
+    */
+
+    render = (i) => {
         const textStyle = {fontSize: 20, color: '#000'}
         return <View key={i} style={
                 { flex: 1
@@ -224,9 +237,9 @@ class PickerItemView extends PureComponent {
                 }
             }>
             <View style={{flex: 1, justifyContent: 'center'}}>
-                <T style={textStyle}>{label}</T>
+                <T style={textStyle}>{this.props.label}</T>
             </View>
-            <Price price={price} style={textStyle} />
+            <Price price={this.props.price} style={textStyle} />
         </View>
     }
 }
