@@ -40,37 +40,56 @@ import { config } from './Config.js'
 @observer
 export class MenuPage extends BarPageFetcher {
     renderFinished = (bar) => {
-        return <ScrollView>
-            <TagView>
-                <View style={{flex: 1, marginTop: 5}}>
-                    {
-                        tagStore.getActiveMenuItems().map(
-                            (menuItem, i) => <MenuItem
-                                key={menuItem.id}
-                                menuItem={menuItem}
-                                />
-                        )
-                    }
-                </View>
-            </TagView>
-        </ScrollView>
+        return <View style={{flex: 1}}>
+            <ScrollView style={{flex: 1}}>
+                <TagView>
+                    <View style={{flex: 1, marginTop: 5}}>
+                        {
+                            tagStore.getActiveMenuItems().map(
+                                menuItem =>
+                                    <MenuItem
+                                        key={menuItem.id}
+                                        menuItem={menuItem}
+                                        currentPage={2}
+                                        />
+                            )
+                        }
+                    </View>
+                </TagView>
+            </ScrollView>
+            <OrderButton />
+        </View>
+    }
+}
+
+@observer
+class OrderButton extends PureComponent {
+    render = () => {
+        if (store.menuItemsOnOrder.length === 0) {
+            return <View />
+        }
+        return <LargeButton
+                    label="Review Order"
+                    onPress={() => store.setCurrentTab(3)}
+                    style={{margin: 5}}
+                    />
     }
 }
 
 const beerImg = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
 
 @observer
-class MenuItem extends PureComponent {
+export class MenuItem extends PureComponent {
     /* properties:
         menuItem: scheme.MenuItem
+        currentPage: Int
+            current page in the TabView
     */
-
-    @observable orderItems = null
 
     constructor(props) {
         super(props)
-        this.orderItems = []
         this.defaultOrderItem = new OrderItem(props.menuItem)
+        this.orderItems = store.menuItemOrdersMap.get(this.props.menuItem.id)
     }
 
     hasDefaultOptions = (orderItem) => {
@@ -86,15 +105,13 @@ class MenuItem extends PureComponent {
     getDefaultOrderItem = () : OrderItem => new OrderItem(this.props.menuItem)
 
     toggleExpand = () : void => {
-        transaction(() => {
-            // store.haveNotifiedAboutCustomization = true
-            if (this.orderItems.length === 0) {
-                this.addRow()
-            }
-        })
+        if (this.orderItems.length === 0) {
+            this.addRow()
+        }
     }
 
     addRow = () : void => {
+        console.log("pushing new row...")
         this.orderItems.push(this.getDefaultOrderItem())
     }
 
@@ -132,6 +149,7 @@ class MenuItem extends PureComponent {
                     addRow={this.addRow}
                     removeRow={this.removeRow}
                     removeRowIfSameOptions={this.removeRowIfSameOptions}
+                    currentPage={this.props.currentPage}
                     />
         </View>
     }
@@ -145,6 +163,8 @@ class OrderList extends PureComponent {
         addRow() -> void
         removeRow(i) -> void
         removeRowIfSameOptions(i, j) -> void
+        currentPage: Int
+            current page in the TabView
     */
 
     render = () => {
@@ -174,6 +194,7 @@ class OrderList extends PureComponent {
                                         orderItem={orderItem}
                                         removeRow={() => this.props.removeRow(i)}
                                         removeRowIfSameOptions={() => this.props.removeRowIfSameOptions(i, i-1)}
+                                        currentPage={this.props.currentPage}
                                         />
                         })
                     }
@@ -250,6 +271,7 @@ class OrderItem {
         // e.g. [[0], [], [1, 3]]
         this.selectedOptions = menuItem.options.map(getMenuItemDefaultOptions)
         this.currency = menuItem.price.currency
+        this.showModal = true
     }
 
     /* Compute the price for all the selected options */
@@ -473,6 +495,20 @@ export class OrderSelection extends PureComponent {
         this.orderItem.selectedOptions = allSelectedOptions
     }
 
+    @action handleFirstAccept = () => {
+        this.orderItem.showModal = false
+        this.props.removeRowIfSameOptions()
+    }
+
+    @action handleFirstCancel = () => {
+        this.orderItem.showModal = false
+        this.props.removeRow()
+    }
+
+    get showModal() {
+        return store.currentPage === this.props.currentPage && this.orderItem.showModal
+    }
+
     render = () => {
         console.log("re-rendering OrderItem", this.props.rowNumber)
         return <View style={
@@ -489,9 +525,9 @@ export class OrderSelection extends PureComponent {
                     pickerItems={this.optionPickerItems}
                     onAcceptChanges={this.handleAcceptOptions}
                     rowNumber={this.props.rowNumber}
-                    showModal={true}
-                    onFirstAccept={this.props.removeRowIfSameOptions}
-                    onFirstCancel={this.props.removeRow}
+                    showModal={this.showModal}
+                    onFirstAccept={this.handleFirstAccept}
+                    onFirstCancel={this.handleFirstCancel}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>

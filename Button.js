@@ -16,12 +16,14 @@ export class LargeButton extends Component {
         onPress: () => void
         primary: bool
         style: style object
+        borderRadius: int
         prominent: bool
             if true, set a pink background color. Otherwise, set a white one.
     */
     static defaultProps = {
         primary: true,
         prominent: true,
+        borderRadius: 10,
     }
 
     render = () => {
@@ -29,7 +31,8 @@ export class LargeButton extends Component {
                     label={this.props.label}
                     onPress={this.props.onPress}
                     fontSize={25}
-                    borderWidth={3}
+                    borderWidth={1.5}
+                    borderRadius={this.props.borderRadius}
                     primary={this.props.primary}
                     style={this.props.style}
                     prominent={this.props.prominent}

@@ -129,24 +129,8 @@ export class TagStore {
         return new Map(tagExcludes)
     }
 
-    // @computed get allMenuItems() {
-    @computed get allMenuItems() {
-        const menu  = store.bar.value.menu
-        const subMenus = (
-            [ menu.beer
-            , menu.wine
-            , menu.spirits
-            , menu.cocktails
-            , menu.water
-            // , menu.snacks
-            // , menu.food
-            ])
-        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
-        return _.flatten(menuItems)
-    }
-
     getActiveMenuItems = () => {
-        return filterMenuItems(this.allMenuItems, this.tagSelection)
+        return filterMenuItems(store.allMenuItems, this.tagSelection)
     }
 
     getExcludedTags = (tagID) => {
@@ -281,7 +265,7 @@ export class TagView extends DownloadResultView {
             return childRow.filter(tagID => isEnabled(tagID, menuItems))
         }
 
-        var menuItems = tagStore.allMenuItems
+        var menuItems = store.allMenuItems
         var parentRow = rootIDs
         var rows = []
         while (parentRow.length > 0) {

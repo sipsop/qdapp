@@ -1,56 +1,7 @@
-import { observable, transaction, computed } from 'mobx'
+import { observable, transaction, computed, autorun } from 'mobx'
 import { Alert } from 'react-native'
 import { emptyResult, graphQL } from './HTTP.js'
 import _ from 'lodash'
-
-export class OrderItem {
-
-    @observable itemID
-    @observable size
-    @observable opts
-    @observable count
-
-    constructor(itemID, drinkSize, drinkOpts, drinkCount) {
-        this.itemID = itemID
-        this.drinkSize = drinkSize    // str, e.g. 'pint', 'half-pint', 'glass', 'bottle', etc
-        this.drinkOpts = drinkOpts    // [str], e,g. ["shandy"]
-        this.drinkCount = drinkCount  // int, number of drinks to order
-    }
-}
-
-export class Order {
-
-    @observable order = asMap()
-
-    getOrder = (itemID) => {
-        return this.order.get(itemID)
-    }
-
-    /* Add an item to the order list */
-    addOrder = (itemID, orderItem) => {
-        var items = this.order.get(itemID)
-        if (items === undefined) {
-            items = []
-            this.order.set(itemID, items)
-        }
-        items.push(orderItem)
-    }
-
-    /* Simplify order list by removing entries with a 0 count */
-    simplifyOrders = () => {
-        this.order.forEach((orderItems, itemID) => {
-            orderItems = orderItems.filter((orderItem) => {
-                return orderItem.count > 0
-            })
-            this.orders.set(itemID, orderItems)
-        })
-    }
-
-    /* Remove any items from the order list */
-    clearOrders = () => {
-        this.orders.clear()
-    }
-}
 
 export class Store {
 
@@ -72,18 +23,57 @@ export class Store {
     // ScrollableTabView
     @observable tabView = null
 
+    @observable menuItemOrders = null
+    // @observable menuItemOrdersMap = null // observable maps don't seem to work...
+
     constructor() {
         this.bar     = emptyResult()
         this.barList = emptyResult()
+        autorun(() => {
+            const menuItems = this.allMenuItems
+            if (!menuItems)
+                return
+            this.menuItemOrders = menuItems.map(menuItem => [menuItem.id, []])
+            this.menuItemOrdersMap = new Map(this.menuItemOrders)
+            this.menuItemCache = new Map()
+        })
+        this.currentPage = 0
     }
 
     setCurrentTab = (i) => {
+        this.currentPage = i
         this.tabView.goToPage(i)
     }
 
     initialize = () => {
         // TODO: Load saved state from local storage
         this.setBarList()
+    }
+
+    @computed get allMenuItems() {
+        const bar = this.bar.value
+        if (!bar || !bar.menu)
+            return undefined
+
+        const menu  = store.bar.value.menu
+        const subMenus = (
+            [ menu.beer
+            , menu.wine
+            , menu.spirits
+            , menu.cocktails
+            , menu.water
+            // , menu.snacks
+            // , menu.food
+            ])
+        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
+        return _.flatten(menuItems)
+    }
+
+    @computed get menuItemsOnOrder() {
+        return this.allMenuItems.filter(menuItem => {
+            const orderItems = store.menuItemOrdersMap.get(menuItem.id)
+            return orderItems.length > 0
+        })
     }
 
     getBarInfo(barID, menu) {
