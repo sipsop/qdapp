@@ -71,7 +71,12 @@ class OrderButton extends PureComponent {
         return <LargeButton
                     label="Review Order"
                     onPress={() => store.setCurrentTab(3)}
-                    style={{margin: 5}}
+                    style={{margin: 5, height: rowHeight}}
+                    /*
+                    prominent={false}
+                    backgroundColor={config.theme.secondary.dark}
+                    borderColor={config.theme.secondary.medium}
+                    */
                     />
     }
 }

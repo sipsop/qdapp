@@ -23,6 +23,11 @@ import { T } from './AppText.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
 
+const largeButtonStyle = {
+    height: 55,
+    margin: 5,
+}
+
 @observer
 export class OrderPage extends Component {
 
@@ -48,7 +53,7 @@ export class OrderPage extends Component {
             </ScrollView>
             <LargeButton
                 label="Place Order"
-                style={{margin: 5}}
+                style={largeButtonStyle}
                 />
         </View>
     }
@@ -58,6 +63,7 @@ export class OrderPage extends Component {
             <LargeButton
                 label="Add Items to Order"
                 onPress={() => store.setCurrentTab(2)}
+                style={largeButtonStyle}
                 />
         </View>
     }

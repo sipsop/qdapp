@@ -19,6 +19,8 @@ export class LargeButton extends Component {
         borderRadius: int
         prominent: bool
             if true, set a pink background color. Otherwise, set a white one.
+        backgroundColor: str
+        borderColor: str
     */
     static defaultProps = {
         primary: true,
@@ -28,14 +30,9 @@ export class LargeButton extends Component {
 
     render = () => {
         return <TextButton
-                    label={this.props.label}
-                    onPress={this.props.onPress}
                     fontSize={25}
                     borderWidth={1.5}
-                    borderRadius={this.props.borderRadius}
-                    primary={this.props.primary}
-                    style={this.props.style}
-                    prominent={this.props.prominent}
+                    {...this.props}
                     />
     }
 }
@@ -51,6 +48,7 @@ export class TextButton extends Component {
         style: style object
         prominent: bool
         alignLeft: bool
+        borderColor: str
     */
 
     static defaultProps = {
@@ -62,9 +60,10 @@ export class TextButton extends Component {
     }
 
     render = () => {
+        const textColor = this.props.prominent ? '#fff' : '#000'
         var text = <T ellipsizeMode='tail'
                         numberOfLines={1}
-                        style={{fontSize: this.props.fontSize, color: '#fff'}}
+                        style={{fontSize: this.props.fontSize, color: textColor}}
                         >
                         {this.props.label}
                     </T>
@@ -72,14 +71,7 @@ export class TextButton extends Component {
             text = <View style={{flex: 1}}>{text}</View>
 
         return (
-            <Button
-                    primary={this.props.primary}
-                    onPress={this.props.onPress}
-                    borderWidth={this.props.borderWidth}
-                    borderRadius={this.props.borderRadius}
-                    style={this.props.style}
-                    prominent={this.props.prominent}
-                    >
+            <Button {...this.props}>
                 {text}
             </Button>
         )
@@ -96,6 +88,7 @@ export class Button extends Component {
         style: style object
         prominent: bool
         children: [Component]
+        backgroundColor: str
     */
 
     static defaultProps = {
@@ -115,6 +108,11 @@ export class Button extends Component {
                     ? { background: '#fff', border: config.theme.primary.medium }
                     : { background: '#fff', border: config.theme.primary.dark }
               )
+
+        if (this.props.backgroundColor)
+            buttonStyle.background = this.props.backgroundColor
+        if (this.props.borderColor)
+            buttonStyle.border = this.props.borderColor
 
         return <TouchableOpacity onPress={this.props.onPress} style={this.props.style}>
             <View style={{flex: 1, justifyContent: 'center'}}>
