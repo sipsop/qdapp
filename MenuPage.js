@@ -233,7 +233,7 @@ class PriceColumn extends PureComponent {
         orderItems: [OrderItem]
     */
     render = () => {
-        return <View>
+        return <View style={{minWidth: 60}}>
             {
                 this.props.orderItems.map((orderItem, i) =>
                     <PriceEntry key={orderItem.id} rowNumber={i} orderItem={orderItem} />
@@ -497,7 +497,7 @@ export class OrderSelection extends PureComponent {
 
     @action handleFirstAccept = () => {
         this.orderItem.showModal = false
-        this.props.removeRowIfSameOptions()
+        // this.props.removeRowIfSameOptions()
     }
 
     @action handleFirstCancel = () => {
