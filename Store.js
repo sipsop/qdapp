@@ -1,5 +1,5 @@
-import { observable, transaction, computed, autorun } from 'mobx'
-import { Alert } from 'react-native'
+import { observable, transaction, computed, autorun, action } from 'mobx'
+import { Alert, AsyncStorage } from 'react-native'
 import { emptyResult, graphQL } from './HTTP.js'
 import _ from 'lodash'
 
@@ -16,9 +16,6 @@ export class Store {
 
     // DownloadResult[ List[schema.Bar] ]
     @observable barList = null
-
-    // Order
-    @observable order = null
 
     // ScrollableTabView
     @observable tabView = null
@@ -46,8 +43,9 @@ export class Store {
     }
 
     initialize = () => {
-        // TODO: Load saved state from local storage
-        this.setBarList()
+        return this.setBarList()
+        // return this.loadFromLocalStorage()
+        //     .then(() => this.setBarList())
     }
 
     @computed get allMenuItems() {
@@ -177,10 +175,16 @@ export class Store {
             this.bar = emptyResult().downloadStarted()
             this.barID = barID
         })
-        this.getBarInfo(barID, true)
+        return this.getBarInfo(barID, true)
             .then((downloadResult) => {
                 try {
-                    this.bar = downloadResult
+                    if (this.barID === barID) {
+                        /* NOTE: a user may have selected a different bar
+                                 before this download has completed, in
+                                 which case we should ignore the download.
+                        */
+                        this.bar = downloadResult
+                    }
                 } catch (err) {
                     console.log(err)
                 }
@@ -193,7 +197,7 @@ export class Store {
     setBarList = (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
-        this.getBarInfo("1")
+        return this.getBarInfo("1")
             .then((downloadResult) => {
                 try {
                     this.barList = downloadResult.update((value) => [value])
@@ -206,12 +210,40 @@ export class Store {
             })
     }
 
+    /* TODO: */
+
     loadFromLocalStorage = () => {
-        // TODO: implement
+        return AsyncStorage.getItem('savedState')
+            .then(savedState => {
+                if (savedState) {
+                    this.restoreState(savedState)
+                }
+                autorun(() => {
+                    this.saveToLocalStorage()
+                })
+            }).catch(console.error)
+
+    }
+
+    @action restoreState = (state) => {
+        if (state.bar && !this.bar.value) {
+            this.bar.value = state.bar
+            this.barID = state.bar.id
+        }
+        if (state.barList && !this.barList.value) {
+            this.barList.value = state.barList
+        }
     }
 
     saveToLocalStorage = () => {
-        // TODO: implement
+        const state = {
+            bar: this.bar ? this.bar.value : undefined,
+            barList: this.barList ? this.barList.value : undefined,
+        }
+        AsyncStorage.setItem('savedState', '')
+            .catch((error) => {
+                console.error(error)
+            })
     }
 }
 

@@ -1,7 +1,8 @@
 {
  'presets': [
     // {"plugins": ["./plugins/babelRelayPlugin"]},
-    'react-native'
+    'react-native',
+    "babel-preset-stage-3"
   ],
  'plugins': ['transform-decorators-legacy']
 }
