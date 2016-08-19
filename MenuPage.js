@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import _ from 'lodash'
+import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -44,7 +45,10 @@ export class MenuPage extends BarPageFetcher {
                 <View style={{flex: 1, marginTop: 5}}>
                     {
                         tagStore.getActiveMenuItems().map(
-                            (menuItem, i) => <MenuItem key={i} menuItem={menuItem} />
+                            (menuItem, i) => <MenuItem
+                                key={menuItem.id}
+                                menuItem={menuItem}
+                                />
                         )
                     }
                 </View>
@@ -164,7 +168,7 @@ class OrderList extends PureComponent {
                     {
                         this.props.orderItems.map((orderItem, i) => {
                             return <OrderSelection
-                                        key={i}
+                                        key={orderItem.id}
                                         rowNumber={i}
                                         menuItem={this.props.menuItem}
                                         orderItem={orderItem}
@@ -211,7 +215,7 @@ class PriceColumn extends PureComponent {
         return <View>
             {
                 this.props.orderItems.map((orderItem, i) =>
-                    <PriceEntry key={i} rowNumber={i} orderItem={orderItem} />
+                    <PriceEntry key={orderItem.id} rowNumber={i} orderItem={orderItem} />
                 )
             }
         </View>
@@ -237,10 +241,11 @@ class PriceEntry extends PureComponent {
 }
 
 class OrderItem {
-    @observable amount:number = 1
+    @observable amount : number = 1
     @observable selectedOptions = null
 
     constructor(menuItem) {
+        this.id = shortid.generate()
         this.menuItem = menuItem
         // e.g. [[0], [], [1, 3]]
         this.selectedOptions = menuItem.options.map(getMenuItemDefaultOptions)
@@ -400,31 +405,13 @@ const AddColor = 'rgb(51, 162, 37)'
 export class OrderSelection extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
-        orderItems: [schema.OrderItem]
+        orderItem: schema.OrderItem
         rowNumber: int
         removeRow() -> void
             remove this row
         removeRowIfSameOptions() -> void
             remove the row iff it has the same options as the item before it
     */
-
-    // constructor(props) {
-    //     super(props)
-    //     this.initialOrderItem = this.props.orderItems[this.props.rowNumber]
-    // }
-
-    // @computed get orderItem() {
-    //     console.log("recomputing OrderItem[", this.props.rowNumber, "]")
-    //     if (this.props.rowNumber < this.props.orderItems.length)
-    //         return this.props.orderItems[this.props.rowNumber]
-    //     // Some OrderItem has been removed, but the component will still
-    //     // be rendered until the parent is re-rendered. Stick with the initial
-    //     // OrderItem for now.
-    //     //
-    //     // TODO: Why is the parent not re-rendered first?
-    //     //
-    //     return this.initialOrderItem
-    // }
 
     get orderItem() {
         return this.props.orderItem
