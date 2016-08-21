@@ -109,12 +109,6 @@ export class MenuItem extends PureComponent {
 
     getDefaultOrderItem = () : OrderItem => new OrderItem(this.props.menuItem)
 
-    toggleExpand = () : void => {
-        if (this.orderItems.length === 0) {
-            this.addRow()
-        }
-    }
-
     addRow = () : void => {
         console.log("pushing new row...")
         this.orderItems.push(this.getDefaultOrderItem())
@@ -140,11 +134,11 @@ export class MenuItem extends PureComponent {
         const image = menuItem.images[0]
 
         return <View>
-            <TouchableOpacity onPress={this.toggleExpand}>
+            <TouchableOpacity onPress={this.addRow}>
                 <View style={styles.primaryMenuItemView}>
                     <Image source={{uri: image}} style={styles.image} />
                     <View style={viewStyles.content}>
-                        <MenuItemHeader menuItem={menuItem} toggleExpand={this.toggleExpand} />
+                        <MenuItemHeader menuItem={menuItem} />
                     </View>
                 </View>
             </TouchableOpacity>
@@ -209,16 +203,19 @@ class OrderList extends PureComponent {
             {
                 this.props.orderItems.length === 0
                     ? undefined
+                    : <View style={{marginBottom: 20}} />
+
+                /*
                     : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 30}]}>
-                        {/*
-                        <TouchableOpacity style={{flex: 1}} onPress={this.popRow}>
-                            <View style={[rowStyle, buttonStyle, {borderColor: RemoveColor}]}>
-                                <T style={{fontSize: 20, color: RemoveColor}}>
-                                    REMOVE ROW
-                                </T>
-                            </View>
-                        </TouchableOpacity>
-                        */}
+                        {
+                        // <TouchableOpacity style={{flex: 1}} onPress={this.popRow}>
+                        //     <View style={[rowStyle, buttonStyle, {borderColor: RemoveColor}]}>
+                        //         <T style={{fontSize: 20, color: RemoveColor}}>
+                        //             REMOVE ROW
+                        //         </T>
+                        //     </View>
+                        // </TouchableOpacity>
+                        }
                         <TouchableOpacity style={{flex: 1}} onPress={this.props.addRow}>
                             <View style={[rowStyle, buttonStyle, {borderColor: AddColor}]}>
                                 <T style={{fontSize: 20, color: AddColor}}>
@@ -227,6 +224,7 @@ class OrderList extends PureComponent {
                             </View>
                         </TouchableOpacity>
                     </View>
+                */
             }
         </View>
     }
@@ -303,8 +301,6 @@ const getMenuItemDefaultOptions = (menuItemOption) => {
 class MenuItemHeader extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
-        toggleExpand() -> void
-            callback to invoke when click the text area
     */
     render = () => {
         const menuItem = this.props.menuItem
@@ -522,7 +518,6 @@ export class OrderSelection extends PureComponent {
                     , justifyContent: 'flex-start'
                     , alignItems: 'center'
                     , height: rowHeight
-                    // , marginBottom: 20
                     }
                 }>
             <View style={{flex: 2, height: buttonHeight}}>
