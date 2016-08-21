@@ -57,8 +57,9 @@ class Price(graphene.ObjectType):
 
 class OptionType(graphene.Enum):
     Single     = 0
-    ZeroOrMore = 1
-    OneOrMore  = 2
+    AtMostOne  = 1
+    ZeroOrMore = 2
+    OneOrMore  = 3
 
 
 class MenuItemOption(graphene.ObjectType):
@@ -285,7 +286,7 @@ fiftyP = Price(
 
 top_option = MenuItemOption(
     name="Choose a Top",
-    optionType=OptionType.Single,
+    optionType=OptionType.AtMostOne,
     optionList=[
         "shandy",
         "lime",
