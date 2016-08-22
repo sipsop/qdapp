@@ -224,6 +224,12 @@ export class BarPageFetcher extends DownloadResultView {
                         />
                     : undefined
                 }
+                <View style={{alignItems: 'center'}}>
+                    <Image
+                        source={require('./logos/powered_by_google_on_white.png')}
+                        style={{marginTop: 10}}
+                        />
+                </View>
             </ScrollView>
         )
     }
