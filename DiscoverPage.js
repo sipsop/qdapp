@@ -23,21 +23,27 @@ import { config } from './Config.js'
     getDownloadResult = () => store.barList
     renderNotStarted  = () => <View />
 
+    saveScrollView = (scrollview) => {
+        store.discoverScrollView = scrollview
+    }
+
     renderFinished = (barList) => {
-        return <ScrollView style={{flex: 1}}>
-            <BarMapView />
-            <View style={{flex: 1}}>
-                {/*
-                <T style={
-                        { marginLeft: 10
-                        , fontSize: 20
-                        , color: config.theme.primary.medium
-                        }}>
-                    Nearby Bars
-                </T>
-                */}
-                {barList.slice(0, 3).map((bar, i) => <BarCard key={i} bar={bar} />)}
-            </View>
-        </ScrollView>
+        return (
+            <ScrollView style={{flex: 1}} ref={this.saveScrollView}>
+                <BarMapView />
+                <View style={{flex: 1}}>
+                    {/*
+                    <T style={
+                            { marginLeft: 10
+                            , fontSize: 20
+                            , color: config.theme.primary.medium
+                            }}>
+                        Nearby Bars
+                    </T>
+                    */}
+                    {barList.slice(0, 3).map((bar, i) => <BarCard key={i} bar={bar} />)}
+                </View>
+            </ScrollView>
+        )
     }
 }
