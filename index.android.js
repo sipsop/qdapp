@@ -30,7 +30,7 @@ import merge from 'merge'
 import { Main } from './Main.js'
 import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
-import { BarMapView } from './BarMapView.js'
+import { BarMapView } from './BarMap.js'
 
 
 class App extends Component {

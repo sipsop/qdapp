@@ -128,10 +128,16 @@ class Address(graphene.ObjectType):
     number = graphene.String().NonNull
     postcode = graphene.String().NonNull
 
+class BarType(graphene.Enum):
+    Pub = 0
+    Club = 1
+
 class Bar(graphene.ObjectType):
     id     = ID
     name   = graphene.String().NonNull
     desc   = graphene.String()
+    barType = graphene.NonNull(BarType)
+    signedUp = graphene.Boolean().NonNull
     images = graphene.List(URL).NonNull
     tags   = graphene.List(graphene.String().NonNull)
     phone  = graphene.String()
@@ -222,6 +228,8 @@ class Query(graphene.ObjectType):
                 The Eagle is a traditional English pub dating back to the 16th
                 century, serving breakfast, lunch and evening meals.
             ''',
+            barType=BarType.Pub,
+            signedUp=True,
             images=[outsideURL, insideURL],
             tags=['#pub', '#traditional', '#lunch', '#dinner'],
             phone="01223 505020",
@@ -234,8 +242,8 @@ class Query(graphene.ObjectType):
                 ),
             ],
             address=Address(
-                lat=0.0,
-                lon=0.0,
+                lat=52.204139,
+                lon=0.118045,
                 city='Cambridge',
                 street='Benet Street',
                 number='8',

@@ -6,7 +6,7 @@ import {
 import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
-import { BarMapView } from './BarMapView.js'
+import { BarMapView } from './BarMap.js'
 import { BarCard } from './BarCard.js'
 import { DownloadResultView } from './HTTP.js'
 import { T } from './AppText.js'
