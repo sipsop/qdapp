@@ -26,7 +26,8 @@ import { config } from './Config.js'
     renderFinished = (barList) => {
         return <ScrollView style={{flex: 1}}>
             <BarMapView />
-            <View style={{flex: 1, marginTop: 10}}>
+            <View style={{flex: 1}}>
+                {/*
                 <T style={
                         { marginLeft: 10
                         , fontSize: 20
@@ -34,6 +35,7 @@ import { config } from './Config.js'
                         }}>
                     Nearby Bars
                 </T>
+                */}
                 {barList.slice(0, 3).map((bar, i) => <BarCard key={i} bar={bar} />)}
             </View>
         </ScrollView>

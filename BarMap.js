@@ -10,17 +10,23 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import MapView from 'react-native-maps'
-import merge from 'merge'
 
 import { PureComponent } from './Component.js'
+import { Map } from './Map.js'
+import { merge } from './Curry.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
-import { Map } from './Map.js'
+
 
 // Search:
 //
 // https://maps.googleapis.com/maps/api/geocode/json?&address=Cambridge,UK
 //
+
+const focusDelta = {
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+}
 
 class LocationStore {
     @observable region = {
@@ -32,7 +38,12 @@ class LocationStore {
 
     @observable currentMarker = null
 
-    @observable allMarkers = [
+    @action focusBar = (bar) => {
+        // this.region = merge(coords(bar), focusDelta)
+        this.currentMarker = bar
+    }
+
+    @observable barMarkers = [
         {
             id: '0',
             signedUp: false,
@@ -71,9 +82,6 @@ class LocationStore {
         }
     ]
 
-    @computed get markerMap() {
-        return asMap(this.allMarkers)
-    }
 }
 
 export const locationStore = new LocationStore()
@@ -95,21 +103,15 @@ export class BarMapView extends PureComponent {
     constructor(props) {
         super(props)
         this.mapRef = null
-        autorun(() => {
-            if (locationStore.currentMarker)
-                this.focusMap(locationStore.currentMarker)
-        })
     }
 
-
-    handleRegionChange = (region) => {
+    @action handleRegionChange = (region) => {
         locationStore.region = region
     }
 
-    focusMap = (marker) => {
-        if (!this.mapRef)
-            return
-        this.mapRef.animateToCoordinate(coords(marker))
+    @action handleMapPress = (value) => {
+        console.log("clearing current marker...")
+        locationStore.currentMarker = null
     }
 
     render = () => {
@@ -130,14 +132,17 @@ export class BarMapView extends PureComponent {
                 <MapView
                     ref={(mapRef) => {this.mapRef = mapRef}}
                     style={style}
+                    /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
                     showsUserLocation={true}
                     region={locationStore.region}
                     onRegionChange={this.handleRegionChange}
                     loadingEnabled={true}
+                    loadingIndicatorColor={config.theme.primary.medium}
+                    onPress={this.handleMapPress}
                     >
                 {
-                    locationStore.allMarkers.map(marker =>
-                        <MapMarker key={marker.id} marker={marker} />
+                    locationStore.barMarkers.map(bar =>
+                        <MapMarker key={bar.id} bar={bar} />
                     )
                 }
                 </MapView>
@@ -146,44 +151,59 @@ export class BarMapView extends PureComponent {
     }
 }
 
-const coords = (marker) => {
+const coords = (bar) => {
     return {
-        latitude: marker.address.lat,
-        longitude: marker.address.lon,
+        latitude: bar.address.lat,
+        longitude: bar.address.lon,
     }
 }
 
 class MapMarker extends PureComponent {
     /* properties:
-        marker: Marker
+        bar: schema.Bar
     */
     constructor(props) {
         super(props)
         this.markerRef = null
         autorun(() => {
-            if (locationStore.currentMarker) {
-                // this.markerRef.showCallout()
-            }
+            if (this.selected && this.markerRef)
+                this.markerRef.showCallout()
+            else if (this.markerRef)
+                this.markerRef.hideCallout()
         })
     }
 
-    @action handleMarkerSelect = () => {
-        locationStore.currentMarker = this.props.marker
+    @action handleMarkerPress = () => {
+        console.log("Setting currentMarker", this.props.bar.id)
+        locationStore.currentMarker = this.props.bar
+    }
+
+    @action handleCalloutPress = () => {
+        store.setBarID(this.props.bar.id)
+        store.setCurrentTab(1)
+    }
+
+    @computed get selected() {
+        if (!locationStore.currentMarker)
+            return false
+        console.log('isSelected', this.props.bar.id, this.props.bar.id === locationStore.currentMarker.id)
+        return this.props.bar.id === locationStore.currentMarker.id
     }
 
     render = () => {
-        const marker = this.props.marker
+        const bar = this.props.bar
         const description =
-            marker.signedUp
-                ? marker.desc
-                : marker.desc + "(menu unknown)"
+            bar.signedUp
+                ? bar.desc
+                : bar.desc + "(menu unknown)"
         return <MapView.Marker
             ref={markerRef => {this.markerRef = markerRef}}
-            coordinate={coords(marker)}
-            title={marker.name}
+            coordinate={coords(bar)}
+            title={bar.name}
             description={description}
-            pinColor={getMarkerColor(marker)}
-            onPress={this.handleMarkerSelect}
+            pinColor={getMarkerColor(bar)}
+            onPress={this.handleMarkerPress}
+            onCalloutPress={this.handleCalloutPress}
             />
     }
 }

@@ -22,6 +22,7 @@ import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { LargeButton } from './Button.js'
 import { T } from './AppText.js'
+import { locationStore } from './BarMap.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
 import { merge } from './Curry.js'
@@ -74,7 +75,9 @@ export class BarPageFetcher extends DownloadResultView {
     }
 
     handleFocusBarOnMap = () => {
-
+        console.log("Focussing bar...")
+        locationStore.focusBar(store.bar.value)
+        store.setCurrentTab(0)
     }
 
     refreshPage = () => {

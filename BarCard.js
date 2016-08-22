@@ -35,8 +35,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
     render = () => {
         const bar = this.props.bar
-        const viewHeight = 350
-        const imageHeight = 250
+        const imageHeight = 200
         const radius = 5
 
         // console.log("barcard: ", bar, bar.id, bar.name, bar.desc)
@@ -130,7 +129,8 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
     handlePress = () => {
         store.setCurrentTab(0)
-        locationStore.currentMarker = this.props.bar
+        locationStore.focusBar(this.props.bar)
+        // locationStore.currentMarker = this.props.bar
         // TODO: Scroll to top
     }
 
