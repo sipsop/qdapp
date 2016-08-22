@@ -229,6 +229,7 @@ export class BarPageFetcher extends DownloadResultView {
                         source={require('./logos/powered_by_google_on_white.png')}
                         style={{marginTop: 10}}
                         />
+                    {/* TODO: display additional attribution stuff here */}
                 </View>
             </ScrollView>
         )

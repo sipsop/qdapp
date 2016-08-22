@@ -539,6 +539,7 @@ export class OrderSelection extends PureComponent {
                     pickerItems={[this.amountPickerItem]}
                     onAcceptChanges={this.handleAcceptAmountChanges}
                     rowNumber={this.props.rowNumber}
+                    useListView={true}
                     />
             </View>
             <TouchableOpacity

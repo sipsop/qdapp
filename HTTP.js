@@ -15,6 +15,7 @@ import { config } from './Config.js'
 import { store } from './Store.js'
 
 const HOST = 'http://192.168.0.6:5000'
+// const HOST = 'http://10.147.18.19:5000'
 
 export class DownloadResult {
     // Download states
@@ -145,9 +146,10 @@ export const graphQL = (query, key) => {
         body: query,
     }
     /* TODO: This should try the cache first if the entry is not too old */
-    return downloadJSON(HOST + '/graphql', httpOptions)
+    return fetchJSON(HOST + '/graphql', httpOptions)
         .then((downloadResult) => {
             const data = downloadResult.value.data
+            /* Asynchronously update the cache */
             cache.set(key, data)
             downloadResult.value = data
             return downloadResult
@@ -159,7 +161,7 @@ export const graphQL = (query, key) => {
         })
 }
 
-export const downloadJSON = (url, httpOptions) => {
+export const fetchJSON = (url, httpOptions) => {
     return fetch(url, httpOptions).then((response) => {
         if (response.status !== 200) {
             throw Error(response.statusText)

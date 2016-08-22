@@ -25,6 +25,8 @@ import { TextButton, Button } from './Button.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
 
+const rowHeight = 55
+
 export class PickerItem {
     /* Attributes:
         title: str
@@ -65,6 +67,9 @@ export class PickerCollection extends PureComponent {
         pickerItems: [PickerItem]
         onAcceptChanges([PickerItem]) -> void
         rowNumber: int
+        useListView: bool
+            whether to use a ListView (many choices), or whether there should
+            be a single ScrollView
 
         showModal: bool
             whether to show the choice modal window the first time
@@ -113,34 +118,24 @@ export class PickerCollection extends PureComponent {
         this.closeModal()
     }
 
+    get showOkButton() {
+        return this.props.pickerItems.length > 1 ||
+               this.props.pickerItems[0].optionType !== 'Single'
+    }
+
     render = () => {
         const pickerItems = this.props.pickerItems
 
         var modal = undefined
         if (this.modalVisible) {
-            const showOkButton = pickerItems.length > 1 || pickerItems[0].optionType !== 'Single'
             modal = <OkCancelModal
-                    visible={this.modalVisible}
-                    cancelModal={this.cancelModal}
-                    okModal={this.okModal}
-                    showOkButton={showOkButton}
-                    >
-                {/*<ScrollView>*/}
-                    {
-                        pickerItems.map(
-                            (pickerItem, i) =>
-                                <PickerItemView
-                                    key={i}
-                                    itemNumber={i}
-                                    allSelectedOptions={this.selectedInModal}
-                                    pickerItem={pickerItem}
-                                    confirmImmediately={!showOkButton}
-                                    confirmSelection={this.okModal}
-                                    />
-                        )
-                    }
-                {/*</ScrollView>*/}
-              </OkCancelModal>
+                        visible={this.modalVisible}
+                        cancelModal={this.cancelModal}
+                        okModal={this.okModal}
+                        showOkButton={this.showOkButton}
+                        >
+                {this.renderItems()}
+            </OkCancelModal>
         }
 
         return <View style={{flex: 1, marginLeft: 5, marginRight: 5}}>
@@ -151,6 +146,24 @@ export class PickerCollection extends PureComponent {
                 rowNumber={this.props.rowNumber}
                 />
         </View>
+    }
+
+    renderItems = () => {
+        const result = this.props.pickerItems.map(
+            (pickerItem, i) =>
+                <PickerItemView
+                    key={i}
+                    itemNumber={i}
+                    allSelectedOptions={this.selectedInModal}
+                    pickerItem={pickerItem}
+                    confirmImmediately={!this.showOkButton}
+                    confirmSelection={this.okModal}
+                    useListView={this.props.useListView}
+                    />
+        )
+        if (this.props.useListView)
+            return result
+        return <ScrollView>{result}</ScrollView>
     }
 }
 
@@ -164,6 +177,7 @@ class PickerItemView extends PureComponent {
             whether to confirm the selection on a single press
         confirmSelection() -> void
             confirm a new selection by closing the modal
+        useListView: bool
     */
 
     @computed get selectedOptions() {
@@ -187,21 +201,26 @@ class PickerItemView extends PureComponent {
 
     render = () => {
         const pickerItem = this.props.pickerItem
+        const flex =
+            this.props.useListView ? 1 : 0
         return (
-            <View style={{flex: 1, justifyContent: 'center'}}>
-                <T style={
-                        { fontSize: 25
-                        , color: '#000'
-                        , textDecorationLine: 'underline'
-                        , marginLeft: 5
-                        }
-                    }>
-                    {pickerItem.title}
-                </T>
+            <View style={{flex: flex, alignItems: 'stretch'}}>
+                <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: config.theme.primary.medium, height: rowHeight}}>
+                    <T style={
+                            { fontSize: 25
+                            , color: '#fff'
+                            , textDecorationLine: 'underline'
+                            , marginLeft: 5
+                            }
+                        }>
+                        {pickerItem.title}
+                    </T>
+                </View>
                 <Selector
                         isSelected={this.isSelected}
                         onSelect={this.handleItemChange}
                         renderRow={this.renderRow}
+                        useListView={this.props.useListView}
                         >
                     {
                         pickerItem.labels.map(

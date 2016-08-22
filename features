@@ -1,3 +1,24 @@
+Maps -- https://developers.google.com/maps/get-started/
+====
+routing
+    - Directions API
+distance from current location
+    - Distance Matrix API
+autocompletion for places
+
+
+Dev docs:
+
+    https://developers.google.com/places/web-service/intro
+
+
+    Info:
+        - bar name
+        - opening times
+        - photos
+        - contact details
+
+
 menu button in menu page
 favourites tab
 bar news feed

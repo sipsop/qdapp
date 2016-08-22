@@ -32,6 +32,7 @@ export class Selector extends PureComponent {
         isSelected(i) -> bool
         onSelect(i) -> void
         renderRow(rowIndex) -> Component
+        useListView: bool
     */
 
     constructor(props) {
@@ -40,15 +41,31 @@ export class Selector extends PureComponent {
         this.dataSource = dataSource.cloneWithRows(_.range(children.length))
     }
 
+    get children() {
+        return makeList(this.props.children)
+    }
+
     render = () => {
+        if (this.props.useListView)
+            return this.renderListView()
+        return this.renderNormal()
+    }
+
+    renderListView = () => {
         return <ListView
                     dataSource={this.dataSource}
                     renderRow={this.renderSelectorItem}
                     />
     }
 
+    renderNormal = () => {
+        return <View>
+            {_.range(this.children.length).map(this.renderSelectorItem)}
+        </View>
+    }
+
     renderSelectorItem = (i) => {
-        const children = makeList(this.props.children)
+        const children = this.children
         return <SelectorItem
                     key={i}
                     rowNumber={i}

@@ -25,7 +25,7 @@ export class OkCancelModal extends Component {
             label="Cancel"
             onPress={this.props.cancelModal}
             primary={false}
-            style={{flex: 1, margin: 5, height: 60 }}
+            style={{flex: 1, margin: 5, height: 55 }}
             />
         var okButton = undefined
         if (this.props.showOkButton) {
@@ -45,7 +45,7 @@ export class OkCancelModal extends Component {
                 <View style={
                         { flexDirection: 'row'
                         , justifyContent: 'space-around'
-                        , marginBottom: 20
+                        , marginBottom: 10
                         }
                 }>
                     {cancelButton}
