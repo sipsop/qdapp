@@ -59,7 +59,7 @@ export class Selector extends PureComponent {
     }
 
     renderNormal = () => {
-        return <View>
+        return <View style={{alignItems: 'stretch'}}>
             {_.range(this.children.length).map(this.renderSelectorItem)}
         </View>
     }
@@ -106,19 +106,32 @@ class SelectorItem extends PureComponent {
             : undefined
 
         return (
-            <Button
-                    prominent={false}
-                    primary={primary}
+            // <Button
+            //         prominent={false}
+            //         primary={primary}
+            //         onPress={this.props.onPress}
+            //         style={{flex: 1, margin: 5}}
+            //     >
+            <TouchableOpacity
+                    style={
+                        { flex: 1
+                        , height: 55
+                        , borderBottomWidth: 0.5
+                        , borderBottomColor: config.theme.primary.medium
+                        }
+                    }
                     onPress={this.props.onPress}
-                    style={{flex: 1, margin: 5}}
-                >
-                <View style={{flex: 1, justifyContent: 'center'}}>
-                    {this.props.children}
+                    >
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        {this.props.children}
+                    </View>
+                    <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
+                        {icon}
+                    </View>
                 </View>
-                <View style={{width: 50, height: 50, justifyContent: 'center', alignItems: 'center'}}>
-                    {icon}
-                </View>
-            </Button>
+            </TouchableOpacity>
+            // </Button>
         )
     }
 

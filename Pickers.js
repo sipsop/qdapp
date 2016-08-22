@@ -203,9 +203,19 @@ class PickerItemView extends PureComponent {
         const pickerItem = this.props.pickerItem
         const flex =
             this.props.useListView ? 1 : 0
+        const backgroundColor =
+            this.props.itemNumber % 2 === 0
+                ? config.theme.primary.medium
+                : config.theme.primary.medium
         return (
             <View style={{flex: flex, alignItems: 'stretch'}}>
-                <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: config.theme.primary.medium, height: rowHeight}}>
+                <View style={
+                        { justifyContent: 'center'
+                        , alignItems: 'center'
+                        , backgroundColor: backgroundColor
+                        , height: rowHeight
+                        }
+                    }>
                     <T style={
                             { fontSize: 25
                             , color: '#fff'
