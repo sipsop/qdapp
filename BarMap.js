@@ -38,9 +38,17 @@ class LocationStore {
 
     @observable currentMarker = null
 
+    constructor() {
+        this.mapView = null
+    }
+
     @action focusBar = (bar) => {
-        // this.region = merge(coords(bar), focusDelta)
+        if (this.mapView) {
+            region = merge(coords(bar), focusDelta)
+            this.mapView.animateToRegion(region, 500)
+        }
         this.currentMarker = bar
+        store.switchToDiscoverPage(true)
     }
 
     @observable barMarkers = [
@@ -110,7 +118,6 @@ export class BarMapView extends PureComponent {
     }
 
     @action handleMapPress = (value) => {
-        console.log("clearing current marker...")
         locationStore.currentMarker = null
     }
 
@@ -130,7 +137,7 @@ export class BarMapView extends PureComponent {
         return (
             <View style={{flex: 0, height: 300}}>
                 <MapView
-                    ref={(mapRef) => {this.mapRef = mapRef}}
+                    ref={mapView => {locationStore.mapView = mapView}}
                     style={style}
                     /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
                     showsUserLocation={true}
@@ -195,7 +202,7 @@ class MapMarker extends PureComponent {
         const description =
             bar.signedUp
                 ? bar.desc
-                : bar.desc + "(menu unknown)"
+                : bar.desc + " (menu unknown)"
         return <MapView.Marker
             ref={markerRef => {this.markerRef = markerRef}}
             coordinate={coords(bar)}

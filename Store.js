@@ -35,11 +35,18 @@ export class Store {
             this.menuItemCache = new Map()
         })
         this.currentPage = 0
+        this.discoverScrollView = null
     }
 
     setCurrentTab = (i) => {
         this.currentPage = i
         this.tabView.goToPage(i)
+    }
+
+    switchToDiscoverPage = (scrollToTop) => {
+        this.setCurrentTab(0)
+        if (scrollToTop)
+            this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
     initialize = () => {
