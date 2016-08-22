@@ -193,20 +193,24 @@ class MapMarker extends PureComponent {
     @computed get selected() {
         if (!locationStore.currentMarker)
             return false
-        console.log('isSelected', this.props.bar.id, this.props.bar.id === locationStore.currentMarker.id)
         return this.props.bar.id === locationStore.currentMarker.id
     }
 
     render = () => {
         const bar = this.props.bar
+        const title =
+            bar.signedUp
+                ? bar.name
+                : bar.name + ' (menu unavailable)'
+
         const description =
             bar.signedUp
                 ? bar.desc
-                : bar.desc + " (menu unknown)"
+                : bar.desc
         return <MapView.Marker
             ref={markerRef => {this.markerRef = markerRef}}
             coordinate={coords(bar)}
-            title={bar.name}
+            title={title}
             description={description}
             pinColor={getMarkerColor(bar)}
             onPress={this.handleMarkerPress}
