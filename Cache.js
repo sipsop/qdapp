@@ -3,6 +3,8 @@ import { AsyncStorage } from 'react-native'
 import { NetworkError } from './HTTP.js'
 import { Hour, Day, Month, getTime } from './Time.js'
 import { promise, chunking } from './Curry.js'
+import { config } from './Config.js'
+
 
 const keyPrefix = 'qd:'
 const key = (args) => {
@@ -86,7 +88,6 @@ export class Storage {
         if (!blob) {
             throw new KeyError(key)
         }
-        console.log("Loading blob", blob)
         return CacheEntry.fromBlob(key, blob)
     }
 
@@ -100,11 +101,11 @@ class Cache {
         this.storage = storage
     }
 
-    async get(key, refreshCallback) {
+    async get(key, refreshCallback, expiredCallback) {
         var cacheEntry
         try {
             cacheEntry = await this.storage.get(key)
-            return await this.refreshIfNeeded(key, cacheEntry, refreshCallback)
+            return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback)
         } catch (e) {
             if (!(e instanceof KeyError))
                 throw e
@@ -113,12 +114,14 @@ class Cache {
         }
     }
 
-    async refreshIfNeeded(key, cacheEntry, refreshCallback) {
+    async refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback) {
         const now = getTime()
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
+            console.log("Reusing value from cache...", key)
             return cacheEntry.value
         } else {
+            console.log("Refreshing cache entry...", key)
             try {
                 cacheEntry = await this.refreshKey(key, refreshCallback)
                 return cacheEntry.value
@@ -127,6 +130,11 @@ class Cache {
                     throw e
                 if (cacheEntry.expiresAfter < now) {
                     // Entry has expired, re-throw network error
+                    if (expiredCallback) {
+                        console.log("Trying download again with expiredCallback...", key)
+                        cacheEntry = await this.refreshKey(key, expiredCallback)
+                        return cacheEntry.value
+                    }
                     throw e
                 }
                 // Entry should be refresh, but cannot currently be refreshed
@@ -167,6 +175,8 @@ class CacheEntry {
         this.value = value
         this.refreshAfter = refreshAfter
         this.expiresAfter = expiresAfter
+        if (!refreshAfter || !expiresAfter)
+            throw Error("Cannot construct cache entry without refreshAfter or expiresAfter")
     }
 
     toBlob = () => {
@@ -179,7 +189,12 @@ class CacheEntry {
 
     static fromBlob = (key, blob) => {
         const result = JSON.parse(blob)
-        if (!result.key || result.value == undefined) {
+        if (result.value == undefined || !result.refreshAfter || !result.expiresAfter) {
+            console.log("Invalid cache entry:",
+                            result.refreshAfter,
+                            result.expiresAfter,
+                            "value == undefined",
+                            result.value == undefined)
             throw Error("Invalid cache entry")
         }
         return new CacheEntry(
@@ -192,8 +207,8 @@ class CacheEntry {
 
     static freshEntry = (key, value) => {
         const now = getTime()
-        const refreshAfter = now + Day
-        const expiresAfter = now + Month
+        const refreshAfter = now + config.refreshAfterDelta
+        const expiresAfter = now + config.expiresAfterDelta
         return new CacheEntry(key, value, refreshAfter, expiresAfter)
     }
 }

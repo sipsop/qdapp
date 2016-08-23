@@ -4,6 +4,7 @@
 # from graphql.execution.middlewares.gevent import GeventExecutionMiddleware, run_in_greenlet
 from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
+import time
 import graphene
 
 # ID  = graphene.ID().NonNull
@@ -217,6 +218,7 @@ class Query(graphene.ObjectType):
     menuTags = graphene.Field(Tags)
 
     def resolve_bar(self, args, info):
+        time.sleep(8)
         id = args['id']
         if id != '1':
             raise ValueError("Expected id=1")

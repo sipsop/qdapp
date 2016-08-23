@@ -32,7 +32,6 @@ export class Store {
                 return
             this.menuItemOrders = menuItems.map(menuItem => [menuItem.id, []])
             this.menuItemOrdersMap = new Map(this.menuItemOrders)
-            this.menuItemCache = new Map()
         })
         this.currentPage = 0
         this.discoverScrollView = null
@@ -81,7 +80,7 @@ export class Store {
         })
     }
 
-    getBarInfo(barID, menu) {
+    async getBarInfo(barID, menu) {
         const menuQuery = !menu ? '' : `
             menu {
                 beer {
@@ -166,16 +165,15 @@ export class Store {
             }
             `
 
-            key = `bar=${barID}:menu=${menu}`
+            key = `qd:bar=${barID}:menu=${menu}`
             if (menuQuery)
                 query += fragments
-            return graphQL(query, key)
-                .then((downloadResult) => {
-                    return downloadResult.update((data) => data.bar)
-                })
+
+            const downloadResult = await graphQL(query, key)
+            return downloadResult.update((data) => data.bar)
     }
 
-    setBarID(barID) {
+    async setBarID(barID) {
         if (this.bar.value && this.bar.value.id === barID) {
             /* All done */
             return
@@ -184,23 +182,18 @@ export class Store {
             this.bar = emptyResult().downloadStarted()
             this.barID = barID
         })
-        return this.getBarInfo(barID, true)
-            .then((downloadResult) => {
-                try {
-                    if (this.barID === barID) {
-                        /* NOTE: a user may have selected a different bar
-                                 before this download has completed, in
-                                 which case we should ignore the download.
-                        */
-                        this.bar = downloadResult
-                    }
-                } catch (err) {
-                    console.log(err)
-                }
-            })
-            .catch((error) => {
-                this.bar = emptyResult().downloadError(error.message)
-            })
+        try {
+            const downloadResult = await this.getBarInfo(barID, true)
+            if (this.barID === barID) {
+                /* NOTE: a user may have selected a different bar
+                         before this download has completed, in
+                         which case we should ignore the download.
+                */
+                this.bar = downloadResult
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     setBarList = (location) => {

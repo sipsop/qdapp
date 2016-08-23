@@ -17,7 +17,13 @@ import { store } from './Store.js'
 const HOST = 'http://192.168.0.6:5000'
 // const HOST = 'http://10.147.18.19:5000'
 
-class NetworkError {
+export class TimeoutError {
+    constructor(message) {
+        this.message = "Downloading is taking too long, please try again later."
+    }
+}
+
+export class NetworkError {
     constructor(message) {
         this.message = message
     }
@@ -142,7 +148,7 @@ export const emptyResult = () => new DownloadResult()
 }
 
 /* Execute a GraphQL query */
-export const graphQL = (query, key) => {
+export async function graphQL(query, key) {
     const httpOptions = {
         method: 'POST',
         headers: {
@@ -151,29 +157,89 @@ export const graphQL = (query, key) => {
         },
         body: query,
     }
-    /* TODO: This should try the cache first if the entry is not too old */
-    return fetchJSON(HOST + '/graphql', httpOptions)
-        .then((downloadResult) => {
-            const data = downloadResult.value.data
-            /* Asynchronously update the cache */
-            cache.set(key, data)
-            downloadResult.value = data
-            return downloadResult
-        })
-        .catch(error => {
-            console.log("Loading from cache...", error)
-            return cache.get(key)
-                .then(data => emptyResult().downloadFinished(data))
-        })
+    return await fetchJSON(key, HOST + '/graphql', httpOptions)
 }
 
-export const fetchJSON = (url, httpOptions) => {
-    return fetch(url, httpOptions).then((response) => {
-        if (response.status !== 200) {
-            throw Error(response.statusText)
-        }
-        return response.json()
-    }).then((jsonDoc) => {
-        return emptyResult().downloadFinished(jsonDoc)
-    })
+export async function fetchJSON(key, url, httpOptions) {
+    return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
+
+export async function fetchJSONWithTimeouts(
+        key,
+        url,
+        httpOptions,
+        refreshTimeout,
+        expiredTimeout,
+        ) {
+
+    async function refreshCallback() {
+        return await _fetchJSON(url, httpOptions, refreshTimeout)
+    }
+    async function expiredCallback() {
+        return await _fetchJSON(url, httpOptions, expiredTimeout)
+    }
+
+    try {
+        const result = await cache.get(key, refreshCallback, /*expiredCallback*/)
+        return emptyResult().downloadFinished(result.data)
+    } catch (e) {
+        if (e instanceof NetworkError || e instanceof TimeoutError)
+            return emptyResult().downloadError(e.message)
+        console.error(e)
+        return undefined
+    }
+}
+
+async function _fetchJSON(url, httpOptions, downloadTimeout) {
+    var response
+    try {
+        // TODO: Use timeout?
+        // response = await timeout(downloadTimeout, () => fetch(url, httpOptions))
+        response = await fetch(url, httpOptions)
+    } catch (err) {
+        throw new NetworkError(err.message)
+    }
+    if (response.status !== 200) {
+        throw new NetworkError(response.statusText)
+    }
+    return await response.json()
+}
+
+
+/************/
+/* Promises */
+/************/
+
+/* Set a timeout for an asynchronous callback */
+export function timeout(timeout, callback) {
+    async function runPromise(resolve, reject) {
+        const flag = { done: false }
+
+        /* Set timeout */
+        setTimeout(() => {
+            if (!flag.done)
+                reject(new TimeoutError())
+        }, timeout)
+
+        /* Invoke callback and wait for result */
+        try {
+            const result = await callback()
+            if (!flag.done) {
+                resolve(result)
+                flag.done = true
+            }
+        } catch (err) {
+            flag.done = true
+            reject(err)
+        }
+    }
+    return new Promise(runPromise)
+}
+
+const promise = f => new Promise((resolve, reject) => {
+    try {
+        resolve(f())
+    } catch (err) {
+        reject(err)
+    }
+})

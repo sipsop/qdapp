@@ -1,3 +1,5 @@
+import { Second, Minute, Hour, Day, Month } from './Time.js'
+
 const pink400 = '#EC407A'
 const pink500 = '#E91E63'
 const pink700 = '#C2185B'
@@ -31,5 +33,10 @@ export const config = {
     theme: {
         primary:    pinkPalette,
         secondary:  purplePalette,
-    }
+    },
+    /* TODO: CHANGE THESE FOR PRODUCTION */
+    // refreshAfterDelta: Day,
+    refreshAfterDelta: Second * 30,
+    // expiresAfterDelta: Month,
+    expiresAfterDelta: Minute * 2,
 }
