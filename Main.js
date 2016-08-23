@@ -17,6 +17,7 @@ import { BarPage } from './BarPage.js'
 import { MenuPage } from './MenuPage.js'
 import { OrderPage } from './OrderPage.js'
 import { store } from './Store.js'
+import { cache } from './Cache.js'
 
 @observer export class Main extends Component {
 

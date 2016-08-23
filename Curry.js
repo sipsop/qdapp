@@ -26,6 +26,22 @@ const copyObject = (src, dst) => {
     })
 }
 
+/*
+    >>> chunking([1, 2, 3, 4, 5], 2)
+    [[1, 2], [3, 4], [5]]
+*/
+export const chunking = (xs, n) => {
+    result = []
+    for (var i = 0; i < xs.length; i+=n) {
+        const chunk = []
+        for (var j = 0; j < n && i + j < xs.length; j++) {
+            chunk.push(xs[i + j])
+        }
+        result.push(chunk)
+    }
+    return result
+}
+
 export function compose(f, g) {
     return (x) => f(g(x))
 }
@@ -202,3 +218,41 @@ export const equals = (val1, val2) => {
         }
     })
 }
+
+/************/
+/* Promises */
+/************/
+
+/* Set a timeout for an asynchronous callback */
+export function timeout(timeout, callback) {
+    async function runPromise(resolve, reject) {
+        const flag = { done: false }
+
+        /* Set timeout */
+        setTimeout(() => {
+            if (!flag.done)
+                reject(new TimeoutError())
+        }, timeout)
+
+        /* Invoke callback and wait for result */
+        try {
+            const result = await callback()
+            if (!flag.done) {
+                resolve(result)
+                flag.done = true
+            }
+        } catch (err) {
+            flag.done = true
+            reject(err)
+        }
+    }
+    return new Promise(runPromise)
+}
+
+const promise = f => new Promise((resolve, reject) => {
+    try {
+        resolve(f())
+    } catch (err) {
+        reject(err)
+    }
+})
