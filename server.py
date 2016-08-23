@@ -218,7 +218,7 @@ class Query(graphene.ObjectType):
     menuTags = graphene.Field(Tags)
 
     def resolve_bar(self, args, info):
-        time.sleep(8)
+        # time.sleep(8)
         id = args['id']
         if id != '1':
             raise ValueError("Expected id=1")

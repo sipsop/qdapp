@@ -147,22 +147,110 @@ export const emptyResult = () => new DownloadResult()
     }
 }
 
-/* Execute a GraphQL query */
-export async function graphQL(query, key) {
-    const httpOptions = {
-        method: 'POST',
-        headers: {
-            // 'Accept': 'application/json',
-            'Content-Type': 'application/graphql',
-        },
-        body: query,
+class DownloadManager {
+
+    constructor() {
+        this.activeDownloads = []
     }
-    return await fetchJSON(key, HOST + '/graphql', httpOptions)
+
+    /* Execute a GraphQL query */
+    async graphQL(
+            key,          /* key used for caching responses */
+            query,        /* GraphQL query string to execute */
+            isRelevantCB, /* Callback that decides whether the download is still relevant */
+        ) : DownloadResult {
+        const httpOptions = {
+            method: 'POST',
+            headers: {
+                // 'Accept': 'application/json',
+                'Content-Type': 'application/graphql',
+            },
+            body: query,
+        }
+        return await fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+    }
+
+    /* HTTP GET/POST/etc to a URL */
+    async fetchJSON(
+            key,            /* key used for caching responses */
+            url,            /* URL to fetch */
+            httpOptions,    /* HTTP options to pass to fetch() */
+            isRelevantCB,   /* Callback that decides whether the download is still relevant */
+        ) : DownloadResult {
+        /* Remove any potential download with the same key that is still pending */
+        this.activeDownloads = this.activeDownloads.filter(
+            download => download.key !== key
+        )
+
+        /* Try a fresh download... */
+        const downloadresult = await fetchJSONWithTimeouts(
+                        key, url, httpOptions, 5000, 12000)
+        if (downloadResult.state === DownloadResult.Error && isRelevantCB) {
+            /* There as been some error, try again later */
+            this.activeDownloads.push(new JSONDownload(
+                key, url, httpOptions, downloadResult, isRelevantCB))
+        }
+        return downloadResult
+    }
+
+    /* Retry all pending downloads */
+    async retryDownloads() {
+        /* Concurrently retry all downloads that are still needed */
+        const promises = []
+        for (var i = 0; i < this.activeDownloads.length; i++) {
+            const download = this.activeDownloads[i]
+            if (download.isRelevant()) {
+                promises.push({index: i, promise: download.retryFetchJSON()})
+            }
+        }
+
+        /* Wait for promises to finish */
+        const activeDownloads = []
+        for (var i = 0; i < promises.length; i++) {
+            const {index, promise} = promises[i]
+            try {
+                await promise
+            } catch (e) {
+                if (isNetworkError(e)) {
+                    /* Retry this later... */
+                    activeDownloads.push(this.activeDownloads[index])
+                } else {
+                    /* This is an actual error, re-throw */
+                    throw e
+                }
+            }
+        }
+
+        /* Update the list of active downloads */
+        this.activeDownloads = activeDownloads
+    }
 }
+
+export const downloadManager = new DownloadManager()
+
+class JSONDownload {
+    constructor(key, url, httpOptions, downloadResult, isRelevant) {
+        this.key = key
+        this.url = url
+        this.httpOptions = httpOptions
+        this.downloadResult = downloadResult
+        this.isRelevant = isRelevant
+    }
+
+    async retryFetchJSON() {
+        const downloadResult = await fetchJSON(this.key, this.url, this.httpOptions)
+        this.downloadResult.update(_ => downloadResult.value)
+    }
+
+}
+
 
 export async function fetchJSON(key, url, httpOptions) {
     return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
+
+const isNetworkError =
+    e => e instanceof NetworkError || e instanceof TimeoutError
 
 export async function fetchJSONWithTimeouts(
         key,
@@ -183,7 +271,7 @@ export async function fetchJSONWithTimeouts(
         const result = await cache.get(key, refreshCallback, /*expiredCallback*/)
         return emptyResult().downloadFinished(result.data)
     } catch (e) {
-        if (e instanceof NetworkError || e instanceof TimeoutError)
+        if (isNetworkError(e))
             return emptyResult().downloadError(e.message)
         console.error(e)
         return undefined

@@ -14,7 +14,7 @@ import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store } from './Store.js'
-import { DownloadResult, DownloadResultView, emptyResult, graphQL } from './HTTP.js'
+import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
 import { all, any } from './Curry.js'
 
 const tagQuery = `
@@ -89,7 +89,7 @@ export class TagStore {
 
     fetchTags = () => {
         this.tagDownloadResult.downloadStarted()
-        graphQL(tagQuery, "tags")
+        downloadManager.graphQL('qd:tags', tagQuery)
             .then((downloadResult) => {
                 try {
                     this.tagDownloadResult = downloadResult.update(data => data.menuTags)

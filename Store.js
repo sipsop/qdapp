@@ -1,6 +1,6 @@
 import { observable, transaction, computed, autorun, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
-import { emptyResult, graphQL } from './HTTP.js'
+import { emptyResult, downloadManager } from './HTTP.js'
 import _ from 'lodash'
 
 export class Store {
@@ -169,7 +169,8 @@ export class Store {
             if (menuQuery)
                 query += fragments
 
-            const downloadResult = await graphQL(query, key)
+            isRelevant = () => barID === this.barID
+            const downloadResult = await downloadManager.graphQL(key, query)
             return downloadResult.update((data) => data.bar)
     }
 
