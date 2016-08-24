@@ -28,7 +28,7 @@ export class Store {
         this.barList = emptyResult()
         autorun(() => {
             const menuItems = this.allMenuItems
-            if (!menuItems)
+            if (menuItems.length === 0)
                 return
             this.menuItemOrders = menuItems.map(menuItem => [menuItem.id, []])
             this.menuItemOrdersMap = new Map(this.menuItemOrders)
@@ -57,7 +57,7 @@ export class Store {
     @computed get allMenuItems() {
         const bar = this.bar.value
         if (!bar || !bar.menu)
-            return undefined
+            return []
 
         const menu  = store.bar.value.menu
         const subMenus = (
