@@ -75,7 +75,6 @@ export class BarPageFetcher extends DownloadResultView {
     }
 
     handleFocusBarOnMap = () => {
-        console.log("Focussing bar...")
         locationStore.focusBar(store.bar.value)
         store.setCurrentTab(0)
     }
@@ -107,7 +106,6 @@ export class BarPageFetcher extends DownloadResultView {
         return (
             <ScrollView>
                 <ImageSwiper
-                    /* showButtons={true} */
                     height={imageHeight}
                     autoplay={this.autoplay}
                     autoplayTimeout={timeout}

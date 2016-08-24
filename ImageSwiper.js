@@ -33,15 +33,17 @@ export class ImageSwiper extends Component {
     render = () => {
         const dot = <View style={dotStyles.dotStyle} />
         const activeDot = <View style={dotStyles.activeDotStyle} />
-        const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
-        const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
+        // const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
+        // const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
         return <Swiper
                     showsButtons={this.props.showButtons}
                     height={this.props.height}
                     dot={dot}
                     activeDot={activeDot}
+                    /*
                     prevButton={prevButton}
                     nextButton={nextButton}
+                    */
                     width={this.props.width}
                     autoplay={this.props.autoplay}
                     autoplayTimeout={this.props.autoplayTimeout}

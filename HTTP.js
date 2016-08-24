@@ -238,6 +238,7 @@ class JSONDownload {
     }
 
     async retryFetchJSON() {
+        this.downloadResult.downloadStarted()
         const downloadResult = await fetchJSON(this.key, this.url, this.httpOptions)
         this.downloadResult.update(_ => downloadResult.value)
     }

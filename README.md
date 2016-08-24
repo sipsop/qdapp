@@ -117,6 +117,10 @@ See also:
 
     https://js.coach/react-native/react-native-carousel?search=carousel
 
+and
+
+    http://www.reactnative.com/best-react-native-components-so-far-while-we-wait-for-android/
+
 ### Intro Screen
 
 https://www.npmjs.com/package/react-native-viewpager

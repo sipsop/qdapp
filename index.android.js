@@ -41,9 +41,6 @@ class App extends Component {
 
 store.barList.downloadStarted()
 store.initialize()
-    // .then(() => {
-    //     store.setBarID("1")
-    // })
 AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing

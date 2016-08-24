@@ -1,5 +1,18 @@
 import _ from 'lodash'
 
+export const logErrors = callback => {
+    try {
+        callback()
+    } catch (err) {
+        logError(err)
+    }
+}
+
+export const logError = err => {
+    // TODO: Crashlytics etc
+    console.error(err)
+}
+
 export const makeList = (xs) => {
     if (Array.isArray(xs))
         return xs

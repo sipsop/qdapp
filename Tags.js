@@ -15,7 +15,7 @@ import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store } from './Store.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
-import { all, any } from './Curry.js'
+import { logErrors, all, any } from './Curry.js'
 
 const tagQuery = `
     query tags {
@@ -87,19 +87,13 @@ export class TagStore {
         this.tagSelectionHistory = new Map()
     }
 
-    fetchTags = () => {
+    async fetchTags() {
         this.tagDownloadResult.downloadStarted()
-        downloadManager.graphQL('qd:tags', tagQuery)
-            .then((downloadResult) => {
-                try {
-                    this.tagDownloadResult = downloadResult.update(data => data.menuTags)
-                } catch (err) {
-                    console.error(err)
-                }
-            })
-            .catch((error) => {
-                this.tagDownloadResult.downloadError(error.message)
-            })
+        const isRelevant = () => true /* Outdated tags should always be updated! */
+        const downloadResult = await downloadManager.graphQL('qd:tags', tagQuery, isRelevant)
+        logErrors(() => {
+            this.tagDownloadResult = downloadResult.update(data => data.menuTags)
+        })
     }
 
     @computed get tags() {
