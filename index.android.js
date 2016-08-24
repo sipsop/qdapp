@@ -23,10 +23,10 @@ import Swiper from 'react-native-swiper'
 import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+
 // import PickerAndroid from 'react-native-picker-android';
 import MapView from 'react-native-maps'
-import merge from 'merge'
-
+import { handleBackButton } from './Backbutton.js'
 import { Main } from './Main.js'
 import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
@@ -38,6 +38,8 @@ class App extends Component {
         return <Main />
     }
 }
+
+handleBackButton()
 
 store.barList.downloadStarted()
 store.initialize()

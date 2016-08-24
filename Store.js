@@ -32,6 +32,7 @@ export class Store {
     constructor() {
         this.bar     = emptyResult()
         this.barList = emptyResult()
+        this.history = []
         autorun(() => {
             if (this.allMenuItems.length === 0)
                 return
@@ -50,7 +51,16 @@ export class Store {
     canSetTab = () => !!this.tabView
 
     @action setCurrentTab = (i) => {
-        this.currentPage = i
+        if (this.currentPage !== i) {
+            this.history.push(this.currentPage)
+            this.currentPage = i
+        }
+    }
+
+    gotoPreviousTab = () => {
+        if (this.history.length) {
+            this.currentPage = this.history.pop()
+        }
     }
 
     getOrderList = (menuItemID) => {

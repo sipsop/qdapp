@@ -31,7 +31,9 @@ import { cache } from './Cache.js'
                 /*page={store.currentTab}*/
                 onChangeTab={
                     changeEvent => {
-                        store.currentPage = changeEvent.i
+                        // store.currentPage = changeEvent.i
+                        console.log("CHANGE EVENT")
+                        store.setCurrentTab(changeEvent.i)
                     }
                 }>
             <View tabLabel='Discover' style={{flex: 1}}>
