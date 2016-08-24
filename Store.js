@@ -1,9 +1,11 @@
 import { observable, transaction, computed, autorun, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
+import _ from 'lodash'
+
+import { OrderItem } from './Orders.js'
 import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
 import { logErrors, logError } from './Curry.js'
-import _ from 'lodash'
 
 export class Store {
 
@@ -22,7 +24,7 @@ export class Store {
     // ScrollableTabView
     @observable tabView = null
     @observable currentPage = 0
-    @observable initialized = true
+    @observable initialized = false
 
     @observable menuItemOrders = null
     // @observable menuItemOrdersMap = null // observable maps don't seem to work...
@@ -31,11 +33,11 @@ export class Store {
         this.bar     = emptyResult()
         this.barList = emptyResult()
         autorun(() => {
-            const menuItems = this.allMenuItems
-            if (menuItems.length === 0)
+            if (this.allMenuItems.length === 0)
                 return
-            this.menuItemOrders = menuItems.map(menuItem => [menuItem.id, []])
-            this.menuItemOrdersMap = new Map(this.menuItemOrders)
+            this.setOrderList(
+                this.allMenuItems.map(menuItem => [menuItem.id, []])
+            )
         })
         autorun(() => {
             /* Set the currentPage whenever the TabView is ready */
@@ -49,6 +51,27 @@ export class Store {
 
     @action setCurrentTab = (i) => {
         this.currentPage = i
+    }
+
+    getOrderList = (menuItemID) => {
+        for (var i = 0; i < this.menuItemOrders.length; i++) {
+            const item = this.menuItemOrders[i]
+            if (item[0] == menuItemID) {
+                const orderList = item[1]
+                return orderList
+            }
+        }
+        console.log(menuItemID, typeof(menuItemID))
+        this.menuItemOrders.forEach(order => {
+            console.log("MenuItemOrder seen:", order.id, typeof(order.id), order)
+        })
+        throw Error(`MenuItemID ${menuItemID} (${typeof(menuItemID)}) not found`)
+
+    }
+
+    setOrderList = (menuItemOrders) => {
+        console.log("Set order list...", menuItemOrders)
+        this.menuItemOrders = menuItemOrders
     }
 
     switchToDiscoverPage = (scrollToTop) => {
@@ -100,7 +123,7 @@ export class Store {
 
     @computed get menuItemsOnOrder() {
         return this.allMenuItems.filter(menuItem => {
-            const orderItems = store.menuItemOrdersMap.get(menuItem.id)
+            const orderItems = this.getOrderList(menuItem.id)
             return orderItems.length > 0
         })
     }
@@ -234,10 +257,16 @@ export class Store {
         const defaultState = {
             barID: null,
             currentPage: 0,
+            menuItemOrders: null,
         }
-        const savedState = await cache.get('qd:state', () => defaultState)
-        if (savedState) {
-            this.restoreState(savedState)
+        try {
+            const savedState = await cache.get('qd:state', () => defaultState)
+            if (savedState) {
+                console.log("Restoring state...", savedState)
+                this.restoreState(savedState)
+            }
+        } catch (err) {
+            logError(err)
         }
     }
 
@@ -245,15 +274,38 @@ export class Store {
         if (state.barID) {
             await this.setBarID(state.barID)
         }
-        if (state.currentPage != undefined)
-            this.setCurrentTab(state.currentPage)
+        transaction(() => {
+            if (state.currentPage)
+                this.setCurrentTab(state.currentPage)
+            if (state.menuItemOrders) {
+                console.log("MENU ITEM ORDERS", state.menuItemOrders)
+                const menuItemOrders = state.menuItemOrders.map(
+                    item => {
+                        const menuItemID = item[0]
+                        const orderItemsJSON = item[1]
+                        const orderItems = orderItemsJSON.map(orderItemJSON => {
+                            const orderItem = new OrderItem(orderItemJSON.menuItem)
+                            orderItem.amount = orderItemJSON.amount
+                            orderItem.selectedOptions = orderItemJSON.selectedOptions
+                            orderItem.showModal = false
+                            return orderItem
+                        })
+                        return [menuItemID, orderItems]
+                    }
+                )
+                this.setOrderList(menuItemOrders)
+            }
+        })
     }
+
 
     async saveToLocalStorage() {
         const state = {
             barID: this.barID,
             currentPage: this.currentPage,
+            menuItemOrders: this.menuItemOrders,
         }
+        console.log("Saving state...", state)
         await cache.set('qd:state', state)
     }
 }

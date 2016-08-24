@@ -1,52 +1,39 @@
-import { observable } from 'mobx'
+import { observable, computed } from 'mobx'
+import _ from 'lodash'
+import shortid from 'shortid'
+
+import { Price, sumPrices } from './Price.js'
+import { updateSelection } from './Selection.js'
+
+/* getMenuItemDefaultOptions : [schema.MenuItemOption] -> [Int] */
+const getMenuItemDefaultOptions = (menuItemOption) => {
+    if (menuItemOption.defaultOption == undefined)
+        return []
+    return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
+}
 
 export class OrderItem {
+    @observable amount : number = 1
+    @observable selectedOptions = null
 
-    @observable drinkID
-    @observable size
-    @observable opts
-    @observable count
+    constructor(menuItem) {
+        this.id = shortid.generate()
+        this.menuItem = menuItem
+        // e.g. [[0], [], [1, 3]]
+        this.selectedOptions = menuItem.options.map(getMenuItemDefaultOptions)
+        this.currency = menuItem.price.currency
+        this.showModal = true
+    }
 
-    constructor(drinkID, size, opts, count) {
-        this.drinkID = drinkID
-        this.size = size    // str, e.g. 'pint', 'half-pint', 'glass', 'bottle', etc
-        this.opts = opts    // [str], e,g. ["shandy"]
-        this.count = count  // int, number of drinks to order
+    /* Compute the price for all the selected options */
+    @computed get subTotal() {
+        const allPrices = _.zipWith(this.menuItem.options, this.selectedOptions,
+            (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
+        )
+        return sumPrices(_.flatten(allPrices))
+    }
+
+    @computed get total() {
+        return this.subTotal * this.amount
     }
 }
-
-export class OrderList {
-    @observable orders = asMap()
-
-    getOrder = (drinkID) => {
-        return this.orders.get(drinkID)
-    }
-
-    /* Add an item to the order list */
-    export const addOrder = (drinkID, orderItem) => {
-        var items = this.orders.get(drinkID)
-        if (items === undefined) {
-            items = []
-            this.orders.set(drinkID, items)
-        }
-        items.push(orderItem)
-        this.orders.set(drinkID, items)
-    }
-
-    /* Simplify order list by removing entries with a 0 count */
-    export const simplifyOrders = () => {
-        this.orders.forEach((orderItems, drinkID) => {
-            orderItems = orderItems.filter((orderItem) => {
-                return orderItem.count > 0
-            })
-            this.orders.set(drinkID, orderItems)
-        })
-    }
-
-    /* Remove any items from the order list */
-    export const clearOrders = () => {
-        this.orders.clear()
-    }
-}
-
-export const orderList = new OrderList()

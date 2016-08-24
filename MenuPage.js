@@ -21,8 +21,8 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { OrderItem } from './Orders.js'
 import { BarPageFetcher } from './BarPage.js'
-import { updateSelection } from './Selection.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Price, sumPrices } from './Price.js'
@@ -94,7 +94,7 @@ export class MenuItem extends PureComponent {
     constructor(props) {
         super(props)
         this.defaultOrderItem = new OrderItem(props.menuItem)
-        this.orderItems = store.menuItemOrdersMap.get(this.props.menuItem.id)
+        this.orderItems = store.getOrderList(this.props.menuItem.id)
     }
 
     hasDefaultOptions = (orderItem) => {
@@ -180,7 +180,6 @@ class OrderList extends PureComponent {
             , marginLeft: 5
             , marginRight: 5
             }
-
         return <View>
             <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
@@ -262,39 +261,6 @@ class PriceEntry extends PureComponent {
             </View>
         )
     }
-}
-
-class OrderItem {
-    @observable amount : number = 1
-    @observable selectedOptions = null
-
-    constructor(menuItem) {
-        this.id = shortid.generate()
-        this.menuItem = menuItem
-        // e.g. [[0], [], [1, 3]]
-        this.selectedOptions = menuItem.options.map(getMenuItemDefaultOptions)
-        this.currency = menuItem.price.currency
-        this.showModal = true
-    }
-
-    /* Compute the price for all the selected options */
-    @computed get subTotal() {
-        const allPrices = _.zipWith(this.menuItem.options, this.selectedOptions,
-            (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
-        )
-        return sumPrices(_.flatten(allPrices))
-    }
-
-    @computed get total() {
-        return this.subTotal * this.amount
-    }
-}
-
-/* getMenuItemDefaultOptions : [schema.MenuItemOption] -> [Int] */
-const getMenuItemDefaultOptions = (menuItemOption) => {
-    if (menuItemOption.defaultOption == undefined)
-        return []
-    return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
 }
 
 @observer
