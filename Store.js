@@ -22,6 +22,7 @@ export class Store {
     // ScrollableTabView
     @observable tabView = null
     @observable currentPage = 0
+    @observable initialized = true
 
     @observable menuItemOrders = null
     // @observable menuItemOrdersMap = null // observable maps don't seem to work...
@@ -60,7 +61,8 @@ export class Store {
     initialize = () => {
         this._initialize()
         autorun(() => {
-            this.saveToLocalStorage()
+            if (this.initialized)
+                this.saveToLocalStorage()
         })
     }
 
@@ -68,6 +70,10 @@ export class Store {
         try {
             await this.loadFromLocalStorage()
             await this.setBarList()
+            // Wait 5 seconds before saving any changes to disk
+            setTimeout(() => {
+                this.initialized = true
+            }, 5000)
         } catch (err) {
             logError(err)
         }
