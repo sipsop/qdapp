@@ -6,6 +6,7 @@ import {
 import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
+import { Page } from './Page.js'
 import { BarMapView } from './BarMap.js'
 import { BarCard } from './BarCard.js'
 import { DownloadResultView } from './HTTP.js'
@@ -14,7 +15,8 @@ import { store } from './Store.js'
 import { config } from './Config.js'
 
 
-@observer export class DiscoverPage extends DownloadResultView {
+@observer
+export class DiscoverPage extends DownloadResultView {
     constructor(props) {
         super(props, "Error downloading list of bars:")
     }
@@ -28,6 +30,17 @@ import { config } from './Config.js'
     }
 
     renderFinished = (barList) => {
+        return <DiscoverView barList={barList} />
+    }
+}
+
+@observer
+export class DiscoverView extends Page {
+    /* properties:
+        barList: [schema.Bar]
+    */
+    renderView = () => {
+        const barList = this.props.barList
         return (
             <ScrollView style={{flex: 1}} ref={this.saveScrollView}>
                 <BarMapView />

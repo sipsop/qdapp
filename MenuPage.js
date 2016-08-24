@@ -21,6 +21,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { Page } from './Page.js'
 import { OrderItem } from './Orders.js'
 import { BarPageFetcher } from './BarPage.js'
 import { PureComponent } from './Component.js'
@@ -39,7 +40,12 @@ import { config } from './Config.js'
 
 @observer
 export class MenuPage extends BarPageFetcher {
-    renderFinished = (bar) => {
+    renderFinished = (bar) => <MenuView />
+}
+
+@observer
+export class MenuView extends Page {
+    render = () => {
         return <View style={{flex: 1}}>
             <ScrollView style={{flex: 1}}>
                 <TagView>

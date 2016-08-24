@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { DownloadResultView } from './HTTP.js'
+import { Page } from './Page.js'
 import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
@@ -94,7 +95,15 @@ export class BarPageFetcher extends DownloadResultView {
                 />
         </View>
 
-    renderFinished = (bar) => {
+    renderFinished = (bar) => <BarView bar={bar} />
+}
+
+class BarView extends Page {
+    /* properties:
+        bar: schema.Bar
+    */
+    renderView = () => {
+        const bar = this.props.bar
         const imageHeight = 300
         const timeout = 3.0 // switch to next image after 3 seconds
         if (this.autoplay) {
