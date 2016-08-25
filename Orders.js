@@ -4,6 +4,7 @@ import shortid from 'shortid'
 
 import { Price, sumPrices } from './Price.js'
 import { updateSelection } from './Selection.js'
+import { store } from './Store.js'
 
 /* getMenuItemDefaultOptions : [schema.MenuItemOption] -> [Int] */
 const getMenuItemDefaultOptions = (menuItemOption) => {
@@ -53,3 +54,45 @@ export class OrderItem {
         return orderItem
     }
 }
+
+class OrderStore {
+    
+    stateChanged = (prevState, nextState) => {
+        return !_.isEqual(prevState, nextState)
+    }
+
+    getState = () => {
+        if (!store.menuItemOrders)
+            return null
+
+        return store.menuItemOrders.map(
+            item => {
+                const menuItemID = item[0]
+                const orderItems = item[1]
+                const orderItemsJSON = orderItems.map(
+                    orderItem => orderItem.toJSON()
+                )
+                return [menuItemID, orderItemsJSON]
+            }
+        )
+    }
+
+    setState = (state) => {
+        if (!state)
+            return
+
+        const menuItemOrders = state.map(
+            item => {
+                const menuItemID = item[0]
+                const orderItemsJSON = item[1]
+                const orderItems = orderItemsJSON.map(
+                    orderItemJSON => OrderItem.fromJSON(orderItemJSON)
+                )
+                return [menuItemID, orderItems]
+            }
+        )
+        store.setOrderList(menuItemOrders)
+    }
+}
+
+export const orderStore = new OrderStore()

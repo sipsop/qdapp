@@ -6,6 +6,7 @@ import { OrderItem } from './Orders.js'
 import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
 import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
+import { orderStore } from './Orders.js'
 
 export class Store {
 
@@ -81,6 +82,7 @@ export class Store {
     }
 
     setOrderList = (menuItemOrders) => {
+        console.log("SET MENU ITEM ORDERS", menuItemOrders)
         this.menuItemOrders = menuItemOrders
     }
 
@@ -247,7 +249,7 @@ export class Store {
         const defaultState = {
             barID: null,
             currentPage: 0,
-            menuItemOrders: null,
+            orderState: null,
         }
         try {
             const savedState = await cache.get('qd:state', () => defaultState)
@@ -279,18 +281,8 @@ export class Store {
                     this.setCurrentTab(state.currentPage)
                 }
             }
-            if (state.menuItemOrders) {
-                const menuItemOrders = state.menuItemOrders.map(
-                    item => {
-                        const menuItemID = item[0]
-                        const orderItemsJSON = item[1]
-                        const orderItems = orderItemsJSON.map(orderItemJSON => {
-                            return OrderItem.fromJSON(orderItemJSON)
-                        })
-                        return [menuItemID, orderItems]
-                    }
-                )
-                this.setOrderList(menuItemOrders)
+            if (state.orderState) {
+                orderStore.setState(state.orderState)
             }
         })
     }
@@ -299,10 +291,9 @@ export class Store {
         return {
             barID: this.barID,
             currentPage: 0 + this.currentPage,
-            menuItemOrders: this.menuItemOrders,
+            orderState: orderStore.getState(),
         }
     }
-
 
     saveToLocalStorage = logErrors(async () => {
         const state = this.getState()
@@ -310,8 +301,6 @@ export class Store {
             console.log("Saving state...", state)
             this.previousState = state
             await cache.set('qd:state', state)
-        } else {
-            console.log("EQUAL STATES", state, this.previousState)
         }
         setTimeout(this.saveToLocalStorage, 3000)
     })
