@@ -148,11 +148,11 @@ class DownloadManager {
     }
 
     /* Execute a GraphQL query */
-    async graphQL(
+    graphQL = async (
             key,          /* key used for caching responses */
             query,        /* GraphQL query string to execute */
             isRelevantCB, /* Callback that decides whether the download is still relevant */
-        ) : DownloadResult {
+        ) : DownloadResult => {
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -165,12 +165,12 @@ class DownloadManager {
     }
 
     /* HTTP GET/POST/etc to a URL */
-    async fetchJSON(
+    fetchJSON = async (
             key,            /* key used for caching responses */
             url,            /* URL to fetch */
             httpOptions,    /* HTTP options to pass to fetch() */
             isRelevantCB,   /* Callback that decides whether the download is still relevant */
-        ) : DownloadResult {
+        ) : DownloadResult => {
         /* Remove any potential download with the same key that is still pending */
         this.activeDownloads = this.activeDownloads.filter(
             download => download.key !== key
@@ -188,7 +188,7 @@ class DownloadManager {
     }
 
     /* Retry all pending downloads */
-    async retryDownloads() {
+    retryDownloads = async () => {
         /* Concurrently retry all downloads that are still needed */
         const promises = []
         for (var i = 0; i < this.activeDownloads.length; i++) {
@@ -231,7 +231,7 @@ class JSONDownload {
         this.isRelevant = isRelevant
     }
 
-    async retryFetchJSON() {
+    retryFetchJSON = async () => {
         this.downloadResult.downloadStarted()
         const downloadResult = await fetchJSON(this.key, this.url, this.httpOptions)
         this.downloadResult.update(_ => downloadResult.value)
@@ -240,25 +240,25 @@ class JSONDownload {
 }
 
 
-export async function fetchJSON(key, url, httpOptions) {
+export const fetchJSON = async (key, url, httpOptions) => {
     return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
 
 const isNetworkError =
     e => e instanceof NetworkError || e instanceof TimeoutError
 
-export async function fetchJSONWithTimeouts(
+export const fetchJSONWithTimeouts = async (
         key,
         url,
         httpOptions,
         refreshTimeout,
         expiredTimeout,
-        ) {
+    ) => {
 
-    async function refreshCallback() {
+    const refreshCallback = async () => {
         return await _fetchJSON(url, httpOptions, refreshTimeout)
     }
-    async function expiredCallback() {
+    const expiredCallback = async () => {
         return await _fetchJSON(url, httpOptions, expiredTimeout)
     }
 
@@ -273,7 +273,7 @@ export async function fetchJSONWithTimeouts(
     }
 }
 
-async function _fetchJSON(url, httpOptions, downloadTimeout) {
+const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
     var response
     try {
         // TODO: Use timeout?
@@ -295,7 +295,7 @@ async function _fetchJSON(url, httpOptions, downloadTimeout) {
 
 /* Set a timeout for an asynchronous callback */
 export function timeout(timeout, callback) {
-    async function runPromise(resolve, reject) {
+    const runPromise = async (resolve, reject) => {
         const flag = { done: false }
 
         /* Set timeout */

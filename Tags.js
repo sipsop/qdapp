@@ -87,7 +87,7 @@ export class TagStore {
         this.tagSelectionHistory = new Map()
     }
 
-    async fetchTags() {
+    fetchTags = async () => {
         this.tagDownloadResult.downloadStarted()
         const isRelevant = () => true /* Outdated tags should always be updated! */
         const downloadResult = await downloadManager.graphQL('qd:tags', tagQuery, isRelevant)

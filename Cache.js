@@ -29,11 +29,11 @@ export class Storage {
         this.maxEntries = maxEntries
     }
 
-    async initialize() {
+    initialize = async () => {
         await this.prune()
     }
 
-    async prune() {
+    prune = async () => {
         const allKeys = await this.getKeys()
         const pruneResult = await this.pruneExpired(allKeys)
 
@@ -46,7 +46,7 @@ export class Storage {
         Remove expired keys.
         Returns the lastAccessTime for each entry for which a key was provided.
     */
-    async pruneExpired(allKeys) {
+    pruneExpired = async (allKeys) => {
         const entriesToDelete = []
         const accessTimes = []
         const now = getTime()
@@ -64,12 +64,12 @@ export class Storage {
         return { lastAccessTimes: lastAccessTimes, deleted: entriesToDelete }
     }
 
-    async getKeys() {
+    getKeys = async () => {
         var keys = await this.backend.getAllKeys()
         return keys.filter(key => key.startsWith('qd:'))
     }
 
-    async clear() {
+    clear = async () => {
         try {
             const keys = await this.getKeys()
             if (keys.length)
@@ -79,11 +79,11 @@ export class Storage {
         }
     }
 
-    async clearAll() {
+    clearAll = async () => {
         await this.backend.clear()
     }
 
-    async get(key) {
+    get = async (key) => {
         const blob = await this.backend.getItem(key)
         if (!blob) {
             throw new KeyError(key)
@@ -91,7 +91,7 @@ export class Storage {
         return CacheEntry.fromBlob(key, blob)
     }
 
-    async set(key, cacheEntry) {
+    set = async (key, cacheEntry) => {
         await this.backend.setItem(key, cacheEntry.toBlob())
     }
 }
@@ -101,7 +101,7 @@ class Cache {
         this.storage = storage
     }
 
-    async get(key, refreshCallback, expiredCallback) {
+    get = async (key, refreshCallback, expiredCallback) => {
         var cacheEntry
         try {
             cacheEntry = await this.storage.get(key)
@@ -114,7 +114,7 @@ class Cache {
         }
     }
 
-    async refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback) {
+    refreshIfNeeded = async (key, cacheEntry, refreshCallback, expiredCallback) => {
         const now = getTime()
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
@@ -144,27 +144,27 @@ class Cache {
         }
     }
 
-    async refreshKey(key, refreshCallback) : CacheEntry {
+    refreshKey = async (key, refreshCallback) : CacheEntry => {
         const value = await refreshCallback()
         return await this.set(key, value)
     }
 
-    async invalidateKey(key) {
+    invalidateKey = async (key) => {
         await this.backend.delete(key)
         /* TODO: Remove any keys that are children in the key hierarchy */
     }
 
-    async set(key, value) : CacheEntry {
+    set = async (key, value) : CacheEntry => {
         const cacheEntry = CacheEntry.freshEntry(key, value)
         await this.storage.set(key, cacheEntry)
         return cacheEntry
     }
 
-    async clear() {
+    clear = async () => {
         await this.storage.clear()
     }
 
-    async clearAll() {
+    clearAll = async () => {
         await this.storage.clearAll()
     }
 }

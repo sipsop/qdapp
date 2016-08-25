@@ -45,6 +45,10 @@ export class Store {
             if (this.tabView)
                 this.tabView.goToPage(this.currentPage)
         })
+        autorun(() => {
+            if (this.initialized)
+                this.saveToLocalStorage()
+        })
         this.discoverScrollView = null
     }
 
@@ -90,16 +94,7 @@ export class Store {
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
-    // Stupid binding issue... Make sure this is bound on access
-    initialize = () => {
-        this._initialize()
-        autorun(() => {
-            if (this.initialized)
-                this.saveToLocalStorage()
-        })
-    }
-
-    async _initialize() {
+    initialize = async () => {
         try {
             await this.loadFromLocalStorage()
             await this.setBarList()
@@ -138,7 +133,7 @@ export class Store {
         })
     }
 
-    async getBarInfo(barID, menu) {
+    getBarInfo = async (barID, menu) => {
         const menuQuery = !menu ? '' : `
             menu {
                 beer {
@@ -233,7 +228,7 @@ export class Store {
             return downloadResult.update((data) => data.bar)
     }
 
-    async setBarID(barID) {
+    setBarID = async (barID) => {
         if (this.bar.value && this.bar.value.id === barID)
             return /* All done */
 
@@ -254,7 +249,7 @@ export class Store {
         })
     }
 
-    async setBarList(location) {
+    setBarList = async (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
         const downloadResult = await this.getBarInfo("1")
@@ -263,7 +258,7 @@ export class Store {
         })
     }
 
-    async loadFromLocalStorage() {
+    loadFromLocalStorage = async () => {
         const defaultState = {
             barID: null,
             currentPage: 0,
@@ -280,13 +275,25 @@ export class Store {
         }
     }
 
-    async restoreState(state) {
+    restoreState = async (state) => {
         if (state.barID) {
             await this.setBarID(state.barID)
         }
         transaction(() => {
-            if (state.currentPage)
-                this.setCurrentTab(state.currentPage)
+            if (state.currentPage) {
+                if (state.currentPage === 1) {
+                    /* NOTE: there is a bug where the Swiper in combination with
+                             the scrollable tab view on the BarPage, where
+                             it sometimes does not show images if we immediately
+                             switch to the bar tab. So wait a little bit first...
+                    */
+                    setTimeout(() => {
+                        this.setCurrentTab(state.currentPage)
+                    }, 600)
+                } else {
+                    this.setCurrentTab(state.currentPage)
+                }
+            }
             if (state.menuItemOrders) {
                 console.log("MENU ITEM ORDERS", state.menuItemOrders)
                 const menuItemOrders = state.menuItemOrders.map(
@@ -309,7 +316,7 @@ export class Store {
     }
 
 
-    async saveToLocalStorage() {
+    saveToLocalStorage = async () => {
         const state = {
             barID: this.barID,
             currentPage: this.currentPage,

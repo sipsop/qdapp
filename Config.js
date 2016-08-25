@@ -34,9 +34,9 @@ export const config = {
         primary:    pinkPalette,
         secondary:  purplePalette,
     },
-    refreshAfterDelta: Day,
-    expiresAfterDelta: Month,
+    // refreshAfterDelta: Day,
+    // expiresAfterDelta: Month,
     /* TODO: DISABLE THESE FOR PRODUCTION */
-    // refreshAfterDelta: Second * 30,
-    // expiresAfterDelta: Minute * 2,
+    refreshAfterDelta: Minute * 1,
+    expiresAfterDelta: Minute * 5,
 }
