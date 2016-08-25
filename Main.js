@@ -32,7 +32,6 @@ import { cache } from './Cache.js'
                 onChangeTab={
                     changeEvent => {
                         // store.currentPage = changeEvent.i
-                        console.log("CHANGE EVENT")
                         store.setCurrentTab(changeEvent.i)
                     }
                 }>

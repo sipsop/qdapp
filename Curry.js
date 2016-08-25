@@ -1,6 +1,42 @@
 import _ from 'lodash'
+import { autorun } from 'mobx'
+
+/*********************** Error Handling ******************************/
 
 export const logErrors = callback => {
+    return (...args) => {
+        const obj = this
+        runAndLogErrors(() => {
+            return callback.bind(this)(...args)
+        })
+    }
+}
+
+export const propagateErrors = (shouldThrow, callback) => {
+    return (...args) => {
+        const obj = this
+        try {
+            return callback(this, ...args)
+        } catch (err) {
+            if (shouldThrow(err))
+                throw err // Exception allowed to propagate
+            logError(err) // Exception not allowed, log error
+        }
+    }
+}
+
+export const logErrors2 = (target, key, descriptor) => {
+    const newFunc = (...args) => {
+        const obj = this
+        runAndLogErrors(() => {
+            return callback(obj, ...args)
+        })
+    }
+    descriptor.value = newFunc
+    return descriptor
+}
+
+export const runAndLogErrors = callback => {
     try {
         callback()
     } catch (err) {
@@ -12,6 +48,14 @@ export const logError = err => {
     // TODO: Crashlytics etc
     console.error(err)
 }
+
+export const safeAutorun = callback => autorun(() => {
+    runAndLogErrors(() => {
+        callback()
+    })
+})
+
+/*********************************************************************/
 
 export const makeList = (xs) => {
     if (Array.isArray(xs))

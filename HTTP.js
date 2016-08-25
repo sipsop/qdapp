@@ -244,7 +244,7 @@ export const fetchJSON = async (key, url, httpOptions) => {
     return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
 
-const isNetworkError =
+export const isNetworkError =
     e => e instanceof NetworkError || e instanceof TimeoutError
 
 export const fetchJSONWithTimeouts = async (

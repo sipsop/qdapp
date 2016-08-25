@@ -1,11 +1,11 @@
-import { observable, transaction, computed, autorun, action } from 'mobx'
+import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 import _ from 'lodash'
 
 import { OrderItem } from './Orders.js'
 import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
-import { logErrors, logError } from './Curry.js'
+import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
 
 export class Store {
 
@@ -24,7 +24,6 @@ export class Store {
     // ScrollableTabView
     @observable tabView = null
     @observable currentPage = 0
-    @observable initialized = false
 
     @observable menuItemOrders = null
     // @observable menuItemOrdersMap = null // observable maps don't seem to work...
@@ -33,23 +32,21 @@ export class Store {
         this.bar     = emptyResult()
         this.barList = emptyResult()
         this.history = []
-        autorun(() => {
+        safeAutorun(() => {
             if (this.allMenuItems.length === 0)
                 return
             this.setOrderList(
                 this.allMenuItems.map(menuItem => [menuItem.id, []])
             )
         })
-        autorun(() => {
+        safeAutorun(() => {
             /* Set the currentPage whenever the TabView is ready */
             if (this.tabView)
                 this.tabView.goToPage(this.currentPage)
         })
-        autorun(() => {
-            if (this.initialized)
-                this.saveToLocalStorage()
-        })
         this.discoverScrollView = null
+        this.previousState = null
+        setTimeout(this.saveToLocalStorage, 5000)
     }
 
     canSetTab = () => !!this.tabView
@@ -84,7 +81,6 @@ export class Store {
     }
 
     setOrderList = (menuItemOrders) => {
-        console.log("Set order list...", menuItemOrders)
         this.menuItemOrders = menuItemOrders
     }
 
@@ -94,18 +90,10 @@ export class Store {
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
-    initialize = async () => {
-        try {
-            await this.loadFromLocalStorage()
-            await this.setBarList()
-            // Wait 5 seconds before saving any changes to disk
-            setTimeout(() => {
-                this.initialized = true
-            }, 5000)
-        } catch (err) {
-            logError(err)
-        }
-    }
+    initialize = logErrors(async () => {
+        await this.loadFromLocalStorage()
+        await this.setBarList()
+    })
 
     @computed get allMenuItems() {
         const bar = this.bar.value
@@ -228,35 +216,32 @@ export class Store {
             return downloadResult.update((data) => data.bar)
     }
 
-    setBarID = async (barID) => {
+    setBarID = logErrors(async (barID) => {
         if (this.bar.value && this.bar.value.id === barID)
             return /* All done */
 
         transaction(() => {
             this.bar = emptyResult().downloadStarted()
+            console.log("SETTING BAR ID:", barID)
             this.barID = barID
         })
 
         const downloadResult = await this.getBarInfo(barID, true)
-        logErrors(() => {
-            if (this.barID === barID) {
-                /* NOTE: a user may have selected a different bar
-                         before this download has completed, in
-                         which case we should ignore the download.
-                */
-                this.bar = downloadResult
-            }
-        })
-    }
+        if (this.barID === barID) {
+            /* NOTE: a user may have selected a different bar
+                     before this download has completed, in
+                     which case we should ignore the download.
+            */
+            this.bar = downloadResult
+        }
+    })
 
-    setBarList = async (location) => {
+    setBarList = logErrors(async (location) => {
         const loc = location || this.location
         this.barList.downloadStarted()
         const downloadResult = await this.getBarInfo("1")
-        logErrors(() => {
-            this.barList = downloadResult.update((value) => [value])
-        })
-    }
+        this.barList = downloadResult.update((value) => [value])
+    })
 
     loadFromLocalStorage = async () => {
         const defaultState = {
@@ -268,7 +253,7 @@ export class Store {
             const savedState = await cache.get('qd:state', () => defaultState)
             if (savedState) {
                 console.log("Restoring state...", savedState)
-                this.restoreState(savedState)
+                await this.restoreState(savedState)
             }
         } catch (err) {
             logError(err)
@@ -316,15 +301,21 @@ export class Store {
     }
 
 
-    saveToLocalStorage = async () => {
+    saveToLocalStorage = logErrors(async () => {
         const state = {
             barID: this.barID,
-            currentPage: this.currentPage,
+            currentPage: 0 + this.currentPage,
             menuItemOrders: this.menuItemOrders,
         }
-        console.log("Saving state...", state)
-        await cache.set('qd:state', state)
-    }
+        if (!_.isEqual(state, this.previousState)) {
+            console.log("Saving state...", state)
+            this.previousState = state
+            await cache.set('qd:state', state)
+        } else {
+            console.log("EQUAL STATES", state, this.previousState)
+        }
+        setTimeout(this.saveToLocalStorage, 3000)
+    })
 }
 
 const popup = (title, message) => Alert.alert(title, message)
