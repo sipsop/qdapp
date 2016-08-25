@@ -36,4 +36,20 @@ export class OrderItem {
     @computed get total() {
         return this.subTotal * this.amount
     }
+
+    toJSON = () => {
+        return {
+            menuItem: this.menuItem,
+            selectedOptions: this.selectedOptions,
+            amount: this.amount,
+        }
+    }
+
+    static fromJSON = (orderItemJSON) : OrderItem => {
+        const orderItem = new OrderItem(orderItemJSON.menuItem)
+        orderItem.selectedOptions = orderItemJSON.selectedOptions
+        orderItem.amount = orderItemJSON.amount
+        orderItem.showModal = false
+        return orderItem
+    }
 }

@@ -280,17 +280,12 @@ export class Store {
                 }
             }
             if (state.menuItemOrders) {
-                console.log("MENU ITEM ORDERS", state.menuItemOrders)
                 const menuItemOrders = state.menuItemOrders.map(
                     item => {
                         const menuItemID = item[0]
                         const orderItemsJSON = item[1]
                         const orderItems = orderItemsJSON.map(orderItemJSON => {
-                            const orderItem = new OrderItem(orderItemJSON.menuItem)
-                            orderItem.amount = orderItemJSON.amount
-                            orderItem.selectedOptions = orderItemJSON.selectedOptions
-                            orderItem.showModal = false
-                            return orderItem
+                            return OrderItem.fromJSON(orderItemJSON)
                         })
                         return [menuItemID, orderItems]
                     }
@@ -300,13 +295,17 @@ export class Store {
         })
     }
 
-
-    saveToLocalStorage = logErrors(async () => {
-        const state = {
+    getState = () => {
+        return {
             barID: this.barID,
             currentPage: 0 + this.currentPage,
             menuItemOrders: this.menuItemOrders,
         }
+    }
+
+
+    saveToLocalStorage = logErrors(async () => {
+        const state = this.getState()
         if (!_.isEqual(state, this.previousState)) {
             console.log("Saving state...", state)
             this.previousState = state
