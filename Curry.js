@@ -3,6 +3,13 @@ import { autorun } from 'mobx'
 
 /*********************** Error Handling ******************************/
 
+/* Force a MobX value to a javascript object */
+export const asData = x => JSON.parse(JSON.stringify(x))
+
+export const log = (args...) => {
+    console.log(args.map(asData)...)
+}
+
 export const logErrors = callback => {
     return (...args) => {
         const obj = this

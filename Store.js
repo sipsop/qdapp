@@ -22,10 +22,6 @@ export class Store {
     // DownloadResult[ List[schema.Bar] ]
     @observable barList = null
 
-    // ScrollableTabView
-    @observable tabView = null
-    @observable currentPage = 0
-
     @observable menuItemOrders = null
     // @observable menuItemOrdersMap = null // observable maps don't seem to work...
 

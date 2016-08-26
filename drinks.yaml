@@ -1,0 +1,234 @@
+drinks:
+    beer:
+        guiness:
+            name: Guiness
+            desc: Guiness is a dry Irish stout from Dublin, Ireland
+            image: https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg
+            tags: |
+                #beer
+                #stout
+                #dark
+
+        heineken:
+            name: Heineken
+            desc: Heineken is a pale lager
+            image: https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg
+            tags: |
+                #beer
+                #lager
+                #hops
+
+        rockBottom:
+            name: Rock Buttom Cask Conditioned Bourbon Chocolate Oatmeal Lager
+            desc: Beer with a rather long name...
+            tags: |
+                #beer
+                #lager
+                #dark
+
+    wine:
+        ### Red
+
+        # wine bodies: light, medium-bodied, heavy
+
+        poggio:
+            name: Poggio Castagno Chianti Classico
+            desc: A classic Chianti with complex flavours
+            tags: |
+                #wine
+                #red
+
+        canaletto:
+            name: Canaletto Montepulciano D'Abruzzo
+            desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
+            # image:
+            tags: |
+                #wine
+                #red
+                #fruity
+
+        merlot:
+            name: Merlot
+            desc: Merlot is a popular and easy-to-drink red wine.
+            # image:
+            tags: |
+                #wine
+                #red
+                #ripe
+                #soft
+                #popular
+                #easy-drinking
+                #medium-bodied
+
+        cabinetSaugvignon:
+            name: Cabernet Sauvignon
+            desc: Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
+            tags: |
+                #wine
+                #red
+                #oak
+                #rich
+                #full-bodied
+                #tannins
+
+        pinotNoir:
+            name: Pinot Noir
+            desc: Pinot noir is a light and smooth red wine.
+            tags: |
+                #wine
+                #red
+                #light-bodied
+                #smooth
+                #silky
+                #fruity
+                #cherry
+
+        rioja:
+            name: Rioja
+            desc: |
+                Rioja is a red wine from the Rioja region in Spain, not unlike
+                Cabinet Saugvignon, but with some cherry fruitiness.
+            tags: |
+                #wine
+                #red
+                #spanish
+                #tannins
+                #fruity
+                #cherry
+                #oak
+
+        ### White
+
+        saugvignonBlanc:
+            name: Saugvignon Blanc
+            desc: |
+                Saugvignon Blanc is popular white wine in the UK, great with food.
+            tags: |
+                #wine
+                #white
+                #popular
+                #dry
+                #acidic
+                #crip
+
+        # wine, rose
+
+        grenache:
+            name: Grenache Rosé
+            desc: |
+                Grenache is a dry, acidic and fruity Rosé.
+            tags: |
+                #wine
+                #rosé
+                #fruity
+                #acidic
+                #dry
+
+        zinfandel:
+            name: Zinfandel Rosé
+            desc: Zinfandel is a moderately sweet and dry
+            tags: |
+                #popular
+                #fruity
+                #sweet
+                #acidic
+                #lemon
+                #strawberry
+
+
+        # cabinetSaugvignon:
+        #     name: Cabernet Sauvignon Rose
+        #     desc: |
+        #         Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
+        #     tags: |
+        #         #wine
+        #         #red
+        #         #oak
+        #         #rich
+        #         #full-bodied
+        #         #tannins
+
+        pinotNoir:
+            name: Pinot Noir Rosé
+            desc: Pinot Noir is a Rosé.
+            tags: |
+                #wine
+                #rose
+                #acidic
+                #soft
+                #fruity
+                #crisp
+                #apple
+                #raspberry
+                #watermelon
+                #strawberry
+
+        # wine, sparkling
+
+    spirits:
+        smirnoff:
+            name: Smirnoff
+            desc: |
+                jfkdk
+                fjdkfjdk
+            tags: |
+                #spirit
+
+    cocktails:
+        longIslandIceTea:
+            name: Long Island Ice Tea
+
+
+
+
+
+
+
+menuOptions:
+    beerTopOptions:
+        optionList:
+            - tops
+            - shandy
+            - lime
+            - blackcurrant
+        optionPrices:
+            - 0.0
+            - 0.0
+            - 0.0
+            - 0.50
+
+menu:
+    beer:
+        defaultOptions:
+            - beerTopOptions
+
+        guiness:
+            tap: yes
+            prices:
+                pint: 3.40
+                half-pint: 2.60
+
+        heineken:
+            prices:
+                pint: 3.20
+                half-pint: 2.30
+
+        rockBottom:
+            prices:
+                pint: 4.20
+                half-pint: 3.40
+
+    wine:
+        poggio:
+            house: yes
+            prices:
+                small: 2.70
+                medium: 3.50
+                large: 4.20
+                bottle: 24.00
+
+        canaletto:
+            prices:
+                glass: 5.20
+                small-glass: 4.30
+                bottle: 28.00
