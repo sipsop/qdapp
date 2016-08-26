@@ -56,7 +56,7 @@ export class OrderItem {
 }
 
 class OrderStore {
-    
+
     stateChanged = (prevState, nextState) => {
         return !_.isEqual(prevState, nextState)
     }
@@ -80,7 +80,7 @@ class OrderStore {
     setState = (state) => {
         if (!state)
             return
-
+        console.log(state)
         const menuItemOrders = state.map(
             item => {
                 const menuItemID = item[0]

@@ -32,6 +32,7 @@ import { SizeTracker } from './SizeTracker.js'
 import { PickerCollection, PickerItem } from './Pickers.js'
 import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
+import { FavItemContainer } from './Fav.js'
 import { min, max } from './Curry.js'
 import { store } from './Store.js'
 import { tagStore } from './Tags.js'
@@ -300,11 +301,7 @@ class MenuItemHeader extends PureComponent {
                         {menuItem.desc}
                     </T>
                 </View>
-                <TouchableOpacity>
-                    <View style={viewStyles.favIcon}>
-                        <Icon name="heart-o" size={45} color={config.theme.primary.medium} />
-                    </View>
-                </TouchableOpacity>
+                <FavItemContainer menuItemID={this.props.menuItem.id} style={viewStyles.favIcon} iconSize={45} />
             </View>
         </View>
     }

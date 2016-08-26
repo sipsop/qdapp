@@ -22,6 +22,7 @@ import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { LargeButton } from './Button.js'
+import { FavBarContainer } from './Fav.js'
 import { T } from './AppText.js'
 import { locationStore } from './BarMap.js'
 import { store } from './Store.js'
@@ -173,19 +174,9 @@ class BarView extends Page {
                             <T style={{color: '#000000'}}>TIMES</T>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                            style={{flex: 1}}
-                            onPress={this.handleFavorite}
-                            >
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            <Icon
-                                name="heart-o"
-                                size={40}
-                                color={config.theme.primary.medium}
-                                />
-                            <T style={{color: '#000000'}}>SAVE</T>
-                        </View>
-                    </TouchableOpacity>
+                    <FavBarContainer barID={bar.id} iconSize={40} style={{flex: 1, alignItems: 'center'}}>
+                        <T style={{color: '#000000'}}>SAVE</T>
+                    </FavBarContainer>
                     <TouchableOpacity
                             style={{flex: 1}}
                             onPress={this.handleFocusBarOnMap}
