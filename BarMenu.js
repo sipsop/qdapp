@@ -15,7 +15,7 @@ import { observer } from 'mobx-react/native'
 
 import { T } from './AppText.js'
 import { SizeTracker } from './SizeTracker.js'
-import { store } from './Store.js'
+import { store, favStore, tabStore } from './Store.js'
 import { merge } from './Curry.js'
 
 
@@ -154,7 +154,7 @@ export class Category {
     }
 
     handleCardPress = () => {
-        store.setCurrentTab(2)
+        tabStore.setCurrentTab(2)
         // TODO: push this.props.tag
     }
 

@@ -7,6 +7,8 @@ import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
 import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
 import { orderStore } from './Orders.js'
+import { favStore } from './Fav.js'
+import { tabStore } from './Tabs.js'
 
 export class Store {
 
@@ -28,7 +30,6 @@ export class Store {
     constructor() {
         this.bar     = emptyResult()
         this.barList = emptyResult()
-        this.history = []
         safeAutorun(() => {
             if (this.allMenuItems.length === 0)
                 return
@@ -36,30 +37,14 @@ export class Store {
                 this.allMenuItems.map(menuItem => [menuItem.id, []])
             )
         })
-        safeAutorun(() => {
-            /* Set the currentPage whenever the TabView is ready */
-            if (this.tabView)
-                this.tabView.goToPage(this.currentPage)
-        })
         this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.saveToLocalStorage, 5000)
     }
 
-    canSetTab = () => !!this.tabView
-
-    @action setCurrentTab = (i) => {
-        if (this.currentPage !== i) {
-            this.history.push(this.currentPage)
-            this.currentPage = i
-        }
-    }
-
-    gotoPreviousTab = () => {
-        if (this.history.length) {
-            this.currentPage = this.history.pop()
-        }
-    }
+    // TODO: replace all occurrences
+    setCurrentTab = (i) => tabStore.setCurrentTab(i)
+    gotoPreviousTab = () => tabStore.gotoPreviousTab()
 
     getOrderList = (menuItemID) => {
         for (var i = 0; i < this.menuItemOrders.length; i++) {
@@ -286,8 +271,8 @@ export class Store {
     getState = () => {
         return {
             barID: this.barID,
-            currentPage: 0 + this.currentPage,
             orderState: orderStore.getState(),
+            ...tabStore.getState(),
         }
     }
 
@@ -305,3 +290,4 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
+export { favStore, tabStore }

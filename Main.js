@@ -16,25 +16,14 @@ import { DiscoverPage } from './DiscoverPage.js'
 import { BarPage } from './BarPage.js'
 import { MenuPage } from './MenuPage.js'
 import { OrderPage } from './OrderPage.js'
+import { TabView } from './Tabs.js'
 import { store } from './Store.js'
 import { cache } from './Cache.js'
 
 @observer export class Main extends Component {
 
     render = () => {
-        return <ScrollableTabView
-                ref={(tabView) => { store.tabView = tabView }}
-                renderTabBar={this.renderTabBar}
-                style={{flex: 1}}
-                scrollWithoutAnimation={true}
-                /* NOTE: This is buggy, do not use! */
-                /*page={store.currentTab}*/
-                onChangeTab={
-                    changeEvent => {
-                        // store.currentPage = changeEvent.i
-                        store.setCurrentTab(changeEvent.i)
-                    }
-                }>
+        return <TabView>
             <View tabLabel='Discover' style={{flex: 1}}>
                 <DiscoverPage />
             </View>
@@ -47,7 +36,7 @@ import { cache } from './Cache.js'
             <View tabLabel='Order' style={{flex: 1}}>
                 <OrderPage />
             </View>
-        </ScrollableTabView>
+        </TabView>
     }
 
     // renderTabBar = () => <DefaultTabBar />

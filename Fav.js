@@ -23,14 +23,16 @@ class FavStore {
 
     getState = () => {
         return {
-            favItems: this.favItems,
-            favBars: this.favBars,
+            favourites: {
+                favItems: this.favItems,
+                favBars: this.favBars,
+            },
         }
     }
 
-    @action setState = (favState) => {
-        this.favItems = favState.favItems
-        this.favBars = favState.favBars
+    @action setState = ({favourites}) => {
+        this.favItems = favourites.favItems
+        this.favBars = favourites.favBars
     }
 }
 
