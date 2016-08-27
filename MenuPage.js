@@ -476,7 +476,7 @@ export class OrderSelection extends PureComponent {
     }
 
     get showModal() {
-        return store.currentPage === this.props.currentPage && this.orderItem.showModal
+        return tabStore.currentPage === this.props.currentPage && this.orderItem.showModal
     }
 
     render = () => {
