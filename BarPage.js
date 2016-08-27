@@ -11,7 +11,7 @@ import {
 import Dimensions from 'Dimensions'
 import _ from 'lodash'
 import Swiper from 'react-native-swiper'
-import { observable, autorun } from 'mobx'
+import { observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -25,9 +25,9 @@ import { LargeButton } from './Button.js'
 import { FavBarContainer } from './Fav.js'
 import { T } from './AppText.js'
 import { locationStore } from './BarMap.js'
-import { store, tabStore } from './Store.js'
+import { store, tabStore, barStore } from './Store.js'
 import { config } from './Config.js'
-import { merge } from './Curry.js'
+import { merge, safeAutorun } from './Curry.js'
 
 export class BarPageFetcher extends DownloadResultView {
     constructor(props) {
@@ -35,11 +35,9 @@ export class BarPageFetcher extends DownloadResultView {
     }
 
     refreshPage = () => {
-        if (store.barID) {
-            store.setBarID(store.barID)
-        }
+        barStore.refreshBar()
     }
-    getDownloadResult = () => store.bar
+    getDownloadResult = () => barStore.getBarDownloadResult()
 
     renderNotStarted = () =>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -63,11 +61,11 @@ export class BarPageFetcher extends DownloadResultView {
         const { height, width} = Dimensions.get('screen')
         this.state = {width: width, height: height} // approximate width and height
         this.timer = undefined
-        autorun(() => {
-            /* Whenever store.bar changes, reinitialize autoplay to `true`
+        safeAutorun(() => {
+            /* Whenever barStore.bar changes, reinitialize autoplay to `true`
                and cancel any timers that are going to set it to `false`
             */
-            store.bar
+            barStore.getBarDownloadResult()
             this.autoplay = true
             if (this.timer) {
                 clearTimeout(this.timer)
@@ -76,26 +74,6 @@ export class BarPageFetcher extends DownloadResultView {
         })
     }
 
-    handleFocusBarOnMap = () => {
-        locationStore.focusBar(store.bar.value)
-        tabStore.setCurrentTab(0)
-    }
-
-    refreshPage = () => {
-        if (store.barID) {
-            store.setBarID(store.barID)
-        }
-    }
-    getDownloadResult = () => store.bar
-
-    renderNotStarted = () =>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <LargeButton
-                label="Please select a bar first"
-                onPress={() => {tabStore.setCurrentTab(0)}}
-                />
-        </View>
-
     renderFinished = (bar) => <BarView bar={bar} />
 }
 
@@ -103,6 +81,11 @@ class BarView extends Page {
     /* properties:
         bar: schema.Bar
     */
+
+    @action handleFocusBarOnMap = () => {
+        locationStore.focusBar(barStore.getBar())
+    }
+
     renderView = () => {
         const bar = this.props.bar
         const imageHeight = 300

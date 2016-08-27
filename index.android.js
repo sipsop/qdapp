@@ -40,8 +40,6 @@ class App extends Component {
 }
 
 handleBackButton()
-
-store.barList.downloadStarted()
 store.initialize()
 AppRegistry.registerComponent('AwesomeProject', () => App);
 

@@ -58,7 +58,7 @@ class TabStore {
         return { tabs: { currentPage: this.currentPage } }
     }
 
-    @action setState = ({tabs}) => {
+    @action setState = async ({tabs}) => {
         const currentPage = tabs.currentPage
         if (!currentPage)
             return

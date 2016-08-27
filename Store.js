@@ -9,6 +9,7 @@ import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
 import { orderStore } from './Orders.js'
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
+import { barStore } from './BarStore.js'
 
 export class Store {
 
@@ -18,18 +19,18 @@ export class Store {
     // DownloadResult[schema.Bar]
     @observable bar   = null
 
-    // BarID
-    @observable barID = null
-
-    // DownloadResult[ List[schema.Bar] ]
-    @observable barList = null
+    // // BarID
+    // @observable barID = null
+    //
+    // // DownloadResult[ List[schema.Bar] ]
+    // @observable barList = null
 
     @observable menuItemOrders = null
     // @observable menuItemOrdersMap = null // observable maps don't seem to work...
 
     constructor() {
-        this.bar     = emptyResult()
-        this.barList = emptyResult()
+        // this.bar     = emptyResult()
+        // this.barList = emptyResult()
         safeAutorun(() => {
             if (this.allMenuItems.length === 0)
                 return
@@ -60,21 +61,21 @@ export class Store {
 
     switchToDiscoverPage = (scrollToTop) => {
         tabStore.setCurrentTab(0)
-        if (scrollToTop)
+        if (scrollToTop && this.discoverScrollView)
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
     initialize = logErrors(async () => {
         await this.loadFromLocalStorage()
-        await this.setBarList()
+        await barStore.initialize()
     })
 
     @computed get allMenuItems() {
-        const bar = this.bar.value
+        const bar = barStore.getBar()
         if (!bar || !bar.menu)
             return []
 
-        const menu  = store.bar.value.menu
+        const menu  = barStore.getBar().menu
         const subMenus = (
             [ menu.beer
             , menu.wine
@@ -95,128 +96,6 @@ export class Store {
         })
     }
 
-    getBarInfo = async (barID, menu) => {
-        const menuQuery = !menu ? '' : `
-            menu {
-                beer {
-                    ...SubMenuFragment
-                }
-                wine {
-                    ...SubMenuFragment
-                }
-                spirits {
-                    ...SubMenuFragment
-                }
-                cocktails {
-                    ...SubMenuFragment
-                }
-                water {
-                    ...SubMenuFragment
-                }
-            }
-        `
-        const fragments = `
-            fragment PriceFragment on Price {
-                currency
-                option
-                price
-            }
-
-            fragment SubMenuFragment on SubMenu {
-                image
-                menuItems {
-                    id
-                    name
-                    desc
-                    images
-                    tags
-                    price {
-                        ...PriceFragment
-                    }
-                    options {
-                        name
-                        optionType
-                        optionList
-                        prices {
-                            ...PriceFragment
-                        }
-                        defaultOption
-                    }
-                }
-            }
-        `
-
-        var query = `
-            query {
-                bar(id: "${barID}") {
-                    id
-                    name
-                    desc
-                    images
-                    tags
-                    phone
-                    website
-                    openingTimes {
-                        day
-                        openTime {
-                            hour
-                            minute
-                        }
-                        closeTime {
-                            hour
-                            minute
-                        }
-                    }
-                    address {
-                        lat
-                        lon
-                        city
-                        street
-                        number
-                        postcode
-                    }
-                    ${menuQuery}
-                }
-            }
-            `
-
-            key = `qd:bar=${barID}:menu=${menu}`
-            if (menuQuery)
-                query += fragments
-
-            isRelevant = () => barID === this.barID
-            const downloadResult = await downloadManager.graphQL(
-                key, query, isRelevant)
-            return downloadResult.update((data) => data.bar)
-    }
-
-    setBarID = logErrors(async (barID) => {
-        if (this.bar.value && this.bar.value.id === barID)
-            return /* All done */
-
-        transaction(() => {
-            this.bar = emptyResult().downloadStarted()
-            console.log("SETTING BAR ID:", barID)
-            this.barID = barID
-        })
-
-        const downloadResult = await this.getBarInfo(barID, true)
-        if (this.barID === barID) {
-            /* NOTE: a user may have selected a different bar
-                     before this download has completed, in
-                     which case we should ignore the download.
-            */
-            this.bar = downloadResult
-        }
-    })
-
-    setBarList = logErrors(async (location) => {
-        const loc = location || this.location
-        this.barList.downloadStarted()
-        const downloadResult = await this.getBarInfo("1")
-        this.barList = downloadResult.update((value) => [value])
-    })
-
     loadFromLocalStorage = async () => {
         const savedState = await cache.get('qd:state', () => null)
         if (savedState) {
@@ -226,10 +105,8 @@ export class Store {
     }
 
     setState = action(async (state) => {
-        if (state.barID) {
-            await this.setBarID(state.barID)
-        }
-        tabStore.setState(state)
+        await barStore.setState(state)
+        await tabStore.setState(state)
         if (state.orderState) {
             orderStore.setState(state.orderState)
         }
@@ -237,7 +114,7 @@ export class Store {
 
     getState = () => {
         return {
-            barID: this.barID,
+            ...barStore.getState(),
             orderState: orderStore.getState(),
             ...tabStore.getState(),
         }
@@ -257,4 +134,4 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore }
+export { favStore, tabStore, barStore }

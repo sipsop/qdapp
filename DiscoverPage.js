@@ -11,7 +11,7 @@ import { BarMapView } from './BarMap.js'
 import { BarCard } from './BarCard.js'
 import { DownloadResultView } from './HTTP.js'
 import { T } from './AppText.js'
-import { store } from './Store.js'
+import { store, barStore } from './Store.js'
 import { config } from './Config.js'
 
 
@@ -22,7 +22,7 @@ export class DiscoverPage extends DownloadResultView {
     }
 
     refreshPage = store.initialize
-    getDownloadResult = () => store.barList
+    getDownloadResult = () => barStore.getBarListDownloadResult()
     renderNotStarted  = () => <View />
 
     saveScrollView = (scrollview) => {
