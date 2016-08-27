@@ -42,10 +42,6 @@ export class Store {
         setTimeout(this.saveToLocalStorage, 5000)
     }
 
-    // TODO: replace all occurrences
-    setCurrentTab = (i) => tabStore.setCurrentTab(i)
-    gotoPreviousTab = () => tabStore.gotoPreviousTab()
-
     getOrderList = (menuItemID) => {
         for (var i = 0; i < this.menuItemOrders.length; i++) {
             const item = this.menuItemOrders[i]
@@ -54,21 +50,16 @@ export class Store {
                 return orderList
             }
         }
-        console.log(menuItemID, typeof(menuItemID))
-        this.menuItemOrders.forEach(order => {
-            console.log("MenuItemOrder seen:", order.id, typeof(order.id), order)
-        })
         throw Error(`MenuItemID ${menuItemID} (${typeof(menuItemID)}) not found`)
 
     }
 
     setOrderList = (menuItemOrders) => {
-        console.log("SET MENU ITEM ORDERS", menuItemOrders)
         this.menuItemOrders = menuItemOrders
     }
 
     switchToDiscoverPage = (scrollToTop) => {
-        this.setCurrentTab(0)
+        tabStore.setCurrentTab(0)
         if (scrollToTop)
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
@@ -227,46 +218,22 @@ export class Store {
     })
 
     loadFromLocalStorage = async () => {
-        const defaultState = {
-            barID: null,
-            currentPage: 0,
-            orderState: null,
-        }
-        try {
-            const savedState = await cache.get('qd:state', () => defaultState)
-            if (savedState) {
-                console.log("Restoring state...", savedState)
-                await this.restoreState(savedState)
-            }
-        } catch (err) {
-            logError(err)
+        const savedState = await cache.get('qd:state', () => null)
+        if (savedState) {
+            console.log("Restoring state...", savedState)
+            await this.setState(savedState)
         }
     }
 
-    restoreState = async (state) => {
+    setState = action(async (state) => {
         if (state.barID) {
             await this.setBarID(state.barID)
         }
-        transaction(() => {
-            if (state.currentPage) {
-                if (state.currentPage === 1) {
-                    /* NOTE: there is a bug where the Swiper in combination with
-                             the scrollable tab view on the BarPage, where
-                             it sometimes does not show images if we immediately
-                             switch to the bar tab. So wait a little bit first...
-                    */
-                    setTimeout(() => {
-                        this.setCurrentTab(state.currentPage)
-                    }, 600)
-                } else {
-                    this.setCurrentTab(state.currentPage)
-                }
-            }
-            if (state.orderState) {
-                orderStore.setState(state.orderState)
-            }
-        })
-    }
+        tabStore.setState(state)
+        if (state.orderState) {
+            orderStore.setState(state.orderState)
+        }
+    })
 
     getState = () => {
         return {

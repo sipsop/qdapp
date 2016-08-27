@@ -34,7 +34,7 @@ import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { FavItemContainer } from './Fav.js'
 import { min, max } from './Curry.js'
-import { store } from './Store.js'
+import { store, tabStore } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
 import { config } from './Config.js'
@@ -77,7 +77,7 @@ class OrderButton extends PureComponent {
         }
         return <LargeButton
                     label="Review Order"
-                    onPress={() => store.setCurrentTab(3)}
+                    onPress={() => tabStore.setCurrentTab(3)}
                     style={{margin: 5, height: rowHeight}}
                     /*
                     prominent={false}

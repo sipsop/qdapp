@@ -20,7 +20,7 @@ import { PureComponent } from './Component.js'
 import { MenuItem, createMenuItem } from './MenuPage.js'
 import { LargeButton } from './Button.js'
 import { T } from './AppText.js'
-import { store } from './Store.js'
+import { store, tabStore } from './Store.js'
 import { config } from './Config.js'
 
 const largeButtonStyle = {
@@ -62,7 +62,7 @@ export class OrderPage extends Component {
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
                 label="Add Items to Order"
-                onPress={() => store.setCurrentTab(2)}
+                onPress={() => tabStore.setCurrentTab(2)}
                 style={largeButtonStyle}
                 />
         </View>

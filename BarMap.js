@@ -14,7 +14,7 @@ import MapView from 'react-native-maps'
 import { PureComponent } from './Component.js'
 import { Map } from './Map.js'
 import { merge } from './Curry.js'
-import { store } from './Store.js'
+import { store, tabStore } from './Store.js'
 import { config } from './Config.js'
 
 
@@ -187,7 +187,7 @@ class MapMarker extends PureComponent {
 
     @action handleCalloutPress = () => {
         store.setBarID(this.props.bar.id)
-        store.setCurrentTab(1)
+        tabStore.setCurrentTab(1)
     }
 
     @computed get selected() {

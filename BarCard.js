@@ -14,7 +14,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { T } from './AppText.js'
 import { ImageSwiper } from './ImageSwiper.js'
 import { locationStore } from './BarMap.js'
-import { store } from './Store.js'
+import { store, tabStore } from './Store.js'
 import { config } from './Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
@@ -28,7 +28,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     handleCardPress = () => {
         transaction(() => {
             store.setBarID(this.props.bar.id)
-            store.setCurrentTab(1)
+            tabStore.setCurrentTab(1)
         })
 
     }
@@ -128,7 +128,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     */
 
     handlePress = () => {
-        store.setCurrentTab(0)
+        tabStore.setCurrentTab(0)
         locationStore.focusBar(this.props.bar)
         // locationStore.currentMarker = this.props.bar
         // TODO: Scroll to top

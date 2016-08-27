@@ -59,7 +59,22 @@ class TabStore {
     }
 
     @action setState = ({tabs}) => {
-        this.currentPage = tabs.currentPage
+        const currentPage = tabs.currentPage
+        if (!currentPage)
+            return
+
+        if (currentPage === 1) {
+            /* NOTE: there is a bug where the Swiper in combination with
+                     the scrollable tab view on the BarPage, where
+                     it sometimes does not show images if we immediately
+                     switch to the bar tab. So wait a little bit first...
+            */
+            setTimeout(() => {
+                this.setCurrentTab(currentPage)
+            }, 600)
+        } else {
+            this.setCurrentTab(currentPage)
+        }
     }
 
 }

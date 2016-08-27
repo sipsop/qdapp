@@ -25,7 +25,7 @@ import { LargeButton } from './Button.js'
 import { FavBarContainer } from './Fav.js'
 import { T } from './AppText.js'
 import { locationStore } from './BarMap.js'
-import { store } from './Store.js'
+import { store, tabStore } from './Store.js'
 import { config } from './Config.js'
 import { merge } from './Curry.js'
 
@@ -45,7 +45,7 @@ export class BarPageFetcher extends DownloadResultView {
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
                 label="Please select a bar first"
-                onPress={() => {store.setCurrentTab(0)}}
+                onPress={() => {tabStore.setCurrentTab(0)}}
                 />
         </View>
 }
@@ -78,7 +78,7 @@ export class BarPageFetcher extends DownloadResultView {
 
     handleFocusBarOnMap = () => {
         locationStore.focusBar(store.bar.value)
-        store.setCurrentTab(0)
+        tabStore.setCurrentTab(0)
     }
 
     refreshPage = () => {
@@ -92,7 +92,7 @@ export class BarPageFetcher extends DownloadResultView {
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
                 label="Please select a bar first"
-                onPress={() => {store.setCurrentTab(0)}}
+                onPress={() => {tabStore.setCurrentTab(0)}}
                 />
         </View>
 
