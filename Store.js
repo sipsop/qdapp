@@ -32,10 +32,10 @@ export class Store {
         // this.bar     = emptyResult()
         // this.barList = emptyResult()
         safeAutorun(() => {
-            if (this.allMenuItems.length === 0)
+            if (barStore.allMenuItems.length === 0)
                 return
             this.setOrderList(
-                this.allMenuItems.map(menuItem => [menuItem.id, []])
+                barStore.allMenuItems.map(menuItem => [menuItem.id, []])
             )
         })
         this.discoverScrollView = null
@@ -70,27 +70,8 @@ export class Store {
         await barStore.initialize()
     })
 
-    @computed get allMenuItems() {
-        const bar = barStore.getBar()
-        if (!bar || !bar.menu)
-            return []
-
-        const menu  = barStore.getBar().menu
-        const subMenus = (
-            [ menu.beer
-            , menu.wine
-            , menu.spirits
-            , menu.cocktails
-            , menu.water
-            // , menu.snacks
-            // , menu.food
-            ])
-        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
-        return _.flatten(menuItems)
-    }
-
     @computed get menuItemsOnOrder() {
-        return this.allMenuItems.filter(menuItem => {
+        return barStore.allMenuItems.filter(menuItem => {
             const orderItems = this.getOrderList(menuItem.id)
             return orderItems.length > 0
         })

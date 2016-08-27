@@ -13,7 +13,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
-import { store } from './Store.js'
+import { store, barStore } from './Store.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
 import { runAndLogErrors, all, any } from './Curry.js'
 
@@ -124,7 +124,7 @@ export class TagStore {
     }
 
     getActiveMenuItems = () => {
-        return filterMenuItems(store.allMenuItems, this.tagSelection)
+        return filterMenuItems(barStore.allMenuItems, this.tagSelection)
     }
 
     getExcludedTags = (tagID) => {
@@ -259,7 +259,7 @@ export class TagView extends DownloadResultView {
             return childRow.filter(tagID => isEnabled(tagID, menuItems))
         }
 
-        var menuItems = store.allMenuItems
+        var menuItems = barStore.allMenuItems
         var parentRow = rootIDs
         var rows = []
         while (parentRow.length > 0) {

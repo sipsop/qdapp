@@ -176,6 +176,32 @@ class BarStore {
     @action setBarDownloadResult = (downloadResult) => {
         this.bar = downloadResult
     }
+
+    @computed get menu() {
+        const bar = this.getBar()
+        if (!bar)
+            return null
+        return bar.menu
+    }
+
+    @computed get allMenuItems() {
+        const menu = this.menu
+        if (!menu)
+            return []
+
+        const subMenus = (
+            [ menu.beer
+            , menu.wine
+            , menu.spirits
+            , menu.cocktails
+            , menu.water
+            // , menu.snacks
+            // , menu.food
+            ])
+        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
+        return _.flatten(menuItems)
+    }
+
 }
 
 export const barStore = new BarStore()
