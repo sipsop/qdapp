@@ -40,7 +40,6 @@ class LoginStore {
             return
         }
         lock.show(lockOpts, (err, profile, userToken) => {
-            console.log("CALLBACK INVOKED!!!!!")
             if (err) {
                 console.log("login error", err)
                 return
@@ -50,18 +49,29 @@ class LoginStore {
         })
     }
 
+    @action logout = () => {
+        this.setLoginInfo(null, null)
+    }
+
     @action setLoginInfo = (profile, userToken) => {
-        console.log("Set login info", profile, userToken)
         this.profile = profile
         this.userToken = userToken
     }
 
+    isLoggedIn = () => {
+        return !!this.userToken
+    }
+
     get userName() {
-        return this.profile ? this.profile.name : null
+        return this.profile ? this.profile.nickname : null
     }
 
     get email() {
         return this.profile ? this.profile.email : null
+    }
+
+    get picture() {
+        return this.profile ? this.profile.picture : null
     }
 }
 
