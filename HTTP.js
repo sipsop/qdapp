@@ -15,10 +15,10 @@ import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 
-// const HOST = 'http://192.168.0.6:5000'
+const HOST = 'http://192.168.0.6:5000'
 // const HOST = 'http://192.168.0.20:5000'
 // const HOST = 'http://172.24.176.169:5000'
-const HOST = 'http://localhost:5000/graphql'
+// const HOST = 'http://localhost:5000/graphql'
 // const HOST = 'http://10.147.18.19:5000'
 
 export class TimeoutError {

@@ -19,20 +19,15 @@ class BarStore {
     @observable barList = emptyResult()
 
     // BarID
-    @observable barID = emptyResult()
+    @observable barID = null
 
     getState = () => {
-        return {
-            barState: {
-                barID: this.barID,
-            }
-        }
+        return { barID: this.barID }
     }
 
-    @action setState = async (state) => {
-        const barState = state.barState
-        if (barState.barID)
-            await this._setBarID(barState.barID)
+    @action setState = async ({barID}) => {
+        if (barID)
+            await this._setBarID(barID)
     }
 
     initialize = async () => {

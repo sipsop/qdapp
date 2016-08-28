@@ -87,18 +87,20 @@ export class Store {
     }
 
     setState = action(async (state) => {
-        await barStore.setState(state)
-        await tabStore.setState(state)
-        loginStore.setState(state.loginState)
-        if (state.orderState) {
+        if (state.barState)
+            await barStore.setState(state.barState)
+        if (state.tabState)
+            await tabStore.setState(state.tabState)
+        if (state.loginState)
+            loginStore.setState(state.loginState)
+        if (state.orderState)
             orderStore.setState(state.orderState)
-        }
     })
 
     getState = () => {
         return {
-            ...barStore.getState(),
-            ...tabStore.getState(),
+            barState: barStore.getState(),
+            tabState: tabStore.getState(),
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
         }

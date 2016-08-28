@@ -55,11 +55,10 @@ class TabStore {
     }
 
     getState = () => {
-        return { tabs: { currentPage: this.currentPage } }
+        return { currentPage: this.currentPage }
     }
 
-    @action setState = async ({tabs}) => {
-        const currentPage = tabs.currentPage
+    @action setState = async ({currentPage}) => {
         if (!currentPage)
             return
 
