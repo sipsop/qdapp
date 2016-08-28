@@ -31,7 +31,6 @@ import { cache } from './Cache.js'
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <TabView>
                     <View tabLabel='Discover' style={{flex: 1}}>
-                        <MenuIcon tabLabel="menu" />
                         <DiscoverPage />
                     </View>
                     <View tabLabel='Bar' style={{flex: 1}}>

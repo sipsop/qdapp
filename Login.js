@@ -8,7 +8,9 @@ var lock = new Auth0Lock({
 
 const lockOpts = {
     closable: true,
-    connections: ["email", "touchid"],
+    // code: true,
+    // magicLink: true,
+    connections: [/*"google", "facebook", "sms"*/ "github", "email", "touchid"],
     authParams: {
         scope: "openid email offline_access",
     },
@@ -27,7 +29,6 @@ class LoginStore {
     }
 
     @action setState = (state) => {
-        console.log("Restoring login state...", state)
         if (state) {
             this.profile = state.profile
             this.userToken = state.userToken
@@ -36,7 +37,6 @@ class LoginStore {
 
     login = () => {
         if (this.userToken) {
-            console.log("Already logged in", this.userToken, this.profile)
             return
         }
         lock.show(lockOpts, (err, profile, userToken) => {

@@ -25,8 +25,8 @@ export class SideMenu extends PureComponent {
                     onClose={drawerStore.setClosed}
                     type="static"
                     content={content}
-                    openDrawerOffset={0.4}
-                    panCloseMask={0.4}
+                    openDrawerOffset={0.25}
+                    panCloseMask={0.25}
                     styles={drawerStyles}
                     tweenHandler={Drawer.tweenPresets.parallax}
                     tapToClose={true}
@@ -53,7 +53,6 @@ class DrawerStore {
     setClosed = () => this.open = false
 
     toggleOpenClose = () => {
-        console.log("TOGGLE OPEN/CLOSE")
         this.open = !this.open
     }
 }

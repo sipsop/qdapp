@@ -81,7 +81,7 @@ export class Store {
     loadFromLocalStorage = async () => {
         const savedState = await cache.get('qd:state', () => null)
         if (savedState) {
-            console.log("Restoring state...", savedState)
+            // console.log("Restoring state...", savedState)
             await this.setState(savedState)
         }
     }
@@ -109,7 +109,7 @@ export class Store {
     saveToLocalStorage = logErrors(async () => {
         const state = this.getState()
         if (!_.isEqual(state, this.previousState)) {
-            console.log("Saving state...", state)
+            // console.log("Saving state...", state)
             this.previousState = state
             await cache.set('qd:state', state)
         }

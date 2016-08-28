@@ -47,7 +47,7 @@ export class RowTextButton extends PureComponent {
         text: str
     */
     render = () => {
-        return <RowButton icon={this.props.icon} onPress={this.props.onPress}>
+        return <RowButton {...this.props}>
             <RowText text={this.props.text} />
         </RowButton>
     }
