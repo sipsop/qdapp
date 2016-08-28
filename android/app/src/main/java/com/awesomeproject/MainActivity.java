@@ -1,6 +1,7 @@
 package com.awesomeproject;
 
 import com.facebook.react.ReactActivity;
+import com.auth0.lock.react.LockReactPackage;
 // import com.zyu.ReactNativeWheelPickerPackage;
 // import com.oblador.vectoricons.VectorIconsPackage;
 // import com.webschik.SpinnerPackage;
@@ -21,13 +22,14 @@ public class MainActivity extends ReactActivity {
     // protected List<ReactPackage> getPackages() {
     //      return Arrays.asList(
     //         new MainReactPackage(),
-    //      new MapsPackage(),
+    //         new LockReactPackage(),
+    //         new MapsPackage()
     //         // new ReactNativeWheelPickerPackage(),
     //         // new VectorIconsPackage(),
     //         // new SpinnerPackage(),
     //         // new MapsPackage()
     //         // new ReactNativeWheelPickerPackage()
-    //         );
+    //     );
     // }
 
     // @Override

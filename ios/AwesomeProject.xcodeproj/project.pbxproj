@@ -33,6 +33,7 @@
 		038B08C7E528456E8847FE70 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 230A845147A044F6BF8940F5 /* Octicons.ttf */; };
 		E0EF7E547D534F5D80B5C8E5 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A515B0A12C647AE879C065E /* Zocial.ttf */; };
 		A904449D9E8B4156A530D6D5 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C218325CDE654A7B94015714 /* libBVLinearGradient.a */; };
+		1EDA9083D8D14365B09888DD /* libA0RNLock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 086A8D9B99FA4CA3B4A0C373 /* libA0RNLock.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +152,8 @@
 		3A515B0A12C647AE879C065E /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		BF0DBD3B6C4E4DD2BC2D88D9 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; name = "BVLinearGradient.xcodeproj"; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		C218325CDE654A7B94015714 /* libBVLinearGradient.a */ = {isa = PBXFileReference; name = "libBVLinearGradient.a"; path = "libBVLinearGradient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		6947ACA454A8491B9A4F9EF6 /* A0RNLock.xcodeproj */ = {isa = PBXFileReference; name = "A0RNLock.xcodeproj"; path = "../node_modules/react-native-lock/ios/A0RNLock.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		086A8D9B99FA4CA3B4A0C373 /* libA0RNLock.a */ = {isa = PBXFileReference; name = "libA0RNLock.a"; path = "libA0RNLock.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +182,7 @@
 				2DA5B2D77D01484CA9877568 /* libAirMaps.a in Frameworks */,
 				1358056B262B4582855FD115 /* libRNVectorIcons.a in Frameworks */,
 				A904449D9E8B4156A530D6D5 /* libBVLinearGradient.a in Frameworks */,
+				1EDA9083D8D14365B09888DD /* libA0RNLock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +308,7 @@
 				20F4EFDE73304D1BB598B543 /* AirMaps.xcodeproj */,
 				AD745AD33BD84B76967DCC95 /* RNVectorIcons.xcodeproj */,
 				BF0DBD3B6C4E4DD2BC2D88D9 /* BVLinearGradient.xcodeproj */,
+				6947ACA454A8491B9A4F9EF6 /* A0RNLock.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -646,6 +651,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -665,6 +671,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Release;
@@ -681,6 +688,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
+					"$(SRCROOT)/../node_modules/react-native-lock/ios/A0RNLock/**",
 				);
 				INFOPLIST_FILE = "AwesomeProject/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -704,6 +712,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
+					"$(SRCROOT)/../node_modules/react-native-lock/ios/A0RNLock/**",
 				);
 				INFOPLIST_FILE = "AwesomeProject/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -757,6 +766,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
+					"$(SRCROOT)/../node_modules/react-native-lock/ios/A0RNLock/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -800,6 +810,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
+					"$(SRCROOT)/../node_modules/react-native-lock/ios/A0RNLock/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

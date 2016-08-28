@@ -17,7 +17,7 @@ import { BarPage } from './BarPage.js'
 import { MenuPage } from './MenuPage.js'
 import { OrderPage } from './OrderPage.js'
 import { TabView } from './Tabs.js'
-import { store } from './Store.js'
+import { store, loginStore } from './Store.js'
 import { cache } from './Cache.js'
 
 @observer export class Main extends Component {
@@ -42,3 +42,5 @@ import { cache } from './Cache.js'
     // renderTabBar = () => <DefaultTabBar />
     renderTabBar = () => <ScrollableTabBar />
 }
+
+// loginStore.login()

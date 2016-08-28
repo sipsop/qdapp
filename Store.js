@@ -10,6 +10,7 @@ import { orderStore } from './Orders.js'
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
 import { barStore } from './BarStore.js'
+import { loginStore } from './Login.js'
 
 export class Store {
 
@@ -88,6 +89,7 @@ export class Store {
     setState = action(async (state) => {
         await barStore.setState(state)
         await tabStore.setState(state)
+        loginStore.setState(state.loginState)
         if (state.orderState) {
             orderStore.setState(state.orderState)
         }
@@ -96,8 +98,9 @@ export class Store {
     getState = () => {
         return {
             ...barStore.getState(),
-            orderState: orderStore.getState(),
             ...tabStore.getState(),
+            loginState: loginStore.getState(),
+            orderState: orderStore.getState(),
         }
     }
 
@@ -115,4 +118,4 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore, barStore }
+export { favStore, tabStore, barStore, loginStore }

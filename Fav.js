@@ -7,6 +7,7 @@ import { PureComponent } from './Component.js'
 import { observable, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { loginStore } from './Store.js'
 import { config } from './Config.js'
 
 /* Store */
@@ -15,7 +16,11 @@ class FavStore {
     @observable favItems = []
     @observable favBars = []
 
-    toggleFavItem = (menuItemID) => toggle(this.favItems, menuItemID)
+    toggleFavItem = (menuItemID) => {
+        console.log("CALLING LOG IN")
+        loginStore.login()
+        toggle(this.favItems, menuItemID)
+    }
     toggleFavBar = (barID) => toggle(this.favBars, barID)
 
     isFavItem = (menuItemID) => _.includes(this.favItems, menuItemID)

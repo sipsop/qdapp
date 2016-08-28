@@ -130,9 +130,17 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
 }
 
 dependencies {
+    compile project(':react-native-lock')
+    // compile 'com.auth0.android:lock-googleplus:2.3.+'
     // compile project(':react-native-maps')
     // compile project(':react-native-wheel-picker')
     compile project(':react-native-vector-icons')
@@ -152,3 +160,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.compile
   into 'libs'
 }
+
