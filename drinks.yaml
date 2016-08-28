@@ -8,6 +8,7 @@ drinks:
                 #beer
                 #stout
                 #dark
+                #blah
 
         heineken:
             name: Heineken
@@ -25,6 +26,18 @@ drinks:
                 #beer
                 #lager
                 #dark
+                
+
+    stellaArtois
+    name: Stella Artois
+    desc: American style premium pale lager.  
+    tags: 
+        #bestsellingbeer
+        #lager
+        #Pale
+        #LowMalt
+        
+    
 
     wine:
         ### Red
@@ -96,7 +109,54 @@ drinks:
                 #fruity
                 #cherry
                 #oak
-
+        malbec:
+            name: Malbec
+            desc:Mallbec is a popular and easy to drink red with a tonne of juicy and fruit flavours.  
+            tags: |
+                #tannins
+                #red
+                #fullbodied
+                #red
+                #darkfruit
+                #blackberry
+                #plum
+                #cherry
+        shiraz:
+            name: Shiraz 
+            desc: A dark  and full bodied red wine 
+            tag: |
+                #dark
+                #fullbodied
+                #tannins
+                #red
+                #acidic
+                #blackberry
+                #blackpepper
+                
+        cabernetFranc:
+            name: Cabernet Franc
+            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon. 
+            tag: |
+                #tannins
+                #red
+                #blueberry
+                #dark
+                #mediumbodied
+                #acidic
+                #plum
+                #strawberry
+        sangiovese 
+            name: Sangiovese
+            desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity. 
+            tags: |
+                #light
+                #acidic
+                #cherry
+                #red
+                #strawberry
+                #cherry
+                #lightoak
+                #tannins
         ### White
 
         saugvignonBlanc:
@@ -109,8 +169,29 @@ drinks:
                 #popular
                 #dry
                 #acidic
-                #crip
-
+                #crisp
+       
+        pinotGrigio
+            name: Pinot Grigio
+            desc: A popular refreshing and zesty white wine. 
+            tags: |
+                #white
+                #light
+                #dry
+                #refreshing
+                #zesty 
+                #citrus
+       
+        chardonnay
+            name: Chardonnay
+            desc: This is the wolrd most famous white wine. 
+            tags: |
+                #white
+                #crisp
+                #fruity
+                #oak
+                #aromatic
+                
         # wine, rose
 
         grenache:
