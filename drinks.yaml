@@ -172,7 +172,7 @@ drinks:
                 #crisp
        
         pinotGrigio
-            name: Pinot Grigio
+            name: Pinot Grigio or Pinot Gris
             desc: A popular refreshing and zesty white wine. 
             tags: |
                 #white
@@ -191,7 +191,42 @@ drinks:
                 #fruity
                 #oak
                 #aromatic
-                
+       
+        riesling
+            name: Riesling
+            desc: An aromatic refreshing white wine with a flavour of apples and usually sweet. 
+            tags: |
+                #light
+                #fresh
+                #white
+                #mildlysweet
+                #acidic
+                #apple
+                #crisp
+                #acidic
+                #floral
+    
+        cheninBlanc
+            name: Chenin Blanc
+            desc: A light bodied white wine similar to Saugvignon Blanc. 
+            tags: |
+                #white
+                #light
+                #zesty
+                #acidic
+        
+        moscato        
+            name: Moascato or Muscat
+            desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
+            tags: |
+                #sweet
+                #white
+                #dessert
+                #acidic
+                #citrus
+        
+                #
+        
         # wine, rose
 
         grenache:
@@ -244,7 +279,43 @@ drinks:
                 #watermelon
                 #strawberry
 
-        # wine, sparkling
+        # wine, sparkling champagne 
+        
+    prosecco 
+        name: Prosecco
+        desc: It is a light sparkling italian wine. Easy to drink and often drank as alternative to Champagne.  
+        tags: |
+            #sparkling
+            #white
+            #citrus
+            #italian
+            #crisp
+            #light
+            #celebration
+            
+    champagne 
+        name: Champagne
+        desc: A sparkling wine produced from grapes grown in the Champagne region of France. 
+        tags: |
+            #french
+            #sparkling
+            #white
+            #celebration
+            #france 
+            #fizz
+            #light
+    
+    cava
+        name: Cava
+        desc: It is a sparkling white wine from Spain.  
+        tags: |
+            #spanish
+            #white
+            #sparkling
+            #light
+            #celebration 
+            #fizz
+            #Spain
 
     spirits:
         smirnoff:
