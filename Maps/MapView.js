@@ -16,7 +16,7 @@ import { Map } from '../Map.js'
 import { merge } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
-
+import { locationStore } from './MapStore.js'
 
 
 const pubColor  = config.theme.primary.medium
@@ -132,7 +132,7 @@ class MapMarker extends PureComponent {
             bar.signedUp
                 ? bar.desc
                 : bar.desc
-        return <MapView.Marker
+        return <NativeMapView.Marker
             ref={markerRef => {this.markerRef = markerRef}}
             coordinate={coords(bar)}
             title={title}

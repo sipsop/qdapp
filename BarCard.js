@@ -11,15 +11,15 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
+import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
-import { ImageSwiper } from './ImageSwiper.js'
 import { locationStore } from './Maps/MapStore.js'
 import { store, tabStore, barStore } from './Store.js'
 import { config } from './Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
 
-@observer export class BarCard extends Component {
+@observer export class BarCard extends PureComponent {
     /* properties:
         bar: schema.Bar
             bar info
@@ -70,7 +70,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
 }
 
-@observer export class BarCardFooter extends Component {
+@observer export class BarCardFooter extends PureComponent {
     /* properties:
         bar: schema.Bar
         showMapButton: bool
@@ -103,7 +103,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     }
 }
 
-@observer export class BarInfo extends Component {
+@observer export class BarInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */
@@ -122,7 +122,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     }
 }
 
-@observer export class PlaceInfo extends Component {
+@observer export class PlaceInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */
@@ -149,7 +149,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
     }
 }
 
-@observer export class TimeInfo extends Component {
+@observer export class TimeInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */

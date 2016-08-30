@@ -1,38 +1,80 @@
+//@flow
+
+import React, { Component } from 'react'
 import { observable, action, autorun, computed, asMap } from 'mobx'
+
 import { store } from '../Store.js'
+import { emptyResult } from '../HTTP.js'
+import { logErrors } from '../Curry.js'
+import { searchNearby } from './Nearby.js'
 
-// Search:
-//
-// https://maps.googleapis.com/maps/api/geocode/json?&address=Cambridge,UK
-//
+type Key = string
 
-const focusDelta = {
+type Coords = {
+    latitude: number,
+    longitude: number,
+}
+
+type Delta = {
+    latitudeDelta: number,
+    longitudeDelta: number,
+}
+
+type Region = {
+    latitude: number,
+    longitude: number,
+    latitudeDelta: number,
+    longitudeDelta: number,
+}
+
+
+const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
+
+const initialLocation : Coords = {
+    latitude: 52.207990,
+    longitude: 0.121703,
+}
+
+const focusDelta : Delta = {
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
 }
 
+const normalDelta : Delta = {
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
+}
+
 class LocationStore {
-    @observable region = {
-        latitude: 52.207990,
-        longitude: 0.121703,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
+    @observable currentLocation : Coords = initialLocation
+    @observable region : Region = {
+        ...initialLocation,
+        ...normalDelta,
     }
 
-    @observable currentMarker = null
+    @observable currentMarkerCoords : Coords = null
+    @observable currentLocation : Coords = initialLocation
+    @observable nearbyBarDownloadResult : DownloadResult = emptyResult()
+    @observable searchRadius : number = 5000 // 5 kilometer search radius
 
     constructor() {
-        this.mapView = null
+        this.mapView : Component = null
     }
 
-    @action focusBar = (bar) => {
+    @action focusBar = (coords : Coords) => {
         if (this.mapView) {
-            region = merge(coords(bar), focusDelta)
+            region = merge(coords, focusDelta)
             this.mapView.animateToRegion(region, 500)
         }
-        this.currentMarker = bar
+        this.currentMarkerCoords = coords
         store.switchToDiscoverPage(true)
     }
+
+    refreshNearbyBars = action(logErrors(async () => {
+        const { latitude, longitude } = this.currentLocation
+        const searchResults = await searchNearby(APIKey, latitude, longitude, this.searchRadius)
+        this.searchResults = searchResults
+    }))
 
     @observable barMarkers = [
         {

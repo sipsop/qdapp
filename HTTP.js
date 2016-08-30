@@ -181,7 +181,7 @@ class DownloadManager {
 
         /* Try a fresh download... */
         const downloadresult = await fetchJSONWithTimeouts(
-                        key, url, httpOptions, 5000, 12000)
+                        key, url, httpOptions, 12000, 20000)
         if (downloadResult.state === DownloadResult.Error && isRelevantCB) {
             /* There as been some error, try again later */
             this.activeDownloads.push(new JSONDownload(
@@ -279,7 +279,9 @@ export const fetchJSONWithTimeouts = async (
 const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
     var response
     try {
-        response = await timeout(downloadTimeout, () => fetch(url, httpOptions))
+        console.log("Starting fetch...", url)
+        const fetchPromise = fetch(url, httpOptions)
+        response = await timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)
     } catch (err) {
         throw new NetworkError(err.message)
