@@ -52,13 +52,13 @@ class LocationStore {
         ...normalDelta,
     }
 
-    @observable currentMarkerCoords : Coords = null
+    @observable currentMarkerCoords : ?Coords = null
     @observable currentLocation : Coords = initialLocation
     @observable nearbyBarDownloadResult : DownloadResult = emptyResult()
     @observable searchRadius : number = 5000 // 5 kilometer search radius
 
     constructor() {
-        this.mapView : Component = null
+        this.mapView = null
     }
 
     @action focusBar = (coords : Coords) => {

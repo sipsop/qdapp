@@ -4,7 +4,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   AppRegistry,
   Image,
@@ -64,13 +64,6 @@ class ListViewBasics extends Component { // Initialize the hardcoded data
                 </ScrollView>
             </View>
         )
-        return (
-            <View style = {{paddingTop: 22, flex: 1}}>
-                <ListView dataSource={this.state.dataSource}
-                          renderRow={(rowData) => <Text>{rowData}</Text>}
-                          />
-            </View>
-        )
     }
 }
 
@@ -95,6 +88,7 @@ class JustifyContentBasics extends Component {
 
 // AppRegistry.registerComponent('AwesomeProject', () => JustifyContentBasics);
 
+/*
 var AwesomeProject = React.createClass({
 
   getInitialState: function() {
@@ -166,6 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+*/
 
 // AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
 
