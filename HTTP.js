@@ -15,9 +15,9 @@ import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 
-const HOST = 'http://192.168.0.6:5000'
+// const HOST = 'http://192.168.0.6:5000'
 // const HOST = 'http://192.168.0.20:5000'
-// const HOST = 'http://172.24.176.169:5000'
+const HOST = 'http://172.24.176.169:5000'
 // const HOST = 'http://localhost:5000/graphql'
 // const HOST = 'http://10.147.18.19:5000'
 
@@ -279,9 +279,8 @@ export const fetchJSONWithTimeouts = async (
 const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
     var response
     try {
-        // TODO: Use timeout?
-        // response = await timeout(downloadTimeout, () => fetch(url, httpOptions))
-        response = await fetch(url, httpOptions)
+        response = await timeout(downloadTimeout, () => fetch(url, httpOptions))
+        // response = await fetch(url, httpOptions)
     } catch (err) {
         throw new NetworkError(err.message)
     }
@@ -296,30 +295,29 @@ const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
 /* Promises */
 /************/
 
+const timedout = { timedout: true }
+
+export const timeoutPromise = (timeout, callback) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(callback()), timeout)
+    })
+}
+
+export const timeoutError = (timeout) => {
+    return timeoutPromise(timeout, () => {
+        return timedout
+    })
+}
+
 /* Set a timeout for an asynchronous callback */
-export function timeout(timeout, callback) {
-    const runPromise = async (resolve, reject) => {
-        const flag = { done: false }
-
-        /* Set timeout */
-        setTimeout(() => {
-            if (!flag.done)
-                reject(new TimeoutError())
-        }, timeout)
-
-        /* Invoke callback and wait for result */
-        try {
-            const result = await callback()
-            if (!flag.done) {
-                resolve(result)
-                flag.done = true
-            }
-        } catch (err) {
-            flag.done = true
-            reject(err)
-        }
+export const timeout = async (timeout, promise) => {
+    const tPromise = timeoutError(timeout)
+    const result = await Promise.race([tPromise, promise])
+    if (result == timedout) {
+        console.log("download timed out...")
+        throw new TimeoutError()
     }
-    return new Promise(runPromise)
+    return result
 }
 
 const promise = f => new Promise((resolve, reject) => {

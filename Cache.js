@@ -22,6 +22,12 @@ class KeyError {
     }
 }
 
+class InvalidCacheEntry {
+    constructor(blob) {
+        this.message = `Invalid cache entry: ${blob}`
+    }
+}
+
 
 export class Storage {
     constructor(backend, maxEntries) {
@@ -107,7 +113,7 @@ class Cache {
             cacheEntry = await this.storage.get(key)
             return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback)
         } catch (e) {
-            if (!(e instanceof KeyError))
+            if (!(e instanceof KeyError || e instanceof InvalidCacheEntry))
                 throw e
             cacheEntry = await this.refreshKey(key, refreshCallback)
             return cacheEntry.value
@@ -131,7 +137,6 @@ class Cache {
                 if (cacheEntry.expiresAfter < now) {
                     // Entry has expired, re-throw network error
                     if (expiredCallback) {
-                        console.log("Trying download again with expiredCallback...", key)
                         cacheEntry = await this.refreshKey(key, expiredCallback)
                         return cacheEntry.value
                     }
@@ -189,14 +194,8 @@ class CacheEntry {
 
     static fromBlob = (key, blob) => {
         const result = JSON.parse(blob)
-        if (result.value == undefined || !result.refreshAfter || !result.expiresAfter) {
-            console.log("Invalid cache entry:",
-                            result.refreshAfter,
-                            result.expiresAfter,
-                            "value == undefined",
-                            result.value == undefined)
-            throw Error("Invalid cache entry")
-        }
+        if (!result.refreshAfter || !result.expiresAfter)
+            throw new InvalidCacheEntry(blob)
         return new CacheEntry(
             key,
             result.value,
