@@ -2,14 +2,9 @@ import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 import _ from 'lodash'
 
-import { OrderItem } from './Orders.js'
-import { emptyResult, downloadManager } from './HTTP.js'
-import { cache } from './Cache.js'
-import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
-import { orderStore } from './Orders.js'
-import { favStore } from './Fav.js'
-import { tabStore } from './Tabs.js'
-import { store } from './Store.js'
+import { emptyResult, downloadManager } from '../HTTP.js'
+import { logErrors } from '../Curry.js'
+import { store } from '../Store.js'
 
 class BarStore {
     // DownloadResult[schema.Bar]

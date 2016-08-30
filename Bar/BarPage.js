@@ -16,18 +16,19 @@ import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { DownloadResultView } from './HTTP.js'
-import { Page } from './Page.js'
 import { sampleBarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
-import { ImageSwiper } from './ImageSwiper.js'
-import { LargeButton } from './Button.js'
-import { FavBarContainer } from './Fav.js'
-import { T } from './AppText.js'
-import { locationStore } from './Maps/MapStore.js'
-import { store, tabStore, barStore } from './Store.js'
-import { config } from './Config.js'
-import { merge, safeAutorun } from './Curry.js'
+
+import { DownloadResultView } from '../HTTP.js'
+import { Page } from '../Page.js'
+import { ImageSwiper } from '../ImageSwiper.js'
+import { LargeButton } from '../Button.js'
+import { FavBarContainer } from '../Fav.js'
+import { T } from '../AppText.js'
+import { locationStore } from '../Maps/MapStore.js'
+import { tabStore, barStore } from '../Store.js'
+import { config } from '../Config.js'
+import { merge, safeAutorun } from '../Curry.js'
 
 export class BarPageFetcher extends DownloadResultView {
     constructor(props) {
@@ -207,7 +208,7 @@ class BarView extends Page {
                 }
                 <View style={{alignItems: 'center'}}>
                     <Image
-                        source={require('./logos/powered_by_google_on_white.png')}
+                        source={require('../logos/powered_by_google_on_white.png')}
                         style={{marginTop: 10}}
                         />
                     {/* TODO: display additional attribution stuff here */}

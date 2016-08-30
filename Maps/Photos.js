@@ -23,6 +23,13 @@ export const getPhotoURL = (apiKey : Key, photo : Photo) => {
     })
 }
 
+export const parsePhoto = (photoRef) : Photo => {
+    return {
+        htmlAttrib: photoRef.html_attributions,
+        photoID:    photoRef.photo_reference,
+    }
+}
+
 /* Shows a photo image with proper attribution */
 export class PhotoImage extends PureComponent {
     /* properties:

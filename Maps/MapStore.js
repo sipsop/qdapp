@@ -63,11 +63,10 @@ class LocationStore {
 
     @observable currentMarkerCoords : ?Coords = null
     @observable currentLocation : Coords = initialLocation
-    @observable nearbyBarDownloadResult : DownloadResult = emptyResult()
+    @observable nearbyBarDownloadResult : DownloadResult<SearchResponse> = emptyResult()
     @observable searchRadius : number = 5000 // 5 kilometer search radius
 
     mapView : ?NativeMapView
-    searchResults : SearchResponse
 
     constructor() {
         this.mapView = null
@@ -83,8 +82,12 @@ class LocationStore {
     }
 
     refreshNearbyBars = action(logErrors(async () => {
-        const searchResults = await searchNearby(APIKey, this.currentLocation, this.searchRadius, 'bar')
-        this.searchResults = searchResults
+        this.nearbyBarDownloadResult = await searchNearby(
+            APIKey,
+            this.currentLocation,
+            this.searchRadius,
+            'bar',
+        )
     }))
 
     @observable barMarkers = [

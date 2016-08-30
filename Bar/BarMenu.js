@@ -13,11 +13,9 @@ import LinearGradient from 'react-native-linear-gradient'
 import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
-import { T } from './AppText.js'
-import { SizeTracker } from './SizeTracker.js'
-import { store, favStore, tabStore } from './Store.js'
-import { merge } from './Curry.js'
-
+import { T } from '../AppText.js'
+import { SizeTracker } from '../SizeTracker.js'
+import { store, favStore, tabStore } from '../Store.js'
 
 export class Category {
     constructor(title, source) {
@@ -123,7 +121,7 @@ export class Category {
     render = () => {
         const submenu = this.props.submenu
         const radius = 20
-        const style = merge({borderRadius: radius}, this.props.style)
+        const style = {borderRadius: radius, ...this.props.style}
 
         return <TouchableOpacity onPress={this.handleCardPress}>
             <Image source={{uri: submenu.image}} style={style}>

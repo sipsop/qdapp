@@ -5,23 +5,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-import Dimensions from 'Dimensions'
 import _ from 'lodash'
-import Swiper from 'react-native-swiper'
 import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
-import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { DownloadResultView } from './HTTP.js'
-import { sampleBarMenu } from './BarMenu.js'
-import { BarCardFooter } from './BarCard.js'
-import { ImageSwiper } from './ImageSwiper.js'
 import { T } from './AppText.js'
-import { store } from './Store.js'
 import { config } from './Config.js'
-import { intersperse, merge } from './Curry.js'
 
 const rowHeight     = 55
 const buttonHeight  = 45

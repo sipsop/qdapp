@@ -9,7 +9,7 @@ import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
 import { orderStore } from './Orders.js'
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
-import { barStore } from './BarStore.js'
+import { barStore } from './Bar/BarStore.js'
 import { loginStore } from './Login.js'
 
 export class Store {

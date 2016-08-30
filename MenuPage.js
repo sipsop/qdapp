@@ -23,7 +23,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from './Page.js'
 import { OrderItem } from './Orders.js'
-import { BarPageFetcher } from './BarPage.js'
+import { BarPageFetcher } from './Bar/BarPage.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Price, sumPrices } from './Price.js'

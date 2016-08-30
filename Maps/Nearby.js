@@ -5,12 +5,13 @@ import { buildURL } from '../URLs.js'
 
 import type { Int, Float } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'
-import type { Photo } from './Photos.js'
+import type { Photo, parsePhoto } from './Photos.js'
 
 /*********************************************************************/
 
 export type SearchResult = {
     placeID:    string,
+    name:       string,
     lat:        Float,
     lon:        Float,
     photos:     Array<Photo>,
@@ -41,7 +42,7 @@ export const searchNearby = async (
         coords       : Coords,
         radius       : Int,
         locationType : string,
-    ) => {
+        ) : Promise<DownloadResult<SearchResponse>> => {
     const url = buildURL(BaseURL, {
         key: apiKey,
         // rankby: 'distance',
@@ -53,7 +54,9 @@ export const searchNearby = async (
     return jsonDownloadResult.update(parseResponse)
 }
 
-export const fetchMore = async (apiKey : Key, prevResponse : SearchResponse) => {
+export const fetchMore = async (
+        apiKey : Key, prevResponse : SearchResponse
+    ) : Promise<DownloadResult<SearchResponse>> => {
     if (!prevResponse.next_page_token)
         return noResults
 
@@ -75,18 +78,12 @@ const parseResponse = (doc) : SearchResponse => {
 const parseSearchResult = (result) : SearchResult => {
     return {
         placeID:    result.place_id,
+        name:       result.name,
         lat:        result.geometry.location.lat,
         lon:        result.geometry.location.lon,
         photos:     result.photos.map(parsePhoto),
         priceLevel: result.price_level,
         rating:     result.rating,
         types:      result.types,
-    }
-}
-
-const parsePhoto = (photoRef) : Photo => {
-    return {
-        htmlAttrib: photoRef.html_attributions,
-        photoID:    photoRef.photo_reference,
     }
 }

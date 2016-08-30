@@ -11,11 +11,11 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { PureComponent } from './Component.js'
-import { T } from './AppText.js'
-import { locationStore } from './Maps/MapStore.js'
-import { store, tabStore, barStore } from './Store.js'
-import { config } from './Config.js'
+import { PureComponent } from '../Component.js'
+import { T } from '../AppText.js'
+import { locationStore } from '../Maps/MapStore.js'
+import { store, tabStore, barStore } from '../Store.js'
+import { config } from '../Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
 

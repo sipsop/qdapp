@@ -8,7 +8,7 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
 import { MapView } from './Maps/MapView.js'
-import { BarCard } from './BarCard.js'
+import { BarCard } from './Bar/BarCard.js'
 import { DownloadResultView } from './HTTP.js'
 import { T } from './AppText.js'
 import { store, barStore } from './Store.js'
