@@ -1,10 +1,16 @@
-import React, { Component } from 'react';
+// flow DISABLED
+/* NOTE: flow cannot type functions with polymorphic return values, so most
+    of this module is not typeable...
+*/
+
 import {
-  ActivityIndicator,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+    React,
+    Component,
+    ActivityIndicator,
+    Text,
+    View,
+    TouchableOpacity,
+} from './Component.js';
 import { observable, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -15,85 +21,104 @@ import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 
+import type { Int, Float, URL } from './Types.js'
+
+/*********************************************************************/
+
+export type HTTPOptions = RequestOptions
+
+/*********************************************************************/
+
 // const HOST = 'http://192.168.0.6:5000'
 // const HOST = 'http://192.168.0.20:5000'
-const HOST = 'http://172.24.176.169:5000'
+const HOST : string = 'http://172.24.176.169:5000'
 // const HOST = 'http://localhost:5000/graphql'
 // const HOST = 'http://10.147.18.19:5000'
 
 export class TimeoutError {
-    constructor(message) {
+    message : string
+    constructor() {
         this.message = "Downloading is taking too long, please try again later."
     }
 }
 
 export class NetworkError {
-    constructor(message) {
+    message : string
+    constructor(message : string) {
         this.message = message
     }
 }
 
-export class DownloadResult {
-    // Download states
-    static NotStarted   = 'NotStarted'  // download has not yet started
-    static InProgress   = 'InProgress'  // download has started
-    static Finished     = 'Finished'    // download is finished successfully
-    static Error        = 'Error'       // download error
+export type DownloadState =
+    | 'NotStarted'  // download error
+    | 'InProgress'  // download error
+    | 'Finished'    // download error
+    | 'Error'       // download error
 
-    // @observable state   = undefined
-    // @observable message = undefined
-    // @observable value   = undefined
+export class DownloadResult<T> {
+    // Download states
+    static NotStarted   = 'NotStarted'
+    static InProgress   = 'InProgress'
+    static Finished     = 'Finished'
+    static Error        = 'Error'
+
+    state   : DownloadState
+    message : ?string
+    value   : ?T
 
     constructor() {
-        this.state   = DownloadResult.NotStarted
+        this.state   = 'NotStarted'
         this.message = undefined
         this.value   = undefined
     }
 
     downloadStarted = () => {
         transaction(() => {
-            this.state   = DownloadResult.InProgress
+            this.state   = 'InProgress'
             this.message = undefined
             this.value   = undefined
         })
         return this
     }
 
-    downloadError = (message) => {
+    downloadError = (message : string) => {
         transaction(() => {
-            this.state   = DownloadResult.Error
+            this.state   = 'Error'
             this.message = message
             this.value   = undefined
         })
         return this
     }
 
-    downloadFinished = (value) => {
+    downloadFinished = (value : T) => {
         transaction(() => {
-            this.state   = DownloadResult.Finished
+            this.state   = 'Finished'
             this.message = undefined
             this.value   = value
         })
         return this
     }
 
-    update = (f) => {
-        if (this.state == DownloadResult.Finished) {
+    update = (f : (value : T) => T) : DownloadResult<T> => {
+        if (this.value == null)
+            throw Error("Value must not be null")
+
+        if (this.state == 'Finished') {
             this.value = f(this.value)
         }
         return this
     }
 }
 
-export const emptyResult = () => new DownloadResult()
+export const emptyResult = () : DownloadResult<T> => new DownloadResult()
 
 /* React Component for rendering a downloadResult in its different states */
-@observer export class DownloadResultView extends PureComponent {
+@observer export class DownloadResultView<T> extends PureComponent {
     /* props:
         downloadResult: DownloadResult
     */
 
-    constructor(props, errorMessage) {
+    constructor(props : {downloadResult: DownloadResult<T>}, errorMessage : string) {
         super(props)
         if (!errorMessage)
             throw Error('Expected an error message as argument to DownloadResultView')
@@ -102,13 +127,13 @@ export const emptyResult = () => new DownloadResult()
 
     render = () => {
         const res = this.getDownloadResult()
-        if (res.state == DownloadResult.NotStarted) {
+        if (res.state == 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state == DownloadResult.InProgress) {
+        } else if (res.state == 'InProgress') {
             return this.renderInProgress()
-        } else if (res.state == DownloadResult.Finished) {
+        } else if (res.state == 'Finished') {
             return this.renderFinished(res.value)
-        } else if (res.state == DownloadResult.Error) {
+        } else if (res.state == 'Error') {
             return this.renderError(res.message)
         } else {
             throw Error('unreachable')
@@ -127,13 +152,13 @@ export const emptyResult = () => new DownloadResult()
         throw Error('NotImplemented')
     }
 
-    renderFinished = (value) => {
+    renderFinished = (value : T) => {
         throw Error('NotImplemented')
     }
 
     renderInProgress = () => <Loader />
 
-    renderError = (message) => {
+    renderError = (message : string) => {
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Text>{this.errorMessage}</Text>
             <Text style={{textAlign: 'center', marginBottom: 20}}>
@@ -146,16 +171,21 @@ export const emptyResult = () => new DownloadResult()
 
 class DownloadManager {
 
+    activeDownloads : Array<JSONDownload>
+
     constructor() {
         this.activeDownloads = []
     }
 
     /* Execute a GraphQL query */
     graphQL = async (
-            key,          /* key used for caching responses */
-            query,        /* GraphQL query string to execute */
-            isRelevantCB, /* Callback that decides whether the download is still relevant */
-        ) : DownloadResult => {
+            /* key used for caching responses */
+            key : string,
+            /* GraphQL query string to execute */
+            query : string,
+            /* Callback that decides whether the download is still relevant */
+            isRelevantCB : () => boolean,
+        ) : Promise<DownloadResult<T>> => {
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -169,20 +199,25 @@ class DownloadManager {
 
     /* HTTP GET/POST/etc to a URL */
     fetchJSON = async (
-            key,            /* key used for caching responses */
-            url,            /* URL to fetch */
-            httpOptions,    /* HTTP options to pass to fetch() */
-            isRelevantCB,   /* Callback that decides whether the download is still relevant */
-        ) : DownloadResult => {
+            /* key used for caching responses */
+            key : string,
+            /* URL to fetch */
+            url : URL,
+            /* HTTP options to pass to fetch() */
+            httpOptions : HTTPOptions,
+            /* Callback that decides whether the download is still relevant */
+            isRelevantCB : () => boolean,
+        ) : Promise<DownloadResult<T>> => {
+
         /* Remove any potential download with the same key that is still pending */
         this.activeDownloads = this.activeDownloads.filter(
             download => download.key !== key
         )
 
         /* Try a fresh download... */
-        const downloadresult = await fetchJSONWithTimeouts(
+        const downloadResult = await fetchJSONWithTimeouts(
                         key, url, httpOptions, 12000, 20000)
-        if (downloadResult.state === DownloadResult.Error && isRelevantCB) {
+        if (downloadResult.state === 'Error' && isRelevantCB) {
             /* There as been some error, try again later */
             this.activeDownloads.push(new JSONDownload(
                 key, url, httpOptions, downloadResult, isRelevantCB))
@@ -225,7 +260,14 @@ class DownloadManager {
 
 export const downloadManager = new DownloadManager()
 
-class JSONDownload {
+class JSONDownload<T> {
+
+    key : string
+    url : URL
+    httpOptions : HTTPOptions
+    downloadResult : DownloadResult<T>
+    isRelevant: () => boolean
+
     constructor(key, url, httpOptions, downloadResult, isRelevant) {
         this.key = key
         this.url = url
@@ -237,25 +279,26 @@ class JSONDownload {
     retryFetchJSON = async () => {
         this.downloadResult.downloadStarted()
         const downloadResult = await fetchJSON(this.key, this.url, this.httpOptions)
-        this.downloadResult.update(_ => downloadResult.value)
+        if (downloadResult.value != null)
+            this.downloadResult.update(_ => downloadResult.value)
     }
 
 }
 
 
-export const fetchJSON = async (key, url, httpOptions) => {
+const fetchJSON = async (key : string, url : URL, httpOptions : HTTPOptions) => {
     return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
 
-export const isNetworkError =
-    e => e instanceof NetworkError || e instanceof TimeoutError
+const isNetworkError = (e : Error) : boolean =>
+    e instanceof NetworkError || e instanceof TimeoutError
 
-export const fetchJSONWithTimeouts = async (
-        key,
-        url,
-        httpOptions,
-        refreshTimeout,
-        expiredTimeout,
+const fetchJSONWithTimeouts = async (
+        key : string,
+        url : URL,
+        httpOptions : HTTPOptions,
+        refreshTimeout : Float,
+        expiredTimeout : Float,
     ) => {
 
     const refreshCallback = async () => {
@@ -267,10 +310,10 @@ export const fetchJSONWithTimeouts = async (
 
     try {
         const result = await cache.get(key, refreshCallback, /*expiredCallback*/)
-        return emptyResult().downloadFinished(result.data)
+        return new DownloadResult().downloadFinished(result.data)
     } catch (e) {
         if (isNetworkError(e))
-            return emptyResult().downloadError(e.message)
+            return new DownloadResult().downloadError(e.message)
         console.error(e)
         return undefined
     }
@@ -299,20 +342,20 @@ const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
 
 const timedout = { timedout: true }
 
-export const timeoutPromise = (timeout, callback) => {
+const timeoutPromise = (timeout, callback) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => resolve(callback()), timeout)
     })
 }
 
-export const timeoutError = (timeout) => {
+const timeoutError = (timeout) => {
     return timeoutPromise(timeout, () => {
         return timedout
     })
 }
 
 /* Set a timeout for an asynchronous callback */
-export const timeout = async (timeout, promise) => {
+const timeout = async (timeout, promise) => {
     const tPromise = timeoutError(timeout)
     const result = await Promise.race([tPromise, promise])
     if (result == timedout) {
