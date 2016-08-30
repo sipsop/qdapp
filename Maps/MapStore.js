@@ -1,32 +1,41 @@
-//@flow
+// @flow
 
-import React, { Component } from 'react'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 
 import { store } from '../Store.js'
-import { emptyResult } from '../HTTP.js'
+import { DownloadResult, emptyResult } from '../HTTP.js'
 import { logErrors } from '../Curry.js'
 import { searchNearby } from './Nearby.js'
+import { merge } from '../Curry.js'
 
-type Key = string
+import type { SearchResponse, SearchResult } from './Nearby.js'
 
-type Coords = {
+/*********************************************************************/
+
+export type Key = string
+
+export type Coords = {
     latitude: number,
     longitude: number,
 }
 
-type Delta = {
+export type Delta = {
     latitudeDelta: number,
     longitudeDelta: number,
 }
 
-type Region = {
+export type Region = {
     latitude: number,
     longitude: number,
     latitudeDelta: number,
     longitudeDelta: number,
 }
 
+type NativeMapView  = {
+    animateToRegion: (region : Region, time : number) => void,
+}
+
+/*********************************************************************/
 
 const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
 
@@ -57,13 +66,16 @@ class LocationStore {
     @observable nearbyBarDownloadResult : DownloadResult = emptyResult()
     @observable searchRadius : number = 5000 // 5 kilometer search radius
 
+    mapView : ?NativeMapView
+    searchResults : SearchResponse
+
     constructor() {
         this.mapView = null
     }
 
     @action focusBar = (coords : Coords) => {
-        if (this.mapView) {
-            region = merge(coords, focusDelta)
+        if (this.mapView != null) {
+            const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
         }
         this.currentMarkerCoords = coords
@@ -71,8 +83,7 @@ class LocationStore {
     }
 
     refreshNearbyBars = action(logErrors(async () => {
-        const { latitude, longitude } = this.currentLocation
-        const searchResults = await searchNearby(APIKey, latitude, longitude, this.searchRadius)
+        const searchResults = await searchNearby(APIKey, this.currentLocation, this.searchRadius, 'bar')
         this.searchResults = searchResults
     }))
 

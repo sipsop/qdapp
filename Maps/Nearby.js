@@ -1,9 +1,32 @@
 // @flow
 
-import { downloadManager } from '../HTTP.js'
+import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 
-import type { Photo, SearchResult, SearchResults } from './MapTypes.js'
+import type { Int, Float } from '../Types.js'
+import type { Key, Coords } from './MapStore.js'
+import type { Photo } from './Photos.js'
+
+/*********************************************************************/
+
+export type SearchResult = {
+    placeID:    string,
+    lat:        Float,
+    lon:        Float,
+    photos:     Array<Photo>,
+    priceLevel: Int,            // 1 through 4 (4 being "very exprensive" and 1 being "free")
+    rating:     Float,          // e.g. 3.4
+    types:      Array<string>,  // e.g. ['cafe', 'food', 'restaurant']
+}
+
+export type SearchResponse = {
+    htmlAttrib: Array<string>,
+    nextToken:  string,
+    results:    SearchResult,
+}
+
+/*********************************************************************/
+
 
 const BaseURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
@@ -13,19 +36,24 @@ const noResults = {
     results:    [],
 }
 
-export const searchNearby = async (apiKey, lat, lon, radius = 5000, type='bar') => {
+export const searchNearby = async (
+        apiKey       : Key,
+        coords       : Coords,
+        radius       : Int,
+        locationType : string,
+    ) => {
     const url = buildURL(BaseURL, {
         key: apiKey,
         // rankby: 'distance',
         radius: radius,
-        location: `${lat},${lon}`,
-        type: 'bar',
+        location: `${coords.latitude},${coords.longitude}`,
+        type: locationType,
     })
     const jsonDownloadResult = await downloadManager.fetchJSON(url)
     return jsonDownloadResult.update(parseResponse)
 }
 
-export const fetchMore = async (apiKey, prevResponse) => {
+export const fetchMore = async (apiKey : Key, prevResponse : SearchResponse) => {
     if (!prevResponse.next_page_token)
         return noResults
 
@@ -36,7 +64,7 @@ export const fetchMore = async (apiKey, prevResponse) => {
 }
 
 /* See https://developers.google.com/places/web-service/search for the response structure */
-const parseResponse = (doc) : SearchResults => {
+const parseResponse = (doc) : SearchResponse => {
     return {
         'htmlAttrib': doc.html_attribution,
         'nextToken':  doc.next_page_token,

@@ -1,4 +1,4 @@
-/* @flow */
+// TODO: Enable flow type checking
 
 import React, { Component } from 'react';
 import {

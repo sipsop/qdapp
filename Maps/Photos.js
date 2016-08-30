@@ -1,14 +1,18 @@
 // @flow
 
-import React, { Component } from 'react';
-import {
-  Image,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import { React, Component, PureComponent, Image, View, TouchableOpacity } from '../Component.js'
 import { buildURL } from '../URLs.js'
 
-import type { Key, Photo } from "./MapTypes.js";
+import type { Key } from "./MapStore.js";
+
+/*********************************************************************/
+
+export type Photo = {
+    htmlAttrib: Array<string>,
+    photoID:    string,
+}
+
+/*********************************************************************/
 
 export const getPhotoURL = (apiKey : Key, photo : Photo) => {
     return buildURL("https://maps.googleapis.com/maps/api/place/photo", {

@@ -18,7 +18,6 @@ import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { locationStore } from './MapStore.js'
 
-
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
 const passiveColor = 'rgb(222, 151, 14)'
