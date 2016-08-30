@@ -16,7 +16,7 @@ import { Map } from '../Map.js'
 import { merge } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
-import { locationStore } from './MapStore.js'
+import { locationStore, getBarCoords } from './MapStore.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
@@ -42,7 +42,7 @@ export class MapView extends PureComponent {
     }
 
     @action handleMapPress = (value) => {
-        locationStore.currentMarker = null
+        locationStore.setCurrentMarker(null)
     }
 
     render = () => {
@@ -105,8 +105,7 @@ class MapMarker extends PureComponent {
     }
 
     @action handleMarkerPress = () => {
-        console.log("Setting currentMarker", this.props.bar.id)
-        locationStore.currentMarker = this.props.bar
+        locationStore.setCurrentMarker(this.props.bar)
     }
 
     @action handleCalloutPress = () => {
@@ -115,9 +114,10 @@ class MapMarker extends PureComponent {
     }
 
     @computed get selected() {
-        if (!locationStore.currentMarker)
+        const markerCoords = locationStore.getCurrentMarkerCoords()
+        if (!markerCoords)
             return false
-        return this.props.bar.id === locationStore.currentMarker.id
+        return _.isEqual(getBarCoords(this.props.bar), markerCoords)
     }
 
     render = () => {

@@ -30,6 +30,7 @@ import { tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { merge, safeAutorun } from '../Curry.js'
 
+
 export class BarPageFetcher extends DownloadResultView {
     constructor(props) {
         super(props, "Error downloading menu page")

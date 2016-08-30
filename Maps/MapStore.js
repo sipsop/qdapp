@@ -8,6 +8,7 @@ import { logErrors } from '../Curry.js'
 import { searchNearby } from './Nearby.js'
 import { merge } from '../Curry.js'
 
+import type { Bar } from '../Bar/Bar.js'
 import type { SearchResponse, SearchResult } from './Nearby.js'
 
 /*********************************************************************/
@@ -54,6 +55,14 @@ const normalDelta : Delta = {
     longitudeDelta: 0.02,
 }
 
+
+export const getBarCoords = (bar : Bar) => {
+    return {
+        latitude: bar.address.lat,
+        longitude: bar.address.lon,
+    }
+}
+
 class LocationStore {
     @observable currentLocation : Coords = initialLocation
     @observable region : Region = {
@@ -72,7 +81,16 @@ class LocationStore {
         this.mapView = null
     }
 
-    @action focusBar = (coords : Coords) => {
+    getCurrentMarkerCoords = () : ?Coords => {
+        return this.currentMarkerCoords
+    }
+
+    setCurrentMarker = (bar : Bar) => {
+        this.currentMarkerCoords = getBarCoords(bar)
+    }
+
+    @action focusBar = (bar : Bar) => {
+        const coords = getBarCoords(bar)
         if (this.mapView != null) {
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)

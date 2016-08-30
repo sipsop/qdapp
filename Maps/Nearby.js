@@ -2,10 +2,11 @@
 
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
+import { parsePhoto } from './Photos.js'
 
 import type { Int, Float } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'
-import type { Photo, parsePhoto } from './Photos.js'
+import type { Photo } from './Photos.js'
 
 /*********************************************************************/
 
