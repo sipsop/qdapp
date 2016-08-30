@@ -7,7 +7,7 @@ import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
-import { BarMapView } from './BarMap.js'
+import { MapView } from './Maps/MapView.js'
 import { BarCard } from './BarCard.js'
 import { DownloadResultView } from './HTTP.js'
 import { T } from './AppText.js'
@@ -43,7 +43,7 @@ export class DiscoverView extends Page {
         const barList = this.props.barList
         return (
             <ScrollView style={{flex: 1}} ref={this.saveScrollView}>
-                <BarMapView />
+                <MapView />
                 <View style={{flex: 1}}>
                     {/*
                     <T style={

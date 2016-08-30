@@ -13,7 +13,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { T } from './AppText.js'
 import { ImageSwiper } from './ImageSwiper.js'
-import { locationStore } from './BarMap.js'
+import { locationStore } from './Maps/MapStore.js'
 import { store, tabStore, barStore } from './Store.js'
 import { config } from './Config.js'
 
@@ -26,7 +26,6 @@ const white = 'rgba(255, 255, 255, 1.0)'
     */
 
     handleCardPress = () => {
-        console.log("BAR STORE", barStore)
         transaction(() => {
             barStore.setBarID(this.props.bar.id)
             tabStore.setCurrentTab(1)

@@ -9,90 +9,15 @@ import _ from 'lodash'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import MapView from 'react-native-maps'
+import NativeMapView from 'react-native-maps'
 
-import { PureComponent } from './Component.js'
-import { Map } from './Map.js'
-import { merge } from './Curry.js'
-import { store, tabStore, barStore } from './Store.js'
-import { config } from './Config.js'
+import { PureComponent } from '../Component.js'
+import { Map } from '../Map.js'
+import { merge } from '../Curry.js'
+import { store, tabStore, barStore } from '../Store.js'
+import { config } from '../Config.js'
 
 
-// Search:
-//
-// https://maps.googleapis.com/maps/api/geocode/json?&address=Cambridge,UK
-//
-
-const focusDelta = {
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-}
-
-class LocationStore {
-    @observable region = {
-        latitude: 52.207990,
-        longitude: 0.121703,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
-    }
-
-    @observable currentMarker = null
-
-    constructor() {
-        this.mapView = null
-    }
-
-    @action focusBar = (bar) => {
-        if (this.mapView) {
-            region = merge(coords(bar), focusDelta)
-            this.mapView.animateToRegion(region, 500)
-        }
-        this.currentMarker = bar
-        store.switchToDiscoverPage(true)
-    }
-
-    @observable barMarkers = [
-        {
-            id: '0',
-            signedUp: false,
-            name: "Some Other Pub",
-            desc: "This is some other pub.",
-            barType: 'Pub',
-            address: {
-                lat: 52.207990,
-                lon: 0.121703,
-            },
-            selected: false,
-        },
-        {
-            id: '1',
-            signedUp: true,
-            name: "The Eagle",
-            desc: "The Eagle is a traditional English pub.",
-            barType: 'Pub',
-            address: {
-                lat: 52.204139,
-                lon: 0.118045,
-            },
-            selected: false,
-        },
-        {
-            id: '2',
-            signedUp: true,
-            name: 'Lola Lo',
-            desc: 'Polynesian-themed nightclub',
-            barType: 'Nightclub',
-            address: {
-                lat: 52.204519,
-                lon: 0.120067,
-            },
-            selected: false,
-        }
-    ]
-
-}
-
-export const locationStore = new LocationStore()
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
@@ -107,7 +32,7 @@ const getMarkerColor = (marker) => {
     return passiveColor
 }
 
-export class BarMapView extends PureComponent {
+export class MapView extends PureComponent {
     constructor(props) {
         super(props)
         this.mapRef = null
@@ -136,7 +61,7 @@ export class BarMapView extends PureComponent {
 
         return (
             <View style={{flex: 0, height: 300}}>
-                <MapView
+                <NativeMapView
                     ref={mapView => {locationStore.mapView = mapView}}
                     style={style}
                     /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
@@ -147,12 +72,12 @@ export class BarMapView extends PureComponent {
                     loadingIndicatorColor={config.theme.primary.medium}
                     onPress={this.handleMapPress}
                     >
-                {
-                    locationStore.barMarkers.map(bar =>
-                        <MapMarker key={bar.id} bar={bar} />
-                    )
-                }
-                </MapView>
+                    {
+                        locationStore.barMarkers.map(bar =>
+                            <MapMarker key={bar.id} bar={bar} />
+                        )
+                    }
+                </NativeMapView>
             </View>
         )
     }
