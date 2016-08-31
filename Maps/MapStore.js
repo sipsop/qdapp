@@ -63,7 +63,7 @@ export const getBarCoords = (bar : Bar) => {
     }
 }
 
-class LocationStore {
+class MapStore {
     @observable currentLocation : Coords = initialLocation
     @observable region : Region = {
         ...initialLocation,
@@ -85,28 +85,29 @@ class LocationStore {
         return this.currentMarkerCoords
     }
 
-    setCurrentMarker = (bar : Bar) => {
+    @action setCurrentMarker = (bar : Bar) => {
         this.currentMarkerCoords = getBarCoords(bar)
     }
 
+    /* Focus the given bar on the map */
     @action focusBar = (bar : Bar) => {
-        const coords = getBarCoords(bar)
         if (this.mapView != null) {
+            const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
         }
-        this.currentMarkerCoords = coords
+        this.setCurrentMarker(bar)
         store.switchToDiscoverPage(true)
     }
 
-    refreshNearbyBars = action(logErrors(async () => {
-        this.nearbyBarDownloadResult = await searchNearby(
+    getNearbyBars = async () => {
+        return await searchNearby(
             APIKey,
             this.currentLocation,
             this.searchRadius,
             'bar',
         )
-    }))
+    }
 
     @observable barMarkers = [
         {
@@ -149,4 +150,4 @@ class LocationStore {
 
 }
 
-export const locationStore = new LocationStore()
+export const mapStore = new MapStore()

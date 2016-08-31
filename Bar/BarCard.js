@@ -13,7 +13,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { PureComponent } from '../Component.js'
 import { T } from '../AppText.js'
-import { locationStore } from '../Maps/MapStore.js'
+import { mapStore } from '../Maps/MapStore.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 
@@ -129,8 +129,8 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
     handlePress = () => {
         tabStore.setCurrentTab(0)
-        locationStore.focusBar(this.props.bar)
-        // locationStore.currentMarker = this.props.bar
+        mapStore.focusBar(this.props.bar)
+        // mapStore.currentMarker = this.props.bar
         // TODO: Scroll to top
     }
 

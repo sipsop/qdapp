@@ -25,7 +25,7 @@ import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
 import { T } from '../AppText.js'
-import { locationStore } from '../Maps/MapStore.js'
+import { mapStore } from '../Maps/MapStore.js'
 import { tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { merge, safeAutorun } from '../Curry.js'
@@ -85,7 +85,7 @@ class BarView extends Page {
     */
 
     @action handleFocusBarOnMap = () => {
-        locationStore.focusBar(barStore.getBar())
+        mapStore.focusBar(barStore.getBar())
     }
 
     renderView = () => {

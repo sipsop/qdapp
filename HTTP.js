@@ -171,7 +171,7 @@ class DownloadManager {
     }
 
     /* Execute a GraphQL query */
-    graphQL = async <T>(
+    graphQL = async /*<T>*/(
             /* key used for caching responses */
             key : string,
             /* GraphQL query string to execute */
@@ -191,7 +191,7 @@ class DownloadManager {
     }
 
     /* HTTP GET/POST/etc to a URL */
-    fetchJSON = async <T>(
+    fetchJSON = async /*<T>*/(
             /* key used for caching responses */
             key : string,
             /* URL to fetch */
@@ -285,7 +285,7 @@ class JSONDownload<T> {
 }
 
 
-const fetchJSON = async <T>(
+const fetchJSON = async /*<T>*/(
         key : string,
         url : URL,
         httpOptions : HTTPOptions
@@ -296,7 +296,7 @@ const fetchJSON = async <T>(
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof TimeoutError
 
-const fetchJSONWithTimeouts = async <T>(
+const fetchJSONWithTimeouts = async /*<T>*/(
         key : string,
         url : URL,
         httpOptions : HTTPOptions,
@@ -321,7 +321,7 @@ const fetchJSONWithTimeouts = async <T>(
     }
 }
 
-const _fetchJSON = async <T>(
+const _fetchJSON = async /*<T>*/(
         url             : URL,
         httpOptions     : HTTPOptions,
         downloadTimeout : Float,

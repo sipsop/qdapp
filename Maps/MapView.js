@@ -16,7 +16,7 @@ import { Map } from '../Map.js'
 import { merge } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
-import { locationStore, getBarCoords } from './MapStore.js'
+import { mapStore, getBarCoords } from './MapStore.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
@@ -38,11 +38,11 @@ export class MapView extends PureComponent {
     }
 
     @action handleRegionChange = (region) => {
-        locationStore.region = region
+        mapStore.region = region
     }
 
     @action handleMapPress = (value) => {
-        locationStore.setCurrentMarker(null)
+        mapStore.setCurrentMarker(null)
     }
 
     render = () => {
@@ -61,18 +61,18 @@ export class MapView extends PureComponent {
         return (
             <View style={{flex: 0, height: 300}}>
                 <NativeMapView
-                    ref={mapView => {locationStore.mapView = mapView}}
+                    ref={mapView => {mapStore.mapView = mapView}}
                     style={style}
                     /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
                     showsUserLocation={true}
-                    region={locationStore.region}
+                    region={mapStore.region}
                     onRegionChange={this.handleRegionChange}
                     loadingEnabled={true}
                     loadingIndicatorColor={config.theme.primary.medium}
                     onPress={this.handleMapPress}
                     >
                     {
-                        locationStore.barMarkers.map(bar =>
+                        mapStore.barMarkers.map(bar =>
                             <MapMarker key={bar.id} bar={bar} />
                         )
                     }
@@ -105,7 +105,7 @@ class MapMarker extends PureComponent {
     }
 
     @action handleMarkerPress = () => {
-        locationStore.setCurrentMarker(this.props.bar)
+        mapStore.setCurrentMarker(this.props.bar)
     }
 
     @action handleCalloutPress = () => {
@@ -114,7 +114,7 @@ class MapMarker extends PureComponent {
     }
 
     @computed get selected() {
-        const markerCoords = locationStore.getCurrentMarkerCoords()
+        const markerCoords = mapStore.getCurrentMarkerCoords()
         if (!markerCoords)
             return false
         return _.isEqual(getBarCoords(this.props.bar), markerCoords)
