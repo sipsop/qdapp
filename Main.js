@@ -52,3 +52,15 @@ import { cache } from './Cache.js'
 }
 
 // loginStore.login()
+
+// Promise.onPossiblyUnhandledRejection(function(error){
+//     throw error
+// })
+
+// By default the choice is not to propogate errors from Promises...
+require('promise/setimmediate/rejection-tracking').enable({
+    allRejections: true,
+    onUnhandled: (id, error) => {
+        console.error(error)
+    }
+})

@@ -21,8 +21,12 @@ export const getPlaceInfo = async (apiKey : Key, placeID : String)
         key: apiKey,
         placeid: placeID,
     })
-    const jsonDownloadResult = await downloadManager.fetchJSON(url)
-    return jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
+    const key = `qd:placeInfo:placeID=${placeID}`
+    const jsonDownloadResult = await downloadManager.fetchJSON(
+        key, url, {method: 'GET'})
+    console.log("DOWNLOADED PLACE INFO", jsonDownloadResult.value)
+    return jsonDownloadResult.update(doc =>
+        doc.results.map(placeInfo => parseBar(placeInfo, doc.html_attributions)))
 }
 
 /************************* Response Parsing **************************/

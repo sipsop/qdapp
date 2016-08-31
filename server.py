@@ -64,6 +64,7 @@ class OptionType(graphene.Enum):
 
 
 class MenuItemOption(graphene.ObjectType):
+    id = ID
     # menu option name (e.g. "Size")
     name    = graphene.String().NonNull
 
@@ -95,6 +96,7 @@ class SubMenu(graphene.ObjectType):
     menuItems = graphene.List(MenuItem).NonNull
 
 class Menu(graphene.ObjectType):
+    placeID   = ID
     beer      = graphene.NonNull(SubMenu)
     wine      = graphene.NonNull(SubMenu)
     spirits   = graphene.NonNull(SubMenu)
@@ -133,22 +135,22 @@ class BarType(graphene.Enum):
     Pub = 0
     Club = 1
 
-class Bar(graphene.ObjectType):
-    id     = ID
-    name   = graphene.String().NonNull
-    desc   = graphene.String()
-    barType = graphene.NonNull(BarType)
-    signedUp = graphene.Boolean().NonNull
-    images = graphene.List(URL).NonNull
-    tags   = graphene.List(graphene.String().NonNull)
-    phone  = graphene.String()
-    website = graphene.String()
-    openingTimes = graphene.List(OpeningTime).NonNull
-    address = graphene.NonNull(Address)
-    menu   = graphene.Field(Menu)
+# class Bar(graphene.ObjectType):
+#     id     = ID
+#     name   = graphene.String().NonNull
+#     desc   = graphene.String()
+#     barType = graphene.NonNull(BarType)
+#     signedUp = graphene.Boolean().NonNull
+#     images = graphene.List(URL).NonNull
+#     tags   = graphene.List(graphene.String().NonNull)
+#     phone  = graphene.String()
+#     website = graphene.String()
+#     openingTimes = graphene.List(OpeningTime).NonNull
+#     address = graphene.NonNull(Address)
+    # menu   = graphene.Field(Menu)
 
-    def resolve_menu(self, args, info):
-        return menu
+    # def resolve_menu(self, args, info):
+    #     return menu
 
 class TagInfo(graphene.ObjectType):
     tagID    = graphene.String().NonNull
@@ -211,53 +213,60 @@ menuTags = Tags(
     ],
 )
 
+eagleID = 'ChIJuQdxBb1w2EcRvnxVeL5abUw'
+
 class Query(graphene.ObjectType):
 
-    bar  = graphene.Field(Bar, id=ID)
+    # bar  = graphene.Field(Bar, id=ID)
     barListTags = graphene.Field(Tags)
     menuTags = graphene.Field(Tags)
+    menu = graphene.Field(Menu, placeID=ID)
 
-    def resolve_bar(self, args, info):
-        # time.sleep(8)
-        id = args['id']
-        if id != '1':
-            raise ValueError("Expected id=1")
-        print("returning bar!", args)
-        return Bar(
-            id=id,
-            name='The Eagle',
-            desc='''
-                The Eagle is a traditional English pub dating back to the 16th
-                century, serving breakfast, lunch and evening meals.
-            ''',
-            barType=BarType.Pub,
-            signedUp=True,
-            images=[outsideURL, insideURL],
-            tags=['#pub', '#traditional', '#lunch', '#dinner'],
-            phone="01223 505020",
-            website="www.eagle-cambridge.co.uk",
-            openingTimes=[
-                None,
-                None,
-                None,
-                None,
-                None,
-                OpeningTime(
-                    # day=Day.Friday,
-                    openTime=Time(hour=11, minute=0),
-                    closeTime=Time(23, minute=30),
-                ),
-                None,
-            ],
-            address=Address(
-                lat=52.204139,
-                lon=0.118045,
-                city='Cambridge',
-                street='Benet Street',
-                number='8',
-                postcode='CB2 3QN',
-                )
-            )
+    def resolve_menu(self, args, info):
+        placeID = args['placeID']
+        return makeMenu(placeID)
+
+    # def resolve_bar(self, args, info):
+    #     # time.sleep(8)
+    #     id = args['id']
+    #     # if id != eagleID:
+    #     #     raise ValueError("Expected id=1")
+    #     print("returning bar!", args)
+    #     return Bar(
+    #         id=id,
+    #         name='The Eagle',
+    #         desc='''
+    #             The Eagle is a traditional English pub dating back to the 16th
+    #             century, serving breakfast, lunch and evening meals.
+    #         ''',
+    #         barType=BarType.Pub,
+    #         signedUp=True,
+    #         images=[outsideURL, insideURL],
+    #         tags=['#pub', '#traditional', '#lunch', '#dinner'],
+    #         phone="01223 505020",
+    #         website="www.eagle-cambridge.co.uk",
+    #         openingTimes=[
+    #             None,
+    #             None,
+    #             None,
+    #             None,
+    #             None,
+    #             OpeningTime(
+    #                 # day=Day.Friday,
+    #                 openTime=Time(hour=11, minute=0),
+    #                 closeTime=Time(23, minute=30),
+    #             ),
+    #             None,
+    #         ],
+    #         address=Address(
+    #             lat=52.204139,
+    #             lon=0.118045,
+    #             city='Cambridge',
+    #             street='Benet Street',
+    #             number='8',
+    #             postcode='CB2 3QN',
+    #             )
+    #         )
 
     def resolve_menuTags(self, args, info):
         return menuTags
@@ -320,94 +329,96 @@ top_option = MenuItemOption(
     defaultOption=None,
 )
 
-menu = Menu(
-    beer=SubMenu(
-        image=beer,
-        menuItems=[
-            MenuItem(
-                id='1',
-                name="Guiness",
-                desc="Guiness is a dry irish stout from Dublin, Ireland.",
-                images=[guiness],
-                tags=['0', '20', '30', '42'],
-                price=Price.pounds(3.40),
-                options=[
-                    option(Price.pounds(3.40), Price.pounds(2.60)),
-                    top_option,
-                ],
-            ),
-            MenuItem(
-                id='2',
-                name="Heineken",
-                desc="Heineken is a pale lager",
-                images=[heineken],
-                tags=['0', '22', '31', '40', '41'],
-                price=Price.pounds(3.20),
-                options=[
-                    option(Price.pounds(3.20), Price.pounds(2.30)),
-                    top_option,
-                ],
-            ),
-            MenuItem(
-                id='3',
-                name="Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Lager",
-                desc="This beer has a rather long name...",
-                images=[rockBottom],
-                tags=['0', '22', '31', '42'],
-                price=Price.pounds(3.20),
-                options=[
-                    option(Price.pounds(4.20), Price.pounds(3.40)),
-                    top_option,
-                ],
-            ),
-        ],
-    ),
-    wine=SubMenu(
-        image=wine,
-        menuItems=[],
-    ),
-    spirits=SubMenu(
-        image=spirits,
-        menuItems=[],
-    ),
-    cocktails=SubMenu(
-        image=cocktails,
-        menuItems=[],
-    ),
-    water=SubMenu(
-        image=water,
-        menuItems=[],
-    ),
-    # snacks=SubMenu(
-    #     image=snacks,
-    # ),
-)
+def makeMenu(placeID):
+    return Menu(
+        placeID=placeID,
+        beer=SubMenu(
+            image=beer,
+            menuItems=[
+                MenuItem(
+                    id='1',
+                    name="Guiness",
+                    desc="Guiness is a dry irish stout from Dublin, Ireland.",
+                    images=[guiness],
+                    tags=['0', '20', '30', '42'],
+                    price=Price.pounds(3.40),
+                    options=[
+                        option(Price.pounds(3.40), Price.pounds(2.60)),
+                        top_option,
+                    ],
+                ),
+                MenuItem(
+                    id='2',
+                    name="Heineken",
+                    desc="Heineken is a pale lager",
+                    images=[heineken],
+                    tags=['0', '22', '31', '40', '41'],
+                    price=Price.pounds(3.20),
+                    options=[
+                        option(Price.pounds(3.20), Price.pounds(2.30)),
+                        top_option,
+                    ],
+                ),
+                MenuItem(
+                    id='3',
+                    name="Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Lager",
+                    desc="This beer has a rather long name...",
+                    images=[rockBottom],
+                    tags=['0', '22', '31', '42'],
+                    price=Price.pounds(3.20),
+                    options=[
+                        option(Price.pounds(4.20), Price.pounds(3.40)),
+                        top_option,
+                    ],
+                ),
+            ],
+        ),
+        wine=SubMenu(
+            image=wine,
+            menuItems=[],
+        ),
+        spirits=SubMenu(
+            image=spirits,
+            menuItems=[],
+        ),
+        cocktails=SubMenu(
+            image=cocktails,
+            menuItems=[],
+        ),
+        water=SubMenu(
+            image=water,
+            menuItems=[],
+        ),
+        # snacks=SubMenu(
+        #     image=snacks,
+        # ),
+    )
 
 
 schema = graphene.Schema(query=Query, executor=GeventExecutor())
-query = '''
-    query {
-        bar(id: "1") {
-            id
-            name
-            address {
-                lat
-                lon
-                city
-                street
-                number
-                postcode
-            }
-        }
-    }
-'''
+# query = '''
+#     query {
+#         bar(id: "1") {
+#             id
+#             name
+#             address {
+#                 lat
+#                 lon
+#                 city
+#                 street
+#                 number
+#                 postcode
+#             }
+#         }
+#     }
+# '''
 # result = schema.execute(query)
 # print(result.data['bar'])
 
-print("===========================")
-result = schema.execute(query)
-print(result.data)
-print("===========================")
+# print("===========================")
+# result = schema.execute(query)
+# print(result.data)
+# print("===========================")
 
 from flask import Flask
 from flask_graphql import GraphQLView

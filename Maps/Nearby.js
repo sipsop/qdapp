@@ -53,7 +53,6 @@ export const searchNearby = async (
     const options = { method: 'GET' }
     const jsonDownloadResult = await downloadManager.fetchJSON(
         key, url, options, isRelevant)
-    console.log("Downloaded some stuff from", url, "!!!", jsonDownloadResult.state, jsonDownloadResult.message, jsonDownloadResult.value)
     return jsonDownloadResult.update(parseResponse)
 }
 

@@ -17,6 +17,7 @@ import { PureComponent } from './Component.js'
 import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
+import { all, any } from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
 
@@ -41,8 +42,9 @@ export class TimeoutError {
 
 export class NetworkError {
     message : string
-    constructor(message : string) {
+    constructor(message : string, status : string) {
         this.message = message
+        this.status = status
     }
 }
 
@@ -62,6 +64,10 @@ export class DownloadResult<T> {
         this.state   = 'NotStarted'
         this.message = undefined
         this.value   = null
+    }
+
+    static combine = (obj) => {
+        return new CombinedDownloadResult(obj)
     }
 
     downloadStarted = () : DownloadResult<T> => {
@@ -89,6 +95,52 @@ export class DownloadResult<T> {
             this.value   = value
         })
         return this
+    }
+
+    update = (f : (value : T) => T) : DownloadResult<T> => {
+        if (this.state == 'Finished') {
+            this.value = f(this.value)
+        }
+        return this
+    }
+}
+
+class CombinedDownloadResult<T> {
+    constructor(obj) {
+        this.obj = obj
+    }
+
+    get _results() {
+        return Object.values(this.obj)
+    }
+
+    get state() {
+        if (any(this._results.map(result => result.state === 'Error')))
+            return 'Error'
+        if (any(this._results.map(result => result.state === 'InProcess')))
+            return 'InProcess'
+        if (all(this._results.map(result => result.state === 'Finished')))
+            return 'Finished'
+        return 'NotStarted'
+    }
+
+    get message() {
+        const results = this._results
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].state === 'Error')
+                return results[i].message
+        }
+        return "No error has occurred..."
+    }
+
+    get value() {
+        if (this.state !== 'Finished')
+            return null
+        const result = {}
+        Object.keys(this.obj).forEach(key => {
+            result[key] = this.obj[key].value
+        })
+        return result
     }
 
     update = (f : (value : T) => T) : DownloadResult<T> => {
@@ -175,7 +227,7 @@ class DownloadManager {
             query : string,
             /* Callback that decides whether the download is still relevant */
             isRelevantCB : () => boolean,
-        ) => { //: Promise<DownloadResult<T>> => {
+            ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -184,7 +236,12 @@ class DownloadManager {
             },
             body: query,
         }
-        const result = await fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+        var result
+        try {
+            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+        } catch (err) {
+            console.error(err)
+        }
         return result.update(value => value.data)
     }
 
@@ -205,14 +262,17 @@ class DownloadManager {
             download => download.key !== key
         )
 
+        if (!url)
+            throw Error("dude I need a URL..." + key)
+
         /* Try a fresh download... */
         const downloadResult : DownloadResult<T> = await fetchJSONWithTimeouts(
                         key, url, httpOptions, 12000, 20000)
-        if (downloadResult.state === 'Error' && isRelevantCB) {
-            /* There as been some error, try again later */
-            this.activeDownloads.push(new JSONDownload(
-                key, url, httpOptions, downloadResult, isRelevantCB))
-        }
+        // if (downloadResult.state === 'Error' && isRelevantCB) {
+        //     /* There as been some error, try again later */
+        //     this.activeDownloads.push(new JSONDownload(
+        //         key, url, httpOptions, downloadResult, isRelevantCB))
+        // }
         return downloadResult
     }
 
@@ -300,7 +360,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         httpOptions : HTTPOptions,
         refreshTimeout : Float,
         expiredTimeout : Float,
-    ) : Promise<DownloadResult<T>> => {
+        ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
         return await _fetchJSON(url, httpOptions, refreshTimeout)
@@ -326,7 +386,7 @@ const _fetchJSON = async /*<T>*/(
         ) : Promise<T> => {
     var response : Response
     try {
-        console.log("Starting fetch...", url)
+        console.log("Starting fetch...", url, httpOptions)
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)
@@ -334,7 +394,7 @@ const _fetchJSON = async /*<T>*/(
         throw new NetworkError(err.message)
     }
     if (response.status !== 200) {
-        throw new NetworkError(response.statusText)
+        throw new NetworkError("Network Error", response.status)
     }
     return await response.json()
 }

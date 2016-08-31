@@ -47,3 +47,56 @@ export type Address = {
     // number: String,
     // postcode: String,
 }
+
+/************************* Menu ***********************************/
+
+export type Menu = {
+    beer:       SubMenu,
+    wine:       SubMenu,
+    spirits:    SubMenu,
+    cocktails:  SubMenu,
+    water:      SubMenu,
+}
+
+export type SubMenu = {
+    image:      URL,
+    menuItems:  Array<MenuItem>,
+}
+
+export type MenuItem = {
+    id:         String,
+    name:       String,
+    images:     Array<String>,
+    tags:       Array<TagID>,
+    price:      Price,
+    options:    Array<MenuItemOption>,
+}
+
+export type MenuItemOption = {
+    name:           String,
+    optionType:     OptionType,
+    optionList:     Array<String>,
+    prices:         Array<Price>,
+    defaultOption:  Int,
+}
+
+export type OptionType =
+    | 'Single'
+    | 'AtMostOne'
+    | 'ZeroOrMore'
+    | 'OneOrMore'
+
+export type Price = {
+    currency:   Currency,
+    option:     PriceOption,
+    price:      Float,
+}
+
+export type Currency =
+    | 'Sterling'
+    | 'Euros'
+    | 'Dollars'
+
+export type PriceOption =
+    | 'Absolute'
+    | 'Relative'

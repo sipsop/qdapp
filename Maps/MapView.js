@@ -17,14 +17,16 @@ import { merge } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { mapStore, getBarCoords } from './MapStore.js'
+import { DownloadResultView } from '../HTTP.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
 const passiveColor = 'rgb(222, 151, 14)'
 
-export class MapView extends PureComponent {
+@observer
+export class MapView extends DownloadResultView {
     constructor(props) {
-        super(props)
+        super(props, "Error downloading map")
         this.mapRef = null
     }
 
@@ -36,7 +38,11 @@ export class MapView extends PureComponent {
         mapStore.setCurrentMarker(null)
     }
 
-    render = () => {
+    getDownloadResult = () => mapStore.searchResponse
+    refreshPage = () => mapStore.updateNearbyBars()
+    renderNotStarted = () => <View />
+
+    renderFinished = (searchResponse) => {
         const style =  {
             flex: 1,
             // position: 'absolute',
@@ -80,6 +86,7 @@ const coords = (bar) => {
     }
 }
 
+@observer
 class MapMarker extends PureComponent {
     /* properties:
         bar: Bar

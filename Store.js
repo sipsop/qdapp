@@ -69,7 +69,7 @@ export class Store {
     }
 
     initialize = logErrors(async () => {
-        Promise.all(
+        await Promise.all(
             this.loadFromLocalStorage(),
             barStore.initialize(),
             mapStore.initialize(),
@@ -128,4 +128,4 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore, barStore, loginStore }
+export { favStore, tabStore, barStore, loginStore, mapStore }

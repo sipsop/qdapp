@@ -75,15 +75,13 @@ class MapStore {
 
     @observable currentMarker : ?Bar = null
     @observable currentLocation : Coords = initialLocation
-    @observable nearbyBarDownloadResult : DownloadResult<SearchResponse> = emptyResult()
     @observable searchRadius : number = 5000 // 5 kilometer search radius
+    @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
 
     mapView : ?NativeMapView
-    searchResponse : DownloadResult<SearchResponse>
 
     constructor() {
         this.mapView = null
-        this.searchResponse = emptyResult()
     }
 
     initialize = async () => {
@@ -146,8 +144,8 @@ class MapStore {
         return this.searchResponse.value.results
     }
 
-    getPlaceInfo = async (barID) : Promise<DownloadResult<Bar>> => {
-        return await getPlaceInfo(APIKey, barID)
+    getPlaceInfo = async (placeID : PlaceID) : Promise<DownloadResult<Bar>> => {
+        return await getPlaceInfo(APIKey, placeID)
     }
 
     @observable barMarkers = [

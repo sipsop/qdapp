@@ -16,7 +16,7 @@ import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { sampleBarMenu } from './BarMenu.js'
+import { BarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 
 import { DownloadResultView } from '../HTTP.js'
@@ -33,13 +33,14 @@ import { merge, safeAutorun } from '../Curry.js'
 
 export class BarPageFetcher extends DownloadResultView {
     constructor(props) {
-        super(props, "Error downloading menu page")
+        super(props, "Error downloading bar page")
     }
 
     refreshPage = () => {
         barStore.refreshBar()
     }
-    getDownloadResult = () => barStore.getBarDownloadResult()
+
+    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
 
     renderNotStarted = () =>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -60,8 +61,6 @@ export class BarPageFetcher extends DownloadResultView {
 
     constructor(props) {
         super(props)
-        const { height, width} = Dimensions.get('screen')
-        this.state = {width: width, height: height} // approximate width and height
         this.timer = undefined
         safeAutorun(() => {
             /* Whenever barStore.bar changes, reinitialize autoplay to `true`
@@ -76,20 +75,23 @@ export class BarPageFetcher extends DownloadResultView {
         })
     }
 
-    renderFinished = (bar) => <BarView bar={bar} />
+    renderFinished = ({bar,menu}) => <BarView bar={bar} menu={menu} />
 }
 
 class BarView extends Page {
     /* properties:
-        bar: schema.Bar
+        bar:  Bar
+        menu: Menu
     */
 
     @action handleFocusBarOnMap = () => {
-        mapStore.focusBar(barStore.getBar())
+        mapStore.focusBar(this.props.bar)
     }
 
     renderView = () => {
         const bar = this.props.bar
+        const menu = this.props.menu
+
         const imageHeight = 300
         const timeout = 3.0 // switch to next image after 3 seconds
         if (this.autoplay) {
@@ -182,7 +184,7 @@ class BarView extends Page {
                 </T>
                 */}
                 <View style={styles.bottomBorder}>
-                    {sampleBarMenu(bar)}
+                    <BarMenu bar={bar} menu={menu} />
                 </View>
                 <InfoItem
                     iconName="map-marker"
