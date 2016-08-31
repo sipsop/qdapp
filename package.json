@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@remobile/react-native-cache-image": "^1.0.0",
+    "babel-plugin-syntax-flow": "^6.13.0",
+    "babel-plugin-transform-flow-strip-types": "^6.14.0",
     "es6-map": "^0.1.4",
     "lodash": "^4.14.0",
     "merge": "^1.2.0",

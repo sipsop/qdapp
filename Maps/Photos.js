@@ -4,44 +4,35 @@ import { React, Component, PureComponent, Image, View, TouchableOpacity } from '
 import { buildURL } from '../URLs.js'
 
 import type { Key } from "./MapStore.js";
+import type { Photo } from "../Bar/Bar.js"
 
-/*********************************************************************/
-
-export type Photo = {
-    htmlAttrib: Array<string>,
-    photoID:    string,
+export const parsePhoto = (key : Key, photoRef : any) : Photo => {
+    return {
+        htmlAttrib: photoRef.html_attributions,
+        url:        getPhotoURL(key, photoRef.photo_reference),
+    }
 }
 
-/*********************************************************************/
-
-export const getPhotoURL = (apiKey : Key, photo : Photo) => {
+export const getPhotoURL = (apiKey : Key, photoID : String) => {
     return buildURL("https://maps.googleapis.com/maps/api/place/photo", {
         key: apiKey,
-        photoreference: photo.photoID,
+        photoreference: photoID,
         maxheight: 500,
         maxwidth: 500,
     })
-}
-
-export const parsePhoto = (photoRef) : Photo => {
-    return {
-        htmlAttrib: photoRef.html_attributions,
-        photoID:    photoRef.photo_reference,
-    }
 }
 
 /* Shows a photo image with proper attribution */
 export class PhotoImage extends PureComponent {
     /* properties:
         photo: Types.Photo
-        photoURL: URL to photo
         style: style object (height, width, etc)
     */
 
     render = () => {
         return <Image
                     style={this.props.style}
-                    source={{uri: this.props.photoURL}}
+                    source={{uri: this.props.photo.url}}
                     /* TODO: html_attributions */
                     />
     }

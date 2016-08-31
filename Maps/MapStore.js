@@ -9,7 +9,7 @@ import { searchNearby } from './Nearby.js'
 import { merge } from '../Curry.js'
 
 import type { Bar } from '../Bar/Bar.js'
-import type { SearchResponse, SearchResult } from './Nearby.js'
+import type { SearchResponse } from './Nearby.js'
 
 /*********************************************************************/
 

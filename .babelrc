@@ -3,5 +3,5 @@
     // {"plugins": ["./plugins/babelRelayPlugin"]},
     'react-native'
   ],
- 'plugins': ['transform-decorators-legacy']
+ 'plugins': ['transform-decorators-legacy', 'transform-flow-strip-types', 'syntax-flow']
 }

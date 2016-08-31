@@ -1,26 +1,32 @@
 // @flow
 
-import type { Int, Float, String, URL } from '../Types.js'
+import type { Int, Float, String, URL, HTML } from '../Types.js'
+
+export type TagID = String
 
 export type Bar = {
     id:             String,
+    signedUp:       boolean,
     name:           String,
+    images:         Array<Photo>,
+    address:        Address,
+    // optional fields
     desc:           ?String,
-    images:         Array<Image>,
-    tags:           Array<String>,
+    htmlAttrib:     ?[HTML],
+    rating:         ?Float,
+    priceLevel:     ?Int,
+    tags:           ?Array<TagID>,
     phone:          ?String,
     website:        ?String,
-    openingTimes:   Array<OpeningTime>,
-    address:        Address,
+    openingTimes:   ?Array<?OpeningTime>,
 }
 
-export type Image = {
+export type Photo = {
     htmlAttrib: ?[String],
     url:        URL,
 }
 
 export type OpeningTime = {
-    day:    Int,
     open:   ?Time,
     close:  ?Time,
 }
@@ -31,11 +37,11 @@ export type Time = {
 }
 
 export type Address = {
-    lat:    Float,
-    lon:    Float,
-    formattedAddress: String,
-    city:   String,
-    street: String,
-    number: String,
-    postcode: String,
+    lat:                Float,
+    lon:                Float,
+    formattedAddress:   ?String,
+    // city:   String,
+    // street: String,
+    // number: String,
+    // postcode: String,
 }

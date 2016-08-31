@@ -1,7 +1,4 @@
-// flow DISABLED
-/* NOTE: flow cannot type functions with polymorphic return values, so most
-    of this module is not typeable...
-*/
+// flow
 
 import {
     React,
@@ -21,7 +18,7 @@ import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 
-import type { Int, Float, URL } from './Types.js'
+import type { Int, Float, String, URL } from './Types.js'
 
 /*********************************************************************/
 
@@ -56,11 +53,6 @@ export type DownloadState =
     | 'Error'       // download error
 
 export class DownloadResult<T> {
-    // Download states
-    static NotStarted   = 'NotStarted'
-    static InProgress   = 'InProgress'
-    static Finished     = 'Finished'
-    static Error        = 'Error'
 
     state   : DownloadState
     message : ?string
@@ -69,10 +61,10 @@ export class DownloadResult<T> {
     constructor() {
         this.state   = 'NotStarted'
         this.message = undefined
-        this.value   = undefined
+        this.value   = null
     }
 
-    downloadStarted = () => {
+    downloadStarted = () : DownloadResult<T> => {
         transaction(() => {
             this.state   = 'InProgress'
             this.message = undefined
@@ -81,7 +73,7 @@ export class DownloadResult<T> {
         return this
     }
 
-    downloadError = (message : string) => {
+    downloadError = (message : string) : DownloadResult<T> => {
         transaction(() => {
             this.state   = 'Error'
             this.message = message
@@ -90,7 +82,7 @@ export class DownloadResult<T> {
         return this
     }
 
-    downloadFinished = (value : T) => {
+    downloadFinished = (value : T) : DownloadResult<T> => {
         transaction(() => {
             this.state   = 'Finished'
             this.message = undefined
@@ -110,7 +102,8 @@ export class DownloadResult<T> {
     }
 }
 
-export const emptyResult = () : DownloadResult<T> => new DownloadResult()
+export const emptyResult =
+    <T>() : DownloadResult<T> => new DownloadResult()
 
 /* React Component for rendering a downloadResult in its different states */
 @observer export class DownloadResultView<T> extends PureComponent {
@@ -171,21 +164,21 @@ export const emptyResult = () : DownloadResult<T> => new DownloadResult()
 
 class DownloadManager {
 
-    activeDownloads : Array<JSONDownload>
+    activeDownloads : Array<JSONDownload<any>>
 
     constructor() {
         this.activeDownloads = []
     }
 
     /* Execute a GraphQL query */
-    graphQL = async (
+    graphQL = async <T>(
             /* key used for caching responses */
             key : string,
             /* GraphQL query string to execute */
             query : string,
             /* Callback that decides whether the download is still relevant */
             isRelevantCB : () => boolean,
-        ) : Promise<DownloadResult<T>> => {
+        ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -198,7 +191,7 @@ class DownloadManager {
     }
 
     /* HTTP GET/POST/etc to a URL */
-    fetchJSON = async (
+    fetchJSON = async <T>(
             /* key used for caching responses */
             key : string,
             /* URL to fetch */
@@ -215,7 +208,7 @@ class DownloadManager {
         )
 
         /* Try a fresh download... */
-        const downloadResult = await fetchJSONWithTimeouts(
+        const downloadResult : DownloadResult<T> = await fetchJSONWithTimeouts(
                         key, url, httpOptions, 12000, 20000)
         if (downloadResult.state === 'Error' && isRelevantCB) {
             /* There as been some error, try again later */
@@ -262,13 +255,19 @@ export const downloadManager = new DownloadManager()
 
 class JSONDownload<T> {
 
-    key : string
+    key : String
     url : URL
     httpOptions : HTTPOptions
     downloadResult : DownloadResult<T>
     isRelevant: () => boolean
 
-    constructor(key, url, httpOptions, downloadResult, isRelevant) {
+    constructor(
+            key             : String,
+            url             : URL,
+            httpOptions     : HTTPOptions,
+            downloadResult  : DownloadResult<T>,
+            isRelevant      : () => boolean,
+            ) {
         this.key = key
         this.url = url
         this.httpOptions = httpOptions
@@ -278,28 +277,32 @@ class JSONDownload<T> {
 
     retryFetchJSON = async () => {
         this.downloadResult.downloadStarted()
-        const downloadResult = await fetchJSON(this.key, this.url, this.httpOptions)
-        if (downloadResult.value != null)
-            this.downloadResult.update(_ => downloadResult.value)
+        const downloadResult : any =
+            await fetchJSON(this.key, this.url, this.httpOptions)
+        this.downloadResult.update(_ => downloadResult.value)
     }
 
 }
 
 
-const fetchJSON = async (key : string, url : URL, httpOptions : HTTPOptions) => {
+const fetchJSON = async <T>(
+        key : string,
+        url : URL,
+        httpOptions : HTTPOptions
+        ) : Promise<DownloadResult<T>> => {
     return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
 }
 
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof TimeoutError
 
-const fetchJSONWithTimeouts = async (
+const fetchJSONWithTimeouts = async <T>(
         key : string,
         url : URL,
         httpOptions : HTTPOptions,
         refreshTimeout : Float,
         expiredTimeout : Float,
-    ) => {
+    ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
         return await _fetchJSON(url, httpOptions, refreshTimeout)
@@ -314,16 +317,19 @@ const fetchJSONWithTimeouts = async (
     } catch (e) {
         if (isNetworkError(e))
             return new DownloadResult().downloadError(e.message)
-        console.error(e)
-        return undefined
+        throw e
     }
 }
 
-const _fetchJSON = async (url, httpOptions, downloadTimeout) => {
-    var response
+const _fetchJSON = async <T>(
+        url             : URL,
+        httpOptions     : HTTPOptions,
+        downloadTimeout : Float,
+        ) : Promise<T> => {
+    var response : Response
     try {
         console.log("Starting fetch...", url)
-        const fetchPromise = fetch(url, httpOptions)
+        const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)
     } catch (err) {

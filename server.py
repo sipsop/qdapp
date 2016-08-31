@@ -117,7 +117,7 @@ class Time(graphene.ObjectType):
     minute  = graphene.Int()
 
 class OpeningTime(graphene.ObjectType):
-    day = graphene.NonNull(Day)
+    # day = graphene.NonNull(Day)
     openTime = graphene.Field(Time)
     closeTime = graphene.Field(Time)
 
@@ -237,11 +237,17 @@ class Query(graphene.ObjectType):
             phone="01223 505020",
             website="www.eagle-cambridge.co.uk",
             openingTimes=[
+                None,
+                None,
+                None,
+                None,
+                None,
                 OpeningTime(
-                    day=Day.Friday,
+                    # day=Day.Friday,
                     openTime=Time(hour=11, minute=0),
                     closeTime=Time(23, minute=30),
                 ),
+                None,
             ],
             address=Address(
                 lat=52.204139,
