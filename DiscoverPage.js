@@ -24,14 +24,7 @@ export class DiscoverPage extends DownloadResultView {
     refreshPage = store.initialize
     getDownloadResult = () => barStore.getBarListDownloadResult()
     renderNotStarted  = () => <View />
-
-    saveScrollView = (scrollview) => {
-        store.discoverScrollView = scrollview
-    }
-
-    renderFinished = (barList) => {
-        return <DiscoverView barList={barList} />
-    }
+    renderFinished = barList => <DiscoverView barList={barList} />
 }
 
 @observer
@@ -39,6 +32,11 @@ export class DiscoverView extends Page {
     /* properties:
         barList: [schema.Bar]
     */
+
+    saveScrollView = (scrollview) => {
+        store.discoverScrollView = scrollview
+    }
+
     renderView = () => {
         const barList = this.props.barList
         return (
