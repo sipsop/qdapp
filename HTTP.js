@@ -92,9 +92,6 @@ export class DownloadResult<T> {
     }
 
     update = (f : (value : T) => T) : DownloadResult<T> => {
-        if (this.value == null)
-            throw Error("Value must not be null")
-
         if (this.state == 'Finished') {
             this.value = f(this.value)
         }
@@ -187,7 +184,8 @@ class DownloadManager {
             },
             body: query,
         }
-        return await fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+        const result = await fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+        return result.update(value => value.data)
     }
 
     /* HTTP GET/POST/etc to a URL */
@@ -313,7 +311,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
 
     try {
         const result = await cache.get(key, refreshCallback, /*expiredCallback*/)
-        return new DownloadResult().downloadFinished(result.data)
+        return new DownloadResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))
             return new DownloadResult().downloadError(e.message)

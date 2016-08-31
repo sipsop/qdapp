@@ -3,10 +3,10 @@
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parsePhoto } from './Photos.js'
-import { parseBar } from './Details.js'
+import { parseBar } from './PlaceInfo.js'
 
 import type { Int, Float } from '../Types.js'
-import type { Key, Coords } from './MapStore.js'
+import type { Key, Coords, PlaceID } from './MapStore.js'
 import type { Bar, Photo } from '../Bar/Bar.js'
 
 /*********************************************************************/
@@ -16,6 +16,11 @@ export type SearchResponse = {
     nextToken:  string,
     results:    Array<Bar>,
 }
+
+// export type MarkerInfo = {
+//     coords:     Coords,
+//     placeID:    PlaceID,
+// }
 
 /*********************************************************************/
 
@@ -34,6 +39,7 @@ export const searchNearby = async (
         radius       : Int,
         locationType : string,
         ) : Promise<DownloadResult<SearchResponse>> => {
+
     const url = buildURL(BaseURL, {
         key: apiKey,
         // rankby: 'distance',
@@ -41,7 +47,13 @@ export const searchNearby = async (
         location: `${coords.latitude},${coords.longitude}`,
         type: locationType,
     })
-    const jsonDownloadResult = await downloadManager.fetchJSON(url)
+
+    const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude}`
+    const isRelevant = () => true
+    const options = { method: 'GET' }
+    const jsonDownloadResult = await downloadManager.fetchJSON(
+        key, url, options, isRelevant)
+    console.log("Downloaded some stuff from", url, "!!!", jsonDownloadResult.state, jsonDownloadResult.message, jsonDownloadResult.value)
     return jsonDownloadResult.update(parseResponse)
 }
 
@@ -62,6 +74,6 @@ const parseResponse = (doc) : SearchResponse => {
     return {
         'htmlAttrib':   doc.html_attribution,
         'nextToken':    doc.next_page_token,
-        'results':      doc.results.map(result => parseBar(result, doc.html_attribution)),
+        'results':      doc.results.map(parseBar),
     }
 }

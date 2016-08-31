@@ -1,12 +1,14 @@
 // @flow
 
+import _ from 'lodash'
+
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parsePhoto } from './Photos.js'
 
 import type { Int, Float, URL, HTML } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'
-import type { Bar, Photo, TagID } from '../Bar/Bar.js'
+import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
 
 /************************* Network ***********************************/
 
@@ -32,6 +34,7 @@ export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar =
         name:           result.name,
         images:         result.photos.map(parsePhoto),
         address:        parseAddress(result),
+        barType:        getBarType(result.types),
 
         // optional fields
         // TODO: include the 'review_summary' parameter in the URL
@@ -47,6 +50,12 @@ export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar =
     }
 }
 
+const getBarType = (types : ?Array<String>) : BarType => {
+    if (types == null)
+        return 'Pub'
+    return _.includes(types, 'bar') ? 'Pub' : 'Club'
+}
+
 const parseTags = (tagList : Array<String>) : ?Array<TagID> => {
     if (!tagList)
         return null
@@ -54,7 +63,7 @@ const parseTags = (tagList : Array<String>) : ?Array<TagID> => {
 }
 
 const parseOpeningTimes = (doc) => {
-    if (!doc.opening_hours)
+    if (!doc.opening_hours || !doc.opening_hours.periods)
         return null
     const result = [null, null, null, null, null, null, null]
     doc.opening_hours.periods.forEach((period, i) => {

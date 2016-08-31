@@ -22,15 +22,6 @@ const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
 const passiveColor = 'rgb(222, 151, 14)'
 
-const getMarkerColor = (marker) => {
-    if (marker.signedUp) {
-        if (marker.barType === 'Pub')
-            return pubColor
-        return clubColor
-    }
-    return passiveColor
-}
-
 export class MapView extends PureComponent {
     constructor(props) {
         super(props)
@@ -72,7 +63,7 @@ export class MapView extends PureComponent {
                     onPress={this.handleMapPress}
                     >
                     {
-                        mapStore.barMarkers.map(bar =>
+                        mapStore.allMarkers.map(bar =>
                             <MapMarker key={bar.id} bar={bar} />
                         )
                     }
@@ -91,7 +82,7 @@ const coords = (bar) => {
 
 class MapMarker extends PureComponent {
     /* properties:
-        bar: schema.Bar
+        bar: Bar
     */
     constructor(props) {
         super(props)
@@ -114,29 +105,41 @@ class MapMarker extends PureComponent {
     }
 
     @computed get selected() {
-        const markerCoords = mapStore.getCurrentMarkerCoords()
-        if (!markerCoords)
+        const currentMarker = mapStore.getCurrentMarker()
+        if (!currentMarker)
             return false
-        return _.isEqual(getBarCoords(this.props.bar), markerCoords)
+        return this.props.bar.id === currentMarker.id
+    }
+
+    @computed get isSignedUp() {
+        // TODO: implement
+        return true
     }
 
     render = () => {
         const bar = this.props.bar
+        const signedUp = this.isSignedUp
         const title =
-            bar.signedUp
+            signedUp
                 ? bar.name
                 : bar.name + ' (menu unavailable)'
 
         const description =
-            bar.signedUp
+            signedUp
                 ? bar.desc
                 : bar.desc
+
+        const color =
+            signedUp
+                ? pubColor
+                : passiveColor
+
         return <NativeMapView.Marker
             ref={markerRef => {this.markerRef = markerRef}}
-            coordinate={coords(bar)}
+            coordinate={getBarCoords(bar)}
             title={title}
             description={description}
-            pinColor={getMarkerColor(bar)}
+            pinColor={pubColor}
             onPress={this.handleMarkerPress}
             onCalloutPress={this.handleCalloutPress}
             />

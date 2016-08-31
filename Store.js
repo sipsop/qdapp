@@ -6,11 +6,13 @@ import { OrderItem } from './Orders.js'
 import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
 import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
-import { orderStore } from './Orders.js'
+
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
 import { barStore } from './Bar/BarStore.js'
+import { orderStore } from './Orders.js'
 import { loginStore } from './Login.js'
+import { mapStore } from './Maps/MapStore.js'
 
 export class Store {
 
@@ -67,8 +69,11 @@ export class Store {
     }
 
     initialize = logErrors(async () => {
-        await this.loadFromLocalStorage()
-        await barStore.initialize()
+        Promise.all(
+            this.loadFromLocalStorage(),
+            barStore.initialize(),
+            mapStore.initialize(),
+        )
     })
 
     @computed get menuItemsOnOrder() {
@@ -95,14 +100,17 @@ export class Store {
             loginStore.setState(state.loginState)
         if (state.orderState)
             orderStore.setState(state.orderState)
+        if (state.mapState)
+            mapStore.setState(state.mapState)
     })
 
     getState = () => {
         return {
-            barState: barStore.getState(),
-            tabState: tabStore.getState(),
+            barState:   barStore.getState(),
+            tabState:   tabStore.getState(),
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
+            mapState:   mapStore.getState(),
         }
     }
 

@@ -1,6 +1,6 @@
 import requests
 
-searchURL = "https://maps.googleapis.com/maps/api/place/radarsearch/json"
+searchURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 apiKey = "AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw"
 
 location = {

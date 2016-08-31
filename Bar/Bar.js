@@ -4,9 +4,11 @@ import type { Int, Float, String, URL, HTML } from '../Types.js'
 
 export type TagID = String
 
+export type BarType = 'Pub' | 'Club'
+
 export type Bar = {
     id:             String,
-    signedUp:       boolean,
+    // signedUp:       boolean,
     name:           String,
     images:         Array<Photo>,
     address:        Address,
