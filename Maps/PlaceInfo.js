@@ -1,10 +1,9 @@
 // @flow
 
-import _ from 'lodash'
-
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parsePhoto } from './Photos.js'
+import * as _ from '../Curry.js'
 
 import type { Int, Float, URL, HTML } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'

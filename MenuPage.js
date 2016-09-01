@@ -12,7 +12,6 @@ import {
   Picker,
   TouchableOpacity,
 } from 'react-native'
-import _ from 'lodash'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -33,7 +32,7 @@ import { PickerCollection, PickerItem } from './Pickers.js'
 import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { FavItemContainer } from './Fav.js'
-import { min, max, logger } from './Curry.js'
+import { min, max, logger, range, deepEqual } from './Curry.js'
 import { store, tabStore } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
@@ -113,7 +112,7 @@ export class MenuItem extends PureComponent {
     hasSameOptions = (orderItem1, orderItem2) => {
         const options1 = orderItem1.selectedOptions.map(xs => xs.map(x => x))
         const options2 = orderItem2.selectedOptions.map(xs => xs.map(x => x))
-        return _.isEqual(options1, options2)
+        return deepEqual(options1, options2)
     }
 
     getDefaultOrderItem = () : OrderItem => new OrderItem(this.props.menuItem)
@@ -293,10 +292,10 @@ class MenuItemHeader extends PureComponent {
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                     <T style={styles.keywordText}>
-                        {   _.join(
-                                menuItem.tags.map(tagID => '#' + tagStore.getTagName(tagID)),
-                                ' '
-                            )
+                        {
+                            menuItem.tags.map(
+                                    tagID => '#' + tagStore.getTagName(tagID)
+                                ).join(' ')
                         }
                     </T>
                     <T style={styles.infoText} numberOfLines={3}>
@@ -414,10 +413,11 @@ export class OrderSelection extends PureComponent {
     @computed get amountPickerItem() {
         console.log("recomputing amountPickerItem", this.props.rowNumber)
         const subTotal = this.orderItem.subTotal || 0.0
+        const numbers = range(N+1)
         return new PickerItem(
             "Number of Drinks:",
-            _.range(N+1).map(i => "" + i),
-            _.range(N+1).map(i => this.makeAbsPrice(i * subTotal)),
+            numbers.map(i => "" + i),
+            numbers.map(i => this.makeAbsPrice(i * subTotal)),
             -1,                             /* defaultOption */
             [this.orderItem.amount],             /* selection */
             'Single',                       /* optionType */

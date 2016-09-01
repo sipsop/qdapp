@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   ListView,
 } from 'react-native'
-import _ from 'lodash'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { computed } from 'mobx'
@@ -19,7 +18,7 @@ import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Button } from './Button.js'
 import { config } from './Config.js'
-import { makeList } from './Curry.js'
+import * as _ from './Curry.js'
 
 const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,
@@ -37,12 +36,12 @@ export class Selector extends PureComponent {
 
     constructor(props) {
         super(props)
-        children = makeList(props.children)
+        children = _.makeList(props.children)
         this.dataSource = dataSource.cloneWithRows(_.range(children.length))
     }
 
     get children() {
-        return makeList(this.props.children)
+        return _.makeList(this.props.children)
     }
 
     render = () => {

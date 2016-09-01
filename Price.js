@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react/native'
-import _ from 'lodash'
 
 import { T } from './AppText.js'
-import { fold } from './Curry.js'
+import * as _ from './Curry.js'
 
 @observer
 export class Price extends Component {

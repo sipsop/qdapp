@@ -1,6 +1,5 @@
 import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
-import _ from 'lodash'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import { logErrors, log, flatten } from '../Curry.js'

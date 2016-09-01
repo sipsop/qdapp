@@ -11,7 +11,6 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
 // import merge from 'merge'
-import _ from 'lodash'
 import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -24,6 +23,7 @@ import { OkCancelModal } from './Modals.js'
 import { TextButton, Button } from './Button.js'
 import { store } from './Store.js'
 import { config } from './Config.js'
+import * as _ from './Curry.js'
 
 const rowHeight = 55
 
@@ -306,6 +306,6 @@ class PickerButton extends PureComponent {
             const firstItem = this.props.pickerItems[0]
             return firstItem.labels[0]
         }
-        return _.join(_.flatten(nonDefaultLabels), ' + ')
+        return _.flatten(nonDefaultLabels).join(' + ')
     }
 }

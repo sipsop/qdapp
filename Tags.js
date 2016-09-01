@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
-import _ from 'lodash'
 import { observable, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -15,9 +14,9 @@ import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store, barStore } from './Store.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
-import { runAndLogErrors, all, any, logger } from './Curry.js'
+import * as _ from './Curry.js'
 
-const log = logger('Tags.js')
+const log = _.logger('Tags.js')
 
 const tagQuery = `
     query tags {
@@ -93,7 +92,7 @@ export class TagStore {
         this.tagDownloadResult.downloadStarted()
         const isRelevant = () => true /* Outdated tags should always be updated! */
         const downloadResult = await downloadManager.graphQL('qd:tags', tagQuery, isRelevant)
-        runAndLogErrors(() => {
+        _.runAndLogErrors(() => {
             this.tagDownloadResult = downloadResult.update(data => data.menuTags)
         })
     }
@@ -231,7 +230,7 @@ const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
 
 const filterMenuItems = (menuItems, tagSelection) => {
     return menuItems.filter(
-        menuItem => all(
+        menuItem => _.all(
             tagSelection.map(tagID => hasTag(menuItem, tagID))
         )
     )
@@ -240,7 +239,7 @@ const filterMenuItems = (menuItems, tagSelection) => {
 /* Check if at least one but not all of the given menu items has the given tag */
 const isEnabled = (tagID, menuItems) => {
     const haveTag = menuItems.map(menuItem => hasTag(menuItem, tagID))
-    return any(haveTag) && !all(haveTag)
+    return _.any(haveTag) && !_.all(haveTag)
 }
 
 @observer

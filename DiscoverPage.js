@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'

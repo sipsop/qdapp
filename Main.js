@@ -8,7 +8,6 @@ import {
   ListView,
   TouchableOpacity,
 } from 'react-native'
-import _ from 'lodash'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 import { observer } from 'mobx-react/native'

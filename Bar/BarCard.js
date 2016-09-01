@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Dimensions from 'Dimensions';
-import _ from 'lodash'
 import { transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'

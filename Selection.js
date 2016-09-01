@@ -7,7 +7,7 @@ the other items.
 */
 
 import { observable, computed, autorun, transaction } from 'mobx'
-import _ from 'lodash'
+import * as _ from './Curry.js'
 
 /* type Index = Int */
 /* type Selection = [Index] */

@@ -1,5 +1,5 @@
 import { Map, mapCreate, mapEquals } from './Map.js'
-import { zipWith, tail, contains, equals } from './Curry.js'
+import { zipWith, tail, includes, equals } from './Curry.js'
 import { JSON } from './JSON.js'
 
 export class Spec {
@@ -300,7 +300,7 @@ export class Enum extends Spec {
     }
 
     validate = (val) => {
-        if (!contains(this.prefixed_opts, val)) {
+        if (!includes(this.prefixed_opts, val)) {
             throw Error(`'${val}' is a valid for enum ${this.name}`)
         }
     }
@@ -328,7 +328,7 @@ export class DataType extends Spec {
 
     validate = (case_inst) => {
         var name = case_inst.case_val.name
-        if (!contains(this.case_names, name)) {
+        if (!includes(this.case_names, name)) {
             throw Error(`Invalid constructor ${name} for datatype ${this.name}`)
         }
         case_inst.case_val.validate(case_inst)

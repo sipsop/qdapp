@@ -1,11 +1,10 @@
 import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
-import _ from 'lodash'
 
 import { OrderItem } from './Orders.js'
 import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from './Cache.js'
-import { logErrors, runAndLogErrors, logError, safeAutorun } from './Curry.js'
+import * as _ from './Curry.js'
 
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
@@ -34,7 +33,7 @@ export class Store {
     constructor() {
         // this.bar     = emptyResult()
         // this.barList = emptyResult()
-        safeAutorun(() => {
+        _.safeAutorun(() => {
             if (barStore.allMenuItems.length === 0)
                 return
             this.setOrderList(
@@ -68,7 +67,7 @@ export class Store {
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
-    initialize = logErrors(async () => {
+    initialize = _.logErrors(async () => {
         await Promise.all(
             this.loadFromLocalStorage(),
             barStore.initialize(),
@@ -114,9 +113,9 @@ export class Store {
         }
     }
 
-    saveToLocalStorage = logErrors(async () => {
+    saveToLocalStorage = _.logErrors(async () => {
         const state = this.getState()
-        if (!_.isEqual(state, this.previousState)) {
+        if (!_.deepEqual(state, this.previousState)) {
             // console.log("Saving state...", state)
             this.previousState = state
             await cache.set('qd:state', state)

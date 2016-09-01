@@ -18,10 +18,10 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
-import _ from 'lodash'
 import Swiper from 'react-native-swiper'
 import { observable, computed, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
+import * as _ from './Curry.js'
 
 
 // import PickerAndroid from 'react-native-picker-android';
@@ -49,7 +49,7 @@ class ListViewBasics extends Component { // Initialize the hardcoded data
             rowHasChanged: (r1, r2) => r1 !== r2
         });
         this.state = {
-            dataSource: ds.cloneWithRows(_.range(100))
+            dataSource: ds.cloneWithRows(range(100))
         };
     }
 
@@ -57,7 +57,7 @@ class ListViewBasics extends Component { // Initialize the hardcoded data
         return (
             <View style={{flex: 1}}>
                 <ScrollView>
-                    {_.range(100).map((i) => <Text key={i}>{i}</Text>)}
+                    {range(100).map((i) => <Text key={i}>{i}</Text>)}
                 </ScrollView>
             </View>
         )

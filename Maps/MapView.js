@@ -5,7 +5,6 @@ import {
   ListView,
   TouchableOpacity,
 } from 'react-native'
-import _ from 'lodash'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -18,6 +17,7 @@ import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { mapStore, getBarCoords } from './MapStore.js'
 import { DownloadResultView } from '../HTTP.js'
+import * as _ from '../Curry.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light

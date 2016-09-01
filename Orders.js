@@ -1,10 +1,12 @@
 import { observable, computed } from 'mobx'
-import _ from 'lodash'
 import shortid from 'shortid'
 
 import { Price, sumPrices } from './Price.js'
 import { updateSelection } from './Selection.js'
 import { store } from './Store.js'
+import * as _ from './Curry.js'
+
+const log = _.logger('Orders.js')
 
 /* getMenuItemDefaultOptions : [schema.MenuItemOption] -> [Int] */
 const getMenuItemDefaultOptions = (menuItemOption) => {
@@ -31,6 +33,7 @@ export class OrderItem {
         const allPrices = _.zipWith(this.menuItem.options, this.selectedOptions,
             (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
         )
+        log("allPries", allPrices)
         return sumPrices(_.flatten(allPrices))
     }
 
@@ -58,7 +61,7 @@ export class OrderItem {
 class OrderStore {
 
     stateChanged = (prevState, nextState) => {
-        return !_.isEqual(prevState, nextState)
+        return !_.deepEqual(prevState, nextState)
     }
 
     getState = () => {

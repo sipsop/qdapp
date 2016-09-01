@@ -160,17 +160,37 @@ export function zip(xs, ys) {
     return result
 }
 
-export function zipWith(f) {
-    const args = tail(arguments)
-    const length = args[0].length
-    args.forEach((arg) => {
-        if (arg.length !== length) {
+export const last = xs => {
+    return xs[xs.length - 1]
+}
+
+export const init = xs => {
+    return xs.slice(0, xs.length - 1)
+}
+
+export const find = (xs, x, equals=_.isEqual) => {
+    for (var i = 0; i < xs.length; i++) {
+        if (equals(xs[i], x)) {
+            return i
+        }
+    }
+    return -1
+}
+
+export function zipWith(...args) {
+    const f = last(args)
+    const xss = init(args)
+    const length = xss[0].length
+    xss.forEach(xs => {
+        if (xs.length !== length) {
             throw Error("zipWith: All arrays must have the same length")
         }
     })
 
-    args.push(f)
-    return _.zipWith.apply(undefined, args)
+    return range(length).map(i => {
+        const args = xss.map(xs => xs[i])
+        return f(...args)
+    })
 }
 
 export function unzip(items) {
@@ -206,9 +226,9 @@ export function partition(f, xs) {
     return [left, right]
 }
 
-export function contains(xs, x) {
+export function includes(xs, x) {
     for (var i = 0; i < xs.length; i++) {
-        if (xs[i] == x) {
+        if (xs[i] === x) {
             return true
         }
     }
@@ -226,7 +246,7 @@ export function take(n, xs) {
 export function unique(xs) {
     var result = []
     for (var i = 0; i < xs.length; i++) {
-        if (!contains(result, xs[i])) { // quadratic...
+        if (!includes(result, xs[i])) { // quadratic...
             result.push(xs[i])
         }
     }
@@ -274,6 +294,14 @@ export function intersperse(x, xs) {
     return result
 }
 
+export const range = /*<T>*/(n : Int) : Array<T> => {
+    const result = []
+    for (var i = 0; i < n; i++) {
+        result.push(i)
+    }
+    return result
+}
+
 export const isNull = (x) => x === null || x === undefined
 
 export const equals = (val1, val2) => {
@@ -298,3 +326,11 @@ export const flatten = /*<T>*/(xss : Array<Array<T>>) : Array<T> => {
     })
     return result
 }
+
+
+export const deepEqual = _.isEqual
+export const intersection = _.intersection
+export const union = _.union
+export const clone = _.clone
+export const sum = xs => fold((x, y) => x + y, 0, xs)
+export const product = xs => fold((x, y) => x * y, 1, xs)

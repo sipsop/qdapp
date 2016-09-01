@@ -8,7 +8,6 @@ import {
     PureComponent,
 } from '../Component.js'
 import LinearGradient from 'react-native-linear-gradient'
-import _ from 'lodash'
 import { observer } from 'mobx-react/native'
 
 import { T } from '../AppText.js'

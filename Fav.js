@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { View, TouchableOpacity } from 'react-native'
-import _ from 'lodash'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { PureComponent } from './Component.js'
@@ -9,6 +8,7 @@ import { observer } from 'mobx-react/native'
 
 import { loginStore } from './Store.js'
 import { config } from './Config.js'
+import * as _ from './Curry.js'
 
 /* Store */
 
