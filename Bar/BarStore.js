@@ -2,7 +2,7 @@ import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import { logErrors, log, flatten } from '../Curry.js'
+import { safeAutorun, logErrors, log, flatten } from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 
@@ -28,6 +28,8 @@ class BarStore {
 
     // BarID
     @observable barID = null
+
+    @observable today : Int
 
     /*************************** State ***********************************/
 
@@ -193,6 +195,18 @@ class BarStore {
         return flatten(menuItems)
     }
 
+    @computed get openingTimes() {
+        return this.bar.value
+            ? this.bar.value.openingTimes
+            : null
+    }
+
+    @computed get barOpenTime() : ?OpeningTime {
+        return this.bar.value
+            ? getBarOpenTime(this.bar.value)
+            : null
+    }
+
     /*********************************************************************/
     /* Functions that can be invoked async without catching errors */
 
@@ -210,4 +224,30 @@ class BarStore {
 
 }
 
+export const getBarOpenTime = (bar : Bar) : ?OpeningTime => {
+    if (!bar.openingTimes)
+        return null
+    return bar.openingTimes[barStore.today]
+}
+
+/* Get the day for which we should be displaying the time */
+const getDay = () => {
+    const date = new Date()
+    var day = date.getDay()
+
+    /* If it's before 06.00AM, display the date from the day before */
+    if (date.getHours() < 6)
+        day -= 1
+    if (day < 0)
+        day += 7
+    return day
+}
+
+/* Update the 'day' every 5 minutes */
+const setDay = () => {
+    barStore.today = getDay()
+    setTimeout(setDay, 1000 * 60 * 5)
+}
+
 export const barStore = new BarStore()
+setDay()

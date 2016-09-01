@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
-  Image,
-  View,
-  TouchableOpacity,
+    Image,
+    View,
+    TouchableOpacity,
 } from 'react-native';
 import Dimensions from 'Dimensions';
 import { transaction } from 'mobx'
@@ -13,7 +13,8 @@ import LinearGradient from 'react-native-linear-gradient'
 import { PureComponent } from '../Component.js'
 import { T } from '../AppText.js'
 import { mapStore } from '../Maps/MapStore.js'
-import { store, tabStore, barStore } from '../Store.js'
+import { store, tabStore } from '../Store.js'
+import { barStore, getBarOpenTime } from './BarStore.js'
 import { config } from '../Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
@@ -121,7 +122,8 @@ const white = 'rgba(255, 255, 255, 1.0)'
     }
 }
 
-@observer export class PlaceInfo extends PureComponent {
+@observer
+export class PlaceInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */
@@ -148,16 +150,53 @@ const white = 'rgba(255, 255, 255, 1.0)'
     }
 }
 
-@observer export class TimeInfo extends PureComponent {
+const timeTextStyle = {fontSize: 11, color: white}
+
+@observer
+export class TimeInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */
     render = () => {
+        const openingTime = getBarOpenTime(this.props.bar)
         return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
             <Icon name="clock-o" size={15} color={white} />
-            <T style={{marginLeft: 5, fontSize: 11, color: white}}>
-                11.00 - 23.30
-            </T>
+            <View style={{marginLeft: 5, flexDirection: 'row'}}>
+                {
+                    openingTime
+                        ? this.renderOpeningTime(openingTime)
+                        : this.renderUnknownOpeningTime()
+                }
+            </View>
         </View>
+    }
+
+    renderOpeningTime = (openingTime : OpeningTime) => {
+        return <View style={{flexDirection: 'row'}}>
+            <Time style={timeTextStyle} time={openingTime.open} />
+            <T style={timeTextStyle}> - </T>
+            <Time style={timeTextStyle} time={openingTime.close} />
+        </View>
+    }
+
+    renderUnknownOpeningTime = () => {
+        return <T style={timeTextStyle}>Unknown</T>
+    }
+}
+
+@observer
+export class Time extends PureComponent {
+    /* properties:
+        time: Time
+        style: text style
+    */
+    render = () => {
+        const time = this.props.time
+        var minute = '' + time.minute
+        if (minute.length === 1)
+            minute = '0' + minute
+        return <T style={this.props.style}>
+            {time.hour}.{minute}
+        </T>
     }
 }
