@@ -41,8 +41,8 @@ export class BarPageFetcher extends DownloadResultView {
     }
 
     getDownloadResult = () => {
-        barStore.bar.value
-        barStore.menuDownloadResult.value
+        // barStore.bar.value
+        // barStore.menuDownloadResult.value
         return barStore.getBarAndMenuDownloadResult()
     }
 
@@ -80,7 +80,7 @@ export class BarPage extends BarPageFetcher {
         })
     }
 
-    renderFinished = ({bar,menu}) => <BarView bar={bar} menu={menu} />
+    renderFinished = ([bar, menu]) => <BarView bar={bar} menu={menu} />
 }
 
 class BarView extends Page {

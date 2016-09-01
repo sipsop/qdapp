@@ -8,7 +8,7 @@ import {
     View,
     TouchableOpacity,
 } from './Component.js';
-import { observable, transaction, computed } from 'mobx'
+import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Cache, cache } from './Cache.js'
@@ -60,34 +60,34 @@ export class DownloadResult<T> {
     @observable message : ?string       = undefined
     @observable value   : ?T            = null
 
-    static combine = (obj) => {
-        return new CombinedDownloadResult(obj)
+    static combine = (downloadResults : Array<DownloadResult<*>>) => {
+        return new CombinedDownloadResult(downloadResults)
     }
 
-    downloadStarted = () : DownloadResult<T> => {
-        transaction(() => {
-            this.state   = 'InProgress'
-            this.message = undefined
-            this.value   = undefined
-        })
+    @action from = (downloadResult : DownloadResult<T>) => {
+        this.state   = downloadResult.state
+        this.message = downloadResult.message
+        this.value   = downloadResult.value
+    }
+
+    @action downloadStarted = () : DownloadResult<T> => {
+        this.state   = 'InProgress'
+        this.message = undefined
+        this.value   = undefined
         return this
     }
 
-    downloadError = (message : string) : DownloadResult<T> => {
-        transaction(() => {
-            this.state   = 'Error'
-            this.message = message
-            this.value   = undefined
-        })
+    @action downloadError = (message : string) : DownloadResult<T> => {
+        this.state   = 'Error'
+        this.message = message
+        this.value   = undefined
         return this
     }
 
-    downloadFinished = (value : T) : DownloadResult<T> => {
-        transaction(() => {
-            this.state   = 'Finished'
-            this.message = undefined
-            this.value   = value
-        })
+    @action downloadFinished = (value : T) : DownloadResult<T> => {
+        this.state   = 'Finished'
+        this.message = undefined
+        this.value   = value
         return this
     }
 
@@ -101,39 +101,30 @@ export class DownloadResult<T> {
 
 class CombinedDownloadResult<T> {
 
-    @observable obj
+    @observable downloadResults : Array<DownloadResult> = null
 
-    constructor(obj) {
-        this.obj = obj
+    constructor(downloadResults : Array<DownloadResult>) {
+        this.downloadResults = downloadResults
         this._value = null
     }
 
-    @computed get _results() {
-        // NOTE: Use Object.keys() to ensure that MobX can log the accesses
-        return Object.keys(this.obj).map(key => this.obj[key])
-        // return Object.values(this.obj)
-    }
-
     @computed get state() {
-        console.log("COMPUTING STATE....")
-        if (any(this._results.map(result => result.state === 'Error')))
+        if (any(this.downloadResults.map(result => result.state === 'Error')))
             return 'Error'
-        if (any(this._results.map(result => result.state === 'InProcess')))
-            return 'InProcess'
-        if (all(this._results.map(result => result.state === 'Finished'))) {
-            console.log("SWITCH STATE TO FINISHED!")
+        if (any(this.downloadResults.map(result => result.state === 'InProgress')))
+            return 'InProgress'
+        if (all(this.downloadResults.map(result => result.state === 'Finished')))
             return 'Finished'
-        }
         return 'NotStarted'
     }
 
     @computed get message() {
-        const results = this._results
+        const results = this.downloadResults
         for (var i = 0; i < results.length; i++) {
             if (results[i].state === 'Error')
                 return results[i].message
         }
-        return "No error has occurred..."
+        return undefined
     }
 
     @computed get value() {
@@ -141,11 +132,7 @@ class CombinedDownloadResult<T> {
             return this._value
         if (this.state !== 'Finished')
             return null
-        const result = {}
-        Object.keys(this.obj).forEach(key => {
-            result[key] = this.obj[key].value
-        })
-        return result
+        return this.downloadResults.map(downloadResult => downloadResult.value)
     }
 
     update = (f : (value : T) => T) : DownloadResult<T> => {

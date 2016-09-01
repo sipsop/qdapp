@@ -22,10 +22,10 @@ class BarStore {
     // DownloadResult[ List[schema.Bar] ]
     @observable barList = emptyResult()
 
-    @observable barAndMenuDownloadResult = DownloadResult.combine({
-        bar: this.bar,
-        menu: this.menuDownloadResult
-    })
+    @observable barAndMenuDownloadResult = DownloadResult.combine([
+        this.bar,
+        this.menuDownloadResult,
+    ])
 
     // BarID
     @observable barID = null
@@ -129,6 +129,7 @@ class BarStore {
         transaction(() => {
             this.barID = barID
             this.bar.downloadStarted()
+            this.menuDownloadResult.downloadStarted()
         })
 
         const [barDownloadResult, menuDownloadResult] = await Promise.all(
@@ -157,11 +158,11 @@ class BarStore {
     @action setBarDownloadResult = (downloadResult) => {
         if (!downloadResult)
             throw Error("DownloadResult is undefined in setBarDownloadResult!")
-        this.bar = downloadResult
+        this.bar.from(downloadResult)
     }
 
     @action setMenuDownloadResult = (downloadResult) => {
-        this.menuDownloadResult = downloadResult
+        this.menuDownloadResult.from(downloadResult)
     }
 
     @computed get menu() {
