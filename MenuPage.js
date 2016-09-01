@@ -33,11 +33,13 @@ import { PickerCollection, PickerItem } from './Pickers.js'
 import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { FavItemContainer } from './Fav.js'
-import { min, max } from './Curry.js'
+import { min, max, logger } from './Curry.js'
 import { store, tabStore } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
 import { config } from './Config.js'
+
+const log = logger('MenuPage.js')
 
 @observer
 export class MenuPage extends BarPageFetcher {

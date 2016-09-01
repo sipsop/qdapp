@@ -15,7 +15,9 @@ import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { store, barStore } from './Store.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
-import { runAndLogErrors, all, any } from './Curry.js'
+import { runAndLogErrors, all, any, logger } from './Curry.js'
+
+const log = logger('Tags.js')
 
 const tagQuery = `
     query tags {

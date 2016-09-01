@@ -10,6 +10,12 @@ export const log = (...args) => {
     console.log(...args.map(asData))
 }
 
+export const logger = (fileName) => {
+    return (...args) => {
+        log(fileName, ...args)
+    }
+}
+
 export const logErrors = callback => {
     return (...args) => {
         const obj = this
@@ -281,4 +287,14 @@ export const equals = (val1, val2) => {
             return undefined
         }
     })
+}
+
+
+/* Flatten a nested list. Use this instead of _.flatten as it doesn't work with MobX... */
+export const flatten = /*<T>*/(xss : Array<Array<T>>) : Array<T> => {
+    const result = []
+    xss.forEach(xs => {
+        xs.forEach(x => result.push(x))
+    })
+    return result
 }

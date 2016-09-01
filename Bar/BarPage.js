@@ -28,7 +28,7 @@ import { T } from '../AppText.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
-import { merge, safeAutorun } from '../Curry.js'
+import { merge, safeAutorun, log } from '../Curry.js'
 
 @observer
 export class BarPageFetcher extends DownloadResultView {

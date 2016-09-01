@@ -13,6 +13,7 @@ import { observer } from 'mobx-react/native'
 
 import { T } from '../AppText.js'
 import { store, favStore, tabStore } from '../Store.js'
+import { log } from '../Curry.js'
 
 import type { String, URL } from '../Types.js'
 
@@ -20,6 +21,8 @@ export type Category = {
     title:  String,
     url:    URL,
 }
+
+const menuPadding = 5
 
 @observer export class BarMenu extends PureComponent {
     /* properties:
@@ -46,8 +49,8 @@ export type Category = {
                 style={
                     { justifyContent: 'center'
                     , alignItems: 'center'
-                    , marginLeft: 5
-                    , marginRight: 5
+                    , marginLeft: menuPadding
+                    , marginRight: menuPadding
                     }}
                 >
             { rows.map(this.renderRow) }
@@ -55,15 +58,15 @@ export type Category = {
     }
 
     renderRow = (row, i) => {
-        const { width } = Dimensions.get('window') // - menuPadding * 2
-        return <CardRow key={i} row={row} rowWidth={width} />
+        const { width } = Dimensions.get('window')
+        return <CardRow key={i} row={row} rowWidth={width - menuPadding * 2} />
     }
 
 }
 
 @observer class CardRow extends Component {
     /* properties:
-        row: [{name: str, tag: str, submenu: schema.SubMenu}]
+        row: [{name: str, tag: str, submenu: SubMenu}]
             list of submenus to show in a row
         rowWidth: int
     */
@@ -107,7 +110,7 @@ export type Category = {
             e.g. "Beer", "Wine"
         tag: str
             e.g. "#beer", "#wine" etc
-        submenu: schema.SubMenu
+        submenu: SubMenu
         style: style object
     */
     render = () => {

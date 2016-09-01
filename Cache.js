@@ -2,9 +2,10 @@ import { AsyncStorage } from 'react-native'
 
 import { NetworkError } from './HTTP.js'
 import { Hour, Day, Month, getTime } from './Time.js'
-import { promise, chunking } from './Curry.js'
+import { promise, chunking, logger } from './Curry.js'
 import { config } from './Config.js'
 
+const log = logger('Cache.js')
 
 const keyPrefix = 'qd:'
 const key = (args) => {
@@ -217,7 +218,7 @@ const MB = (x) => KB(x) * 1024
 
 const storage = new Storage(AsyncStorage /* backend */, 100 /* maxEntries */)
 export const cache = new Cache(storage)
-cache.clearAll()
+// cache.clearAll()
 
 /********************************************/
 /* TODO: Use this to optimize AsyncStorage? */

@@ -13,7 +13,7 @@ import NativeMapView from 'react-native-maps'
 
 import { PureComponent } from '../Component.js'
 import { Map } from '../Map.js'
-import { merge } from '../Curry.js'
+import { merge, logger } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { mapStore, getBarCoords } from './MapStore.js'
@@ -22,6 +22,8 @@ import { DownloadResultView } from '../HTTP.js'
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
 const passiveColor = 'rgb(222, 151, 14)'
+
+const log = logger('Maps/MapView.js')
 
 @observer
 export class MapView extends DownloadResultView {

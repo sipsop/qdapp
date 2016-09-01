@@ -3,7 +3,7 @@ import { Alert, AsyncStorage } from 'react-native'
 import _ from 'lodash'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import { logErrors, log } from '../Curry.js'
+import { logErrors, log, flatten } from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 
@@ -140,7 +140,6 @@ class BarStore {
                      which case we should ignore the download.
             */
             transaction(() => {
-                log("downloaded!", barDownloadResult)
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
             })
@@ -183,8 +182,16 @@ class BarStore {
             // , menu.snacks
             // , menu.food
             ])
-        const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
-        return _.flatten(menuItems)
+        const menuItems = subMenus.map(subMenu => subMenu.menuItems)
+        // menuItems.forEach(xs => {
+        //     if (!Array.isArray(xs))
+        //         throw Error("Expected an array of menu items: " + xs)
+        //     xs.forEach(menuItem => {
+        //         if (!menuItem.id)
+        //             throw Error("Menu item must have an ID")
+        //     })
+        // })
+        return flatten(menuItems)
     }
 
     /*********************************************************************/
