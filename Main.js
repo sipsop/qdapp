@@ -13,6 +13,7 @@ import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 import { observer } from 'mobx-react/native'
 
+import { handleBackButton } from './Backbutton.js'
 import { SideMenu, MenuIcon } from './SideMenu.js'
 import { ControlPanel } from './ControlPanel.js'
 import { DiscoverPage } from './DiscoverPage.js'
@@ -51,6 +52,8 @@ import { cache } from './Cache.js'
     renderTabBar = () => <ScrollableTabBar />
 }
 
+console.log("----------------------------------------------------------------")
+
 // loginStore.login()
 
 // Promise.onPossiblyUnhandledRejection(function(error){
@@ -64,3 +67,6 @@ require('promise/setimmediate/rejection-tracking').enable({
         console.error(error)
     }
 })
+
+handleBackButton()
+store.initialize()

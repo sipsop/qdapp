@@ -2,20 +2,21 @@
 
 import { React, Component, PureComponent, Image, View, TouchableOpacity } from '../Component.js'
 import { buildURL } from '../URLs.js'
+import { APIKey } from './MapStore.js'
 
 import type { Key } from "./MapStore.js";
 import type { Photo } from "../Bar/Bar.js"
 
-export const parsePhoto = (key : Key, photoRef : any) : Photo => {
+export const parsePhoto = (photoRef : any) : Photo => {
     return {
         htmlAttrib: photoRef.html_attributions,
-        url:        getPhotoURL(key, photoRef.photo_reference),
+        url:        getPhotoURL(photoRef.photo_reference),
     }
 }
 
-export const getPhotoURL = (apiKey : Key, photoID : String) => {
+export const getPhotoURL = (photoID : String) => {
     return buildURL("https://maps.googleapis.com/maps/api/place/photo", {
-        key: apiKey,
+        key: APIKey,
         photoreference: photoID,
         maxheight: 500,
         maxwidth: 500,

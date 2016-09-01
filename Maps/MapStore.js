@@ -41,7 +41,7 @@ type NativeMapView  = {
 
 /*********************************************************************/
 
-const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
+export const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
 
 const initialLocation : Coords = {
     latitude: 52.207990,

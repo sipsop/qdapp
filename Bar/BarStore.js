@@ -3,7 +3,7 @@ import { Alert, AsyncStorage } from 'react-native'
 import _ from 'lodash'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import { logErrors } from '../Curry.js'
+import { logErrors, log } from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 
@@ -22,8 +22,19 @@ class BarStore {
     // DownloadResult[ List[schema.Bar] ]
     @observable barList = emptyResult()
 
+    @observable barAndMenuDownloadResult = DownloadResult.combine({
+        bar: this.bar,
+        menu: this.menuDownloadResult
+    })
+
     // BarID
     @observable barID = null
+
+    /*************************** State ***********************************/
+
+    initialize = async () => {
+        await this._setBarList()
+    }
 
     getState = () => {
         return { barID: this.barID }
@@ -34,22 +45,16 @@ class BarStore {
             await this._setBarID(barID)
     }
 
-    initialize = async () => {
-        await this._setBarList()
-    }
-
-    refreshBar = logErrors(async () => {
-        if (this.barID)
-            await this._setBarID(this.barID)
-    })
+    /*************************** Getters *********************************/
 
     getBarDownloadResult = () => this.bar
-    getBarAndMenuDownloadResult = () =>
-        DownloadResult.combine({ bar: this.bar, menu: this.menuDownloadResult})
+    getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
     getBarListDownloadResult = () => this.barList
     getBar = () => this.bar.value
 
-    getBarMenu = async (placeID : PlaceID) : Promise<DownloadResult<Menu>> => {
+    /*************************** Network *********************************/
+
+    _getBarMenu = async (placeID : PlaceID) : Promise<DownloadResult<Menu>> => {
         const fragments = `
             fragment PriceFragment on Price {
                 currency
@@ -107,108 +112,13 @@ class BarStore {
         isRelevant = () => placeID === this.barID
         const downloadResult = await downloadManager.graphQL(
             key, menuQuery, isRelevant)
-        console.log("DOWNLOADED MENU!", downloadResult.value)
         return downloadResult.update(data => data.menu)
     }
 
-    getBarInfo = logErrors(async (placeID : PlaceID) => {
-        return await mapStore.getPlaceInfo(placeID)
-    })
 
-    // getBarInfo = async (barID, menu) => {
-    //     const menuQuery = !menu ? '' : `
-    //         menu {
-    //             beer {
-    //                 ...SubMenuFragment
-    //             }
-    //             wine {
-    //                 ...SubMenuFragment
-    //             }
-    //             spirits {
-    //                 ...SubMenuFragment
-    //             }
-    //             cocktails {
-    //                 ...SubMenuFragment
-    //             }
-    //             water {
-    //                 ...SubMenuFragment
-    //             }
-    //         }
-    //     `
-    //     const fragments = `
-    //         fragment PriceFragment on Price {
-    //             currency
-    //             option
-    //             price
-    //         }
-    //
-    //         fragment SubMenuFragment on SubMenu {
-    //             image
-    //             menuItems {
-    //                 id
-    //                 name
-    //                 desc
-    //                 images
-    //                 tags
-    //                 price {
-    //                     ...PriceFragment
-    //                 }
-    //                 options {
-    //                     name
-    //                     optionType
-    //                     optionList
-    //                     prices {
-    //                         ...PriceFragment
-    //                     }
-    //                     defaultOption
-    //                 }
-    //             }
-    //         }
-    //     `
-    //
-    //     var query = `
-    //         query {
-    //             bar(id: "${barID}") {
-    //                 id
-    //                 name
-    //                 desc
-    //                 images
-    //                 tags
-    //                 phone
-    //                 website
-    //                 openingTimes {
-    //                     day
-    //                     openTime {
-    //                         hour
-    //                         minute
-    //                     }
-    //                     closeTime {
-    //                         hour
-    //                         minute
-    //                     }
-    //                 }
-    //                 address {
-    //                     lat
-    //                     lon
-    //                     city
-    //                     street
-    //                     number
-    //                     postcode
-    //                 }
-    //                 ${menuQuery}
-    //             }
-    //         }
-    //         `
-    //
-    //         key = `qd:bar=${barID}:menu=${menu}`
-    //         if (menuQuery)
-    //             query += fragments
-    //
-    //         isRelevant = () => barID === this.barID
-    //         const downloadResult = await downloadManager.graphQL(
-    //             key, query, isRelevant)
-    //         return downloadResult.update((data) => data.bar)
-    // }
+    _getBarInfo = async (placeID : PlaceID) => {
+        return await mapStore.getPlaceInfo(placeID)
+    }
 
     _setBarID = async (barID) => {
         if (this.bar.value && this.bar.value.id === barID)
@@ -217,40 +127,36 @@ class BarStore {
         console.log("Setting bar with placeID =", barID)
 
         transaction(() => {
-            this.setBarDownloadResult(emptyResult().downloadStarted())
             this.barID = barID
+            this.bar.downloadStarted()
         })
 
         const [barDownloadResult, menuDownloadResult] = await Promise.all(
-            [ this.getBarInfo(barID), this.getBarMenu(barID) ])
-        console.log("GOT RESULTSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-        console.log(barDownloadResult)
-        console.log(menuDownloadResult)
+            [ this._getBarInfo(barID), this._getBarMenu(barID) ])
         if (this.barID === barID) {
             /* NOTE: a user may have selected a different bar
                      before this download has completed, in
                      which case we should ignore the download.
             */
             transaction(() => {
+                log("downloaded!", barDownloadResult)
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
             })
         }
     }
 
-    setBarID = logErrors(this._setBarID)
-
     _setBarList = async (location) => {
         const loc = location || store.location
         this.barList.downloadFinished([])
         // this.barList.downloadStarted()
-        // const downloadResult = await this.getBarInfo("1")
+        // const downloadResult = await this._getBarInfo("1")
         // this.barList = downloadResult.update((value) => [value])
     }
 
-    setBarList = logErrors(this._setBarList)
-
     @action setBarDownloadResult = (downloadResult) => {
+        if (!downloadResult)
+            throw Error("DownloadResult is undefined in setBarDownloadResult!")
         this.bar = downloadResult
     }
 
@@ -279,6 +185,21 @@ class BarStore {
         const menuItems = subMenus.map((subMenu) => subMenu.menuItems)
         return _.flatten(menuItems)
     }
+
+    /*********************************************************************/
+    /* Functions that can be invoked async without catching errors */
+
+    refreshBar = logErrors(async () => {
+        if (this.barID)
+            await this._setBarID(this.barID)
+    })
+
+    getBarMenu = logErrors(this._getBarMenu)
+    getBarInfo = logErrors(this._getBarInfo)
+    setBarID = logErrors(this._setBarID)
+    setBarList = logErrors(this._setBarList)
+
+    /*********************************************************************/
 
 }
 

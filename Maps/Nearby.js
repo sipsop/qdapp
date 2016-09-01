@@ -2,7 +2,6 @@
 
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
-import { parsePhoto } from './Photos.js'
 import { parseBar } from './PlaceInfo.js'
 
 import type { Int, Float } from '../Types.js'

@@ -8,7 +8,7 @@ import {
     View,
     TouchableOpacity,
 } from './Component.js';
-import { observable, transaction } from 'mobx'
+import { observable, transaction, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Cache, cache } from './Cache.js'
@@ -27,9 +27,9 @@ export type HTTPOptions = RequestOptions
 
 /*********************************************************************/
 
-// const HOST = 'http://192.168.0.6:5000'
+const HOST = 'http://192.168.0.6:5000'
 // const HOST = 'http://192.168.0.20:5000'
-const HOST : string = 'http://172.24.176.169:5000'
+// const HOST : string = 'http://172.24.176.169:5000'
 // const HOST = 'http://localhost:5000/graphql'
 // const HOST = 'http://10.147.18.19:5000'
 
@@ -56,15 +56,9 @@ export type DownloadState =
 
 export class DownloadResult<T> {
 
-    state   : DownloadState
-    message : ?string
-    value   : ?T
-
-    constructor() {
-        this.state   = 'NotStarted'
-        this.message = undefined
-        this.value   = null
-    }
+    @observable state   : DownloadState = 'NotStarted'
+    @observable message : ?string       = undefined
+    @observable value   : ?T            = null
 
     static combine = (obj) => {
         return new CombinedDownloadResult(obj)
@@ -106,25 +100,34 @@ export class DownloadResult<T> {
 }
 
 class CombinedDownloadResult<T> {
+
+    @observable obj
+
     constructor(obj) {
         this.obj = obj
+        this._value = null
     }
 
-    get _results() {
-        return Object.values(this.obj)
+    @computed get _results() {
+        // NOTE: Use Object.keys() to ensure that MobX can log the accesses
+        return Object.keys(this.obj).map(key => this.obj[key])
+        // return Object.values(this.obj)
     }
 
-    get state() {
+    @computed get state() {
+        console.log("COMPUTING STATE....")
         if (any(this._results.map(result => result.state === 'Error')))
             return 'Error'
         if (any(this._results.map(result => result.state === 'InProcess')))
             return 'InProcess'
-        if (all(this._results.map(result => result.state === 'Finished')))
+        if (all(this._results.map(result => result.state === 'Finished'))) {
+            console.log("SWITCH STATE TO FINISHED!")
             return 'Finished'
+        }
         return 'NotStarted'
     }
 
-    get message() {
+    @computed get message() {
         const results = this._results
         for (var i = 0; i < results.length; i++) {
             if (results[i].state === 'Error')
@@ -133,7 +136,9 @@ class CombinedDownloadResult<T> {
         return "No error has occurred..."
     }
 
-    get value() {
+    @computed get value() {
+        if (this._value)
+            return this._value
         if (this.state !== 'Finished')
             return null
         const result = {}
@@ -145,7 +150,7 @@ class CombinedDownloadResult<T> {
 
     update = (f : (value : T) => T) : DownloadResult<T> => {
         if (this.state == 'Finished') {
-            this.value = f(this.value)
+            this._value = f(this.value)
         }
         return this
     }
@@ -155,7 +160,8 @@ export const emptyResult =
     <T>() : DownloadResult<T> => new DownloadResult()
 
 /* React Component for rendering a downloadResult in its different states */
-@observer export class DownloadResultView<T> extends PureComponent {
+@observer
+export class DownloadResultView<T> extends PureComponent {
     /* props:
         downloadResult: DownloadResult
     */

@@ -30,7 +30,7 @@ import { tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
 import { merge, safeAutorun } from '../Curry.js'
 
-
+@observer
 export class BarPageFetcher extends DownloadResultView {
     constructor(props) {
         super(props, "Error downloading bar page")
@@ -40,7 +40,11 @@ export class BarPageFetcher extends DownloadResultView {
         barStore.refreshBar()
     }
 
-    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
+    getDownloadResult = () => {
+        barStore.bar.value
+        barStore.menuDownloadResult.value
+        return barStore.getBarAndMenuDownloadResult()
+    }
 
     renderNotStarted = () =>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -51,7 +55,8 @@ export class BarPageFetcher extends DownloadResultView {
         </View>
 }
 
-@observer export class BarPage extends BarPageFetcher {
+@observer
+export class BarPage extends BarPageFetcher {
     /* properties:
         width: int
         height: int
@@ -107,9 +112,9 @@ class BarView extends Page {
                     autoplay={this.autoplay}
                     autoplayTimeout={timeout}
                     >
-                    {bar.images.map((url, i) =>
+                    {bar.images.map((photo, i) =>
                         <Image
-                            source={{uri: url}}
+                            source={{uri: photo.url}}
                             key={i}
                             style={{flex: 1, height: imageHeight}}
                             >

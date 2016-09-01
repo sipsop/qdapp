@@ -26,7 +26,6 @@ import { observer } from 'mobx-react/native'
 
 // import PickerAndroid from 'react-native-picker-android';
 // import MapView from 'react-native-maps'
-import { handleBackButton } from './Backbutton.js'
 import { Main } from './Main.js'
 import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
@@ -39,8 +38,6 @@ class App extends Component {
     }
 }
 
-handleBackButton()
-store.initialize()
 AppRegistry.registerComponent('AwesomeProject', () => App);
 
 // Testing

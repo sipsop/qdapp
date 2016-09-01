@@ -12,7 +12,7 @@ import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
 
 /************************* Network ***********************************/
 
-const BaseURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+const BaseURL = "https://maps.googleapis.com/maps/api/place/details/json"
 
 export const getPlaceInfo = async (apiKey : Key, placeID : String)
         : Promise<DownloadResult<Bar>> =>
@@ -24,9 +24,9 @@ export const getPlaceInfo = async (apiKey : Key, placeID : String)
     const key = `qd:placeInfo:placeID=${placeID}`
     const jsonDownloadResult = await downloadManager.fetchJSON(
         key, url, {method: 'GET'})
-    console.log("DOWNLOADED PLACE INFO", jsonDownloadResult.value)
-    return jsonDownloadResult.update(doc =>
-        doc.results.map(placeInfo => parseBar(placeInfo, doc.html_attributions)))
+    if (jsonDownloadResult.value && jsonDownloadResult.value.status !== 'OK')
+        throw Error(jsonDownloadResult.value.status)
+    return jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
 }
 
 /************************* Response Parsing **************************/
