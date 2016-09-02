@@ -5,7 +5,15 @@ import { Hour, Day, Month, getTime } from './Time.js'
 import { promise, chunking, logger } from './Curry.js'
 import { config } from './Config.js'
 
+import type { Float } from './Types.js'
+
 const log = logger('Cache.js')
+
+export type CacheInfo = {
+    refreshAfter: Float,
+    expiresAfter: Float,
+}
+
 
 const keyPrefix = 'qd:'
 const key = (args) => {
@@ -108,20 +116,20 @@ class Cache {
         this.storage = storage
     }
 
-    get = async (key, refreshCallback, expiredCallback) => {
+    get = async (key, refreshCallback, expiredCallback, cacheInfo : CacheInfo) => {
         var cacheEntry
         try {
             cacheEntry = await this.storage.get(key)
-            return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback)
+            return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback, cacheInfo)
         } catch (e) {
             if (!(e instanceof KeyError || e instanceof InvalidCacheEntry))
                 throw e
-            cacheEntry = await this.refreshKey(key, refreshCallback)
+            cacheEntry = await this.refreshKey(key, refreshCallback, cacheInfo)
             return cacheEntry.value
         }
     }
 
-    refreshIfNeeded = async (key, cacheEntry, refreshCallback, expiredCallback) => {
+    refreshIfNeeded = async (key, cacheEntry, refreshCallback, expiredCallback, cacheInfo : CacheInfo) => {
         const now = getTime()
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
@@ -130,7 +138,7 @@ class Cache {
         } else {
             console.log("Refreshing cache entry...", key)
             try {
-                cacheEntry = await this.refreshKey(key, refreshCallback)
+                cacheEntry = await this.refreshKey(key, refreshCallback, cacheInfo)
                 return cacheEntry.value
             } catch (e) {
                 if (!(e instanceof NetworkError))
@@ -138,7 +146,7 @@ class Cache {
                 if (cacheEntry.expiresAfter < now) {
                     // Entry has expired, re-throw network error
                     if (expiredCallback) {
-                        cacheEntry = await this.refreshKey(key, expiredCallback)
+                        cacheEntry = await this.refreshKey(key, expiredCallback, cacheInfo)
                         return cacheEntry.value
                     }
                     throw e
@@ -150,9 +158,9 @@ class Cache {
         }
     }
 
-    refreshKey = async (key, refreshCallback) : CacheEntry => {
+    refreshKey = async (key, refreshCallback, cacheInfo : CacheInfo) : CacheEntry => {
         const value = await refreshCallback()
-        return await this.set(key, value)
+        return await this.set(key, value, cacheInfo)
     }
 
     invalidateKey = async (key) => {
@@ -160,8 +168,8 @@ class Cache {
         /* TODO: Remove any keys that are children in the key hierarchy */
     }
 
-    set = async (key, value) : CacheEntry => {
-        const cacheEntry = CacheEntry.freshEntry(key, value)
+    set = async (key, value, cacheInfo : CacheInfo) : CacheEntry => {
+        const cacheEntry = CacheEntry.freshEntry(key, value, cacheInfo)
         await this.storage.set(key, cacheEntry)
         return cacheEntry
     }
@@ -205,10 +213,10 @@ class CacheEntry {
         )
     }
 
-    static freshEntry = (key, value) => {
+    static freshEntry = (key, value, cacheInfo : CacheInfo = config.defaultCacheInfo) => {
         const now = getTime()
-        const refreshAfter = now + config.refreshAfterDelta
-        const expiresAfter = now + config.expiresAfterDelta
+        const refreshAfter = now + cacheInfo.refreshAfter
+        const expiresAfter = now + cacheInfo.expiresAfter
         return new CacheEntry(key, value, refreshAfter, expiresAfter)
     }
 }

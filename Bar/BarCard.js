@@ -185,7 +185,17 @@ export class TimeInfo extends PureComponent {
     }
 
     renderUnknownOpeningTime = () => {
-        return <T style={timeTextStyle}>Unknown</T>
+        var text
+        if (this.props.bar.openNow != null) {
+            if (this.props.bar.openNow)
+                text = "open"
+            else
+                text = "closed"
+        } else {
+            text = "unknown"
+        }
+
+        return <T style={timeTextStyle}>{text}</T>
     }
 }
 

@@ -206,12 +206,6 @@ export class DownloadResultView<T> extends PureComponent {
 
 class DownloadManager {
 
-    activeDownloads : Array<JSONDownload<any>>
-
-    constructor() {
-        this.activeDownloads = []
-    }
-
     /* Execute a GraphQL query */
     graphQL = async /*<T>*/(
             /* key used for caching responses */
@@ -220,6 +214,7 @@ class DownloadManager {
             query : string,
             /* Callback that decides whether the download is still relevant */
             isRelevantCB : () => boolean,
+            cacheInfo    : CacheInfo,
             ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
             method: 'POST',
@@ -231,7 +226,7 @@ class DownloadManager {
         }
         var result
         try {
-            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB)
+            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB, cacheInfo)
         } catch (err) {
             console.error(err)
         }
@@ -248,111 +243,39 @@ class DownloadManager {
             httpOptions : HTTPOptions,
             /* Callback that decides whether the download is still relevant */
             isRelevantCB : () => boolean,
+            cacheInfo : CacheInfo,
         ) : Promise<DownloadResult<T>> => {
-
-        /* Remove any potential download with the same key that is still pending */
-        this.activeDownloads = this.activeDownloads.filter(
-            download => download.key !== key
-        )
 
         if (!url)
             throw Error("dude I need a URL..." + key)
 
         /* Try a fresh download... */
-        const downloadResult : DownloadResult<T> = await fetchJSONWithTimeouts(
-                        key, url, httpOptions, 12000, 20000)
-        // if (downloadResult.state === 'Error' && isRelevantCB) {
-        //     /* There as been some error, try again later */
-        //     this.activeDownloads.push(new JSONDownload(
-        //         key, url, httpOptions, downloadResult, isRelevantCB))
-        // }
-        return downloadResult
+        return await fetchJSONWithTimeouts(key, url, httpOptions, 12000, 20000, cacheInfo)
     }
 
-    /* Retry all pending downloads */
-    retryDownloads = async () => {
-        /* Concurrently retry all downloads that are still needed */
-        const promises = []
-        for (var i = 0; i < this.activeDownloads.length; i++) {
-            const download = this.activeDownloads[i]
-            if (download.isRelevant()) {
-                promises.push({index: i, promise: download.retryFetchJSON()})
-            }
-        }
-
-        /* Wait for promises to finish */
-        const activeDownloads = []
-        for (var i = 0; i < promises.length; i++) {
-            const {index, promise} = promises[i]
-            try {
-                await promise
-            } catch (e) {
-                if (isNetworkError(e)) {
-                    /* Retry this later... */
-                    activeDownloads.push(this.activeDownloads[index])
-                } else {
-                    /* This is an actual error, re-throw */
-                    throw e
-                }
-            }
-        }
-
-        /* Update the list of active downloads */
-        this.activeDownloads = activeDownloads
-    }
 }
 
 export const downloadManager = new DownloadManager()
 
-class JSONDownload<T> {
-
-    key : String
-    url : URL
-    httpOptions : HTTPOptions
-    downloadResult : DownloadResult<T>
-    isRelevant: () => boolean
-
-    constructor(
-            key             : String,
-            url             : URL,
-            httpOptions     : HTTPOptions,
-            downloadResult  : DownloadResult<T>,
-            isRelevant      : () => boolean,
-            ) {
-        this.key = key
-        this.url = url
-        this.httpOptions = httpOptions
-        this.downloadResult = downloadResult
-        this.isRelevant = isRelevant
-    }
-
-    retryFetchJSON = async () => {
-        this.downloadResult.downloadStarted()
-        const downloadResult : any =
-            await fetchJSON(this.key, this.url, this.httpOptions)
-        this.downloadResult.update(_ => downloadResult.value)
-    }
-
-}
-
-
 const fetchJSON = async /*<T>*/(
         key : string,
         url : URL,
-        httpOptions : HTTPOptions
+        httpOptions : HTTPOptions,
+        cacheInfo   : CacheInfo,
         ) : Promise<DownloadResult<T>> => {
-    return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000)
+    return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000, cacheInfo)
 }
 
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof TimeoutError
 
 const fetchJSONWithTimeouts = async /*<T>*/(
-        key : string,
-        url : URL,
-        httpOptions : HTTPOptions,
-        refreshTimeout : Float,
-        expiredTimeout : Float,
+        key             : string,
+        url             : URL,
+        httpOptions     : HTTPOptions,
+        refreshTimeout  : Float,
+        expiredTimeout  : Float,
+        cacheInfo       : CacheInfo,
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
@@ -363,7 +286,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
     }
 
     try {
-        const result = await cache.get(key, refreshCallback, /*expiredCallback*/)
+        const result = await cache.get(key, refreshCallback, /*expiredCallback, */ cacheInfo = cacheInfo)
         return new DownloadResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))

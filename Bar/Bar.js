@@ -21,6 +21,8 @@ export type Bar = {
     phone:          ?String,
     website:        ?String,
     openingTimes:   ?Array<?OpeningTime>,
+    // whether the bar is open now -- use with care (check the timestamp)
+    openNow:        ?boolean,
 }
 
 export type Photo = {

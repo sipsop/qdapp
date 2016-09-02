@@ -50,6 +50,7 @@ export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar =
         phone:          result.formatted_phone_number,
         website:        result.website,
         openingTimes:   parseOpeningTimes(result),
+        openNow:        parseOpenNow(result),
     }
 }
 
@@ -80,6 +81,12 @@ const parseOpeningTimes = (doc) => {
         }
     })
     return result
+}
+
+const parseOpenNow = (doc) => {
+    if (!doc.opening_hours)
+        return null
+    return doc.opening_hours.open_now
 }
 
 const parseTime = (doc : { time : String}) => {

@@ -3,6 +3,7 @@
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parseBar } from './PlaceInfo.js'
+import { config } from '../Config.js'
 
 import type { Int, Float } from '../Types.js'
 import type { Key, Coords, PlaceID } from './MapStore.js'
@@ -37,21 +38,25 @@ export const searchNearby = async (
         coords       : Coords,
         radius       : Int,
         locationType : string,
+        includeOpenNowOnly = true,
         ) : Promise<DownloadResult<SearchResponse>> => {
 
-    const url = buildURL(BaseURL, {
-        key: apiKey,
+    const params = {
+        key:        apiKey,
         // rankby: 'distance',
-        radius: radius,
-        location: `${coords.latitude},${coords.longitude}`,
-        type: locationType,
-    })
+        radius:     radius,
+        location:   `${coords.latitude},${coords.longitude}`,
+        type:       locationType,
+    }
+    if (includeOpenNowOnly)
+        params.opennow = true
+    const url = buildURL(BaseURL, params)
 
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude}`
     const isRelevant = () => true
     const options = { method: 'GET' }
     const jsonDownloadResult = await downloadManager.fetchJSON(
-        key, url, options, isRelevant)
+        key, url, options, isRelevant, config.nearbyCacheInfo)
     return jsonDownloadResult.update(parseResponse)
 }
 

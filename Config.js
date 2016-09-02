@@ -34,8 +34,14 @@ export const config = {
         primary:    pinkPalette,
         secondary:  purplePalette,
     },
-    refreshAfterDelta: Day,
-    expiresAfterDelta: Month,
+    nearbyCacheInfo: {
+        nearbyRefreshAfter: 20 * Minute,
+        nearbyExpiresAfter: 3 * Day,
+    },
+    defaultCacheInfo: {
+        refreshAfter: Day,
+        expiresAfter: Month,
+    },
     /* TODO: DISABLE THESE FOR PRODUCTION */
     // refreshAfterDelta: Minute * 1,
     // expiresAfterDelta: Minute * 5,
