@@ -227,7 +227,8 @@ class BarView extends Page {
 }
 
 const formatAddress = (address) => {
-    return `${address.number} ${address.street}, ${address.city}, ${address.postcode}`
+    return address.formattedAddress
+    // return `${address.number} ${address.street}, ${address.city}, ${address.postcode}`
 }
 
 class InfoItem extends Component {
