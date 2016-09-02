@@ -30,17 +30,12 @@ export class DiscoverPage extends DownloadResultView {
     renderNotStarted  = () => <View />
 
     renderFinished = searchResponse => {
-        const barList = mapStore.nearbyBarList || []
-        return <DiscoverView barList={barList} />
+        return <DiscoverView />
     }
 }
 
 @observer
 export class DiscoverView extends PureComponent {
-    /* properties:
-        barList: [schema.Bar]
-    */
-
     constructor(props) {
         super(props)
         this.ds = new ListView.DataSource({
@@ -52,12 +47,15 @@ export class DiscoverView extends PureComponent {
         store.discoverScrollView = scrollview
     }
 
-    @computed get rowNumbers() {
-        return _.range(1 + this.props.barList.length)
+    @computed get rows() {
+        const mapValue = [-1, null]
+        const barList = mapStore.nearbyBarList.map((bar, i) => [i, bar])
+        barList.unshift(mapValue)
+        return barList
     }
 
     @computed get dataSource() {
-        return this.ds.cloneWithRows(this.rowNumbers)
+        return this.ds.cloneWithRows(this.rows)
     }
 
     render = () => {
@@ -68,15 +66,14 @@ export class DiscoverView extends PureComponent {
                     />
     }
 
-    renderRow = (i) => {
-        log("rendering row", i)
-        if (i === 0)
+    renderRow = (value) => {
+        const [i, bar] = value
+        if (i === -1)
             return <MapView key='mapview' />
-        return this.renderBarCard(i - 1)
+        return this.renderBarCard(bar)
     }
 
-    renderBarCard = (i) => {
-        const bar = this.props.barList[i]
+    renderBarCard = (bar) => {
         return <BarCard key={bar.id} bar={bar} />
 
         return (

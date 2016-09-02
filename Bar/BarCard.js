@@ -177,7 +177,7 @@ export class TimeInfo extends PureComponent {
     }
 
     renderOpeningTime = (openingTime : OpeningTime) => {
-        return <View style={{flexDirection: 'row'}}>
+        return <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Time style={timeTextStyle} time={openingTime.open} />
             <T style={timeTextStyle}> - </T>
             <Time style={timeTextStyle} time={openingTime.close} />

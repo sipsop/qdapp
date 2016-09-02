@@ -4,13 +4,15 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 
 import { store } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
-import { logErrors } from '../Curry.js'
+import { logErrors, logger } from '../Curry.js'
 import { searchNearby } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
 import { merge } from '../Curry.js'
 
 import type { Bar } from '../Bar/Bar.js'
 import type { SearchResponse } from './Nearby.js'
+
+const log = logger("Maps/MapStore.js")
 
 /*********************************************************************/
 
@@ -66,6 +68,12 @@ export const getBarCoords = (bar : Bar) => {
     }
 }
 
+export const distance = (c1 : Coords, c2 : Coords) : Float => {
+    const a = c1.latitude - c2.latitude
+    const b = c2.longitude - c2.longitude
+    return Math.sqrt(a*a + b*b)
+}
+
 class MapStore {
     @observable currentLocation : Coords = initialLocation
     @observable region : Region = {
@@ -77,6 +85,7 @@ class MapStore {
     @observable currentLocation : Coords = initialLocation
     @observable searchRadius : number = 5000 // 5 kilometer search radius
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
+    @observable lastSelectedMarker : ?Bar = null
 
     mapView : ?NativeMapView
 
@@ -100,12 +109,21 @@ class MapStore {
         this.currentLocation = mapState.currentLocation
     }
 
+    @computed get focusPoint() {
+        if (this.lastSelectedMarker)
+            return getBarCoords(this.lastSelectedMarker)
+        return this.currentLocation
+    }
+
     getCurrentMarker = () : ?Coords => {
         return this.currentMarker
     }
 
     @action setCurrentMarker = (bar : Bar) => {
         this.currentMarker = bar
+        if (bar != null) {
+            this.lastSelectedMarker = bar
+        }
     }
 
     /* Focus the given bar on the map */
@@ -114,9 +132,9 @@ class MapStore {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
+            store.switchToDiscoverPage(true)
         }
         this.setCurrentMarker(bar)
-        store.switchToDiscoverPage(true)
     }
 
     searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
@@ -143,10 +161,32 @@ class MapStore {
         return this.searchResponse.value.results
     }
 
-    @computed get nearbyBarList() : Array<Bar> {
+    @computed get barList() : Array<Bar> {
         if (this.searchResponse.value == null)
             return []
         return this.searchResponse.value.results
+    }
+
+    @computed get nearbyBarList() : Array<Bar> {
+        return this.sortResults(this.barList)
+    }
+
+    sortResults = (bars : Array<Bar>) : Array<Bar> => {
+        const focusPoint = this.focusPoint
+        const results = bars.slice()
+        results.sort((bar1, bar2) => {
+            const c1 = getBarCoords(bar1)
+            const c2 = getBarCoords(bar2)
+            const d1 = distance(focusPoint, c1)
+            const d2 = distance(focusPoint, c2)
+            if (d1 < d2)
+                return -1
+            else if (d1 > d2)
+                return 1
+            else
+                return 0
+        })
+        return results
     }
 
     getPlaceInfo = async (placeID : PlaceID) : Promise<DownloadResult<Bar>> => {
