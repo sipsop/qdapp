@@ -1,11 +1,14 @@
-import React, { Component } from 'react';
 import {
-  View,
-  ScrollView,
-} from 'react-native';
+    React,
+    Component,
+    View,
+    ScrollView,
+    ListView,
+    PureComponent,
+} from './Component.js'
+import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from './Page.js'
 import { MapView } from './Maps/MapView.js'
 import { BarCard } from './Bar/BarCard.js'
 import { DownloadResultView } from './HTTP.js'
@@ -27,24 +30,55 @@ export class DiscoverPage extends DownloadResultView {
     renderNotStarted  = () => <View />
 
     renderFinished = searchResponse => {
-        const barList = mapStore.nearbyBarList
+        const barList = mapStore.nearbyBarList || []
         return <DiscoverView barList={barList} />
     }
 }
 
 @observer
-export class DiscoverView extends Page {
+export class DiscoverView extends PureComponent {
     /* properties:
         barList: [schema.Bar]
     */
+
+    constructor(props) {
+        super(props)
+        this.ds = new ListView.DataSource({
+            rowHasChanged: (i, j) => i !== j,
+        })
+    }
 
     saveScrollView = (scrollview) => {
         store.discoverScrollView = scrollview
     }
 
-    renderView = () => {
-        const barList = this.props.barList.slice(0, 3)
-        log("barLIST>>>>>>>>>", barList)
+    @computed get rowNumbers() {
+        return _.range(1 + this.props.barList.length)
+    }
+
+    @computed get dataSource() {
+        return this.ds.cloneWithRows(this.rowNumbers)
+    }
+
+    render = () => {
+        return <ListView
+                    ref={this.saveScrollView}
+                    dataSource={this.dataSource}
+                    renderRow={this.renderRow}
+                    />
+    }
+
+    renderRow = (i) => {
+        log("rendering row", i)
+        if (i === 0)
+            return <MapView key='mapview' />
+        return this.renderBarCard(i - 1)
+    }
+
+    renderBarCard = (i) => {
+        const bar = this.props.barList[i]
+        return <BarCard key={bar.id} bar={bar} />
+
         return (
             <ScrollView style={{flex: 1}} ref={this.saveScrollView}>
                 <MapView />
