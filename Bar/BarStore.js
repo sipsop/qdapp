@@ -18,9 +18,6 @@ class BarStore {
     @observable bar : DownloadResult<Bar> = emptyResult()
     @observable menuDownloadResult : DownloadResult<Menu> = emptyResult()
 
-    // DownloadResult[ List[schema.Bar] ]
-    @observable barList = emptyResult()
-
     @observable barAndMenuDownloadResult = DownloadResult.combine([
         this.bar,
         this.menuDownloadResult,
@@ -34,7 +31,7 @@ class BarStore {
     /*************************** State ***********************************/
 
     initialize = async () => {
-        await this._setBarList()
+
     }
 
     getState = () => {
@@ -50,7 +47,6 @@ class BarStore {
 
     getBarDownloadResult = () => this.bar
     getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
-    getBarListDownloadResult = () => this.barList
     getBar = () => this.bar.value
 
     /*************************** Network *********************************/
@@ -147,14 +143,6 @@ class BarStore {
         }
     }
 
-    _setBarList = async (location) => {
-        const loc = location || store.location
-        this.barList.downloadFinished([])
-        // this.barList.downloadStarted()
-        // const downloadResult = await this._getBarInfo("1")
-        // this.barList = downloadResult.update((value) => [value])
-    }
-
     @action setBarDownloadResult = (downloadResult) => {
         if (!downloadResult)
             throw Error("DownloadResult is undefined in setBarDownloadResult!")
@@ -218,7 +206,6 @@ class BarStore {
     getBarMenu = logErrors(this._getBarMenu)
     getBarInfo = logErrors(this._getBarInfo)
     setBarID = logErrors(this._setBarID)
-    setBarList = logErrors(this._setBarList)
 
     /*********************************************************************/
 

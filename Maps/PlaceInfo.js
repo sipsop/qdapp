@@ -35,7 +35,7 @@ export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar =
         id:             result.place_id,
         signedUp:       false, // this info must be fetched separate from our server
         name:           result.name,
-        images:         result.photos.map(parsePhoto),
+        photos:         result.photos.map(parsePhoto),
         address:        parseAddress(result),
         barType:        getBarType(result.types),
 
@@ -70,9 +70,13 @@ const parseOpeningTimes = (doc) => {
         return null
     const result = [null, null, null, null, null, null, null]
     doc.opening_hours.periods.forEach((period, i) => {
-        result[period.open.day] = {
-            open:  parseTime(period.open),
-            close: parseTime(period.close),
+        const day = (
+            (period.open && period.open.day) ||
+            (period.close && period.close.day)
+        )
+        result[day] = {
+            open:  period.open ? parseTime(period.open) : null,
+            close: period.close ? parseTime(period.close) : null,
         }
     })
     return result

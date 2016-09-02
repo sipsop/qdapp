@@ -128,7 +128,12 @@ class MapStore {
         )
     }
 
+    getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
+        return this.searchResponse
+    }
+
     updateNearbyBars = action(async () : void => {
+        this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby('bar')
     })
 

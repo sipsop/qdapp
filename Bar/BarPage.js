@@ -19,6 +19,7 @@ import { BarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 
 import { DownloadResultView } from '../HTTP.js'
+import { PhotoImage } from '../Maps/Photos.js'
 import { Page } from '../Page.js'
 import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
@@ -111,10 +112,10 @@ class BarView extends Page {
                     autoplay={this.autoplay}
                     autoplayTimeout={timeout}
                     >
-                    {bar.images.map((photo, i) =>
-                        <Image
-                            source={{uri: photo.url}}
-                            key={i}
+                    {bar.photos.map((photo, i) =>
+                        <PhotoImage
+                            key={photo.url}
+                            photo={photo}
                             style={{flex: 1, height: imageHeight}}
                             >
                             <View style={{flex: 1}} />
@@ -123,7 +124,7 @@ class BarView extends Page {
                                     <BarCardFooter bar={bar} showMapButton={false} />
                                 </View>
                             </LinearGradient>
-                        </Image>
+                        </PhotoImage>
                         )
                     }
                 </ImageSwiper>

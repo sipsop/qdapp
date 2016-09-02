@@ -3,7 +3,7 @@ import {
     Image,
     View,
     TouchableOpacity,
-} from 'react-native';
+} from 'react-native'
 import Dimensions from 'Dimensions';
 import { transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -12,12 +12,15 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { PureComponent } from '../Component.js'
 import { T } from '../AppText.js'
-import { mapStore } from '../Maps/MapStore.js'
-import { store, tabStore } from '../Store.js'
+import { PhotoImage } from '../Maps/Photos.js'
+import { store, tabStore, mapStore } from '../Store.js'
+import * as _ from '../Curry.js'
 import { barStore, getBarOpenTime } from './BarStore.js'
 import { config } from '../Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
+
+const log = _.logger('Bar/BarCard.js')
 
 @observer export class BarCard extends PureComponent {
     /* properties:
@@ -51,9 +54,11 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
         const { height, width } = Dimensions.get('screen')
 
-        return <View style={{flex: 0, height: 350, margin: 10, borderRadius: radius, /*borderTopLeftRadius: radius, borderTopRightRadius: radius */}}>
+        log("Rendering bar card...", bar.photos)
+
+        return <View style={{flex: 0, height: imageHeight, margin: 10, borderRadius: radius }}>
             <TouchableOpacity onPress={this.handleCardPress} style={{flex: 2, borderRadius: radius}}>
-                <Image source={{uri: bar.images[0]}} style={imageStyle}>
+                <PhotoImage photo={bar.photos[0]} style={imageStyle}>
                     <View style={{flex: 1}}>
                         {/* Push footer to bottom */}
                         <View style={{flex: 1}} />
@@ -63,7 +68,7 @@ const white = 'rgba(255, 255, 255, 1.0)'
                             </View>
                         </LinearGradient>
                     </View>
-                </Image>
+                </PhotoImage>
             </TouchableOpacity>
         </View>
     }

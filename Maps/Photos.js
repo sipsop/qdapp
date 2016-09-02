@@ -35,6 +35,8 @@ export class PhotoImage extends PureComponent {
                     style={this.props.style}
                     source={{uri: this.props.photo.url}}
                     /* TODO: html_attributions */
-                    />
+                    >
+            {this.props.children}
+        </Image>
     }
 }
