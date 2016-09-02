@@ -1,6 +1,6 @@
 // @flow
 
-import { observable, action, autorun, computed, asMap } from 'mobx'
+import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
 import { store } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
@@ -107,6 +107,7 @@ class MapStore {
     @action setState = (mapState) => {
         this.currentMarker = mapState.currentMarker
         this.currentLocation = mapState.currentLocation
+        this.lastSelectedMarker = mapState.currentMarker
     }
 
     @computed get focusPoint() {
@@ -122,12 +123,20 @@ class MapStore {
     @action setCurrentMarker = (bar : Bar) => {
         this.currentMarker = bar
         if (bar != null) {
-            this.lastSelectedMarker = bar
+            /* Set a timeout for updating the lastSelectedMarker, as
+                updating this will re-render the bar list which may
+                take some time, causing the UI to hang. Instead switch
+                to the map with callout first, and show an updated bar
+                list later.
+            */
+            setTimeout(() => this.lastSelectedMarker = bar, 100)
+            // this.lastSelectedMarker = bar
         }
     }
 
     /* Focus the given bar on the map */
     @action focusBar = (bar : Bar) => {
+        log("FOCUSSING BAR", bar.name)
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }

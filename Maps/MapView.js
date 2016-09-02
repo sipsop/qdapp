@@ -93,14 +93,23 @@ class MapMarker extends PureComponent {
     /* properties:
         bar: Bar
     */
+
+    @observable markerRef = null
+
     constructor(props) {
         super(props)
-        this.markerRef = null
+        /* Set a timeout for the marker update, as 'markerRef.showCallout()'
+           doesn't work when done immediately on load */
+        setTimeout(this.autoUpdateCallout, 500)
+    }
+
+    autoUpdateCallout = () => {
         autorun(() => {
-            if (this.selected && this.markerRef)
+            if (this.selected && this.markerRef) {
                 this.markerRef.showCallout()
-            else if (this.markerRef)
+            } else if (this.markerRef) {
                 this.markerRef.hideCallout()
+            }
         })
     }
 
