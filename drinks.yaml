@@ -28,7 +28,7 @@ drinks:
                 #dark
                 
 
-    stellaArtois
+    stellaArtois:
     name: Stella Artois
     desc: American style premium pale lager.  
     tags: 
@@ -145,7 +145,8 @@ drinks:
                 #acidic
                 #plum
                 #strawberry
-        sangiovese 
+                
+        sangiovese: 
             name: Sangiovese
             desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity. 
             tags: |
@@ -157,6 +158,7 @@ drinks:
                 #cherry
                 #lightoak
                 #tannins
+                
         ### White
 
         saugvignonBlanc:
@@ -171,7 +173,7 @@ drinks:
                 #acidic
                 #crisp
        
-        pinotGrigio
+        pinotGrigio:
             name: Pinot Grigio or Pinot Gris
             desc: A popular refreshing and zesty white wine. 
             tags: |
@@ -182,7 +184,7 @@ drinks:
                 #zesty 
                 #citrus
        
-        chardonnay
+        chardonnay:
             name: Chardonnay
             desc: This is the wolrd most famous white wine. 
             tags: |
@@ -192,7 +194,7 @@ drinks:
                 #oak
                 #aromatic
        
-        riesling
+        riesling:
             name: Riesling
             desc: An aromatic refreshing white wine with a flavour of apples and usually sweet. 
             tags: |
@@ -206,7 +208,7 @@ drinks:
                 #acidic
                 #floral
     
-        cheninBlanc
+        cheninBlanc:
             name: Chenin Blanc
             desc: A light bodied white wine similar to Saugvignon Blanc. 
             tags: |
@@ -215,7 +217,7 @@ drinks:
                 #zesty
                 #acidic
         
-        moscato        
+        moscato:        
             name: Moascato or Muscat
             desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
             tags: |
@@ -225,7 +227,6 @@ drinks:
                 #acidic
                 #citrus
         
-                #
         
         # wine, rose
 
@@ -281,7 +282,7 @@ drinks:
 
         # wine, sparkling champagne 
         
-    prosecco 
+    prosecco: 
         name: Prosecco
         desc: It is a light sparkling italian wine. Easy to drink and often drank as alternative to Champagne.  
         tags: |
@@ -293,7 +294,7 @@ drinks:
             #light
             #celebration
             
-    champagne 
+    champagne: 
         name: Champagne
         desc: A sparkling wine produced from grapes grown in the Champagne region of France. 
         tags: |
@@ -305,7 +306,7 @@ drinks:
             #fizz
             #light
     
-    cava
+    cava:
         name: Cava
         desc: It is a sparkling white wine from Spain.  
         tags: |
