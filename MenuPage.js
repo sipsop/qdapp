@@ -21,7 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from './Page.js'
-import { OrderItem } from './Orders/Orders.js'
+import { createOrderItem, orderStore } from './Orders/OrderStore.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
@@ -37,6 +37,13 @@ import { store, tabStore } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
 import { config } from './Config.js'
+
+/*********************************************************************/
+
+import type { Int, String } from '../Types.js'
+import type { OrderItem } from './Orders/OrderStore.js'
+
+/*********************************************************************/
 
 const log = logger('MenuPage.js')
 
@@ -73,7 +80,7 @@ export class MenuView extends Page {
 @observer
 class OrderButton extends PureComponent {
     render = () => {
-        if (store.menuItemsOnOrder.length === 0) {
+        if (orderStore.menuItemsOnOrder.length === 0) {
             return <View />
         }
         return <LargeButton
@@ -89,52 +96,24 @@ class OrderButton extends PureComponent {
     }
 }
 
-const beerImg = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
-
 @observer
 export class MenuItem extends PureComponent {
     /* properties:
-        menuItem: scheme.MenuItem
+        menuItem: MenuItem
         currentPage: Int
             current page in the TabView
     */
 
-    constructor(props) {
-        super(props)
-        this.defaultOrderItem = new OrderItem(props.menuItem)
-        this.orderItems = store.getOrderList(this.props.menuItem.id)
+    @observable showModalFor : ?OrderItem = null
+
+    @action showModal = () => {
+        const orderItem = createOrderItem(this.props.menuItem)
+        orderStore.addOrderItem(orderItem)
+        this.showModalFor = orderItem
     }
 
-    hasDefaultOptions = (orderItem) => {
-        return this.hasSameOptions(this.defaultOrderItem, orderItem)
-    }
-
-    hasSameOptions = (orderItem1, orderItem2) => {
-        const options1 = orderItem1.selectedOptions.map(xs => xs.map(x => x))
-        const options2 = orderItem2.selectedOptions.map(xs => xs.map(x => x))
-        return deepEqual(options1, options2)
-    }
-
-    getDefaultOrderItem = () : OrderItem => new OrderItem(this.props.menuItem)
-
-    addRow = () : void => {
-        console.log("pushing new row...")
-        this.orderItems.push(this.getDefaultOrderItem())
-    }
-
-    removeRow = (i : number) : void => {
-         this.orderItems.splice(i, 1)
-    }
-
-    /* If row `i` has the same options as row `j`, remove row `i`. */
-    removeRowIfSameOptions = (i : number, j : number) : void => {
-        if (this.orderItems.length > 1 &&
-                this.hasSameOptions(this.orderItems[i], this.orderItems[j]))
-            this.orderItems.splice(i, 1)
-    }
-
-    popRow = () : void => {
-        this.orderItems.pop()
+    @action modalClosed = () => {
+        this.showModalFor = null
     }
 
     render = () => {
@@ -142,7 +121,7 @@ export class MenuItem extends PureComponent {
         const image = menuItem.images[0]
 
         return <View>
-            <TouchableOpacity onPress={this.addRow}>
+            <TouchableOpacity onPress={this.showModal}>
                 <View style={styles.primaryMenuItemView}>
                     <Image source={{uri: image}} style={styles.image} />
                     <View style={viewStyles.content}>
@@ -152,11 +131,9 @@ export class MenuItem extends PureComponent {
             </TouchableOpacity>
             <OrderList
                     menuItem={menuItem}
-                    orderItems={this.orderItems}
-                    addRow={this.addRow}
-                    removeRow={this.removeRow}
-                    removeRowIfSameOptions={this.removeRowIfSameOptions}
                     currentPage={this.props.currentPage}
+                    showModalFor={this.showModalFor}
+                    onModalClose={this.modalClosed}
                     />
         </View>
     }
@@ -166,13 +143,14 @@ export class MenuItem extends PureComponent {
 class OrderList extends PureComponent {
     /* properties:
         menuItem: MenuItem
-        orderItems: [OrderItem]
-        addRow() -> void
-        removeRow(i) -> void
-        removeRowIfSameOptions(i, j) -> void
+        showModalFor: ?OrderItem
         currentPage: Int
             current page in the TabView
     */
+
+    @computed get orderItems() : Array<OrderItem> {
+        return orderStore.getOrderList(this.props.menuItem.id)
+    }
 
     render = () => {
         const rowStyle =
@@ -192,23 +170,21 @@ class OrderList extends PureComponent {
             <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                     {
-                        this.props.orderItems.map((orderItem, i) => {
+                        this.orderItems.map((orderItem, i) => {
                             return <OrderSelection
                                         key={orderItem.id}
                                         rowNumber={i}
                                         menuItem={this.props.menuItem}
                                         orderItem={orderItem}
-                                        removeRow={() => this.props.removeRow(i)}
-                                        removeRowIfSameOptions={() => this.props.removeRowIfSameOptions(i, i-1)}
                                         currentPage={this.props.currentPage}
                                         />
                         })
                     }
                 </View>
-                <PriceColumn orderItems={this.props.orderItems} />
+                <PriceColumn orderItems={this.orderItems} />
             </View>
             {
-                this.props.orderItems.length === 0
+                this.orderItems.length === 0
                     ? undefined
                     : <View style={{marginBottom: 20}} />
 
@@ -260,11 +236,12 @@ class PriceEntry extends PureComponent {
         rowNumber: Int
     */
     render = () => {
+        const total = orderStore.getTotal(this.props.orderItem)
         console.log("re-rendering price for orderItem", this.props.rowNumber)
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <T style={{marginRight: 5, color: '#000'}}>
-                    {'£' + this.props.orderItem.total.toFixed(2)}
+                    {'£' + total.toFixed(2)}
                 </T>
             </View>
         )
@@ -402,8 +379,6 @@ export class OrderSelection extends PureComponent {
         rowNumber: int
         removeRow() -> void
             remove this row
-        removeRowIfSameOptions() -> void
-            remove the row iff it has the same options as the item before it
     */
 
     get orderItem() {
@@ -412,7 +387,7 @@ export class OrderSelection extends PureComponent {
 
     @computed get amountPickerItem() {
         console.log("recomputing amountPickerItem", this.props.rowNumber)
-        const subTotal = this.orderItem.subTotal || 0.0
+        const subTotal = orderStore.getSubTotal(this.orderItem) || 0.0
         const numbers = range(N+1)
         return new PickerItem(
             "Number of Drinks:",
@@ -453,7 +428,7 @@ export class OrderSelection extends PureComponent {
 
     @action handleDecrease = () => {
         if (this.orderItem.amount === 0)
-            this.props.removeRow()
+            orderStore.removeOrderItem(this.orderItem)
         else
             this.orderItem.amount = max(0, this.orderItem.amount - 1)
     }
@@ -469,12 +444,11 @@ export class OrderSelection extends PureComponent {
 
     @action handleFirstAccept = () => {
         this.orderItem.showModal = false
-        // this.props.removeRowIfSameOptions()
     }
 
     @action handleFirstCancel = () => {
         this.orderItem.showModal = false
-        this.props.removeRow()
+        orderStore.removeOrderItem(this.orderItem)
     }
 
     get showModal() {
