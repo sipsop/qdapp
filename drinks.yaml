@@ -238,8 +238,10 @@ drinks:
                 #wine
                 #rosé
                 #fruity
-                #acidic
+                #lowinacidity
                 #dry
+                #cherry
+                #lowintannin 
 
         zinfandel:
             name: Zinfandel Rosé
@@ -251,6 +253,51 @@ drinks:
                 #acidic
                 #lemon
                 #strawberry
+                #rose
+                #wine
+                
+                
+        
+        provence:
+            name: Provence
+            desc: The most famous rose region in the world, the rose wines of Provence are versatile. 
+            tags: |
+                #crisp
+                #fresh
+                #dry
+                #popular
+                #rosepetal
+                #fruity
+                #spicy
+                #rose
+                #wine
+         
+        syrah:
+            name: Syrah
+            desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend. 
+            tags: |
+                #rubyred
+                #boldflavours 
+                #fruity
+                #wine
+                #rose
+                #whitepepper
+                #cherry
+                #strawberry
+        
+        tempranillo:
+            name: Tempranillo
+            desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja. 
+            tags: |
+            #acidity
+            #refreshing 
+            #fruity 
+            #wine
+            #rose
+            #strawberry
+            #raspberry
+            #trempranillio
+    
 
 
         # cabinetSaugvignon:
@@ -267,7 +314,7 @@ drinks:
 
         pinotNoir:
             name: Pinot Noir Rosé
-            desc: Pinot Noir is a Rosé.
+            desc: Pinot Noir is an elegant and delighful Rosé.
             tags: |
                 #wine
                 #rose
@@ -280,6 +327,7 @@ drinks:
                 #watermelon
                 #strawberry
 
+        
         # wine, sparkling champagne 
         
     prosecco: 
