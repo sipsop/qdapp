@@ -15,24 +15,7 @@ import { paymentStore } from './Payment/PaymentStore.js'
 
 export class Store {
 
-    // [ lat, lon ]
-    @observable location = null
-
-    // DownloadResult[schema.Bar]
-    @observable bar   = null
-
-    // // BarID
-    // @observable barID = null
-    //
-    // // DownloadResult[ List[schema.Bar] ]
-    // @observable barList = null
-
-    @observable menuItemOrders = null
-    // @observable menuItemOrdersMap = null // observable maps don't seem to work...
-
     constructor() {
-        // this.bar     = emptyResult()
-        // this.barList = emptyResult()
         _.safeAutorun(() => {
             if (barStore.allMenuItems.length === 0)
                 return
@@ -43,22 +26,6 @@ export class Store {
         this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.saveToLocalStorage, 5000)
-    }
-
-    getOrderList = (menuItemID) => {
-        for (var i = 0; i < this.menuItemOrders.length; i++) {
-            const item = this.menuItemOrders[i]
-            if (item[0] == menuItemID) {
-                const orderList = item[1]
-                return orderList
-            }
-        }
-        throw Error(`MenuItemID ${menuItemID} (${typeof(menuItemID)}) not found`)
-
-    }
-
-    setOrderList = (menuItemOrders) => {
-        this.menuItemOrders = menuItemOrders
     }
 
     switchToDiscoverPage = (scrollToTop) => {
@@ -75,13 +42,6 @@ export class Store {
         )
     })
 
-    @computed get menuItemsOnOrder() {
-        return barStore.allMenuItems.filter(menuItem => {
-            const orderItems = this.getOrderList(menuItem.id)
-            return orderItems.length > 0
-        })
-    }
-
     loadFromLocalStorage = async () => {
         const savedState = await cache.get('qd:state', () => null)
         if (savedState) {
@@ -97,8 +57,8 @@ export class Store {
             await tabStore.setState(state.tabState)
         if (state.loginState)
             loginStore.setState(state.loginState)
-        if (state.orderState)
-            orderStore.setState(state.orderState)
+        // if (state.orderState)
+        //     orderStore.setState(state.orderState)
         if (state.mapState)
             mapStore.setState(state.mapState)
         if (state.payState)

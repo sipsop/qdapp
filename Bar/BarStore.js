@@ -1,4 +1,4 @@
-import { observable, transaction, computed, action } from 'mobx'
+import { observable, transaction, computed, action, asMap } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
@@ -9,7 +9,7 @@ import { mapStore } from '../Maps/MapStore.js'
 /************************* Types ***********************************/
 
 import type { PlaceID } from '../Maps/MapStore.js'
-import type { Bar, Menu } from './Bar.js'
+import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './Bar.js'
 
 /************************* Store ***********************************/
 
@@ -181,6 +181,18 @@ class BarStore {
         //     })
         // })
         return flatten(menuItems)
+    }
+
+    @computed get menuItemByID() {
+        return asMap(this.allMenuItems.map(
+            menuItem => [menuItem.id, menuItem]
+        ))
+    }
+
+    getMenuItem = (menuItemID : MenuItemID) : MenuItem => {
+        if (this.menuItemByID.has(menuItemID))
+            return this.menuItemByID.get(menuItemID)
+        return null
     }
 
     @computed get openingTimes() {

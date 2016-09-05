@@ -2,7 +2,10 @@
 
 import type { Int, Float, String, URL, HTML } from '../Types.js'
 
-export type TagID = String
+export type ID = String
+export type BarID = ID
+export type MenuItemID = ID
+export type TagID = ID
 
 export type BarType = 'Pub' | 'Club'
 
