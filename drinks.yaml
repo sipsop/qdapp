@@ -121,6 +121,7 @@ drinks:
                 #blackberry
                 #plum
                 #cherry
+        
         shiraz:
             name: Shiraz 
             desc: A dark  and full bodied red wine 
@@ -289,28 +290,15 @@ drinks:
             name: Tempranillo
             desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja. 
             tags: |
-            #acidity
-            #refreshing 
-            #fruity 
-            #wine
-            #rose
-            #strawberry
-            #raspberry
-            #trempranillio
+                #acidity
+                #refreshing 
+                #fruity 
+                #wine
+                #rose
+                #strawberry
+                #raspberry
+                #trempranillio
     
-
-
-        # cabinetSaugvignon:
-        #     name: Cabernet Sauvignon Rose
-        #     desc: |
-        #         Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
-        #     tags: |
-        #         #wine
-        #         #red
-        #         #oak
-        #         #rich
-        #         #full-bodied
-        #         #tannins
 
         pinotNoir:
             name: Pinot Noir Rosé
