@@ -3,10 +3,10 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { T } from '../AppText.js'
 import { OkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector } from '../Selector.js'
+import { Header } from '../Header.js'
 
 import { CardInput } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
@@ -103,6 +103,7 @@ export class RemoveCardButton extends PureComponent {
     */
 
     removeCard = () => {
+        /* TODO: Show popup asking for confirmation! */
         paymentStore.removeCard(this.props.card.cardNumber)
     }
 
@@ -118,35 +119,5 @@ export class RemoveCardButton extends PureComponent {
                 <Icon name="times" size={35} color="rgb(184, 37, 17)" />
             </TouchableOpacity>
         </View>
-    }
-}
-
-@observer
-class Header extends PureComponent {
-    /* properties:
-        label: String
-    */
-    render = () => {
-        const backgroundColor = config.theme.primary.medium
-        const rowHeight = 55
-        return (
-            <View style={
-                    { justifyContent: 'center'
-                    , alignItems: 'center'
-                    , backgroundColor: backgroundColor
-                    , height: rowHeight
-                    }
-                }>
-                <T style={
-                        { fontSize: 25
-                        , color: '#fff'
-                        , textDecorationLine: 'underline'
-                        , marginLeft: 5
-                        }
-                    }>
-                    {this.props.label}
-                </T>
-            </View>
-        )
     }
 }

@@ -1,24 +1,16 @@
-import React, { Component } from 'react'
-import {
-  AppRegistry,
-  StyleSheet,
-  View,
-  ScrollView,
-  Modal,
-  TouchableOpacity,
-} from 'react-native'
+import { React, Component, View, ScrollView, TouchableOpacity, PureComponent } from './Component.js'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
-// import merge from 'merge'
 import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { PureComponent } from './Component.js'
+// import { PureComponent } from './Component.js'
 import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
+import { Header } from './Header.js'
 import { OkCancelModal } from './Modals.js'
 import { TextButton, Button } from './Button.js'
 import { store } from './Store.js'
@@ -209,23 +201,7 @@ class PickerItemView extends PureComponent {
                 : config.theme.primary.medium
         return (
             <View style={{flex: flex, alignItems: 'stretch'}}>
-                <View style={
-                        { justifyContent: 'center'
-                        , alignItems: 'center'
-                        , backgroundColor: backgroundColor
-                        , height: rowHeight
-                        }
-                    }>
-                    <T style={
-                            { fontSize: 25
-                            , color: '#fff'
-                            , textDecorationLine: 'underline'
-                            , marginLeft: 5
-                            }
-                        }>
-                        {pickerItem.title}
-                    </T>
-                </View>
+                <Header label={pickerItem.title} />
                 <Selector
                         isSelected={this.isSelected}
                         onSelect={this.handleItemChange}

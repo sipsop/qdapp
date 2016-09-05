@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
 import {
-  AppRegistry,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  ListView,
-  Platform,
-  Picker,
-  TouchableOpacity,
+    AppRegistry,
+    Image,
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    ListView,
+    Platform,
+    Picker,
+    TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 
@@ -22,10 +22,27 @@ class PureComponent extends Component {
     }
 }
 
+class T extends PureComponent {
+    /* properties:
+        style
+        numberOfLines
+        ellipsizeMode
+    */
+    render = () => {
+        const style = {fontFamily: 'Roboto', ...this.props.style}
+        return <Text
+            style={style}
+            numberOfLines={this.props.numberOfLines}
+            ellipsizeMode={this.props.ellipsizeMode}
+            >
+            {this.props.children}
+        </Text>
+    }
+}
+
 export {
     React,
     Component,
-    PureComponent,
     Dimensions,
     AppRegistry,
     Image,
@@ -37,4 +54,6 @@ export {
     Platform,
     Picker,
     TouchableOpacity,
+    PureComponent,
+    T,
 }
