@@ -256,8 +256,6 @@ drinks:
                 #strawberry
                 #rose
                 #wine
-                
-                
         
         provence:
             name: Provence
@@ -314,7 +312,28 @@ drinks:
                 #raspberry
                 #watermelon
                 #strawberry
-
+        tavel:
+            name: Tavel
+            desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.  
+            tag: |
+                #dry
+                #nutty
+                #fruity
+                #wine
+                #rose
+                #foodwine
+                
+        sangiovese:
+            name: Saniovese rose
+            desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish. 
+            tags: |
+                #roses 
+                #wine
+                #rose
+                #strawberry
+                #acidity
+                #dry
+                #fruity
         
         # wine, sparkling champagne 
         
