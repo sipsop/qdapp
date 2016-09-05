@@ -12,7 +12,8 @@ import {
     TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
-
+import Icon from 'react-native-vector-icons/FontAwesome'
+import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 class PureComponent extends Component {
@@ -41,8 +42,10 @@ class T extends PureComponent {
 }
 
 export {
+    /* React */
     React,
     Component,
+    /* React Native */
     Dimensions,
     AppRegistry,
     Image,
@@ -54,6 +57,10 @@ export {
     Platform,
     Picker,
     TouchableOpacity,
+    /* Custom Components */
     PureComponent,
     T,
+    /* External */
+    Icon,
+    EvilIcon,
 }

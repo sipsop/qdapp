@@ -1,10 +1,10 @@
 import { observable, computed } from 'mobx'
 import shortid from 'shortid'
 
-import { Price, sumPrices } from './Price.js'
-import { updateSelection } from './Selection.js'
-import { store } from './Store.js'
-import * as _ from './Curry.js'
+import { Price, sumPrices } from '../Price.js'
+import { updateSelection } from '../Selection.js'
+import { store } from '../Store.js'
+import * as _ from '../Curry.js'
 
 const log = _.logger('Orders.js')
 

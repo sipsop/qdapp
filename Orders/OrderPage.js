@@ -1,27 +1,19 @@
-import React, { Component } from 'react';
 import {
-  Image,
-  StyleSheet,
-  TextInput,
-  View,
-  ScrollView,
-  ListView,
-  Picker,
-  TouchableOpacity,
-} from 'react-native'
+    React,
+    Component,
+    View,
+    ScrollView,
+    PureComponent,
+    T,
+} from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import Icon from 'react-native-vector-icons/FontAwesome'
-import EvilIcon from 'react-native-vector-icons/EvilIcons'
-
-import { PureComponent } from './Component.js'
-import { MenuItem, createMenuItem } from './MenuPage.js'
-import { LargeButton } from './Button.js'
-import { Popup } from './Payment/Popup.js'
-import { T } from './AppText.js'
-import { store, tabStore } from './Store.js'
-import { config } from './Config.js'
+import { MenuItem, createMenuItem } from '../MenuPage.js'
+import { LargeButton } from '../Button.js'
+import { Popup } from '../Payment/Popup.js'
+import { store, tabStore } from '../Store.js'
+import { config } from '../Config.js'
 
 const largeButtonStyle = {
     height: 55,

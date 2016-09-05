@@ -21,7 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from './Page.js'
-import { OrderItem } from './Orders.js'
+import { OrderItem } from './Orders/Orders.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
