@@ -1,5 +1,5 @@
 import { UIManager } from 'react-native'
-import { React, Component, PureComponent } from '../Component.js'
+import { React, Component, PureComponent, Platform } from '../Component.js'
 
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import { observable, action, autorun, computed, asMap } from 'mobx'
@@ -28,6 +28,12 @@ const largeButtonStyle = {
 
 @observer
 export class CardInput extends PureComponent {
+
+    componentWillMount = () => {
+        if (Platform.OS === 'ios')
+            CardIOUtilities.preload()
+    }
+
     scanCard = () => {
         CardIOModule
             .scanCard(scanConfig)
