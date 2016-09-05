@@ -11,10 +11,8 @@ import * as _ from '../Curry.js'
 
 /*********************************************************************/
 
-import type BarID from '../Bar/Bar.js'
+import type { BarID, MenuItemID } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
-
-export type MenuItemID = Int
 
 export type OrderItem = {
     barID:              BarID,
@@ -45,6 +43,16 @@ class OrderStore {
                 return null
             })
             .filter(menuItem => menuItem != null)
+    }
+
+    @action addOrderItem = (orderItem : OrderItem) => {
+        this.orderList.push(orderItem)
+    }
+
+    @action removeOrderItem = (orderItem1 : OrderItem) => {
+        this.orderList = this.orderList.filter(
+            orderItem2 => orderItem2.id !== orderItem1.id
+        )
     }
 
     getOrderList = (menuItemID) => {
@@ -101,6 +109,7 @@ _.safeAutorun(() => {
 
 export const createOrderItem = (menuItem : MenuItem) : OrderItem => {
     return {
+        id:                 shortid.generate(),
         menuItemID:         menuItem.id,
         selectedOptions:    menuItem.options.map(getMenuItemDefaultOptions),
         amount:             1,
