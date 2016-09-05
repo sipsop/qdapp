@@ -343,6 +343,7 @@ drinks:
         tags: |
             #sparkling
             #white
+            #dry
             #citrus
             #italian
             #crisp
@@ -351,28 +352,64 @@ drinks:
             
     champagne: 
         name: Champagne
-        desc: A sparkling wine produced from grapes grown in the Champagne region of France. 
+        desc: This is the most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France. 
         tags: |
             #french
             #sparkling
             #white
             #celebration
             #france 
-            #fizz
+            #fizzy
             #light
     
+    cremant:
+        name: Cremant 
+        desc: It is mostly known for its' low amount of carbon dioxide. 
+        tags: |
+            #creamy
+            #wine
+            #sparkling
+            #crisp
+            #fruity
+            
     cava:
         name: Cava
-        desc: It is a sparkling white wine from Spain.  
+        desc: It is a Spanish sparkling white or pink wine from Spain.  
         tags: |
             #spanish
             #white
+            #pink
             #sparkling
             #light
             #celebration 
-            #fizz
+            #fizzy
             #Spain
-
+            #dry
+    
+    espumate: 
+        name: Espumate
+        desc: It is low level and cheap sparkling wine from Portugal. 
+        tags: |
+            #cheap
+            #wine
+            #sparkling
+            #acidic 
+            #earthy
+            #fruity 
+            
+    asti:
+        name: Asti 
+        desc: A sweet italian sparkler wine made in the region of Asti. 
+        alcohol content: 8%
+        tags: |
+            #wine
+            #sparkling
+            #sweet
+            #white
+            #floralaroma
+            #peachflavour 
+            #acidity 
+    
     spirits:
         smirnoff:
             name: Smirnoff
