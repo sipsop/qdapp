@@ -15,7 +15,7 @@ export class OkCancelModal extends Component {
     /* properties:
         visible: bool
         cancelModal: () => void
-        okModal: [int] => void
+        okModal: () => void
         children: [Component]
         showOkButton: bool
     */

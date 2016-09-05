@@ -18,6 +18,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { PureComponent } from './Component.js'
 import { MenuItem, createMenuItem } from './MenuPage.js'
 import { LargeButton } from './Button.js'
+import { Popup } from './Payment/Popup.js'
 import { T } from './AppText.js'
 import { store, tabStore } from './Store.js'
 import { config } from './Config.js'
@@ -30,6 +31,8 @@ const largeButtonStyle = {
 @observer
 export class OrderPage extends Component {
 
+    @observable popupVisible = false
+
     render = () => {
         if (store.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
@@ -38,6 +41,10 @@ export class OrderPage extends Component {
 
     renderOrderList = () => {
         return <View style={{flex: 1}}>
+            <Popup
+                visible={this.popupVisible}
+                onClose={() => this.popupVisible = false}
+                />
             <ScrollView style={{flex: 1}}>
                 {
                     store.menuItemsOnOrder.map(
@@ -53,6 +60,7 @@ export class OrderPage extends Component {
             <LargeButton
                 label="Place Order"
                 style={largeButtonStyle}
+                onPress={() => this.popupVisible = true}
                 />
         </View>
     }

@@ -12,6 +12,7 @@ import { barStore } from './Bar/BarStore.js'
 import { orderStore } from './Orders.js'
 import { loginStore } from './Login.js'
 import { mapStore } from './Maps/MapStore.js'
+import { paymentStore } from './Payment/PaymentStore.js'
 
 export class Store {
 
@@ -101,6 +102,8 @@ export class Store {
             orderStore.setState(state.orderState)
         if (state.mapState)
             mapStore.setState(state.mapState)
+        if (state.payState)
+            paymentStore.setState(state.payState)
     })
 
     getState = () => {
@@ -110,6 +113,7 @@ export class Store {
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
             mapState:   mapStore.getState(),
+            payState:   paymentStore.getState(),
         }
     }
 

@@ -30,7 +30,6 @@ export class Selector extends PureComponent {
         children: [Component]
         isSelected(i) -> bool
         onSelect(i) -> void
-        renderRow(rowIndex) -> Component
         useListView: bool
     */
 

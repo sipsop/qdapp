@@ -229,7 +229,6 @@ class PickerItemView extends PureComponent {
                 <Selector
                         isSelected={this.isSelected}
                         onSelect={this.handleItemChange}
-                        renderRow={this.renderRow}
                         useListView={this.props.useListView}
                         >
                     {
