@@ -155,6 +155,7 @@ drinks:
         sangiovese: 
             name: Sangiovese
             desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity. 
+            abv: 13.5% to 14.5%
             tags: |
                 #light
                 #acidic
@@ -163,7 +164,22 @@ drinks:
                 #strawberry
                 #cherry
                 #lightoak
+                #plum
                 #tannins
+        
+        beaujlaisNouveau:
+            name: Beaujolais Nouveau
+            desc: It is a fruity french red wine and is released in the same year of its harvest. 
+            abv: 12.5% to 13%
+            tags: |
+                #wine
+                #red
+                #fruity
+                #easytodrink
+                #cherry
+                #strawberry
+                #raspberry
+                #soft
                 
         ### White
 
