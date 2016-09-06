@@ -1,13 +1,7 @@
-import React, { Component } from 'react';
 import {
-  AppRegistry,
-  Image,
-  StyleSheet,
-  View,
-  ScrollView,
-  ListView,
-  TouchableOpacity,
-} from 'react-native'
+    React, Component, Image, View, ScrollView, TouchableOpacity,
+    PureComponent, T,
+} from '../Component.js'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
 import { observable, action } from 'mobx'
@@ -24,7 +18,6 @@ import { Page } from '../Page.js'
 import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
-import { T } from '../AppText.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'
@@ -97,37 +90,9 @@ class BarView extends Page {
         const bar = this.props.bar
         const menu = this.props.menu
 
-        const imageHeight = 300
-        const timeout = 3.0 // switch to next image after 3 seconds
-        if (this.autoplay) {
-            this.timer = setTimeout(
-                () => { this.autoplay = false },
-                (timeout * bar.images.length) * 1000,
-            )
-        }
         return (
             <ScrollView>
-                <ImageSwiper
-                    height={imageHeight}
-                    autoplay={this.autoplay}
-                    autoplayTimeout={timeout}
-                    >
-                    {bar.photos.map((photo, i) =>
-                        <PhotoImage
-                            key={photo.url}
-                            photo={photo}
-                            style={{flex: 1, height: imageHeight}}
-                            >
-                            <View style={{flex: 1}} />
-                            <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                                <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                                    <BarCardFooter bar={bar} showMapButton={false} />
-                                </View>
-                            </LinearGradient>
-                        </PhotoImage>
-                        )
-                    }
-                </ImageSwiper>
+                <BarHeader bar={this.props.bar} imageHeight={300} />
                 {/*
                 <LinearGradient
                         style={
@@ -226,12 +191,54 @@ class BarView extends Page {
     }
 }
 
+export class BarHeader extends PureComponent {
+    /* properties:
+        imageHeight: Int
+    */
+    render = () => {
+        const bar = this.props.bar
+
+        const imageHeight = this.props.imageHeight
+        const timeout = 3.0 // switch to next image after 3 seconds
+        if (this.autoplay) {
+            this.timer = setTimeout(
+                () => { this.autoplay = false },
+                (timeout * bar.images.length) * 1000,
+            )
+        }
+
+        return (
+            <ImageSwiper
+                height={imageHeight}
+                autoplay={this.autoplay}
+                autoplayTimeout={timeout}
+                >
+                {bar.photos.map((photo, i) =>
+                    <PhotoImage
+                        key={photo.url}
+                        photo={photo}
+                        style={{flex: 1, height: imageHeight}}
+                        >
+                        <View style={{flex: 1}} />
+                        <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
+                            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                                <BarCardFooter bar={bar} showMapButton={false} />
+                            </View>
+                        </LinearGradient>
+                    </PhotoImage>
+                    )
+                }
+            </ImageSwiper>
+        )
+    }
+}
+
 const formatAddress = (address) => {
     return address.formattedAddress
     // return `${address.number} ${address.street}, ${address.city}, ${address.postcode}`
 }
 
-class InfoItem extends Component {
+class InfoItem extends PureComponent {
     /* properties:
         iconName: str
         info: str

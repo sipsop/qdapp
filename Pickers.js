@@ -10,7 +10,7 @@ import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { T } from './AppText.js'
 import { Price } from './Price.js'
-import { Header } from './Header.js'
+import { TextHeader } from './Header.js'
 import { OkCancelModal } from './Modals.js'
 import { TextButton, Button } from './Button.js'
 import { store } from './Store.js'
@@ -199,7 +199,7 @@ class PickerItemView extends PureComponent {
                 : config.theme.primary.medium
         return (
             <View style={{flex: flex, alignItems: 'stretch'}}>
-                <Header label={pickerItem.title} />
+                <TextHeader label={pickerItem.title} />
                 <Selector
                         isSelected={this.isSelected}
                         onSelect={this.handleItemChange}

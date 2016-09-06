@@ -121,7 +121,7 @@ export class OkCancelModal extends PureComponent {
                 <View style={
                         { flexDirection: 'row'
                         , justifyContent: 'space-around'
-                        , marginBottom: 10
+                        // , marginBottom: 5
                         }
                 }>
                     {cancelButton}

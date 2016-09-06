@@ -213,6 +213,12 @@ class BarStore {
             : null
     }
 
+    @computed get barName() : String {
+        return this.getBar()
+            ? this.getBar().name
+            : ""
+    }
+
     /*********************************************************************/
     /* Functions that can be invoked async without catching errors */
 

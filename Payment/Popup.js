@@ -1,13 +1,17 @@
-import { React, Component, PureComponent, View, TouchableOpacity, T } from '../Component.js'
+import {
+    React, Component, View, TouchableOpacity, ScrollView,
+    T, PureComponent
+} from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import { BarHeader } from '../Bar/BarPage.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector } from '../Selector.js'
-import { Header } from '../Header.js'
-import { orderStore } from '../Orders/OrderStore.js'
+import { Header, HeaderText } from '../Header.js'
+import { barStore, orderStore } from '../Store.js'
 
 import { CardInput } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
@@ -29,9 +33,7 @@ export class Popup extends PureComponent {
                 ? { flex: 1, justifyContent: 'center' }
                 : {}
 
-        const totalTextStyle = {
-            fontSize: 25,
-            color: 'black',
+        const textStyle = {
             textAlign: 'center',
         }
 
@@ -42,22 +44,21 @@ export class Popup extends PureComponent {
                     okModal={this.props.onClose}
                     okLabel="Pay Now"
                     >
-            <View style={{flex: 1}}>
-                <Header label="Card" />
-                <CreditCardList />
-                <View style={addCardStyle}>
-                    <CardInput />
+            <ScrollView>
+                <View style={{flex: 1}}>
+                    <BarHeader bar={barStore.getBar()} imageHeight={200} />
+                    <Header>
+                        <View style={{flexDirection: 'row'}}>
+                            <HeaderText style={{flex: 1, ...textStyle}}>Total:</HeaderText>
+                            <HeaderText style={{flex: 1, ...textStyle}}>{orderStore.totalText}</HeaderText>
+                        </View>
+                    </Header>
+                    <CreditCardList />
+                    <View style={addCardStyle}>
+                        <CardInput />
+                    </View>
                 </View>
-            </View>
-            <View style={
-                    { flexDirection: 'row'
-                    , borderTopWidth: 1
-                    , borderBottomWidth: 1
-                    }
-                }>
-                <T style={{flex: 1, ...totalTextStyle}}>Total:</T>
-                <T style={{flex: 1, ...totalTextStyle}}>{orderStore.totalText}</T>
-            </View>
+            </ScrollView>
         </OkCancelModal>
     }
 }
