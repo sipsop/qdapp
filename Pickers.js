@@ -78,7 +78,6 @@ export class PickerCollection extends PureComponent {
 
     constructor(props) {
         super(props)
-        this.openCount = 0
         if (props.showModal)
             this.showModal()
     }
@@ -91,7 +90,6 @@ export class PickerCollection extends PureComponent {
 
     @action closeModal = () => {
         this.modalVisible = false
-        this.openCount += 1
     }
 
     @action okModal = () => {
@@ -99,13 +97,13 @@ export class PickerCollection extends PureComponent {
         //     pickerItem.selected = pickerItem.selectedInModal
         // })
         this.props.onAcceptChanges(this.selectedInModal)
-        if (this.openCount === 0 && this.props.onFirstAccept)
+        if (this.props.showModal && this.props.onFirstAccept)
             this.props.onFirstAccept()
         this.closeModal()
     }
 
     @action cancelModal = () => {
-        if (this.openCount === 0 && this.props.onFirstCancel)
+        if (this.props.showModal && this.props.onFirstCancel)
             this.props.onFirstCancel()
         this.closeModal()
     }
