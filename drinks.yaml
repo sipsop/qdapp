@@ -109,9 +109,11 @@ drinks:
                 #fruity
                 #cherry
                 #oak
+        
         malbec:
             name: Malbec
-            desc:Mallbec is a popular and easy to drink red with a tonne of juicy and fruit flavours.  
+            desc: Mallbec is a popular and easy to drink red wine with a tonne of juicy and fruity flavours.  
+            abv: 13.5-15%
             tags: |
                 #tannins
                 #red
@@ -121,6 +123,7 @@ drinks:
                 #blackberry
                 #plum
                 #cherry
+                #malbec 
         
         shiraz:
             name: Shiraz 
@@ -136,16 +139,18 @@ drinks:
                 
         cabernetFranc:
             name: Cabernet Franc
-            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon. 
+            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish. 
+            abv: 12.5% and above 
             tag: |
                 #tannins
                 #red
                 #blueberry
                 #dark
                 #mediumbodied
+                #vanilla
+                #blackberry
+                #cherry 
                 #acidic
-                #plum
-                #strawberry
                 
         sangiovese: 
             name: Sangiovese
@@ -243,6 +248,7 @@ drinks:
                 #dry
                 #cherry
                 #lowintannin 
+                #grenache
 
         zinfandel:
             name: Zinfandel Rosé
@@ -256,6 +262,7 @@ drinks:
                 #strawberry
                 #rose
                 #wine
+                #zinfandel
         
         provence:
             name: Provence
@@ -270,6 +277,7 @@ drinks:
                 #spicy
                 #rose
                 #wine
+                #provence
          
         syrah:
             name: Syrah
@@ -283,6 +291,7 @@ drinks:
                 #whitepepper
                 #cherry
                 #strawberry
+                #syrah
         
         tempranillo:
             name: Tempranillo
@@ -312,6 +321,7 @@ drinks:
                 #raspberry
                 #watermelon
                 #strawberry
+                #pinotnoir
         tavel:
             name: Tavel
             desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.  
@@ -322,6 +332,7 @@ drinks:
                 #wine
                 #rose
                 #foodwine
+                #tavel
                 
         sangiovese:
             name: Saniovese rose
@@ -334,6 +345,7 @@ drinks:
                 #acidity
                 #dry
                 #fruity
+                #sanioveserose
         
         # wine, sparkling champagne 
         
@@ -350,6 +362,7 @@ drinks:
             #light
             #sweet
             #celebration
+            #prosecco
             
     champagne: 
         name: Champagne
@@ -362,6 +375,7 @@ drinks:
             #france 
             #fizzy
             #light
+            #champagne
     
     cremant:
         name: Cremant 
@@ -372,6 +386,7 @@ drinks:
             #sparkling
             #crisp
             #fruity
+            #cremant
             
     cava:
         name: Cava
@@ -386,6 +401,7 @@ drinks:
             #fizzy
             #Spain
             #dry
+            #cava
     
     espumate: 
         name: Espumate
@@ -397,6 +413,7 @@ drinks:
             #acidic 
             #earthy
             #fruity 
+            #espumate
             
     asti:
         name: Asti 
@@ -410,6 +427,7 @@ drinks:
             #floralaroma
             #peachflavour 
             #acidity 
+            #asti
     
     trentoDoc:
         name: Trento Doc
@@ -421,6 +439,7 @@ drinks:
             #straw-yellow
             #dry
             #smooth
+            #trentodoc
      
     sekt:
         name: Sekt or Schaumwein
@@ -435,6 +454,7 @@ drinks:
             #aromasofpears
             #aromasofwhiteflower
             #lowalcohol
+            #sekt
     
     pezsgö:
         name: Pezsgö
@@ -446,6 +466,7 @@ drinks:
             #creamy
             #toasty
             #dry
+            #pezsgo
     
     sovetskoyeShampanskoye:
         name:Sovetskoye Shampanskoye
@@ -458,6 +479,7 @@ drinks:
             #fruity
             #hintofpeach
             #refreshing
+            #sovetskoyeshanpanskoye
             
     shiraz:
         name: Shiraz
@@ -472,6 +494,7 @@ drinks:
             #red
             #juicy
             #berry
+            #shiraz
     
     methodeCapClassique:
         name: Methode Cap Classique 
@@ -482,6 +505,7 @@ drinks:
             #sparkling
             #fruity
             #crisp 
+            #mcc
         
     spirits:
         smirnoff:
@@ -495,11 +519,6 @@ drinks:
     cocktails:
         longIslandIceTea:
             name: Long Island Ice Tea
-
-
-
-
-
 
 
 menuOptions:
