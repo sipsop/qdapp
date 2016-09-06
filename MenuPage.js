@@ -176,27 +176,6 @@ class OrderList extends PureComponent {
                 this.orderItems.length === 0
                     ? undefined
                     : <View style={{marginBottom: 20}} />
-
-                /*
-                    : <View style={[rowStyle, {flexDirection: 'row', marginBottom: 30}]}>
-                        {
-                        // <TouchableOpacity style={{flex: 1}} onPress={this.popRow}>
-                        //     <View style={[rowStyle, buttonStyle, {borderColor: RemoveColor}]}>
-                        //         <T style={{fontSize: 20, color: RemoveColor}}>
-                        //             REMOVE ROW
-                        //         </T>
-                        //     </View>
-                        // </TouchableOpacity>
-                        }
-                        <TouchableOpacity style={{flex: 1}} onPress={this.props.addRow}>
-                            <View style={[rowStyle, buttonStyle, {borderColor: AddColor}]}>
-                                <T style={{fontSize: 20, color: AddColor}}>
-                                    MORE OPTIONS
-                                </T>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                */
             }
         </View>
     }
@@ -391,7 +370,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get amountPickerItem() {
-        console.log("recomputing amountPickerItem", this.props.rowNumber)
+        log("recomputing amountPickerItem", this.props.rowNumber)
         const subTotal = orderStore.getSubTotal(this.orderItem) || 0.0
         const numbers = range(N+1)
         return new PickerItem(
@@ -405,7 +384,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get optionPickerItems() {
-        console.log("recomputing optionPickerItems", this.props.rowNumber)
+        log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
         return menuItem.options.map((menuOptionItem, i) => {
             return new PickerItem(
@@ -413,7 +392,7 @@ export class OrderSelection extends PureComponent {
                 menuOptionItem.optionList,
                 menuOptionItem.prices,
                 menuOptionItem.defaultOption || -1,
-                this.orderItem.selectedOptions[i].slice(), // NOTE: THe copy here is very important!
+                this.orderItem.selectedOptions[i].slice(), // NOTE: The copy here is very important!
                 menuOptionItem.optionType,
             )
         })

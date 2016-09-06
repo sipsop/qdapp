@@ -76,6 +76,14 @@ class OrderStore {
     /* Compute the price for all the selected options */
     getSubTotal = (orderItem : OrderItem) : Float => {
         const menuItem = barStore.getMenuItem(orderItem.menuItemID)
+        if (!menuItem) {
+            /* Menu items may be re-rendered while the order list is being
+               cleared after a bar change. Just return 'null' in that case
+               to avoid errors in the subtotal calculation
+            */
+            return null
+        }
+
         const allPrices = _.zipWith(menuItem.options, orderItem.selectedOptions,
             (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
         )
@@ -105,6 +113,7 @@ export const orderStore = new OrderStore()
 
 _.safeAutorun(() => {
     /* Clear the order list whenever the selected bar changes */
+    log("CLEARING ORDER LIST")
     barStore.barID
     orderStore.clearOrderList()
 })
@@ -125,45 +134,3 @@ const getMenuItemDefaultOptions = (menuItemOption : MenuItemOption) : Int => {
         return []
     return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
 }
-
-// export class OrderItem {
-//     @observable amount : number = 1
-//     @observable selectedOptions = null
-//
-//     constructor(menuItem) {
-//         this.id = shortid.generate()
-//         this.menuItem = menuItem
-//         // e.g. [[0], [], [1, 3]]
-//         this.selectedOptions = menuItem.options.map(getMenuItemDefaultOptions)
-//         this.currency = menuItem.price.currency
-//         this.showModal = true
-//     }
-//
-//     /* Compute the price for all the selected options */
-//     @computed get subTotal() {
-//         const allPrices = _.zipWith(this.menuItem.options, this.selectedOptions,
-//             (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
-//         )
-//         return sumPrices(_.flatten(allPrices))
-//     }
-//
-//     @computed get total() {
-//         return this.subTotal * this.amount
-//     }
-//
-//     toJSON = () => {
-//         return {
-//             menuItem: this.menuItem,
-//             selectedOptions: this.selectedOptions,
-//             amount: this.amount,
-//         }
-//     }
-//
-//     static fromJSON = (orderItemJSON) : OrderItem => {
-//         const orderItem = new OrderItem(orderItemJSON.menuItem)
-//         orderItem.selectedOptions = orderItemJSON.selectedOptions
-//         orderItem.amount = orderItemJSON.amount
-//         orderItem.showModal = false
-//         return orderItem
-//     }
-// }
