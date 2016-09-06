@@ -46,6 +46,8 @@ export class Store {
     }
 
     setState = action(async (state) => {
+        if (state.payState)
+            paymentStore.setState(state.payState)
         if (state.barState)
             await barStore.setState(state.barState)
         if (state.tabState)
@@ -56,25 +58,23 @@ export class Store {
             orderStore.setState(state.orderState)
         if (state.mapState)
             mapStore.setState(state.mapState)
-        if (state.payState)
-            paymentStore.setState(state.payState)
     })
 
     getState = () => {
         return _.asData({
+            payState:   paymentStore.getState(),
             barState:   barStore.getState(),
             tabState:   tabStore.getState(),
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
             mapState:   mapStore.getState(),
-            payState:   paymentStore.getState(),
         })
     }
 
     saveToLocalStorage = _.logErrors(async () => {
         const state = this.getState()
         if (!_.deepEqual(state, this.previousState)) {
-            // log("Saving state now...", state)
+            log("Saving state now...", state)
             this.previousState = state
             await cache.set('qd:state', state)
         }

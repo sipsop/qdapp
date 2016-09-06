@@ -28,11 +28,6 @@ export class Popup extends PureComponent {
         onClose: () => void
     */
     render = () => {
-        const addCardStyle =
-            paymentStore.cards.length === 0
-                ? { flex: 1, justifyContent: 'center' }
-                : {}
-
         const textStyle = {
             textAlign: 'center',
         }
@@ -54,9 +49,6 @@ export class Popup extends PureComponent {
                         </View>
                     </Header>
                     <CreditCardList />
-                    <View style={addCardStyle}>
-                        <CardInput />
-                    </View>
                 </View>
             </ScrollView>
         </OkCancelModal>
@@ -74,16 +66,26 @@ export class CreditCardList extends PureComponent {
     }
 
     render = () => {
-        return <Selector
-                    isSelected={this.isSelected}
-                    onSelect={this.onSelect}
-                    >
-            {
-                paymentStore.cards.map(
-                    card => <CreditCard key={card.cardNumber} card={card} />
-                )
-            }
-        </Selector>
+        const addCardStyle =
+            paymentStore.cards.length === 0
+                ? { flex: 1, justifyContent: 'center' }
+                : {}
+
+        return <View>
+            <Selector
+                isSelected={this.isSelected}
+                onSelect={this.onSelect}
+                >
+                {
+                    paymentStore.cards.map(
+                        card => <CreditCard key={card.cardNumber} card={card} />
+                    )
+                }
+            </Selector>
+            <View style={addCardStyle}>
+                <CardInput />
+            </View>
+        </View>
     }
 }
 
@@ -135,20 +137,22 @@ export class RemoveCardButton extends PureComponent {
     }
 
     render = () => {
-        return <View style={
-                { justifyContent: 'center'
-                , alignItems: 'center'
-                , width: 55
-                , height: 55
-                }
-            }>
+        return <View>
             <SmallOkCancelModal
                 ref={ref => this.modal = ref}
                 message="Are you sure you want to remove this card?"
                 onConfirm={this.removeCard}
                 />
             <TouchableOpacity onPress={() => this.modal.show()}>
-                <Icon name="times" size={35} color="rgb(184, 37, 17)" />
+                <View style={
+                        { justifyContent: 'center'
+                        , alignItems: 'center'
+                        , width: 55
+                        , height: 55
+                        }
+                    }>
+                    <Icon name="times" size={35} color="rgb(184, 37, 17)" />
+                </View>
             </TouchableOpacity>
         </View>
     }

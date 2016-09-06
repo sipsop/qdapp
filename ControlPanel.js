@@ -10,7 +10,8 @@ import { RowTextButton } from './Rows.js'
 import { T } from './AppText.js'
 import { loginStore } from './Store.js'
 import { drawerStore } from './SideMenu.js'
-import { SmallOkCancelModal } from './Modals.js'
+import { SmallOkCancelModal, SimpleModal } from './Modals.js'
+import { CreditCardList } from './Payment/Popup.js'
 import { config } from './Config.js'
 import * as _ from './Curry.js'
 
@@ -23,20 +24,54 @@ assert(drawerStore != null, 'drawerStore is null')
 @observer
 export class ControlPanel extends PureComponent {
 
-    modal = null
+    signoutModal = null
+    paymentModal = null
 
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
             <RowTextButton text="Recent Orders" icon={icon("glass", config.theme.primary.dark)} />
-            <RowTextButton text="Payment" icon={icon("credit-card", "rgb(19, 58, 194)")} />
-            <RowTextButton text="Settings" icon={icon("cog", "rgba(0, 0, 0, 0.60)")} />
-            <SmallOkCancelModal
-                ref={ref => this.modal = ref}
-                message="Sign out?"
-                onConfirm={loginStore.logout}
-                onClose={() => drawerStore.enable()}
+            <PaymentConfig />
+            <Settings />
+            <Signout />
+        </View>
+    }
+}
+
+@observer
+class PaymentConfig extends PureComponent {
+    render = () => {
+        return <View>
+            <RowTextButton text="Payment"
+                icon={icon("credit-card", "rgb(19, 58, 194)")}
+                onPress={() => {
+                    drawerStore.disable()
+                    this.paymentModal.show()
+                }}
                 />
+            <SimpleModal
+                    ref={ref => this.paymentModal = ref}
+                    onClose={drawerStore.enable}
+                    >
+                <View style={{flex: 1}}>
+                    <CreditCardList />
+                </View>
+            </SimpleModal>
+        </View>
+    }
+}
+
+@observer
+class Settings extends PureComponent {
+    render = () => {
+        return <RowTextButton text="Settings" icon={icon("cog", "rgba(0, 0, 0, 0.60)")} />
+    }
+}
+
+@observer
+class Signout extends PureComponent {
+    render = () => {
+        return <View>
             {
                 loginStore.isLoggedIn
                     ? <RowTextButton
@@ -44,11 +79,17 @@ export class ControlPanel extends PureComponent {
                         icon={icon("sign-out", config.theme.removeColor)}
                         onPress={() => {
                             drawerStore.disable()
-                            this.modal.show()
+                            this.signoutModal.show()
                         }}
                         />
                     : undefined
             }
+            <SmallOkCancelModal
+                ref={ref => this.signoutModal = ref}
+                message="Sign out?"
+                onConfirm={loginStore.logout}
+                onClose={() => drawerStore.enable()}
+                />
         </View>
     }
 }

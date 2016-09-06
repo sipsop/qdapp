@@ -89,6 +89,35 @@ export class SmallOkCancelModal extends PureComponent {
     }
 }
 
+@observer
+export class SimpleModal extends PureComponent {
+    /*
+        <SimpleModal ref={ref => this.modal = ref}>
+            ...
+        </SimpleModal>
+        <Button onPress={() => this.modal.show()} ... />
+            ^- NOTE: don't pass this.modal.show, as it won't be bound yet!
+    */
+    @observable visible = false
+
+    show = () => this.visible = true
+    close = () => {
+        this.visible = false
+        if (this.props.onClose)
+            this.props.onClose()
+    }
+
+    render = () => {
+        return <OkCancelModal
+                    visible={this.visible}
+                    cancelModal={this.close}
+                    showOkButton={false}
+                    cancelLabel="Close"
+                    {...this.props}
+                    />
+    }
+}
+
 export class OkCancelModal extends PureComponent {
     /* properties:
         visible: bool
