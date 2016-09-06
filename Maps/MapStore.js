@@ -135,13 +135,14 @@ class MapStore {
     }
 
     /* Focus the given bar on the map */
-    @action focusBar = (bar : Bar) => {
+    @action focusBar = (bar : Bar, switchToDiscoverPage = true) => {
         log("FOCUSSING BAR", bar.name)
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
-            store.switchToDiscoverPage(true)
+            if (switchToDiscoverPage)
+                store.switchToDiscoverPage(true)
         }
         this.setCurrentMarker(bar)
     }

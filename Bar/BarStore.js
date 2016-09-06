@@ -118,7 +118,8 @@ class BarStore {
     }
 
     _setBarID = async (barID) => {
-        if (this.bar.value && this.bar.value.id === barID)
+        const bar = this.getBar()
+        if (bar && bar.id === barID)
             return /* All done */
 
         console.log("Setting bar with placeID =", barID)
@@ -139,6 +140,11 @@ class BarStore {
             transaction(() => {
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
+                if (this.getBar() != null) {
+                    setTimeout(() => {
+                        mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
+                    }, 1000)
+                }
             })
         }
     }
@@ -196,14 +202,14 @@ class BarStore {
     }
 
     @computed get openingTimes() {
-        return this.bar.value
-            ? this.bar.value.openingTimes
+        return this.getBar()
+            ? this.getBar().openingTimes
             : null
     }
 
     @computed get barOpenTime() : ?OpeningTime {
-        return this.bar.value
-            ? getBarOpenTime(this.bar.value)
+        return this.getBar()
+            ? getBarOpenTime(this.getBar())
             : null
     }
 
