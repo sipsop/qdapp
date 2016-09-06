@@ -65,7 +65,6 @@ export class MenuView extends Page {
                                     <MenuItem
                                         key={menuItem.id}
                                         menuItem={menuItem}
-                                        currentPage={2}
                                         />
                             )
                         }
@@ -100,8 +99,6 @@ class OrderButton extends PureComponent {
 export class MenuItem extends PureComponent {
     /* properties:
         menuItem: MenuItem
-        currentPage: Int
-            current page in the TabView
     */
 
     @observable showModalFor : ?OrderItem = null
@@ -131,7 +128,6 @@ export class MenuItem extends PureComponent {
             </TouchableOpacity>
             <OrderList
                     menuItem={menuItem}
-                    currentPage={this.props.currentPage}
                     showModalFor={this.showModalFor}
                     onModalClose={this.modalClosed}
                     />
@@ -144,8 +140,8 @@ class OrderList extends PureComponent {
     /* properties:
         menuItem: MenuItem
         showModalFor: ?OrderItem
-        currentPage: Int
-            current page in the TabView
+            order item that we should show a modal for (just once)
+        onModalClose: () => void
     */
 
     @computed get orderItems() : Array<OrderItem> {
@@ -166,19 +162,12 @@ class OrderList extends PureComponent {
             , marginLeft: 5
             , marginRight: 5
             }
+
         return <View>
             <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                     {
-                        this.orderItems.map((orderItem, i) => {
-                            return <OrderSelection
-                                        key={orderItem.id}
-                                        rowNumber={i}
-                                        menuItem={this.props.menuItem}
-                                        orderItem={orderItem}
-                                        currentPage={this.props.currentPage}
-                                        />
-                        })
+                        this.orderItems.map(this.renderOrderItem)
                     }
                 </View>
                 <PriceColumn orderItems={this.orderItems} />
@@ -210,6 +199,21 @@ class OrderList extends PureComponent {
                 */
             }
         </View>
+    }
+
+    renderOrderItem = (orderItem : OrderItem, i : Int) : Component => {
+        const showModal = this.props.showModalFor
+            ? orderItem.id === this.props.showModalFor.id
+            : false
+
+        return <OrderSelection
+            key={orderItem.id}
+            rowNumber={i}
+            menuItem={this.props.menuItem}
+            orderItem={orderItem}
+            showModal={showModal}
+            onModalClose={this.props.onModalClose}
+            />
     }
 }
 
@@ -376,6 +380,7 @@ export class OrderSelection extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
         orderItem: schema.OrderItem
+        onModalClose: () => void
         rowNumber: int
         removeRow() -> void
             remove this row
@@ -418,7 +423,7 @@ export class OrderSelection extends PureComponent {
         return {
             price: price,
             option: 'Absolute',
-            currency: this.orderItem.currency,
+            currency: orderStore.currency,
         }
     }
 
@@ -433,26 +438,34 @@ export class OrderSelection extends PureComponent {
             this.orderItem.amount = max(0, this.orderItem.amount - 1)
     }
 
+    handleClose = () => {
+        this.props.onModalClose()
+    }
+
     @action handleAcceptAmountChanges = (allSelectedOptions : [[number]]) => {
         const amountSelection : [number] = allSelectedOptions[0]
         this.orderItem.amount = amountSelection[0]
+        this.handleClose()
     }
 
     @action handleAcceptOptions = (allSelectedOptions : [[number]]) => {
         this.orderItem.selectedOptions = allSelectedOptions
+        this.handleClose()
     }
 
     @action handleFirstAccept = () => {
-        this.orderItem.showModal = false
+        // this.orderItem.showModal = false
+        this.handleClose()
     }
 
     @action handleFirstCancel = () => {
-        this.orderItem.showModal = false
+        // this.orderItem.showModal = false
         orderStore.removeOrderItem(this.orderItem)
+        this.handleClose()
     }
 
     get showModal() {
-        return tabStore.currentPage === this.props.currentPage && this.orderItem.showModal
+        return this.props.showModal
     }
 
     render = () => {
