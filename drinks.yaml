@@ -28,14 +28,14 @@ drinks:
                 #dark
                 
 
-    stellaArtois:
-    name: Stella Artois
-    desc: American style premium pale lager.  
-    tags: 
-        #bestsellingbeer
-        #lager
-        #Pale
-        #LowMalt
+        stellaArtois:
+            name: Stella Artois
+            desc: American style premium pale lager.  
+            tags: |
+                #bestsellingbeer
+                #lager
+                #Pale
+                #LowMalt
         
     
 
@@ -181,7 +181,7 @@ drinks:
                 #raspberry
                 #soft
                 
-        ### White
+        ###White
 
         saugvignonBlanc:
             name: Saugvignon Blanc
@@ -320,7 +320,7 @@ drinks:
                 #rose
                 #strawberry
                 #raspberry
-                #trempranillio
+                #tempranillo
     
 
         pinotNoir:
@@ -338,6 +338,7 @@ drinks:
                 #watermelon
                 #strawberry
                 #pinotnoir
+        
         tavel:
             name: Tavel
             desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.  
@@ -532,6 +533,52 @@ drinks:
             tags: |
                 #spirit
 
+        greyGoose:
+            name: Grey Goose Vodka
+            abv: 40%
+            desc: 
+            tags: |
+                #spirit
+                #vodka
+                #premium
+                #french
+                #france
+                #grain
+                
+        russianStandard:
+            name: Russian Standard Vodka
+            abv: 40%
+            desc:
+            tags: |
+                #spirit
+                #vodka
+                #russian
+                #russia
+                #grain
+                
+        absolut:
+            name: Absolut Vodka
+            abv: 40%
+            desc: A versatile and pure vodka, with a distinct character of grain, followed by a hint of dried fruit.
+            tags: |
+                #spirit
+                #vodka
+                #absolut
+                #premium
+                #grain
+                
+        ciroc:
+            name: Ciroc Vodka
+            abv: 40%
+            desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+            tags: |
+                #spirit
+                #vodka
+                #ciroc
+                #premium
+                #grapes
+            
+    
     cocktails:
         longIslandIceTea:
             name: Long Island Ice Tea
