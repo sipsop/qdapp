@@ -339,7 +339,7 @@ drinks:
         
     prosecco: 
         name: Prosecco
-        desc: It is a light sparkling italian wine. Easy to drink and often drank as alternative to Champagne.  
+        desc: It is a light sparkling italian wine. Easy to drink and often drank as an alternative to Champagne.  
         tags: |
             #sparkling
             #white
@@ -348,11 +348,12 @@ drinks:
             #italian
             #crisp
             #light
+            #sweet
             #celebration
             
     champagne: 
         name: Champagne
-        desc: This is the most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France. 
+        desc: It is most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France. 
         tags: |
             #french
             #sparkling
@@ -410,6 +411,78 @@ drinks:
             #peachflavour 
             #acidity 
     
+    trentoDoc:
+        name: Trento Doc
+        desc: It is an Italian unique sparkling wine with a dry, smooth, rounded and elegant flavour.  
+        alcohol content: above 11%
+        tags: |
+            #wine
+            #sparkling
+            #straw-yellow
+            #dry
+            #smooth
+     
+    sekt:
+        name: Sekt or Schaumwein
+        desc: This wine is produced in Germany and is usually sweeter and lower in alcohol than champagne and other sparkling wine. 
+        alcohol content: 6%
+        tags: |
+            #wine
+            #sparkling 
+            #golden
+            #sweet
+            #aromasofapples
+            #aromasofpears
+            #aromasofwhiteflower
+            #lowalcohol
+    
+    pezsgö:
+        name: Pezsgö
+        desc: Pezsgo is a sparkling wine produced in Hiungary which is well crafted and perfect for celebrations. 
+        alcohol content: above 11%
+        tags: |
+            #wine 
+            #sparkling
+            #creamy
+            #toasty
+            #dry
+    
+    sovetskoyeShampanskoye:
+        name:Sovetskoye Shampanskoye
+        desc:This is Russian champagne and a popular brand among rich in Soviet Union. 
+        alcohol content:
+        tags: |
+            #wine
+            #sparkling
+            #dry
+            #fruity
+            #hintofpeach
+            #refreshing
+            
+    shiraz:
+        name: Shiraz
+        desc: A famous red sparkling wine produced in Australia. 
+        abv: 13% or above
+        tags: |
+            #wine
+            #sparkling
+            #sweet
+            #dry
+            #tannin
+            #red
+            #juicy
+            #berry
+    
+    methodeCapClassique:
+        name: Methode Cap Classique 
+        desc: It is a South African elegant sparkling wine 
+        abv: 11.5% or above
+        tags: |
+            #wine
+            #sparkling
+            #fruity
+            #crisp 
+        
     spirits:
         smirnoff:
             name: Smirnoff
