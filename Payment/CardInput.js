@@ -48,7 +48,7 @@ export class CardInput extends PureComponent {
 
     render = () => {
         return <LargeButton
-                    label="Add a New Card"
+                    label="Add a Card"
                     onPress={this.scanCard}
                     style={largeButtonStyle}
                     prominent={false}

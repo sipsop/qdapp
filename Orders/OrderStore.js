@@ -3,7 +3,7 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { Price, sumPrices } from '../Price.js'
+import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
 import { barStore } from '../Bar/BarStore.js'
@@ -33,7 +33,7 @@ class OrderStore {
 
     @observable orderList : Array<OrderItem> = []
 
-    @computed get menuItemsOnOrder() {
+    @computed get menuItemsOnOrder() : Array<MenuItem> {
         const seen = []
         return this.orderList.map(orderItem => {
                 if (!_.includes(seen, orderItem.menuItemID)) {
@@ -92,6 +92,18 @@ class OrderStore {
 
     getTotal = (orderItem : OrderItem) : Float => {
         return this.getSubTotal(orderItem) * orderItem.amount
+    }
+
+    @computed get total() : Float {
+        return _.sum(this.orderList.map(this.getTotal))
+    }
+
+    @computed get totalText() : String {
+        const total = this.total
+        if (!total)
+            return ""
+        const currencySymbol = getCurrencySymbol(this.currency)
+        return `${currencySymbol}${total.toFixed(2)}`
     }
 
     /*********************************************************************/

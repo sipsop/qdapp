@@ -10,6 +10,7 @@ import {
     Platform,
     Picker,
     TouchableOpacity,
+    Modal,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -57,6 +58,7 @@ export {
     Platform,
     Picker,
     TouchableOpacity,
+    Modal,
     /* Custom Components */
     PureComponent,
     T,

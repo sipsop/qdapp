@@ -1,16 +1,32 @@
-import React, { Component } from 'react';
-import {
-  Image,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native'
-
-import { T } from './AppText.js'
+import { React, Component, View, TouchableOpacity, PureComponent, T } from './Component.js'
 import { config } from './Config.js'
 import { merge } from './Curry.js'
 
-export class LargeButton extends Component {
+export class PrimaryButton extends PureComponent {
+    render = () => {
+        const props = {
+            ...this.props,
+            textColor: config.theme.primary.medium,
+            prominent: false,
+            borderWidth: 0,
+        }
+        return <LargeButton {...props} />
+    }
+}
+
+export class SecondaryButton extends PureComponent {
+    render = () => {
+        const props = {
+            ...this.props,
+            textColor: config.theme.primary.dark,
+            prominent: false,
+            borderWidth: 0,
+        }
+        return <LargeButton {...props} />
+    }
+}
+
+export class LargeButton extends PureComponent {
     /* properties:
         label: str
         onPress: () => void

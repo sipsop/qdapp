@@ -25,6 +25,10 @@ export class OrderPage extends Component {
 
     @observable popupVisible = false
 
+    handleOrderPress = () => {
+        this.popupVisible = true
+    }
+
     render = () => {
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
@@ -49,11 +53,7 @@ export class OrderPage extends Component {
                     )
                 }
             </ScrollView>
-            <LargeButton
-                label="Place Order"
-                style={largeButtonStyle}
-                onPress={() => this.popupVisible = true}
-                />
+            <OrderButton onPress={this.handleOrderPress} />
         </View>
     }
 
@@ -65,5 +65,19 @@ export class OrderPage extends Component {
                 style={largeButtonStyle}
                 />
         </View>
+    }
+}
+
+@observer
+class OrderButton extends PureComponent {
+    /* properties:
+        onPress: () => void
+    */
+    render = () => {
+        return <LargeButton
+                    label={`Place Order  (${orderStore.totalText})`}
+                    style={largeButtonStyle}
+                    onPress={this.props.onPress}
+                    />
     }
 }

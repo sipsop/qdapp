@@ -83,7 +83,7 @@ class OrderButton extends PureComponent {
             return <View />
         }
         return <LargeButton
-                    label="Review Order"
+                    label={`Review Order  (${orderStore.totalText})`}
                     onPress={() => tabStore.setCurrentTab(3)}
                     style={{margin: 5, height: rowHeight}}
                     /*

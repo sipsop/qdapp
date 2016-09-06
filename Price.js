@@ -24,20 +24,21 @@ export class Price extends Component {
         }
 
         return <T style={this.props.style}>
-            {prefix}{this.getCurrencySymbol(price.currency)}{price.price.toFixed(2)}
+            {prefix}{getCurrencySymbol(price.currency)}{price.price.toFixed(2)}
         </T>
     }
 
-    getCurrencySymbol = (symbol) => {
-        if (symbol == 'Sterling') {
-            return '£'
-        } else if (symbol == 'Euros') {
-            return '€'
-        } else if (symbol == 'Dollars') {
-            return '$'
-        } else {
-            throw Error('Unknown currency symbol:' + symbol)
-        }
+}
+
+export const getCurrencySymbol = (symbol) => {
+    if (symbol == 'Sterling') {
+        return '£'
+    } else if (symbol == 'Euros') {
+        return '€'
+    } else if (symbol == 'Dollars') {
+        return '$'
+    } else {
+        throw Error('Unknown currency symbol:' + symbol)
     }
 }
 

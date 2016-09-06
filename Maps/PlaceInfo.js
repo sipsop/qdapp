@@ -35,7 +35,7 @@ export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar =
         id:             result.place_id,
         signedUp:       false, // this info must be fetched separate from our server
         name:           result.name,
-        photos:         result.photos.map(parsePhoto),
+        photos:         result.photos ? result.photos.map(parsePhoto) : [],
         address:        parseAddress(result),
         barType:        getBarType(result.types),
 

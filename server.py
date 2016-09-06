@@ -310,7 +310,7 @@ fiftyP = Price(
 )
 
 top_option = MenuItemOption(
-    name="Choose a Top",
+    name="Top",
     optionType=OptionType.AtMostOne,
     optionList=[
         "shandy",

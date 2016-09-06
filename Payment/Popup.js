@@ -1,12 +1,13 @@
-import { React, Component, PureComponent, View, TouchableOpacity } from '../Component.js'
+import { React, Component, PureComponent, View, TouchableOpacity, T } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { OkCancelModal } from '../Modals.js'
+import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector } from '../Selector.js'
 import { Header } from '../Header.js'
+import { orderStore } from '../Orders/OrderStore.js'
 
 import { CardInput } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
@@ -28,18 +29,34 @@ export class Popup extends PureComponent {
                 ? { flex: 1, justifyContent: 'center' }
                 : {}
 
+        const totalTextStyle = {
+            fontSize: 25,
+            color: 'black',
+            textAlign: 'center',
+        }
+
         return <OkCancelModal
                     visible={this.props.visible}
                     showOkButton={true}
                     cancelModal={this.props.onClose}
                     okModal={this.props.onClose}
+                    okLabel="Pay Now"
                     >
             <View style={{flex: 1}}>
-                <Header label="Choose a Card" />
+                <Header label="Card" />
                 <CreditCardList />
                 <View style={addCardStyle}>
                     <CardInput />
                 </View>
+            </View>
+            <View style={
+                    { flexDirection: 'row'
+                    , borderTopWidth: 1
+                    , borderBottomWidth: 1
+                    }
+                }>
+                <T style={{flex: 1, ...totalTextStyle}}>Total:</T>
+                <T style={{flex: 1, ...totalTextStyle}}>{orderStore.totalText}</T>
             </View>
         </OkCancelModal>
     }
@@ -56,7 +73,6 @@ export class CreditCardList extends PureComponent {
     }
 
     render = () => {
-        log("rendering card list...", paymentStore.cards)
         return <Selector
                     isSelected={this.isSelected}
                     onSelect={this.onSelect}
@@ -89,7 +105,16 @@ export class CreditCard extends PureComponent {
                 , paddingRight: 10
                 }
             }>
-                <T style={textStyle}>{card.cardType}</T>
+                <View style={
+                        { justifyContent: 'center'
+                        , borderWidth: 1
+                        , borderRadius: 5
+                        , borderColor: 'rgb(19, 56, 189)'
+                        , padding: 5
+                        }
+                    }>
+                    <T style={textStyle}>{card.cardType}</T>
+                </View>
                 <T style={textStyle}>{card.redactedCardNumber}</T>
             </View>
         </View>
@@ -102,8 +127,9 @@ export class RemoveCardButton extends PureComponent {
         card: Card
     */
 
+    modal = null
+
     removeCard = () => {
-        /* TODO: Show popup asking for confirmation! */
         paymentStore.removeCard(this.props.card.cardNumber)
     }
 
@@ -115,7 +141,12 @@ export class RemoveCardButton extends PureComponent {
                 , height: 55
                 }
             }>
-            <TouchableOpacity onPress={this.removeCard}>
+            <SmallOkCancelModal
+                ref={ref => this.modal = ref}
+                message="Are you sure you want to remove this card?"
+                onConfirm={this.removeCard}
+                />
+            <TouchableOpacity onPress={() => this.modal.show()}>
                 <Icon name="times" size={35} color="rgb(184, 37, 17)" />
             </TouchableOpacity>
         </View>

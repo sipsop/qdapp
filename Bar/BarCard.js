@@ -5,15 +5,17 @@ import {
     TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions';
-import { transaction } from 'mobx'
+import { action, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
+
+import { SmallOkCancelModal } from '../Modals.js'
 import { PureComponent } from '../Component.js'
 import { T } from '../AppText.js'
 import { PhotoImage } from '../Maps/Photos.js'
-import { store, tabStore, mapStore } from '../Store.js'
+import { store, tabStore, mapStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
 import { barStore, getBarOpenTime } from './BarStore.js'
 import { config } from '../Config.js'
@@ -28,12 +30,18 @@ const log = _.logger('Bar/BarCard.js')
             bar info
     */
 
-    handleCardPress = () => {
-        transaction(() => {
-            barStore.setBarID(this.props.bar.id)
-            tabStore.setCurrentTab(1)
-        })
+    modal = null
 
+    handleCardPress = () => {
+        if (orderStore.orderList.length > 0 && this.props.bar.id !== barStore.barID)
+            this.modal.show()
+        else
+            this.setBar()
+    }
+
+    @action setBar = () => {
+        barStore.setBarID(this.props.bar.id)
+        tabStore.setCurrentTab(1)
     }
 
     render = () => {
@@ -54,9 +62,15 @@ const log = _.logger('Bar/BarCard.js')
 
         const { height, width } = Dimensions.get('screen')
 
-        log("Rendering bar card...", bar.photos)
+        const currentBar = barStore.getBar()
+        const currentBarName = currentBar ? currentBar.name : ""
 
         return <View style={{flex: 0, height: imageHeight, margin: 10, borderRadius: radius }}>
+            <SmallOkCancelModal
+                ref={ref => this.modal = ref}
+                message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
+                onConfirm={this.setBar}
+                />
             <TouchableOpacity onPress={this.handleCardPress} style={{flex: 2, borderRadius: radius}}>
                 <PhotoImage photo={bar.photos[0]} style={imageStyle}>
                     <View style={{flex: 1}}>
