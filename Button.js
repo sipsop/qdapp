@@ -21,6 +21,7 @@ export class LargeButton extends Component {
             if true, set a pink background color. Otherwise, set a white one.
         backgroundColor: str
         borderColor: str
+        textColor: str
     */
     static defaultProps = {
         primary: true,
@@ -49,6 +50,7 @@ export class TextButton extends Component {
         prominent: bool
         alignLeft: bool
         borderColor: str
+        textColor: str
     */
 
     static defaultProps = {
@@ -60,7 +62,7 @@ export class TextButton extends Component {
     }
 
     render = () => {
-        const textColor = this.props.prominent ? '#fff' : '#000'
+        const textColor = this.props.textColor || (this.props.prominent ? '#fff' : '#000')
         var text = <T ellipsizeMode='tail'
                         numberOfLines={1}
                         style={{fontSize: this.props.fontSize, color: textColor}}
@@ -104,10 +106,7 @@ export class Button extends Component {
                     ? { background: config.theme.primary.medium, border: config.theme.primary.dark }
                     : { background: config.theme.primary.dark, border: config.theme.primary.medium }
               )
-            : ( this.props.primary
-                    ? { background: '#fff', border: config.theme.primary.medium }
-                    : { background: '#fff', border: config.theme.primary.dark }
-              )
+            : {}
 
         if (this.props.backgroundColor)
             buttonStyle.background = this.props.backgroundColor

@@ -9,6 +9,7 @@ import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 import { LargeButton } from '../Button.js'
 import { logger } from '../Curry.js'
 import { paymentStore } from './PaymentStore.js'
+import { config } from '../Config.js'
 
 
 const log = logger('Payment/CardInput.js')
@@ -50,6 +51,9 @@ export class CardInput extends PureComponent {
                     label="Add a New Card"
                     onPress={this.scanCard}
                     style={largeButtonStyle}
+                    prominent={false}
+                    textColor={config.theme.addColor}
+                    borderColor={config.theme.addColor}
                     />
     }
 }

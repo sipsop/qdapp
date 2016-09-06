@@ -31,8 +31,10 @@ export const makeConfig = (primaryPalette, secondaryPalette) => {
 
 export const config = {
     theme: {
-        primary:    pinkPalette,
-        secondary:  purplePalette,
+        primary:        pinkPalette,
+        secondary:      purplePalette,
+        addColor:       'rgb(51, 162, 37)',
+        removeColor:    '#900',
     },
     nearbyCacheInfo: {
         nearbyRefreshAfter: 20 * Minute,

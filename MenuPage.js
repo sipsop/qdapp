@@ -349,8 +349,6 @@ const rowHeight = 55
 const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
-const RemoveColor = '#900'
-const AddColor = 'rgb(51, 162, 37)'
 
 // spy(console.log)
 
@@ -469,7 +467,7 @@ export class OrderSelection extends PureComponent {
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
                 {/*<Icon name="minus-circle" size={iconSize} color="#900" />*/}
-                <EvilIcon name="minus" size={iconSize} color={RemoveColor} />
+                <EvilIcon name="minus" size={iconSize} color={config.theme.removeColor} />
             </TouchableOpacity>
             <View style={{flex: 1, height: buttonHeight}}>
                 <PickerCollection
@@ -484,7 +482,7 @@ export class OrderSelection extends PureComponent {
                     style={{flex: 0, width: iconBoxSize, height: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}
                     >
                 {/*<Icon name="plus-circle" size={iconSize} color="rgb(51, 162, 37)" />*/}
-                <EvilIcon name="plus" size={iconSize} color={AddColor} />
+                <EvilIcon name="plus" size={iconSize} color={config.theme.addColor} />
             </TouchableOpacity>
          </View>
     }
