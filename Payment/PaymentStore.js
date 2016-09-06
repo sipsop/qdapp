@@ -23,19 +23,19 @@ export type CardState = {
 const log = logger('Payment/PaymentStore.sj')
 
 class PaymentStore {
-    @observable cards        : Array<Card> = []
-    @observable selectedCard : ?Int = null
+    @observable cards               : Array<Card> = []
+    @observable selectedCardNumber  : String = null
 
     getState = () : CardState => {
         return {
-            cards:        this.cards,
-            selectedCard: this.selectedCard
+            cards:              this.cards,
+            selectedCardNumber: this.selectedCardNumber,
         }
     }
 
     @action setState = (cardState : CardState) => {
         this.cards = cardState.cards
-        this.selectedCard = cardState.selectedCard
+        this.selectedCardNumber = cardState.selectedCardNumber
     }
 
     @action addCard = (card : Card) => {
@@ -43,21 +43,25 @@ class PaymentStore {
             const existingCard = this.cards[i]
             if (existingCard.cardNumber === card.cardNumber) {
                 this.cards[i] = card
-                this.selectCard(i)
+                this.selectCard(card.cardNumber)
                 return
             }
         }
-        log("Pushing card...")
         this.cards.push(card)
-        this.selectCard(this.cards.length - 1)
+        this.selectCard(card.cardNumber)
     }
 
     @action removeCard = (cardNumber : String) => {
         const i = this.findCard(cardNumber)
         if (i !== -1) {
             this.cards.splice(i, 1)
-            if (this.selectedCard === i)
+            if (this.selectedCardNumber === cardNumber)
                 this.deselectCard()
+        }
+        log("SHOULD I SET THE CARD NUMBER?", this.selectedCardNumber, this.cards.length > 0)
+        if (this.selectedCardNumber == null && this.cards.length > 0) {
+            log("SETTING CARD NUMBER")
+            this.selectCard(this.cards[0].cardNumber)
         }
     }
 
@@ -69,12 +73,22 @@ class PaymentStore {
         return -1
     }
 
-    @action selectCard = (i : Int) => {
-        this.selectedCard = i
+    isSelected = (i : Int) => {
+        if (i >= this.cards.length)
+            return false
+        return this.cards[i].cardNumber === this.selectedCardNumber
+    }
+
+    @action selectCardByOffset = (i : Int) => {
+        this.selectCard(this.cards[i].cardNumber)
+    }
+
+    @action selectCard = (cardNumber : String) => {
+        this.selectedCardNumber = cardNumber
     }
 
     @action deselectCard = () => {
-        this.selectedCard = null
+        this.selectCard(null)
     }
 }
 

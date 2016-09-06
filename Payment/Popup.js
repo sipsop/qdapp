@@ -57,14 +57,6 @@ export class Popup extends PureComponent {
 
 @observer
 export class CreditCardList extends PureComponent {
-    isSelected = (i : Int) => {
-        return paymentStore.selectedCard === i
-    }
-
-    onSelect = (i : Int) => {
-        paymentStore.selectCard(i)
-    }
-
     render = () => {
         const addCardStyle =
             paymentStore.cards.length === 0
@@ -73,9 +65,9 @@ export class CreditCardList extends PureComponent {
 
         return <View>
             <Selector
-                isSelected={this.isSelected}
-                onSelect={this.onSelect}
-                >
+                    isSelected={paymentStore.isSelected}
+                    onSelect={paymentStore.selectCardByOffset}
+                    >
                 {
                     paymentStore.cards.map(
                         card => <CreditCard key={card.cardNumber} card={card} />
