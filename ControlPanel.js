@@ -11,9 +11,10 @@ import { T } from './AppText.js'
 import { loginStore } from './Store.js'
 import { drawerStore } from './SideMenu.js'
 import { SmallOkCancelModal } from './Modals.js'
+import { config } from './Config.js'
 import * as _ from './Curry.js'
 
-const icon = iconName => <Icon name={iconName} size={30} />
+const icon = (iconName, color="#000") => <Icon name={iconName} size={30} color={color} />
 
 const { log, assert } = _.utils('./ControlPanel.js')
 assert(drawerStore != null, 'drawerStore is null')
@@ -27,9 +28,9 @@ export class ControlPanel extends PureComponent {
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
-            <RowTextButton text="Recent Orders" icon={icon("cog")} />
-            <RowTextButton text="Payment" icon={icon("cog")} />
-            <RowTextButton text="Settings" icon={icon("cog")} />
+            <RowTextButton text="Recent Orders" icon={icon("glass", config.theme.primary.dark)} />
+            <RowTextButton text="Payment" icon={icon("credit-card", "rgb(19, 58, 194)")} />
+            <RowTextButton text="Settings" icon={icon("cog", "rgba(0, 0, 0, 0.60)")} />
             <SmallOkCancelModal
                 ref={ref => this.modal = ref}
                 message="Sign out?"
@@ -40,9 +41,8 @@ export class ControlPanel extends PureComponent {
                 loginStore.isLoggedIn
                     ? <RowTextButton
                         text="Sign Out"
-                        icon={icon("sign-out")}
+                        icon={icon("sign-out", config.theme.removeColor)}
                         onPress={() => {
-                            log("Signing out?")
                             drawerStore.disable()
                             this.modal.show()
                         }}

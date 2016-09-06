@@ -28,7 +28,7 @@ export class RowButton extends PureComponent {
                     onPress={this.props.onPress}
                     >
                 <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View style={{width: 40, height: rowHeight, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{width: 55, height: rowHeight, justifyContent: 'center', alignItems: 'center'}}>
                         {this.props.icon}
                     </View>
                     <View style={{flex: 1, justifyContent: 'center'}}>

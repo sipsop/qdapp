@@ -313,11 +313,10 @@ top_option = MenuItemOption(
     name="Top",
     optionType=OptionType.AtMostOne,
     optionList=[
+        "tops (lemonade)",
         "shandy",
         "lime",
         "blackcurrant",
-        "some other top",
-        "more options here",
     ], #+ ["x%d" % i for i in range(100)],
     prices=[
         zero,
