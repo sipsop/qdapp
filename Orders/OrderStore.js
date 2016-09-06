@@ -67,6 +67,10 @@ class OrderStore {
         this.setOrderList([])
     }
 
+    @computed get currency() {
+        return 'Sterling'
+    }
+
     /*********************************************************************/
 
     /* Compute the price for all the selected options */

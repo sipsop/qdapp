@@ -8,21 +8,16 @@ import * as _ from './Curry.js'
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
 import { barStore } from './Bar/BarStore.js'
-import { orderStore } from './Orders/Orders.js'
+import { orderStore } from './Orders/OrderStore.js'
 import { loginStore } from './Login.js'
 import { mapStore } from './Maps/MapStore.js'
 import { paymentStore } from './Payment/PaymentStore.js'
 
+const log = _.logger('Store.js')
+
 export class Store {
 
     constructor() {
-        _.safeAutorun(() => {
-            if (barStore.allMenuItems.length === 0)
-                return
-            this.setOrderList(
-                barStore.allMenuItems.map(menuItem => [menuItem.id, []])
-            )
-        })
         this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.saveToLocalStorage, 5000)
@@ -45,7 +40,7 @@ export class Store {
     loadFromLocalStorage = async () => {
         const savedState = await cache.get('qd:state', () => null)
         if (savedState) {
-            // console.log("Restoring state...", savedState)
+            // log("Restoring state...", savedState)
             await this.setState(savedState)
         }
     }
@@ -57,8 +52,8 @@ export class Store {
             await tabStore.setState(state.tabState)
         if (state.loginState)
             loginStore.setState(state.loginState)
-        // if (state.orderState)
-        //     orderStore.setState(state.orderState)
+        if (state.orderState)
+            orderStore.setState(state.orderState)
         if (state.mapState)
             mapStore.setState(state.mapState)
         if (state.payState)
@@ -66,28 +61,28 @@ export class Store {
     })
 
     getState = () => {
-        return {
+        return _.asData({
             barState:   barStore.getState(),
             tabState:   tabStore.getState(),
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
             mapState:   mapStore.getState(),
             payState:   paymentStore.getState(),
-        }
+        })
     }
 
     saveToLocalStorage = _.logErrors(async () => {
         const state = this.getState()
         if (!_.deepEqual(state, this.previousState)) {
-            // console.log("Saving state...", state)
+            // log("Saving state now...", state)
             this.previousState = state
             await cache.set('qd:state', state)
         }
-        setTimeout(this.saveToLocalStorage, 3000)
+        setTimeout(this.saveToLocalStorage, 1000)
     })
 }
 
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore, barStore, loginStore, mapStore }
+export { favStore, tabStore, barStore, loginStore, mapStore, orderStore }

@@ -12,7 +12,7 @@ import { observer } from 'mobx-react/native'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { Popup } from '../Payment/Popup.js'
-import { store, tabStore } from '../Store.js'
+import { store, tabStore, orderStore } from '../Store.js'
 import { config } from '../Config.js'
 
 const largeButtonStyle = {
@@ -26,7 +26,7 @@ export class OrderPage extends Component {
     @observable popupVisible = false
 
     render = () => {
-        if (store.menuItemsOnOrder.length > 0)
+        if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()
     }
@@ -39,7 +39,7 @@ export class OrderPage extends Component {
                 />
             <ScrollView style={{flex: 1}}>
                 {
-                    store.menuItemsOnOrder.map(
+                    orderStore.menuItemsOnOrder.map(
                         menuItem =>
                             <MenuItem
                                 key={menuItem.id}
