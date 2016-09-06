@@ -1,5 +1,8 @@
 import Auth0Lock from 'react-native-lock'
-import { observable, action } from 'mobx'
+import { observable, action, computed } from 'mobx'
+import * as _ from './Curry.js'
+
+const log = _.logger('Login.js')
 
 var lock = new Auth0Lock({
     clientId: 'phA8QFWKknNtcDwVefccBf82sIp4bw6c',
@@ -50,6 +53,7 @@ class LoginStore {
     }
 
     @action logout = () => {
+        log("LOGGING OUT")
         this.setLoginInfo(null, null)
     }
 
@@ -58,19 +62,19 @@ class LoginStore {
         this.userToken = userToken
     }
 
-    isLoggedIn = () => {
+    @computed get isLoggedIn() {
         return !!this.userToken
     }
 
-    get userName() {
+    @computed get userName() {
         return this.profile ? this.profile.nickname : null
     }
 
-    get email() {
+    @computed get email() {
         return this.profile ? this.profile.email : null
     }
 
-    get picture() {
+    @computed get picture() {
         return this.profile ? this.profile.picture : null
     }
 }

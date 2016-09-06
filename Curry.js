@@ -327,6 +327,23 @@ export const flatten = /*<T>*/(xss : Array<Array<T>>) : Array<T> => {
     return result
 }
 
+export const makeAssert = (modname : String) => {
+    return (val, message = "Expected true, got false") => {
+        assert(val, `${modname}: ${message}`)
+    }
+}
+
+export const assert = (val : Bool, message : String = "Expected true, got false") => {
+    if (!val)
+        throw Error(message)
+}
+
+export const utils = (modname : String) => {
+    return {
+        assert: makeAssert(modname),
+        log:    logger(modname),
+    }
+}
 
 export const deepEqual = _.isEqual
 export const intersection = _.intersection

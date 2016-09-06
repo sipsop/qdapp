@@ -6,8 +6,6 @@ import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-// import { TabBar } from './TabBar.js'
-import { MenuIcon } from './SideMenu.js'
 import { PureComponent } from './Component.js'
 import { safeAutorun } from './Curry.js'
 import { config } from './Config.js'

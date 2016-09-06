@@ -24,7 +24,8 @@ const white = 'rgba(255, 255, 255, 1.0)'
 
 const log = _.logger('Bar/BarCard.js')
 
-@observer export class BarCard extends PureComponent {
+@observer
+export class BarCard extends PureComponent {
     /* properties:
         bar: schema.Bar
             bar info

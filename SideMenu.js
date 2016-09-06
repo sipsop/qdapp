@@ -28,6 +28,7 @@ export class SideMenu extends PureComponent {
                     openDrawerOffset={0.25}
                     panCloseMask={0.25}
                     styles={drawerStyles}
+                    disabled={drawerStore.disabled}
                     tweenHandler={Drawer.tweenPresets.parallax}
                     tapToClose={true}
                     /*elevation={2}*/
@@ -48,9 +49,13 @@ export class MenuIcon extends PureComponent {
 
 class DrawerStore {
     @observable open = false
+    @observable disabled = false
 
-    setOpen = () => this.open = true
-    setClosed = () => this.open = false
+    @action disable = () => this.disabled = true
+    @action enable = () => this.disabled = false
+
+    @action setOpen = () => this.open = true
+    @action setClosed = () => this.open = false
 
     toggleOpenClose = () => {
         this.open = !this.open

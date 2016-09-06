@@ -9,6 +9,10 @@ export class PrimaryButton extends PureComponent {
             textColor: config.theme.primary.medium,
             prominent: false,
             borderWidth: 0,
+            style: {
+                minWidth: 70,
+                minHeight: 55,
+            }
         }
         return <LargeButton {...props} />
     }
@@ -21,6 +25,8 @@ export class SecondaryButton extends PureComponent {
             textColor: config.theme.primary.dark,
             prominent: false,
             borderWidth: 0,
+            minWidth: 70,
+            minHeight: 55,
         }
         return <LargeButton {...props} />
     }

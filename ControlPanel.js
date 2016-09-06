@@ -9,25 +9,43 @@ import { PureComponent } from './Component.js'
 import { RowTextButton } from './Rows.js'
 import { T } from './AppText.js'
 import { loginStore } from './Store.js'
-
-
+import { drawerStore } from './SideMenu.js'
+import { SmallOkCancelModal } from './Modals.js'
+import * as _ from './Curry.js'
 
 const icon = iconName => <Icon name={iconName} size={30} />
 
+const { log, assert } = _.utils('./ControlPanel.js')
+assert(drawerStore != null, 'drawerStore is null')
+
+
 @observer
 export class ControlPanel extends PureComponent {
+
+    modal = null
+
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
-            <RowTextButton text="Orders" icon={icon("cog")} />
+            <RowTextButton text="Recent Orders" icon={icon("cog")} />
             <RowTextButton text="Payment" icon={icon("cog")} />
             <RowTextButton text="Settings" icon={icon("cog")} />
+            <SmallOkCancelModal
+                ref={ref => this.modal = ref}
+                message="Sign out?"
+                onConfirm={loginStore.logout}
+                onClose={() => drawerStore.enable()}
+                />
             {
-                loginStore.isLoggedIn()
+                loginStore.isLoggedIn
                     ? <RowTextButton
                         text="Sign Out"
                         icon={icon("sign-out")}
-                        onPress={loginStore.logout}
+                        onPress={() => {
+                            log("Signing out?")
+                            drawerStore.disable()
+                            this.modal.show()
+                        }}
                         />
                     : undefined
             }
@@ -38,7 +56,7 @@ export class ControlPanel extends PureComponent {
 @observer
 class LoginInfo extends PureComponent {
     render = () => {
-        return loginStore.isLoggedIn()
+        return loginStore.isLoggedIn
             ? this.renderLoggedIn()
             : this.renderLoggedOut()
     }

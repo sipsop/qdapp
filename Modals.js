@@ -1,15 +1,18 @@
 import { React, Component, View, Modal, PureComponent, T } from './Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
+import * as _ from './Curry.js'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+const log = _.logger('./Modals.js')
 
 @observer
 export class SmallOkCancelModal extends PureComponent {
     /* properties:
         message: String
         onConfirm: ?() => void
+        onClose: () => void
         okLabel: String
         cancelLabel
     */
@@ -22,6 +25,8 @@ export class SmallOkCancelModal extends PureComponent {
 
     @action close = () => {
         this.visible = false
+        if (this.props.onClose)
+            this.props.onClose()
     }
 
     @action confirm = () => {
