@@ -58,9 +58,7 @@ class PaymentStore {
             if (this.selectedCardNumber === cardNumber)
                 this.deselectCard()
         }
-        log("SHOULD I SET THE CARD NUMBER?", this.selectedCardNumber, this.cards.length > 0)
         if (this.selectedCardNumber == null && this.cards.length > 0) {
-            log("SETTING CARD NUMBER")
             this.selectCard(this.cards[0].cardNumber)
         }
     }

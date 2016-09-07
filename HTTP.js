@@ -17,7 +17,7 @@ import { PureComponent } from './Component.js'
 import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
-import { all, any } from './Curry.js'
+import * as _ from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
 
@@ -109,11 +109,11 @@ class CombinedDownloadResult<T> {
     }
 
     @computed get state() {
-        if (any(this.downloadResults.map(result => result.state === 'Error')))
+        if (_.any(this.downloadResults.map(result => result.state === 'Error')))
             return 'Error'
-        if (any(this.downloadResults.map(result => result.state === 'InProgress')))
+        if (_.any(this.downloadResults.map(result => result.state === 'InProgress')))
             return 'InProgress'
-        if (all(this.downloadResults.map(result => result.state === 'Finished')))
+        if (_.all(this.downloadResults.map(result => result.state === 'Finished')))
             return 'Finished'
         return 'NotStarted'
     }
@@ -304,7 +304,7 @@ const _fetchJSON = async /*<T>*/(
     try {
         console.log("Starting fetch...", url, httpOptions)
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
-        response = await timeout(downloadTimeout, fetchPromise)
+        response = await _.timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)
     } catch (err) {
         throw new NetworkError(err.message)
@@ -314,41 +314,3 @@ const _fetchJSON = async /*<T>*/(
     }
     return await response.json()
 }
-
-
-/************/
-/* Promises */
-/************/
-
-const timedout = { timedout: true }
-
-const timeoutPromise = (timeout, callback) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(callback()), timeout)
-    })
-}
-
-const timeoutError = (timeout) => {
-    return timeoutPromise(timeout, () => {
-        return timedout
-    })
-}
-
-/* Set a timeout for an asynchronous callback */
-const timeout = async (timeout, promise) => {
-    const tPromise = timeoutError(timeout)
-    const result = await Promise.race([tPromise, promise])
-    if (result == timedout) {
-        console.log("download timed out...")
-        throw new TimeoutError()
-    }
-    return result
-}
-
-const promise = f => new Promise((resolve, reject) => {
-    try {
-        resolve(f())
-    } catch (err) {
-        reject(err)
-    }
-})

@@ -353,3 +353,42 @@ export const union = _.union
 export const clone = _.clone
 export const sum = xs => fold((x, y) => x + y, 0, xs)
 export const product = xs => fold((x, y) => x * y, 1, xs)
+
+/*********************** Async Stuff ******************************/
+
+export const promise = f => {
+    return (...args) => {
+        new Promise((resolve, reject) => {
+            try {
+                resolve(f(...args))
+            } catch (err) {
+                reject(err)
+            }
+        })
+    }
+}
+
+const timedout = { timedout: true }
+
+const timeoutPromise = (timeout, callback) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(callback()), timeout)
+    })
+}
+
+const timeoutError = (timeout) => {
+    return timeoutPromise(timeout, () => {
+        return timedout
+    })
+}
+
+/* Set a timeout for an asynchronous callback */
+export const timeout = async (timeout, promise) => {
+    const tPromise = timeoutError(timeout)
+    const result = await Promise.race([tPromise, promise])
+    if (result == timedout) {
+        console.log("download timed out...")
+        throw new TimeoutError()
+    }
+    return result
+}
