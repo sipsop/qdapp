@@ -240,21 +240,24 @@ drinks:
                 
         ###White
 
-        saugvignonBlanc:
-            name: Saugvignon Blanc
-            desc: |
-                Saugvignon Blanc is popular white wine in the UK, great with food.
+        sauvignonBlanc:
+            name: Sauvignon Blanc or Fume Blanc
+            desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
+            abv: 10% to 13% 
             tags: |
                 #wine
                 #white
                 #popular
                 #dry
+                #fruity
+                #tropicalflavour 
                 #acidic
                 #crisp
        
         pinotGrigio:
             name: Pinot Grigio or Pinot Gris
-            desc: A popular refreshing and zesty white wine. 
+            desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine. 
+            abv: 11.5% to 13%
             tags: |
                 #white
                 #light
@@ -266,8 +269,10 @@ drinks:
         chardonnay:
             name: Chardonnay
             desc: This is the wolrd most famous white wine. 
+            abv: 13% to 14.5%
             tags: |
                 #white
+                #wine
                 #crisp
                 #fruity
                 #oak
@@ -275,17 +280,19 @@ drinks:
        
         riesling:
             name: Riesling
-            desc: An aromatic refreshing white wine with a flavour of apples and usually sweet. 
+            desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry. 
+            abv: 6% to 8% (German) and 10.5 to 12.5% (American, Austrian and Australian)
             tags: |
                 #light
                 #fresh
                 #white
-                #mildlysweet
+                #sweet
                 #acidic
                 #apple
                 #crisp
                 #acidic
                 #floral
+                #intensemineral 
     
         cheninBlanc:
             name: Chenin Blanc
@@ -299,14 +306,69 @@ drinks:
         moscato:        
             name: Moascato or Muscat
             desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
+            abv: 5% to 7% 
             tags: |
                 #sweet
+                #fruity
                 #white
+                #wine
                 #dessert
+                #honey
                 #acidic
                 #citrus
         
+        gewurztraminer:
+            name: Gewurztraminer
+            desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine. 
+            abv: 11.5% to 15%
+            tags: |
+                #wine
+                #white
+                #lychees 
+                #grapefruit
+                #pineapple
+                #fruity
+                #spice
+                #herbs
+                #fullbodied
+                #rose 
+                #aciditymediumlow
         
+        viognier:
+            name: Viognier
+            desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.  
+            abv: 13.5% to 15% 
+            tags: |
+                #wine
+                #white
+                #tropicalaroma
+                #flatinnose
+                #crisp 
+                #dry
+                #lowacidity 
+        
+        semillon:
+            name: Semillon 
+            desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.  
+            abv: 11.5% to 13.5%
+            tags: | 
+                #white
+                #wine
+                #dry
+                #fruity 
+                #citrus
+                #oak
+                #fullbodied
+                #zesty
+                #lemon
+                #lime
+                #rich
+                #creamy
+                #lanolin
+                #mediumacidity
+                
+                
+                
         # wine, rose
 
         grenache:
