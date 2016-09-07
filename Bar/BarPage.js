@@ -198,10 +198,7 @@ class BarView extends Page {
 @observer
 export class LazyBarHeader extends PureComponent {
     render = () => {
-        return <LazyComponent
-                    timeout={0}
-                    style={{height: this.props.imageHeight}}
-                    >
+        return <LazyComponent style={{height: this.props.imageHeight}}>
             <BarHeader {...this.props} />
         </LazyComponent>
     }
@@ -232,37 +229,71 @@ export class BarHeader extends PureComponent {
                 autoplay={this.autoplay}
                 autoplayTimeout={timeout}
                 >
-                {bar.photos.map((photo, i) =>
-                    <PhotoImage
-                        key={photo.url}
-                        photo={photo}
-                        style={{flex: 1, height: imageHeight}}
-                        >
-                        {
-                            this.props.showBackButton
-                                ? <TouchableOpacity onPress={this.props.onBack}>
-                                    <View style={
-                                            { width: 55
-                                            , height: 55
-                                            , justifyContent: 'center'
-                                            , alignItems: 'center'
-                                            }
-                                        }>
-                                        <MaterialIcon name="arrow-back" size={30} color='#fff' />
-                                  </View>
-                                  </TouchableOpacity>
-                                : <View style={{flex: 1}} />
-                        }
-                        <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                            <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                                <BarCardFooter bar={bar} showMapButton={false} />
-                            </View>
-                        </LinearGradient>
-                    </PhotoImage>
+                {
+                    bar.photos.map((photo, i) =>
+                        <BarPhoto
+                            key={photo.url}
+                            bar={bar}
+                            photo={photo}
+                            timeout={i === 0 ? 0 : 1000}
+                            {...this.props}
+                            />
                     )
                 }
             </ImageSwiper>
         )
+    }
+}
+
+@observer
+export class LazyBarPhoto extends PureComponent {
+    render = () => {
+        return <LazyComponent
+                    timeout={this.props.timeout || 0}
+                    style={{height: this.props.imageHeight}}
+                    >
+            <BarPhoto {...this.props} />
+        </LazyComponent>
+    }
+}
+
+@observer
+export class BarPhoto extends PureComponent {
+    /* properties:
+        photo: Photo
+        bar: Bar
+        imageHeight: Int
+        showBackButton: Bool
+        onBack: () => void
+    */
+    render = () => {
+        const photo = this.props.photo
+        return <PhotoImage
+                    key={photo.url}
+                    photo={photo}
+                    style={{flex: 0, height: this.props.imageHeight}}
+                    >
+            {
+                this.props.showBackButton
+                    ? <TouchableOpacity onPress={this.props.onBack}>
+                        <View style={
+                                { width: 55
+                                , height: 55
+                                , justifyContent: 'center'
+                                , alignItems: 'center'
+                                }
+                            }>
+                            <MaterialIcon name="arrow-back" size={30} color='#fff' />
+                        </View>
+                      </TouchableOpacity>
+                    : <View style={{flex: 1}} />
+            }
+            <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
+                <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                    <BarCardFooter bar={this.props.bar} showMapButton={false} />
+                </View>
+            </LinearGradient>
+        </PhotoImage>
     }
 }
 
