@@ -11,6 +11,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { BarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
 
+import { LazyComponent } from '../LazyComponent.js'
 import { DownloadResultView } from '../HTTP.js'
 import { PhotoImage } from '../Maps/Photos.js'
 import { Page } from '../Page.js'
@@ -91,7 +92,7 @@ class BarView extends Page {
 
         return (
             <ScrollView>
-                <BarHeader
+                <LazyBarHeader
                     bar={this.props.bar}
                     imageHeight={300}
                     showBackButton={false}
@@ -194,6 +195,19 @@ class BarView extends Page {
     }
 }
 
+@observer
+export class LazyBarHeader extends PureComponent {
+    render = () => {
+        return <LazyComponent
+                    timeout={0}
+                    style={{height: this.props.imageHeight}}
+                    >
+            <BarHeader {...this.props} />
+        </LazyComponent>
+    }
+}
+
+@observer
 export class BarHeader extends PureComponent {
     /* properties:
         imageHeight: Int
@@ -257,6 +271,7 @@ const formatAddress = (address) => {
     // return `${address.number} ${address.street}, ${address.city}, ${address.postcode}`
 }
 
+@observer
 class InfoItem extends PureComponent {
     /* properties:
         iconName: str

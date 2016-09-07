@@ -6,7 +6,7 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { BarHeader } from '../Bar/BarPage.js'
+import { LazyBarHeader } from '../Bar/BarPage.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
@@ -42,7 +42,7 @@ export class Popup extends PureComponent {
                     okLabel={`Pay Now (${orderStore.totalText})`}
                     >
                 <View style={{flex: 1}}>
-                    <BarHeader
+                    <LazyBarHeader
                         bar={barStore.getBar()}
                         imageHeight={250}
                         showBackButton={true}
