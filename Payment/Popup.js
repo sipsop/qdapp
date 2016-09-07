@@ -38,17 +38,24 @@ export class Popup extends PureComponent {
                     showOkButton={true}
                     cancelModal={this.props.onClose}
                     okModal={this.props.onClose}
-                    okLabel="Pay Now"
+                    okLabel={`Pay Now (${orderStore.totalText})`}
                     >
             <ScrollView>
                 <View style={{flex: 1}}>
-                    <BarHeader bar={barStore.getBar()} imageHeight={200} />
+                    <BarHeader
+                        bar={barStore.getBar()}
+                        imageHeight={250}
+                        showBackButton={true}
+                        onBack={this.props.onClose}
+                        />
+                    {/*
                     <Header>
                         <View style={{flexDirection: 'row'}}>
                             <HeaderText style={{flex: 1, ...textStyle}}>Total:</HeaderText>
                             <HeaderText style={{flex: 1, ...textStyle}}>{orderStore.totalText}</HeaderText>
                         </View>
                     </Header>
+                    */}
                     <CreditCardList />
                 </View>
             </ScrollView>

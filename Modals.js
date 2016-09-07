@@ -125,24 +125,29 @@ export class OkCancelModal extends PureComponent {
         okModal: () => void
         children: [Component]
         showOkButton: bool
+        showCancelButton: bool
         okLabel: String
             label to show on the Ok button
         cancelLabel
     */
 
     render = () => {
-        const cancelButton = <LargeButton
-            label={this.props.cancelLabel || 'Cancel'}
-            onPress={this.props.cancelModal}
-            primary={false}
-            style={{flex: 1, margin: 5, height: 55 }}
-            />
+        var cancelButton = undefined
+        if (this.props.showCancelButton) {
+            cancelButton = <LargeButton
+                label={this.props.cancelLabel || 'Cancel'}
+                onPress={this.props.cancelModal}
+                primary={false}
+                style={{flex: 1, margin: 5, height: 55}}
+                />
+        }
+
         var okButton = undefined
         if (this.props.showOkButton) {
             okButton = <LargeButton
                 label={this.props.okLabel || 'Ok'}
                 onPress={this.props.okModal}
-                style={{flex: 1, margin: 5}}
+                style={{flex: 1, margin: 5, height: 55}}
                 />
         }
 

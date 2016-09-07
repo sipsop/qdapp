@@ -1,13 +1,12 @@
 import {
     React, Component, Image, View, ScrollView, TouchableOpacity,
-    PureComponent, T,
+    PureComponent, T, Icon, MaterialIcon,
 } from '../Component.js'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
 import { observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
-import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { BarMenu } from './BarMenu.js'
 import { BarCardFooter } from './BarCard.js'
@@ -92,7 +91,11 @@ class BarView extends Page {
 
         return (
             <ScrollView>
-                <BarHeader bar={this.props.bar} imageHeight={300} />
+                <BarHeader
+                    bar={this.props.bar}
+                    imageHeight={300}
+                    showBackButton={false}
+                    />
                 {/*
                 <LinearGradient
                         style={
@@ -194,6 +197,8 @@ class BarView extends Page {
 export class BarHeader extends PureComponent {
     /* properties:
         imageHeight: Int
+        showBackButton: Bool
+        onBack: () => void
     */
     render = () => {
         const bar = this.props.bar
@@ -219,7 +224,21 @@ export class BarHeader extends PureComponent {
                         photo={photo}
                         style={{flex: 1, height: imageHeight}}
                         >
-                        <View style={{flex: 1}} />
+                        {
+                            this.props.showBackButton
+                                ? <TouchableOpacity onPress={this.props.onBack}>
+                                    <View style={
+                                            { width: 55
+                                            , height: 55
+                                            , justifyContent: 'center'
+                                            , alignItems: 'center'
+                                            }
+                                        }>
+                                        <MaterialIcon name="arrow-back" size={30} color='#fff' />
+                                  </View>
+                                  </TouchableOpacity>
+                                : <View style={{flex: 1}} />
+                        }
                         <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
                             <View style={{flex: 1, justifyContent: 'flex-end'}}>
                                 <BarCardFooter bar={bar} showMapButton={false} />

@@ -113,6 +113,9 @@ export class TagStore {
     }
 
     @computed get tagNames() {
+        if (!this.tags)
+            return new Map()
+    
         const tagNames = this.tags.tagInfo.map(
             tagInfo => [tagInfo.tagID, tagInfo.tagName])
         return new Map(tagNames)

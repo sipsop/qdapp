@@ -15,6 +15,7 @@ import {
 import Dimensions from 'Dimensions'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 class PureComponent extends Component {
@@ -85,4 +86,5 @@ export {
     /* External */
     Icon,
     EvilIcon,
+    MaterialIcon,
 }
