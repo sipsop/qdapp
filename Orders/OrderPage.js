@@ -9,6 +9,7 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { Page } from '../Page.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { Popup } from '../Payment/Popup.js'
@@ -21,7 +22,7 @@ const largeButtonStyle = {
 }
 
 @observer
-export class OrderPage extends Component {
+export class OrderPage extends Page {
 
     @observable popupVisible = false
 
@@ -29,7 +30,7 @@ export class OrderPage extends Component {
         this.popupVisible = true
     }
 
-    render = () => {
+    renderView = () => {
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()

@@ -6,6 +6,7 @@ import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 // import { PureComponent } from './Component.js'
+import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { T } from './AppText.js'
@@ -149,6 +150,7 @@ export class PickerCollection extends PureComponent {
                     confirmImmediately={!this.showOkButton}
                     confirmSelection={this.okModal}
                     useListView={this.props.useListView}
+                    lazyLoad={i > 0}
                     />
         )
         if (this.props.useListView)
@@ -168,6 +170,8 @@ class PickerItemView extends PureComponent {
         confirmSelection() -> void
             confirm a new selection by closing the modal
         useListView: bool
+        lazyLoad: bool
+            whether to load the view asynchronously
     */
 
     @computed get selectedOptions() {
@@ -200,22 +204,26 @@ class PickerItemView extends PureComponent {
         return (
             <View style={{flex: flex, alignItems: 'stretch'}}>
                 <TextHeader label={pickerItem.title} />
-                <Selector
-                        isSelected={this.isSelected}
-                        onSelect={this.handleItemChange}
-                        useListView={this.props.useListView}
-                        >
-                    {
-                        pickerItem.labels.map(
-                            (label, i) =>
-                                <LabelView
-                                    key={i}
-                                    label={label}
-                                    price={pickerItem.prices[i]}
-                                    />
-                        )
-                    }
-                </Selector>
+                {
+                    lazyWrap(this.props.lazyLoad,
+                        <Selector
+                            isSelected={this.isSelected}
+                            onSelect={this.handleItemChange}
+                            useListView={this.props.useListView}
+                            >
+                            {
+                                pickerItem.labels.map(
+                                    (label, i) =>
+                                        <LabelView
+                                            key={i}
+                                            label={label}
+                                            price={pickerItem.prices[i]}
+                                            />
+                                )
+                            }
+                        </Selector>
+                    )
+                }
             </View>
         )
     }

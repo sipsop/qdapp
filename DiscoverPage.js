@@ -9,6 +9,7 @@ import {
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { Page } from './Page.js'
 import { MapView } from './Maps/MapView.js'
 import { BarCard } from './Bar/BarCard.js'
 import { DownloadResultView } from './HTTP.js'
@@ -35,7 +36,7 @@ export class DiscoverPage extends DownloadResultView {
 }
 
 @observer
-export class DiscoverView extends PureComponent {
+export class DiscoverView extends Page {
     constructor(props) {
         super(props)
         this.ds = new ListView.DataSource({
@@ -58,7 +59,7 @@ export class DiscoverView extends PureComponent {
         return this.ds.cloneWithRows(this.rows)
     }
 
-    render = () => {
+    renderView = () => {
         return <ListView
                     ref={this.saveScrollView}
                     dataSource={this.dataSource}

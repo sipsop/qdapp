@@ -30,12 +30,26 @@ export class LazyComponent extends PureComponent {
     }
 
     render = () => {
-        return <View style={this.props.style}>
-            {
-                this.state.loaded
-                    ? this.props.children
-                    : <Loader />
-            }
+        const children = this.props.children
+        if (this.state.loaded) {
+            if (Array.isArray(children))
+                return <View style={this.props.style}>{this.props.children}</View>
+            return children
+        }
+
+        const style = this.props.style || {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        }
+        return <View style={style}>
+            <Loader />
         </View>
     }
+}
+
+export const lazyWrap = (lazy : bool, component : Component) : Component => {
+    if (lazy)
+        return <LazyComponent>{component}</LazyComponent>
+    return component
 }

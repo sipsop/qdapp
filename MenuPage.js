@@ -54,7 +54,7 @@ export class MenuPage extends BarPageFetcher {
 
 @observer
 export class MenuView extends Page {
-    render = () => {
+    renderView = () => {
         return <View style={{flex: 1}}>
             <ScrollView style={{flex: 1}}>
                 <TagView>
