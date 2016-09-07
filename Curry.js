@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import { autorun } from 'mobx'
 
+export const DEV = true
+
 /*********************** Error Handling ******************************/
 
 /* Force a MobX value to a javascript object */

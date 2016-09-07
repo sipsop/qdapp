@@ -1,6 +1,6 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView,
-    T, PureComponent
+    T, Mono, PureComponent
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -101,7 +101,9 @@ export class CreditCard extends PureComponent {
                 , paddingRight: 10
                 }
             }>
-                {getCreditCardIcon(this.props.card.cardNumber)}
+                <View style={{alignItems: 'center', minWidth: 60}}>
+                    {getCreditCardIcon(this.props.card.cardNumber)}
+                </View>
                 {/*
                 <View style={
                         { justifyContent: 'center'
@@ -114,7 +116,12 @@ export class CreditCard extends PureComponent {
                     <T style={textStyle}>{card.cardType}</T>
                 </View>
                 */}
-                <T style={textStyle}>{card.redactedCardNumber}</T>
+                <View style={{flex: 3, flexDirection: 'row'}}>
+                    <T style={{flex: 1, textAlign: 'right', ...textStyle}}>•••• •••• ••••</T>
+                    <T style={{width: 70, ...textStyle, textAlign: 'center'}}>
+                        {' ' + card.cardNumber.slice(card.cardNumber.length - 4)}
+                    </T>
+                </View>
             </View>
         </View>
     }

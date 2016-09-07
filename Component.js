@@ -42,6 +42,25 @@ class T extends PureComponent {
     }
 }
 
+
+class Mono extends PureComponent {
+    /* properties:
+        style
+        numberOfLines
+        ellipsizeMode
+    */
+    render = () => {
+        const style = {fontFamily: "robotomono", ...this.props.style}
+        return <Text
+            style={style}
+            numberOfLines={this.props.numberOfLines}
+            ellipsizeMode={this.props.ellipsizeMode}
+            >
+            {this.props.children}
+        </Text>
+    }
+}
+
 export {
     /* React */
     React,
@@ -62,6 +81,7 @@ export {
     /* Custom Components */
     PureComponent,
     T,
+    Mono,
     /* External */
     Icon,
     EvilIcon,

@@ -1,11 +1,7 @@
-import React, { Component } from 'react'
-import { View, TouchableOpacity, Image } from 'react-native'
+import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent } from './Component.js'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import Icon from 'react-native-vector-icons/FontAwesome'
-
-import { PureComponent } from './Component.js'
 import { RowTextButton } from './Rows.js'
 import { T } from './AppText.js'
 import { loginStore } from './Store.js'
@@ -53,9 +49,9 @@ class PaymentConfig extends PureComponent {
                     ref={ref => this.paymentModal = ref}
                     onClose={drawerStore.enable}
                     >
-                <View style={{flex: 1}}>
+                <ScrollView>
                     <CreditCardList />
-                </View>
+                </ScrollView>
             </SimpleModal>
         </View>
     }

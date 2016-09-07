@@ -37,5 +37,15 @@
     "babel-preset-react-native-stage-0": "^1.0.1",
     "babel-preset-stage-3": "^6.11.0",
     "flow-bin": "^0.30.0"
+  },
+  "rnpm": {
+    "assets": [
+        "Roboto_Mono/RobotoMono-Regular.ttf",
+        "Roboto_Mono/RobotoMono-Bold.ttf",
+        "Open_Sans/OpenSans-Regular.ttf",
+        "Open_Sans/OpenSans-Semibold.ttf",
+        "Open_Sans/OpenSans-Bold.ttf",
+        "Open_Sans/OpenSans-ExtraBold.ttf"
+    ]
   }
 }
