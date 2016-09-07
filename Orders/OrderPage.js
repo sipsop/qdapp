@@ -74,8 +74,10 @@ class OrderButton extends PureComponent {
         onPress: () => void
     */
     render = () => {
+        if (!orderStore.haveOrders)
+            return <View />
         return <LargeButton
-                    label={`Place Order  (${orderStore.totalText})`}
+                    label={`Place Order  ${orderStore.totalTextWithParens}`}
                     style={largeButtonStyle}
                     onPress={this.props.onPress}
                     />

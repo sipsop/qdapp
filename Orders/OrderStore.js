@@ -33,6 +33,9 @@ class OrderStore {
 
     @observable orderList : Array<OrderItem> = []
 
+    // Update asynchronously
+    @observable total : Float = 0.0
+
     @computed get menuItemsOnOrder() : Array<MenuItem> {
         const seen = []
         return this.orderList.map(orderItem => {
@@ -94,16 +97,27 @@ class OrderStore {
         return this.getSubTotal(orderItem) * orderItem.amount
     }
 
-    @computed get total() : Float {
+    @computed get haveOrders() : Bool {
+        return _.any(this.orderList.map(orderItem => orderItem.amount > 0))
+    }
+
+    // Update the total asynchronously for UI responsiveness (see the autorun below)
+    @computed get _total() : Float {
         return _.sum(this.orderList.map(this.getTotal))
     }
 
     @computed get totalText() : String {
         const total = this.total
-        if (!total)
+        if (!this.haveOrders)
             return ""
         const currencySymbol = getCurrencySymbol(this.currency)
         return `${currencySymbol}${total.toFixed(2)}`
+    }
+
+    @computed get totalTextWithParens() : String {
+        if (!this.haveOrders)
+            return ""
+        return `(${this.totalText})`
     }
 
     /*********************************************************************/
@@ -125,10 +139,21 @@ export const orderStore = new OrderStore()
 
 _.safeAutorun(() => {
     /* Clear the order list whenever the selected bar changes */
-    log("CLEARING ORDER LIST")
     barStore.barID
     orderStore.clearOrderList()
 })
+
+const periodicallyUpdateTotal = () => {
+    orderStore.total = orderStore._total
+    setTimeout(periodicallyUpdateTotal, 600)
+}
+
+periodicallyUpdateTotal()
+
+// _.safeAutorun(() => {
+//     const total = _.sum(orderStore.orderList.map(orderStore.getTotal))
+//     setTimeout(() => orderStore.total = total, 0)
+// })
 
 /*********************************************************************/
 
