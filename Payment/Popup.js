@@ -1,5 +1,5 @@
 import {
-    React, Component, View, TouchableOpacity, ScrollView,
+    React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
@@ -9,10 +9,10 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { BarHeader } from '../Bar/BarPage.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
-import { Selector } from '../Selector.js'
+import { Selector, SelectorItem } from '../Selector.js'
 import { Header, HeaderText } from '../Header.js'
 import { barStore, orderStore } from '../Store.js'
-import { logger } from '../Curry.js'
+import * as _ from '../Curry.js'
 
 import { CardInput } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
@@ -20,7 +20,7 @@ import { getCreditCardIcon } from './CreditCardInfo.js'
 
 import type { String, Int } from '../Types.js'
 
-const log = logger('Payment/Popup.js')
+const { log, assert } = _.utils('Payment/Popup.js')
 
 @observer
 export class Popup extends PureComponent {
@@ -36,11 +36,11 @@ export class Popup extends PureComponent {
         return <OkCancelModal
                     visible={this.props.visible}
                     showOkButton={true}
+                    showCancelButton={false}
                     cancelModal={this.props.onClose}
                     okModal={this.props.onClose}
                     okLabel={`Pay Now (${orderStore.totalText})`}
                     >
-            <ScrollView>
                 <View style={{flex: 1}}>
                     <BarHeader
                         bar={barStore.getBar()}
@@ -58,33 +58,57 @@ export class Popup extends PureComponent {
                     */}
                     <CreditCardList />
                 </View>
-            </ScrollView>
         </OkCancelModal>
     }
 }
 
+
+const dataSource = new ListView.DataSource({
+    rowHasChanged: (i, j) => i !== j,
+})
+
 @observer
 export class CreditCardList extends PureComponent {
+    constructor(props) {
+        super(props)
+        this.dataSource = dataSource.cloneWithRows(_.range(paymentStore.cards.length + 1))
+    }
+
+    @computed get numberOfRows() {
+        return paymentStore.cards.length + 1
+    }
+
     render = () => {
+        return <ListView
+                    dataSource={dataSource.cloneWithRows(_.range(this.numberOfRows))}
+                    renderRow={this.renderRow} />
+    }
+
+    renderRow = (i : Int) : Component => {
+        if (i < paymentStore.cards.length)
+            return this.renderCard(i)
+        return this.renderAddButton()
+    }
+
+    renderCard = (i : Int) => {
+        const card = paymentStore.cards[i]
+        return <SelectorItem
+                    isSelected={() => paymentStore.isSelected(i)}
+                    onPress={() => paymentStore.selectCardByOffset(i)}
+                    rowNumber={i}
+                    >
+            <CreditCard key={card.cardNumber} card={card} />
+        </SelectorItem>
+    }
+
+    renderAddButton = () => {
         const addCardStyle =
             paymentStore.cards.length === 0
-                ? { flex: 1, justifyContent: 'center' }
-                : {}
+                ? { height: 55, justifyContent: 'center' }
+                : { height: 55, justifyContent: 'center' }
 
-        return <View>
-            <Selector
-                    isSelected={paymentStore.isSelected}
-                    onSelect={paymentStore.selectCardByOffset}
-                    >
-                {
-                    paymentStore.cards.map(
-                        card => <CreditCard key={card.cardNumber} card={card} />
-                    )
-                }
-            </Selector>
-            <View style={addCardStyle}>
-                <CardInput />
-            </View>
+        return <View style={addCardStyle}>
+            <CardInput />
         </View>
     }
 }

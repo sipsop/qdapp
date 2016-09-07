@@ -76,7 +76,7 @@ export class Selector extends PureComponent {
 }
 
 @observer
-class SelectorItem extends PureComponent {
+export class SelectorItem extends PureComponent {
     /* properties:
         isSelected() -> bool
             callback to indicate whether this item is selected.

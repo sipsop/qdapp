@@ -131,11 +131,17 @@ export class OkCancelModal extends PureComponent {
         cancelLabel
     */
 
+    static defaultProps = {
+        okLabel: 'Ok',
+        cancelLabel: 'Cancel',
+        showCancelButton: true,
+    }
+
     render = () => {
         var cancelButton = undefined
         if (this.props.showCancelButton) {
             cancelButton = <LargeButton
-                label={this.props.cancelLabel || 'Cancel'}
+                label={this.props.cancelLabel}
                 onPress={this.props.cancelModal}
                 primary={false}
                 style={{flex: 1, margin: 5, height: 55}}
