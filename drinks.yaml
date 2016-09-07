@@ -63,30 +63,38 @@ drinks:
         merlot:
             name: Merlot
             desc: Merlot is a popular and easy-to-drink red wine.
-            # image:
+            abv: 13.5% to 15%
             tags: |
                 #wine
                 #red
                 #ripe
                 #soft
+                #lowacidity
+                #herbalflavours
+                #plums
+                #blackcherry
                 #popular
                 #easy-drinking
                 #medium-bodied
 
-        cabinetSaugvignon:
+        cabernetSaugvignon:
             name: Cabernet Sauvignon
             desc: Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
+            abv: 13.5% to 15%
             tags: |
                 #wine
                 #red
+                #ruby
+                #darkpurple
                 #oak
                 #rich
-                #full-bodied
+                #fullbodied
                 #tannins
 
         pinotNoir:
             name: Pinot Noir
-            desc: Pinot noir is a light and smooth red wine.
+            desc: Pinot noir is a light fruity and smooth red wine.
+            abv: 11.5 % to 14%
             tags: |
                 #wine
                 #red
@@ -95,6 +103,8 @@ drinks:
                 #silky
                 #fruity
                 #cherry
+                #plums
+                #strawberry
 
         rioja:
             name: Rioja
@@ -180,6 +190,53 @@ drinks:
                 #strawberry
                 #raspberry
                 #soft
+        
+        barolo:
+            name: Barolo
+            desc: This is a rich taste full-bodied italian wine which grows better with age. 
+            abv: 13.5% to 15%
+            tags: |
+                #wine
+                #red
+                #crimsonred
+                #fullbodied
+                #tannins
+                #acidic
+                #rich
+                #exoticaromas
+                #tar
+                #roses
+                #licorice
+                #mint
+                #spice
+                #herbs 
+        
+        dolcetto:
+            name: Dolcetto
+            desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food. 
+            abv: 11.5% to 13.5%
+            tags: |
+                #wine
+                #red
+                #soft
+                #sweet
+                #blackcherry
+                #licorice
+                #pruneflavours
+                #bitterfinish
+                
+        zinfandel: 
+            name: Zinfandel
+            desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins. 
+            abv 14% to 15.5%
+            tags: |
+                #wine
+                #red
+                #pepper
+                #berry
+                #moderateacidity
+                #tannins 
+                
                 
         ###White
 
