@@ -104,8 +104,8 @@ export class CreditCardList extends PureComponent {
     renderAddButton = () => {
         const addCardStyle =
             paymentStore.cards.length === 0
-                ? { height: 55, justifyContent: 'center' }
-                : { height: 55, justifyContent: 'center' }
+                ? { marginTop: 5 }
+                : { }
 
         return <View style={addCardStyle}>
             <CardInput />
