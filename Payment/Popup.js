@@ -12,10 +12,11 @@ import { config } from '../Config.js'
 import { Selector } from '../Selector.js'
 import { Header, HeaderText } from '../Header.js'
 import { barStore, orderStore } from '../Store.js'
+import { logger } from '../Curry.js'
 
 import { CardInput } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
-import { logger } from '../Curry.js'
+import { getCreditCardIcon } from './CreditCardInfo.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -100,6 +101,8 @@ export class CreditCard extends PureComponent {
                 , paddingRight: 10
                 }
             }>
+                {getCreditCardIcon(this.props.card.cardNumber)}
+                {/*
                 <View style={
                         { justifyContent: 'center'
                         , borderWidth: 1
@@ -110,6 +113,7 @@ export class CreditCard extends PureComponent {
                     }>
                     <T style={textStyle}>{card.cardType}</T>
                 </View>
+                */}
                 <T style={textStyle}>{card.redactedCardNumber}</T>
             </View>
         </View>
