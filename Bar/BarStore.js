@@ -2,7 +2,7 @@ import { observable, transaction, computed, action, asMap } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import { safeAutorun, logErrors, log, flatten } from '../Curry.js'
+import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 
@@ -12,6 +12,8 @@ import type { PlaceID } from '../Maps/MapStore.js'
 import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './Bar.js'
 
 /************************* Store ***********************************/
+
+const { log, assert } = _.utils('./Bar/BarStore.js')
 
 class BarStore {
     // DownloadResult[schema.Bar]
@@ -186,19 +188,13 @@ class BarStore {
         //             throw Error("Menu item must have an ID")
         //     })
         // })
-        return flatten(menuItems)
+        return _.flatten(menuItems)
     }
 
     @computed get menuItemByID() {
         return asMap(this.allMenuItems.map(
             menuItem => [menuItem.id, menuItem]
         ))
-    }
-
-    getMenuItem = (menuItemID : MenuItemID) : MenuItem => {
-        if (this.menuItemByID.has(menuItemID))
-            return this.menuItemByID.get(menuItemID)
-        return null
     }
 
     @computed get openingTimes() {
@@ -219,17 +215,41 @@ class BarStore {
             : ""
     }
 
+    getMenuItem = (menuItemID : MenuItemID) : MenuItem => {
+        if (this.menuItemByID.has(menuItemID))
+            return this.menuItemByID.get(menuItemID)
+        return null
+    }
+
+    /* Get the string options for menu item, e.g. [['pint'], ['lime']] */
+    getMenuItemStringOptions = (menuItem, selectedOptions : Array<Array<Int>>) : Array<Array<String>> => {
+        return _.zipWith(menuItem.options, selectedOptions,
+            (menuItemOption, selection) => {
+                return selection.map(i => menuItemOption.optionList[i])
+            }
+        )
+    }
+
+    /* Get the string options for menu item, e.g. [[0], [2]] */
+    getOrderItemIntOptions = (menuItem, selectedStringOptions : Array<Array<String>>) : Array<Array<Int>> => {
+        return _.zipWith(menuItem.options, selectedOptions,
+            (menuItemOption, selection) => {
+                return selection.map(s => _.find(menuItemOption.optionList, s))
+            }
+        )
+    }
+
     /*********************************************************************/
     /* Functions that can be invoked async without catching errors */
 
-    refreshBar = logErrors(async () => {
+    refreshBar = _.logErrors(async () => {
         if (this.barID)
             await this._setBarID(this.barID)
     })
 
-    getBarMenu = logErrors(this._getBarMenu)
-    getBarInfo = logErrors(this._getBarInfo)
-    setBarID = logErrors(this._setBarID)
+    getBarMenu = _.logErrors(this._getBarMenu)
+    getBarInfo = _.logErrors(this._getBarInfo)
+    setBarID = _.logErrors(this._setBarID)
 
     /*********************************************************************/
 

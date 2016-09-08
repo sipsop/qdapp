@@ -13,6 +13,7 @@ import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
+import { store, tabStore } from '../Store.js'
 
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
@@ -150,9 +151,33 @@ class Receipt extends PureComponent {
                           </Header>
                         : undefined
                     }
-                    <OrderList orderList={orderResult.orderList} />
+                    <Info orderResult={orderResult} />
+                    <OrderList
+                        orderList={orderResult.orderList}
+                        simple={true}
+                        />
                 </ScrollView>
         </OkCancelModal>
+    }
+}
+
+@observer
+class Info extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+    render = () => {
+        return <T style={
+                    { fontSize: 18
+                    , color: '#000'
+                    , textAlign: 'center'
+                    , marginTop: 10
+                    , marginBottom: 10
+                    }
+                }>
+            Your order has been placed!{'\n'}
+            Show this page to claim your order.
+        </T>
     }
 }
 

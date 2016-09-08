@@ -16,6 +16,7 @@ import type { BarID, MenuItemID } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
+    id:                 ID,
     barID:              BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<Int>>,

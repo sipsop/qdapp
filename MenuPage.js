@@ -115,24 +115,30 @@ export class MenuItem extends PureComponent {
 
     render = () => {
         const menuItem = this.props.menuItem
-        const image = menuItem.images[0]
-
         return <View>
             <TouchableOpacity onPress={this.showModal}>
                 <View style={styles.primaryMenuItemView}>
-                    <Image source={{uri: image}} style={styles.image} />
+                    <MenuItemImage menuItem={menuItem} />
                     <View style={viewStyles.content}>
                         <MenuItemHeader menuItem={menuItem} />
                     </View>
                 </View>
             </TouchableOpacity>
             <MenuItemOrderList
-                    menuItem={menuItem}
-                    showModalFor={this.showModalFor}
-                    onModalClose={this.modalClosed}
-                    />
+                menuItem={menuItem}
+                showModalFor={this.showModalFor}
+                onModalClose={this.modalClosed}
+                />
         </View>
     }
+}
+
+export const MenuItemImage = (props) => {
+    const image =
+        props.menuItem.images && props.menuItem.images.length > 0
+            ? props.menuItem.images[0]
+            : undefined
+    return <Image source={{uri: image}} style={styles.image} />
 }
 
 @observer
@@ -197,7 +203,7 @@ class MenuItemOrderList extends PureComponent {
 }
 
 @observer
-class PriceColumn extends PureComponent {
+export class PriceColumn extends PureComponent {
     /* properties:
         orderItems: [OrderItem]
     */
@@ -205,7 +211,11 @@ class PriceColumn extends PureComponent {
         return <View style={{minWidth: 60}}>
             {
                 this.props.orderItems.map((orderItem, i) =>
-                    <PriceEntry key={orderItem.id} rowNumber={i} orderItem={orderItem} />
+                    <PriceEntry
+                        key={orderItem.id}
+                        rowNumber={i}
+                        orderItem={orderItem}
+                        />
                 )
             }
         </View>
