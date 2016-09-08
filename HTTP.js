@@ -210,7 +210,7 @@ export class DownloadResultView<T> extends PureComponent {
                     : undefined
             }
             <View>
-                <Loader>
+                <Loader />
             </View>
         </View>
     }

@@ -18,9 +18,10 @@ export class OrderList extends Page {
         orderList: [OrderItem]
     */
     renderView = () => {
+        const menuItemsOnOrder = orderStore.getMenuItemsOnOrder(this.props.orderList)
         return <View>
             {
-                this.props.orderList.map(
+                menuItemsOnOrder.map(
                     menuItem =>
                         <MenuItem
                             key={menuItem.id}

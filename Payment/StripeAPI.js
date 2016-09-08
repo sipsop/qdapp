@@ -1,4 +1,4 @@
-import Strip from './Stripe.js'
+// import Strip from './Stripe.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 
 import type { Int, Float, String } from '../Types.js'
@@ -7,11 +7,11 @@ import type { Card } from './PaymentStore.js'
 export type CardToken = String
 
 const stripeTestSecretKey = "sk_test_8MKOs1GQ5iKWE5mAi44c36yY"
-Stripe.setPublishableKey(stripeTestSecretKey)
+// Stripe.setPublishableKey(stripeTestSecretKey)
 
 export const getStripeToken = (card : Card) : Promise<DownloadResult<Token>> => {
     const responseHandler = (status, response) => {
-        if (response.error) {
+        if (response.error)
             reject(response.error.message)
         resolve(response.id)
     }

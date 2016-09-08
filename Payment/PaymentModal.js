@@ -20,10 +20,10 @@ import { getCreditCardIcon } from './CreditCardInfo.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Payment/Popup.js')
+const { log, assert } = _.utils('Payment/PaymentModal.js')
 
 @observer
-export class Popup extends PureComponent {
+export class PaymentModal extends PureComponent {
     /* properties:
         visible: bool
         onClose: () => void

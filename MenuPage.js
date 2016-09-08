@@ -126,7 +126,7 @@ export class MenuItem extends PureComponent {
                     </View>
                 </View>
             </TouchableOpacity>
-            <OrderList
+            <MenuItemOrderList
                     menuItem={menuItem}
                     showModalFor={this.showModalFor}
                     onModalClose={this.modalClosed}
@@ -136,7 +136,7 @@ export class MenuItem extends PureComponent {
 }
 
 @observer
-class OrderList extends PureComponent {
+class MenuItemOrderList extends PureComponent {
     /* properties:
         menuItem: MenuItem
         showModalFor: ?OrderItem

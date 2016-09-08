@@ -9,16 +9,25 @@ import { config } from './Config.js'
 export class Header extends PureComponent {
     /* properties:
         children: [Component]
+        primary: bool
     */
+
+    static defaultProps = {
+        primary: true,
+        rowHeight: 55,
+    }
+
     render = () => {
-        const backgroundColor = config.theme.primary.medium
-        const rowHeight = 55
+        const backgroundColor =
+            this.props.primary
+                ? config.theme.primary.medium
+                : config.theme.primary.dark
         return (
             <View style={
                     { justifyContent: 'center'
                     , alignItems: 'center'
                     , backgroundColor: backgroundColor
-                    , height: rowHeight
+                    , height: this.props.rowHeight
                     , paddingLeft: 5
                     , paddingRight: 5
                     }
@@ -33,22 +42,33 @@ export class Header extends PureComponent {
 export class TextHeader extends PureComponent {
     /* properties:
         label: String
+        rowHeight: Int
     */
+
+    static defaultProps = {
+        fontSize: 25,
+        rowHeight: 55,
+    }
     render = () => {
         const backgroundColor = config.theme.primary.medium
-        const rowHeight = 55
         return (
-            <Header>
-                <HeaderText>{this.props.label}</HeaderText>
+            <Header rowHeight={this.props.rowHeight}>
+                <HeaderText fontSize={this.props.fontSize}>
+                    {this.props.label}
+                </HeaderText>
             </Header>
         )
     }
 }
 
 export class HeaderText extends PureComponent {
+    static defaultProps = {
+        fontSize: 25,
+    }
+
     render = () => {
         return <T style={
-                { fontSize: 25
+                { fontSize: this.props.fontSize
                 , color: '#fff'
                 , ...this.props.style
                 }

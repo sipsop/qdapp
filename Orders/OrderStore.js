@@ -3,6 +3,7 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
+import { DownloadResult, emptyResult } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
@@ -50,9 +51,11 @@ class OrderStore {
     @observable activeOrderID : ?ID = null
     @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
 
-    @computed get menuItemsOnOrder() : Array<MenuItem> {
+    getOrderResultDownload = () => this.orderResultDownload
+
+    getMenuItemsOnOrder = (orderList : Array<OrderItem>) : Array<MenuItem> => {
         const seen = []
-        return this.orderList.map(orderItem => {
+        return orderList.map(orderItem => {
                 if (!_.includes(seen, orderItem.menuItemID)) {
                     seen.push(orderItem.menuItemID)
                     return barStore.getMenuItem(orderItem.menuItemID)
@@ -60,6 +63,10 @@ class OrderStore {
                 return null
             })
             .filter(menuItem => menuItem != null)
+    }
+
+    @computed get menuItemsOnOrder() : Array<MenuItem> {
+        return this.getMenuItemsOnOrder(this.orderList)
     }
 
     @action addOrderItem = (orderItem : OrderItem) => {
@@ -168,6 +175,7 @@ class OrderStore {
             estimatedTime:  90,
             receipt:        'x4J',
             userName:       'Mark F',
+            orderList:      this.orderList.slice(),
         })
     })
 }
