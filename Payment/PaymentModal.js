@@ -30,7 +30,7 @@ export class PaymentModal extends PureComponent {
     */
 
     payNow = () => {
-        orderStore.setOrderToken()
+        orderStore.setFreshOrderToken()
         orderStore.placeActiveOrder()
         this.props.onClose()
     }

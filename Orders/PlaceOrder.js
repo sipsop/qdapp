@@ -33,6 +33,7 @@ export class PlaceOrderModal extends DownloadResultView {
     inProgressMessage = "Processing order..."
 
     @computed get visible() {
+        log('PLACE ORDER MODAl VISIBLE...................=', orderStore.getActiveOrderToken())
         return orderStore.getActiveOrderToken() != null
     }
 

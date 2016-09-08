@@ -12,7 +12,15 @@ import { observer } from 'mobx-react/native'
 import { barStore, orderStore } from '../Store.js'
 import { Page } from '../Page.js'
 import { MenuItem, MenuItemImage } from '../MenuPage.js'
+import { Header, HeaderText } from '../Header.js'
 import * as _ from '../Curry.js'
+import { config } from '../Config.js'
+
+const { log, assert } = _.utils('./Orders/OrderList.js')
+
+// assert(Header != null)
+// assert(HeaderText != null)
+// assert(MenuItemImage != null)
 
 @observer
 export class OrderList extends Page {
@@ -56,12 +64,15 @@ export class OrderList extends Page {
 }
 
 const titleTextStyle = {
-    flex: 1,
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
+    color: config.theme.primary.medium, //'#000',
+    textDecorationLine: 'underline',
+}
+
+const itemTextStyle = {
+    fontSize: 20,
     color: '#000',
-    // textDecorationLine: 'underline',
-    marginRight: 5,
 }
 
 @observer
@@ -72,10 +83,39 @@ export class SimpleMenuItem extends PureComponent {
     render = () => {
         const menuItem = this.props.menuItem
         const orderItems = orderStore.getOrderList(menuItem.id)
-        return <View style={{flex: 1, flexDirection: 'row'}}>
-            <MenuItemImage menuItem={menuItem} />
-            <View style={{flex: 1, marginLeft: 10}}>
-                <T style={titleTextStyle}>{menuItem.name}</T>
+        return <View style={{flex: 1}}>
+            <MenuItemImage
+                menuItem={menuItem}
+                style={
+                    { position: 'absolute'
+                    , zIndex: 2
+                    , width: 80
+                    , height: 80
+                    , borderWidth: 0.5
+                    , borderColor: '#000'
+                    , borderRadius: 10
+                    , marginLeft: 10
+                    , marginRight: 10
+                    }
+                }
+                />
+            <View style={
+                    { height: 50
+                    , backgroundColor: config.theme.primary.medium
+                    , justifyContent: 'center'
+                    , paddingLeft: 5
+                    , paddingRight: 5
+                    , marginTop: 15
+                    , marginBottom: 15
+                    }
+                }>
+                <ScrollView horizontal={true}>
+                    <HeaderText style={{marginLeft: 100}}>
+                        {menuItem.name}
+                    </HeaderText>
+                </ScrollView>
+            </View>
+            <View style={{flex: 1, marginLeft: 10, marginBottom: 15}}>
                 {
                     orderItems.map((orderItem, rowNumber) => {
                         const stringOpts = _.flatten(
@@ -83,14 +123,20 @@ export class SimpleMenuItem extends PureComponent {
                                 menuItem, orderItem.selectedOptions
                             )
                         )
-                        const label = orderItem.amount + ' x ' + stringOpts.join(' + ')
-                        return <T key={orderItem.id} style={titleTextStyle}>{label}</T>
+                        const opts = stringOpts.join(' + ')
+                        const price = orderStore.getTotal(orderItem).toFixed(2)
+                        return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
+                            <T style={{width: 50, ...itemTextStyle}}>{orderItem.amount}</T>
+                            <ScrollView horizontal={true} style={{paddingRight: 5}}>
+                                <T style={{flex: 1, ...itemTextStyle}}>{opts}</T>
+                            </ScrollView>
+                            <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...itemTextStyle}}>
+                                £{price}
+                            </T>
+                        </View>
                     })
                 }
             </View>
-            {/*
-            <PriceColumn orderItems={orderItems} />
-            */}
         </View>
     }
 }

@@ -133,12 +133,21 @@ export class MenuItem extends PureComponent {
     }
 }
 
-export const MenuItemImage = (props) => {
-    const image =
-        props.menuItem.images && props.menuItem.images.length > 0
-            ? props.menuItem.images[0]
-            : undefined
-    return <Image source={{uri: image}} style={styles.image} />
+export class MenuItemImage extends PureComponent {
+    /* properties:
+        menuItem: MenuItem
+        style: style object
+    */
+
+    render = () => {
+        const style = this.props.style || styles.image
+        const menuItem = this.props.menuItem
+        const image =
+            menuItem.images && menuItem.images.length > 0
+                ? menuItem.images[0]
+                : undefined
+        return <Image source={{uri: image}} style={style} />
+    }
 }
 
 @observer

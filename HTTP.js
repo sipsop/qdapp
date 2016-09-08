@@ -64,6 +64,20 @@ export class DownloadResult<T> {
         return new CombinedDownloadResult(downloadResults)
     }
 
+    getState = () => {
+        return {
+            state:      this.state,
+            message:    this.message,
+            value:      this.value,
+        }
+    }
+
+    @action setState = (downloadState) => {
+        this.state   = downloadState.state
+        this.message = downloadState.message
+        this.value   = downloadState.value
+    }
+
     @action from = (downloadResult : DownloadResult<T>) => {
         this.state   = downloadResult.state
         this.message = downloadResult.message

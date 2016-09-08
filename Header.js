@@ -10,11 +10,13 @@ export class Header extends PureComponent {
     /* properties:
         children: [Component]
         primary: bool
+        style
     */
 
     static defaultProps = {
         primary: true,
         rowHeight: 55,
+        style: {},
     }
 
     render = () => {
@@ -30,6 +32,7 @@ export class Header extends PureComponent {
                     , height: this.props.rowHeight
                     , paddingLeft: 5
                     , paddingRight: 5
+                    , ...this.props.style
                     }
                 }>
                 {this.props.children}

@@ -40,8 +40,6 @@ export type OrderResult = {
 
 const { log, assert } = _.utils('./Orders/OrderStore.js')
 
-
-
 class OrderStore {
 
     @observable orderList : Array<OrderItem> = []
@@ -147,20 +145,32 @@ class OrderStore {
 
     getState = () : OrderState => {
         return {
-            orderList: this.orderList,
+            orderList:  this.orderList,
+            orderToken: this.getActiveOrderToken(),
+            orderResultDownload: this.orderResultDownload.getState(),
         }
     }
 
     @action setState = (orderState : OrderState) => {
-        this.setOrderList(orderState.orderList)
+        if (orderState.orderList)
+            this.setOrderList(orderState.orderList)
+        if (orderState.orderToken)
+            this.setOrderToken(orderState.orderToken)
+        if (orderState.orderResultDownload)
+            this.orderResultDownload.setState(orderState.orderResultDownload)
     }
 
     /*********************************************************************/
 
     getActiveOrderToken = () => this.activeOrderID
 
-    @action setOrderToken = () => {
-        this.activeOrderID = shortid.generate()
+    @action setOrderToken = (token) => {
+        log("SETTING ORDER TOKEN...", token)
+        this.activeOrderID = token
+    }
+
+    @action setFreshOrderToken = () => {
+        this.setOrderToken(shortid.generate())
     }
 
     @action clearOrderToken = () => {
