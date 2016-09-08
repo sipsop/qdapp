@@ -70,6 +70,13 @@ export class DownloadResult<T> {
         this.value   = downloadResult.value
     }
 
+    @action reset = () : DownloadResult<T> => {
+        this.state = 'NotStarted'
+        this.message = undefined
+        this.value = undefined
+        return this
+    }
+
     @action downloadStarted = () : DownloadResult<T> => {
         this.state   = 'InProgress'
         this.message = undefined
@@ -153,6 +160,8 @@ export class DownloadResultView<T> extends PureComponent {
         downloadResult: DownloadResult
     */
 
+    inProgressMessage = null
+
     constructor(props : {downloadResult: DownloadResult<T>}, errorMessage : string) {
         super(props)
         if (!errorMessage)
@@ -191,7 +200,20 @@ export class DownloadResultView<T> extends PureComponent {
         throw Error('NotImplemented')
     }
 
-    renderInProgress = () => <Loader />
+    renderInProgress = () => {
+        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            {
+                this.inProgressMessage
+                    ? <T style={{fontSize: 20, color: '#000'}}>
+                        {this.inProgressMessage}
+                      </T>
+                    : undefined
+            }
+            <View>
+                <Loader>
+            </View>
+        </View>
+    }
 
     renderError = (message : string) => {
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

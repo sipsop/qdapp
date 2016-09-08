@@ -25,9 +25,20 @@ export type OrderState = {
     orderList: Array<OrderItem>,
 }
 
+export type OrderResult = {
+    errorMessage:   ?String,
+    queueSize:      Int,
+    estimatedTime:  Float,
+    receipt:        String,
+    userName:       String,
+    // orderList:      Array<OrderItem>,
+}
+
 /*********************************************************************/
 
-const log = _.logger('OrderStore.js')
+const { log, assert } = _.utils('./Orders/OrderStore.js')
+
+
 
 class OrderStore {
 
@@ -35,6 +46,9 @@ class OrderStore {
 
     // Update asynchronously
     @observable total : Float = 0.0
+
+    @observable activeOrderID : ?ID = null
+    @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
 
     @computed get menuItemsOnOrder() : Array<MenuItem> {
         const seen = []
@@ -68,6 +82,7 @@ class OrderStore {
 
     @action clearOrderList = () => {
         this.setOrderList([])
+        this.clearOrderToken()
     }
 
     @computed get currency() {
@@ -133,6 +148,28 @@ class OrderStore {
     }
 
     /*********************************************************************/
+
+    getActiveOrderToken = () => this.activeOrderID
+
+    @action setOrderToken = () => {
+        this.activeOrderID = shortid.generate()
+    }
+
+    @action clearOrderToken = () => {
+        this.activeOrderID = null
+    }
+
+    /* Submit order to server */
+    placeActiveOrder = _.logErrors(async () => {
+        // this.stripeTokenDownload.downloadFinished('someFakeStripeToken')
+        this.orderResultDownload.downloadFinished({
+            errorMessage:   null,
+            queueSize:      2,
+            estimatedTime:  90,
+            receipt:        'x4J',
+            userName:       'Mark F',
+        })
+    })
 }
 
 export const orderStore = new OrderStore()

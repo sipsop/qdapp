@@ -28,6 +28,13 @@ export class Popup extends PureComponent {
         visible: bool
         onClose: () => void
     */
+
+    payNow = () => {
+        orderStore.setOrderToken()
+        orderStore.placeActiveOrder()
+        this.props.onClose()
+    }
+
     render = () => {
         const textStyle = {
             textAlign: 'center',
@@ -39,7 +46,7 @@ export class Popup extends PureComponent {
                     showOkButton={true}
                     showCancelButton={false}
                     cancelModal={this.props.onClose}
-                    okModal={this.props.onClose}
+                    okModal={this.payNow}
                     okLabel={`Pay Now (${orderStore.totalText})`}
                     >
                 <View style={{flex: 1}}>

@@ -9,6 +9,9 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+
+import { MenuItemsOnOrder } from './MenuItemsOnOrder.js'
+import { PlaceOrder } from './PlaceOrder.js'
 import { Page } from '../Page.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
@@ -26,6 +29,10 @@ export class OrderPage extends Page {
 
     @observable popupVisible = false
 
+    @computed get orderPlacedModalVisible() {
+        return
+    }
+
     handleOrderPress = () => {
         this.popupVisible = true
     }
@@ -42,17 +49,8 @@ export class OrderPage extends Page {
                 visible={this.popupVisible}
                 onClose={() => this.popupVisible = false}
                 />
-            <ScrollView style={{flex: 1}}>
-                {
-                    orderStore.menuItemsOnOrder.map(
-                        menuItem =>
-                            <MenuItem
-                                key={menuItem.id}
-                                menuItem={menuItem}
-                                currentPage={3}
-                                />
-                    )
-                }
+            <ScrollView>
+                <OrderList ordderList={orderStore.menuItemsOnOrder} />
             </ScrollView>
             <OrderButton onPress={this.handleOrderPress} />
         </View>
