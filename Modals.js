@@ -160,7 +160,7 @@ export class OkCancelModal extends PureComponent {
         return <Modal visible={this.props.visible}
                       onRequestClose={this.props.cancelModal}>
             <View style={{flex: 1, alignItems: 'stretch'}}>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', marginBottom: 5, backgroundColor: "#fff"}}>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: "#fff"}}>
                     {this.props.children}
                 </View>
                 <View style={

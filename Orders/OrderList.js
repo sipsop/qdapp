@@ -83,7 +83,8 @@ export class SimpleMenuItem extends PureComponent {
     render = () => {
         const menuItem = this.props.menuItem
         const orderItems = orderStore.getOrderList(menuItem.id)
-        return <View style={{flex: 1}}>
+        const orderListHeight = orderItems.length * 50
+        return <View >
             <MenuItemImage
                 menuItem={menuItem}
                 style={
@@ -110,12 +111,14 @@ export class SimpleMenuItem extends PureComponent {
                     }
                 }>
                 <ScrollView horizontal={true}>
-                    <HeaderText style={{marginLeft: 100}}>
-                        {menuItem.name}
-                    </HeaderText>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        <HeaderText style={{marginLeft: 100}}>
+                            {menuItem.name}
+                        </HeaderText>
+                    </View>
                 </ScrollView>
             </View>
-            <View style={{flex: 1, marginLeft: 10, marginBottom: 15}}>
+            <View>
                 {
                     orderItems.map((orderItem, rowNumber) => {
                         const stringOpts = _.flatten(
@@ -126,8 +129,10 @@ export class SimpleMenuItem extends PureComponent {
                         const opts = stringOpts.join(' + ')
                         const price = orderStore.getTotal(orderItem).toFixed(2)
                         return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
-                            <T style={{width: 50, ...itemTextStyle}}>{orderItem.amount}</T>
-                            <ScrollView horizontal={true} style={{paddingRight: 5}}>
+                            <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...itemTextStyle}}>
+                                {orderItem.amount}
+                            </T>
+                            <ScrollView horizontal={true} style={{paddingLeft: 5, paddingRight: 5}}>
                                 <T style={{flex: 1, ...itemTextStyle}}>{opts}</T>
                             </ScrollView>
                             <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...itemTextStyle}}>
