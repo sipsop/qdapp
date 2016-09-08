@@ -26,7 +26,6 @@ drinks:
                 #beer
                 #lager
                 #dark
-                
 
         stellaArtois:
             name: Stella Artois
@@ -37,7 +36,136 @@ drinks:
                 #Pale
                 #LowMalt
         
+####beer
+###lager
     
+    ##pale lagers and pilsners
+    
+    americanLager:   
+        name: American Lager
+        desc: American lager is a light in coulur, slightly hoppy and well carbonated beer. 
+        abv: 4.5% to 5.5%
+        tags: |
+            #beer
+            #palelager
+            #lager
+            #hoppy
+            #spicyfood
+            #lightinflavour
+            
+    germanHelles:
+        name: German Helles
+        desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness. 
+        abv: 4.5% to 6% 
+        tags: |
+            #beer
+            #lager
+            #palelager
+            #brightgold
+            #lesshoppy
+            #fullbodied
+            #lowbitter
+    
+    germanPilsner:
+        name: German Pilsner
+        desc: German Pilsner is a light pale lager with a distinct flavour and hop aroma. 
+        abv: 4.5% to 5%
+        tags: |
+            #beer
+            #lager
+            #palelager
+            #palegold
+            #malt
+            #mediumhop
+            #fish
+            #spicy
+    
+    czech/BohemianPilsner:
+        name: Czech or Bohemian Pilsner
+        desc: It is a crystal clear, light straw to golden colour beer which has a distinct flavour with a spicy bitterness and floral flavours or aromas.  
+        abv: 4.5% to 5.5% 
+        tags: |
+            #beer
+            #lager
+            #palelager
+            #bitterhop
+            #strawcolour 
+            #floralaroma
+            #floralflavour
+            #smooth
+            #crisp
+            #spicyfood
+    
+    ##dark lager
+    
+    amberAmercanLager
+        name: Amber American Lager
+        desc: Amber American Lager are known for its sweet, creamy malt flavours with moderate hop aromas due to caramel malts.
+        abv: 4.8% to 5.4%
+        tags: |
+            #beer
+            #lager
+            #darklager
+            #amber
+            #maltflavour
+            #caramel
+            #hoppy
+            #caramelaroma
+            #smooth
+            #dark
+    
+    oktoberfest:
+        name: Oktoberfest or Marzen 
+        desc: Oktoberfest is a full-bodied, toasty, balanced in sweet taste and a dark copper coloured dark lager beer 
+        abv: 5% to 6%
+        tags: |
+            #beer
+            #lager
+            #darklager
+            #toasty
+            #hoppy
+            #darkcopper
+            #fullbodied
+            #oktoberfest 
+    
+    germanSchwarzbier: 
+        name: Gemran Schwarzbier 
+        desc: This beer has an opaque, black or brown colour with hints of either coffee or chocolate flavour and produced in Germany. 
+        abv: 4.4% to 5.4%
+        tags: |
+            #beer
+            #lager
+            #darklager
+            #darkincolour
+            #hintofcoffee
+            #hintofchocolate
+            #black
+            #brown
+            #malt
+            #darkincolour 
+    
+    viennaLager:
+        name: Vienna Lager 
+        desc: Vienna Lager has light malt sweetness and is a medium bodied with reddish-amber or copper colour. This type of beer is more famous in North America. 
+        abv: 4.7% to 5.5%
+        tags: |
+            #beer
+            #lager
+            #darklager
+            #reddishincolour
+            ##sweet
+            #maltyflavour
+            #hoppy
+            #crisp 
+            #mediumbodied
+            
+        
+    
+            
+            
+            
+        
+     
 
     wine:
         ### Red
