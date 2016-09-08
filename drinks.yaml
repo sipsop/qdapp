@@ -47,7 +47,7 @@ drinks:
         abv: 4.5% to 5.5%
         tags: |
             #beer
-            #palelager
+            #paleLager
             #lager
             #hoppy
             #spicyfood
@@ -60,7 +60,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #palelager
+            #paleLager
             #brightgold
             #lesshoppy
             #fullbodied
@@ -87,7 +87,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #palelager
+            #paleLager
             #bitterhop
             #strawcolour 
             #floralaroma
@@ -105,7 +105,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #darklager
+            #darkLager
             #amber
             #maltflavour
             #caramel
@@ -121,7 +121,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #darklager
+            #darkLager
             #toasty
             #hoppy
             #darkcopper
@@ -135,7 +135,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #darklager
+            #darkLager
             #darkincolour
             #hintofcoffee
             #hintofchocolate
@@ -151,7 +151,7 @@ drinks:
         tags: |
             #beer
             #lager
-            #darklager
+            #darkLager
             #reddishincolour
             ##sweet
             #maltyflavour
@@ -159,13 +159,74 @@ drinks:
             #crisp 
             #mediumbodied
             
-        
+    ##german Bock 
     
+    traditionalBock:
+        name: Traditional Bock
+        desc: Tradional Bock is a strong and dark Gemran lager. 
+        abv: 6.3% to 7.2% 
+        tags: |
+            #beer
+            #lager
+            #germanBock
+            #malty
+            #sweet
+            #toasty
+            #darkcoppercolour
+            #smooth
+            #rich 
+            #toasty
+    
+    doppelbock:
+        name: Doppelbock 
+        desc: Doppelbock is German Bock lager with a strong, clear, dark and malty with very little bitterness. 
+        abv: 7% to 10%
+        tags: |
+            #beer
+            #lager
+            #germanBoc
+            #fullbodied
+            #strong 
+            #dark
+            #clear
+            #malt 
+            #softbody
+            #GermanNobleHops
+    
+    weizenbock:
+        name: Weizenbock 
+        desc: It is a full-bodied, rich and malty beer which has pale to amber colour and it varies depending on malt's colour.  
+        abv: 6.5% to 9% 
+        tags: |
+            #beer
+            #lager
+            #germanBock
+            #fruity
+            #malty
+            #wheatBocks
+            #fullbodied
+            #amber
+            #pale
+            #slightlyspicy
+            #cloveflavour 
             
-            
-            
-        
-     
+    maibock:
+        name: Maibock
+        desc: Maibock is a strong lager of German origin which has hoppy aromas and is golden in colour with a refreshing finish.  
+        abv: 6.3% to 7.4%
+        tags: |
+            #beer
+            #lager
+            #germanBock
+            #pale
+            #hoppy
+            #malty 
+            #hopbitternesslow
+            #toasted 
+            #breadymalt 
+            #germanNobleHops 
+            #bitter
+###ale
 
     wine:
         ### Red
