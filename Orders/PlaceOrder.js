@@ -175,11 +175,13 @@ class ReceiptHeader extends PureComponent {
 
         return <Header>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                {headerText(orderResult.userName, 20)}
                 <TouchableOpacity
                         style={{flex: 1}}
                         onPress={() => this.receiptModal.show()}>
-                    {headerText('#' + orderResult.receipt)}
+                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                        {headerText(orderResult.userName, 20)}
+                        {headerText('#' + orderResult.receipt)}
+                    </View>
                 </TouchableOpacity>
                 <Message
                         ref={ref => this.receiptModal = ref}
