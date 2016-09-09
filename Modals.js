@@ -129,12 +129,16 @@ export class OkCancelModal extends PureComponent {
         okLabel: String
             label to show on the Ok button
         cancelLabel
+        okDisabled: bool
+        cancelDisabled: bool
     */
 
     static defaultProps = {
         okLabel: 'Ok',
         cancelLabel: 'Cancel',
         showCancelButton: true,
+        cancelDisabled: false,
+        okDisabled: false,
     }
 
     render = () => {
@@ -145,6 +149,7 @@ export class OkCancelModal extends PureComponent {
                 onPress={this.props.cancelModal}
                 primary={false}
                 style={{flex: 1, margin: 5, height: 55}}
+                disabled={this.props.cancelDisabled}
                 />
         }
 
@@ -154,6 +159,7 @@ export class OkCancelModal extends PureComponent {
                 label={this.props.okLabel || 'Ok'}
                 onPress={this.props.okModal}
                 style={{flex: 1, margin: 5, height: 55}}
+                disabled={this.props.okDisabled}
                 />
         }
 

@@ -368,7 +368,7 @@ class OrderItem(graphene.ObjectType):
     selectedOptionStrings = graphene.List(graphene.String()).NonNull
     amount = graphene.Int().NonNull
 
-characters = string.ascii_letters + '0123456789!?@#<>*'
+characters = string.ascii_letters + '0123456789!?@*$+/|'
 
 def shortid():
     return ''.join(random.sample(characters, 3))

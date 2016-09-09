@@ -41,6 +41,8 @@ export class PaymentModal extends PureComponent {
         }
         const bar = barStore.getBar()
 
+        log("OK DISABLED", paymentStore.selectedCardNumber)
+
         return <OkCancelModal
                     visible={this.props.visible}
                     showOkButton={true}
@@ -48,6 +50,7 @@ export class PaymentModal extends PureComponent {
                     cancelModal={this.props.onClose}
                     okModal={this.payNow}
                     okLabel={`Pay Now (${orderStore.totalText})`}
+                    okDisabled={paymentStore.selectedCardNumber == null}
                     >
                 <View style={{flex: 1}}>
                     <LazyBarPhoto

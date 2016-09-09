@@ -44,11 +44,13 @@ export class LargeButton extends PureComponent {
         backgroundColor: str
         borderColor: str
         textColor: str
+        disabled: bool
     */
     static defaultProps = {
         primary: true,
         prominent: true,
         borderRadius: 10,
+        disabled: false,
     }
 
     render = () => {
@@ -73,6 +75,7 @@ export class TextButton extends Component {
         alignLeft: bool
         borderColor: str
         textColor: str
+        disabled: bool
     */
 
     static defaultProps = {
@@ -81,6 +84,7 @@ export class TextButton extends Component {
         prominent: true,
         borderRadius: 5,
         alignLeft: false,
+        disabled: false,
     }
 
     render = () => {
@@ -113,6 +117,7 @@ export class Button extends Component {
         prominent: bool
         children: [Component]
         backgroundColor: str
+        disabled: bool
     */
 
     static defaultProps = {
@@ -120,39 +125,58 @@ export class Button extends Component {
         borderWidth: 2,
         borderRadius: 5,
         prominent: true,
+        disabled: false,
     }
 
     render = () => {
-        const buttonStyle = this.props.prominent
-            ? ( this.props.primary
-                    ? { background: config.theme.primary.medium, border: config.theme.primary.dark }
-                    : { background: config.theme.primary.dark, border: config.theme.primary.medium }
-              )
-            : {}
+        const buttonStyle = {}
+
+        if (this.props.prominent) {
+            if (this.props.primary) {
+                buttonStyle.background = config.theme.primary.medium
+                buttonStyle.border = config.theme.primary.dark
+            } else {
+                buttonStyle.background = config.theme.primary.dark
+                buttonStyle.border = config.theme.primary.medium
+            }
+            if (this.props.disabled) {
+                /* Make disabled buttons transparent */
+                buttonStyle.background += '5f'
+                buttonStyle.border += '5f'
+            }
+        }
 
         if (this.props.backgroundColor)
             buttonStyle.background = this.props.backgroundColor
         if (this.props.borderColor)
             buttonStyle.border = this.props.borderColor
 
-        return <TouchableOpacity onPress={this.props.onPress} style={this.props.style}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={
-                        { flex: 1
-                        // , flexWrap: 'wrap'
-                        , flexDirection: 'row'
-                        , justifyContent: 'center'
-                        , alignItems: 'center'
-                        , borderWidth: this.props.borderWidth
-                        , backgroundColor: buttonStyle.background
-                        , borderColor: buttonStyle.border
-                        , borderRadius: this.props.borderRadius
-                        , padding: 5
-                        }
-                    }>
-                    {this.props.children}
-                </View>
+        const button = <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={
+                    { flex: 1
+                    // , flexWrap: 'wrap'
+                    , flexDirection: 'row'
+                    , justifyContent: 'center'
+                    , alignItems: 'center'
+                    , borderWidth: this.props.borderWidth
+                    , backgroundColor: buttonStyle.background
+                    , borderColor: buttonStyle.border
+                    , borderRadius: this.props.borderRadius
+                    , padding: 5
+                    }
+                }>
+                {this.props.children}
             </View>
+        </View>
+
+        if (this.props.disabled) {
+            return <View style={this.props.style}>
+                {button}
+            </View>
+        }
+
+        return <TouchableOpacity onPress={this.props.onPress} style={this.props.style}>
+            {button}
         </TouchableOpacity>
     }
 }
