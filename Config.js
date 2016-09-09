@@ -41,6 +41,7 @@ export const config = {
         nearbyExpiresAfter: 3 * Day,
     },
     defaultCacheInfo: {
+        noCache:     false,
         refreshAfter: Day,
         expiresAfter: Month,
     },

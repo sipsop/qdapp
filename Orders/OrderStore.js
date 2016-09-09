@@ -3,12 +3,22 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { DownloadResult, emptyResult } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
 import { barStore } from '../Bar/BarStore.js'
+import { getStripeToken } from '../Payment/StripeAPI.js'
+// import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
+
+const uuid = () => {
+    var id = ""
+    for (var i = 0; i < 4; i++) {
+        id += shortid.generate()
+    }
+    return id
+}
 
 /*********************************************************************/
 
@@ -28,7 +38,6 @@ export type OrderState = {
 }
 
 export type OrderResult = {
-    errorMessage:   ?String,
     queueSize:      Int,
     estimatedTime:  Float,
     receipt:        String,
@@ -122,9 +131,13 @@ class OrderStore {
         return _.any(this.orderList.map(orderItem => orderItem.amount > 0))
     }
 
+    orderListTotal = (orderList : Array<OrderItem>) : Float => {
+        return _.sum(orderList.map(this.getTotal))
+    }
+
     // Update the total asynchronously for UI responsiveness (see the autorun below)
     @computed get _total() : Float {
-        return _.sum(this.orderList.map(this.getTotal))
+        return this.orderListTotal(this.orderList)
     }
 
     @computed get totalText() : String {
@@ -170,16 +183,14 @@ class OrderStore {
     }
 
     @action setFreshOrderToken = () => {
-        this.setOrderToken(shortid.generate())
+        this.setOrderToken(uuid())
     }
 
     @action clearOrderToken = () => {
         this.activeOrderID = null
     }
 
-    /* Submit order to server */
-    placeActiveOrder = _.logErrors(async () => {
-        // this.stripeTokenDownload.downloadFinished('someFakeStripeToken')
+    placeActiveOrderStub = () => {
         this.orderResultDownload.downloadFinished({
             errorMessage:   null,
             queueSize:      2,
@@ -188,6 +199,39 @@ class OrderStore {
             userName:       'Mark F',
             orderList:      this.orderList.slice(),
         })
+    }
+
+    /* Submit order to server */
+    placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
+        return this.placeActiveOrderStub()
+    
+        const stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+        const userName = loginStore.userName
+        const currency = 'Sterling'
+        const total    = this.orderListTotal(this.orderList)
+
+        const result = await downloadManager.graphQLMutate(`
+            mutation {
+                placeOrder(
+                        userName: "${userName}",
+                        currency: "${currency}",
+                        price:    "${total}",
+                        orderList: ${JSON.stringify(this.orderList)}
+                        stripeToken: ${stripeToken}) {
+                    errorMessage
+                    userName
+                	queueSize
+                    estimatedTime
+                    receipt
+                }
+            }
+        `)
+
+        if (result.errorMessage) {
+            this.orderResultDownload.downloadError(result.errorMessage)
+        } else {
+            this.orderResultDownload.downloadFinished(result)
+        }
     })
 }
 

@@ -10,6 +10,7 @@ import type { Float } from './Types.js'
 const log = logger('Cache.js')
 
 export type CacheInfo = {
+    noCache:      Bool,
     refreshAfter: Float,
     expiresAfter: Float,
 }
@@ -226,7 +227,7 @@ const MB = (x) => KB(x) * 1024
 
 const storage = new Storage(AsyncStorage /* backend */, 100 /* maxEntries */)
 export const cache = new Cache(storage)
-// cache.clearAll()
+cache.clearAll()
 
 /********************************************/
 /* TODO: Use this to optimize AsyncStorage? */

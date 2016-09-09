@@ -76,11 +76,11 @@ export class PlaceOrderModal extends DownloadResultView {
 }
 
 
-const headerText = (text, fontSize = 25) => {
+const headerText = (text, fontSize = 25, textAlign = 'center') => {
     return <HeaderText
                 fontSize={fontSize}
                 rowHeight={40}
-                style={{flex: 1, textAlign: 'center'}}
+                style={{flex: 1, textAlign: textAlign}}
                 >
         {text}
     </HeaderText>
@@ -132,11 +132,13 @@ class Receipt extends PureComponent {
                           </Header>
                         : undefined
                     }
+                    {/*<OrderTotal orderResult={orderResult} />*/}
                     <Info orderResult={orderResult} />
                     <OrderList
                         orderList={orderResult.orderList}
                         simple={true}
                         />
+                    <OrderTotal orderResult={orderResult} />
                 </ScrollView>
         </OkCancelModal>
     }
@@ -211,6 +213,25 @@ class ReceiptHeader extends PureComponent {
                         </T>
                     </View>
                 </Message>
+            </View>
+        </Header>
+    }
+}
+
+@observer
+class OrderTotal extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+    render = () => {
+        const orderResult = this.props.orderResult
+        // if (orderResult.orderList.length === 1)
+        //     return <View />
+        const total = orderStore.orderListTotal(orderResult.orderList)
+        return <Header>
+            <View style={{flexDirection: 'row'}}>
+                {headerText('Total:')}
+                {headerText('£' + total.toFixed(2), 25, 'right')}
             </View>
         </Header>
     }

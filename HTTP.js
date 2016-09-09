@@ -21,6 +21,8 @@ import * as _ from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
 
+const { log, assert } = _.utils('./HTTP.js')
+
 /*********************************************************************/
 
 export type HTTPOptions = RequestOptions
@@ -242,6 +244,10 @@ export class DownloadResultView<T> extends PureComponent {
 
 class DownloadManager {
 
+    graphQLMutate = async (query) => {
+        return await this.graphQL('', query, null, { noCache: true })
+    }
+
     /* Execute a GraphQL query */
     graphQL = async /*<T>*/(
             /* key used for caching responses */
@@ -249,7 +255,6 @@ class DownloadManager {
             /* GraphQL query string to execute */
             query : string,
             /* Callback that decides whether the download is still relevant */
-            isRelevantCB : () => boolean,
             cacheInfo    : CacheInfo,
             ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
@@ -262,9 +267,9 @@ class DownloadManager {
         }
         var result
         try {
-            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB, cacheInfo)
+            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, cacheInfo)
         } catch (err) {
-            console.error(err)
+            _.logError(err)
         }
         return result.update(value => value.data)
     }
@@ -277,14 +282,9 @@ class DownloadManager {
             url : URL,
             /* HTTP options to pass to fetch() */
             httpOptions : HTTPOptions,
-            /* Callback that decides whether the download is still relevant */
-            isRelevantCB : () => boolean,
             cacheInfo : CacheInfo,
         ) : Promise<DownloadResult<T>> => {
-
-        if (!url)
-            throw Error("dude I need a URL..." + key)
-
+        assert(url)
         /* Try a fresh download... */
         return await fetchJSONWithTimeouts(key, url, httpOptions, 12000, 20000, cacheInfo)
     }
@@ -315,10 +315,15 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        return await _fetchJSON(url, httpOptions, refreshTimeout)
+        return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
-        return await _fetchJSON(url, httpOptions, expiredTimeout)
+        return await simpleFetchJSON(url, httpOptions, expiredTimeout)
+    }
+
+    if (cacheInfo && cacheInfo.noCache) {
+        /* Don't cache anything... */
+        return await refreshCallback()
     }
 
     try {
@@ -331,14 +336,13 @@ const fetchJSONWithTimeouts = async /*<T>*/(
     }
 }
 
-const _fetchJSON = async /*<T>*/(
+export const simpleFetchJSON = async /*<T>*/(
         url             : URL,
         httpOptions     : HTTPOptions,
         downloadTimeout : Float,
         ) : Promise<T> => {
     var response : Response
     try {
-        console.log("Starting fetch...", url, httpOptions)
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await _.timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)

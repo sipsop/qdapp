@@ -90,8 +90,7 @@ export class TagStore {
 
     fetchTags = async () => {
         this.tagDownloadResult.downloadStarted()
-        const isRelevant = () => true /* Outdated tags should always be updated! */
-        const downloadResult = await downloadManager.graphQL('qd:tags', tagQuery, isRelevant)
+        const downloadResult = await downloadManager.graphQL('qd:tags', tagQuery)
         _.runAndLogErrors(() => {
             this.tagDownloadResult = downloadResult.update(data => data.menuTags)
         })
@@ -115,7 +114,7 @@ export class TagStore {
     @computed get tagNames() {
         if (!this.tags)
             return new Map()
-    
+
         const tagNames = this.tags.tagInfo.map(
             tagInfo => [tagInfo.tagID, tagInfo.tagName])
         return new Map(tagNames)

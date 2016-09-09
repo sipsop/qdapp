@@ -108,9 +108,7 @@ class BarStore {
         `
 
         key = `qd:placeID=${placeID}`
-        isRelevant = () => placeID === this.barID
-        const downloadResult = await downloadManager.graphQL(
-            key, menuQuery, isRelevant)
+        const downloadResult = await downloadManager.graphQL(key, menuQuery)
         return downloadResult.update(data => data.menu)
     }
 

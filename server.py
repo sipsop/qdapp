@@ -368,6 +368,16 @@ class OrderItem(graphene.ObjectType):
     selectedOptionStrings = graphene.List(graphene.String()).NonNull
     amount = graphene.Int().NonNull
 
+# For inputs you have to use 'InputObjectType' for some reason...
+# http://stackoverflow.com/questions/32304486/how-to-make-a-mutation-query-for-inserting-a-list-of-array-fields-in-graphql
+class OrderItemInput(graphene.InputObjectType):
+    barID = BarID
+    menuItemID = MenuItemID
+    # e.g. [['pint'], ['lime']]
+    selectedOptionStrings = graphene.List(graphene.String()).NonNull
+    amount = graphene.Int().NonNull
+
+
 characters = string.ascii_letters + '0123456789!?@*$+/|'
 
 def shortid():
@@ -378,18 +388,19 @@ class PlaceOrder(graphene.Mutation):
         userName = graphene.String().NonNull
         currency = graphene.String().NonNull
         price = graphene.Float().NonNull
-        # orderList = graphene.List(OrderItem).NonNull
+        orderList = graphene.List(OrderItemInput).NonNull
         stripeToken = graphene.String().NonNull
 
     errorMessage = graphene.String()
     queueSize = graphene.Int().NonNull
     estimatedTime = graphene.Int().NonNull
     receipt = graphene.String().NonNull
-    userName = graphene.String().NonNull,
+    userName = graphene.String().NonNull
     # orderList = graphene.List(OrderItem).NonNull
 
     @classmethod
     def mutate(cls, instance, args, info):
+        # TODO: Authentication
         print("Placing Order:", args)
         assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
         queueSize = 2
@@ -398,6 +409,7 @@ class PlaceOrder(graphene.Mutation):
             queueSize=queueSize,
             estimatedTime=queueSize * 90,
             receipt=shortid(),
+            userName=args['userName'],
         )
 
 class Mutations(graphene.ObjectType):
