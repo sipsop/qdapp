@@ -226,8 +226,63 @@ drinks:
             #breadymalt 
             #germanNobleHops 
             #bitter
+
 ###ale
 
+    ##brownAle
+    
+    americanBrownAle:
+        name: American Brown Ale
+        desc: It is a medium to full-bodied, deep copper to very dark brown and clear brown ale which is drier than english brown ale.  
+        abv: 4.3% to 6.2%
+        ibu: 20-30
+        tags: |
+            #beer
+            #ale
+            #brownale
+            #dark
+            #malt
+            #roastedmalt
+            #chocolate
+            #brown
+            #caramel 
+            #dry
+            #citrus 
+            #toasty 
+    
+    englishBrownAle: 
+        name: English Brown Ale
+        desc: English Brown Ale varies depending either if it is from northeastern England then it is strong, malty and nutty and from southern England it is darker, sweeter and low in alcohol. 
+        abv: 4.2% to 5.4%
+        ibu: 20-30
+        tags: |
+            #beer
+            #ale
+            #brownale
+            #dark
+            #nutty
+            #malt
+            #caramel 
+            #strong
+            #foodfriendly 
+            
+    ##paleAle 
+    
+    AmercanAmberAle:
+        name: American Amber Ale
+        desc: 
+        abv: 4.5% to 6.2% 
+        ibu: 25-40
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #malty
+            #caramel
+            #amber
+            
+        
+    
     wine:
         ### Red
 
