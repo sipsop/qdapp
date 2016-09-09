@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../HTTP.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
-import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
+import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
@@ -33,7 +33,6 @@ export class PlaceOrderModal extends DownloadResultView {
     inProgressMessage = "Processing order..."
 
     @computed get visible() {
-        log('PLACE ORDER MODAl VISIBLE...................=', orderStore.getActiveOrderToken())
         return orderStore.getActiveOrderToken() != null
     }
 
@@ -97,20 +96,6 @@ class Receipt extends PureComponent {
         showEstimate: bool
     */
 
-    @observable estimate = null
-    updating = false
-
-    // updateEstimate = () => {
-    //     if (this.props.showEstimate) {
-    //
-    //         if (!this.updating)
-    //             setTimeout(this.updateEstimate, 5000)
-    //         this.updating = true
-    //     } else {
-    //         this.updating = false
-    //     }
-    // }
-
     render = () => {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
@@ -137,12 +122,7 @@ class Receipt extends PureComponent {
                         imageHeight={150}
                         />
                     {/*<TextHeader label={'#' + orderResult.receipt} />*/}
-                    <Header>
-                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                            {headerText(orderResult.userName, 20)}
-                            {headerText('#' + orderResult.receipt)}
-                        </View>
-                    </Header>
+                    <ReceiptHeader orderResult={orderResult} />
                     { timeEstimate
                         ? <Header primary={false} rowHeight={40}>
                             <View style={{flexDirection: 'row'}}>
@@ -179,6 +159,58 @@ class Info extends PureComponent {
             Your order has been placed!{'\n'}
             Show this page to claim your order.
         </T>
+    }
+}
+
+@observer
+class ReceiptHeader extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+
+    receiptModal = null
+
+    render = () => {
+        const orderResult = this.props.orderResult
+
+        return <Header>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {headerText(orderResult.userName, 20)}
+                <TouchableOpacity
+                        style={{flex: 1}}
+                        onPress={() => this.receiptModal.show()}>
+                    {headerText('#' + orderResult.receipt)}
+                </TouchableOpacity>
+                <Message
+                        ref={ref => this.receiptModal = ref}
+                        >
+                    <View style={
+                            { justifyContent: 'center'
+                            , alignItems: 'center'
+                            , minHeight: 300
+                            }
+                        }>
+                        {/*
+                        <T style={
+                                { fontSize: 60
+                                , numberOfLines: 1
+                                , color: config.theme.primary.medium
+                                }
+                            }>
+                            {orderResult.userName}
+                        </T>
+                        */}
+                        <T style={
+                                { fontSize: 100
+                                , color: config.theme.primary.medium
+                                }
+                            }>
+                            {'#' + orderResult.receipt}
+                        </T>
+                    </View>
+                </Message>
+            </View>
+        </Header>
     }
 }
 
