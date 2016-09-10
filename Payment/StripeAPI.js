@@ -1,5 +1,5 @@
 import Strip from './Stripe.js'
-import { DownloadResult, emptyResult } from '../HTTP.js'
+import { NetworkError } from '../HTTP.js'
 
 /*********************************************************************/
 
@@ -17,8 +17,8 @@ const stripeAPIKey = stripeTestAPIKey
 
 // Adapted from https://github.com/xcarpentier/react-native-stripe-api/
 
-export const getStripeToken = (card : Card) : Promise<Token> => {
-    return this.stripePostRequest('tokens', {
+export const getStripeToken = async (card : Card) : Promise<Token> => {
+    return await stripePostRequest('tokens', {
       'card[number]':       card.cardNumber,
       'card[exp_month]':    card.expiryMonth,
       'card[exp_year]':     card.expiryYear,

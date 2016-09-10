@@ -250,9 +250,7 @@ export class TagView extends DownloadResultView {
         children: [Component]
     */
 
-    constructor(props) {
-        super(props, "Error downloading tags")
-    }
+    errorMessage = "Error downloading tags"
 
     @computed get rows() {
         /* Get all applicable tags */

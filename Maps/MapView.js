@@ -27,8 +27,9 @@ const log = logger('Maps/MapView.js')
 
 @observer
 export class MapView extends DownloadResultView {
+    errorMessage = "Error downloading map"
     constructor(props) {
-        super(props, "Error downloading map")
+        super(props)
         this.mapRef = null
     }
 

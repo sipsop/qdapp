@@ -227,7 +227,7 @@ const MB = (x) => KB(x) * 1024
 
 const storage = new Storage(AsyncStorage /* backend */, 100 /* maxEntries */)
 export const cache = new Cache(storage)
-cache.clearAll()
+// cache.clearAll()
 
 /********************************************/
 /* TODO: Use this to optimize AsyncStorage? */

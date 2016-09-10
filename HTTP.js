@@ -4,9 +4,9 @@ import {
     React,
     Component,
     ActivityIndicator,
-    Text,
     View,
     TouchableOpacity,
+    T,
 } from './Component.js';
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -177,13 +177,7 @@ export class DownloadResultView<T> extends PureComponent {
     */
 
     inProgressMessage = null
-
-    constructor(props : {downloadResult: DownloadResult<T>}, errorMessage : string) {
-        super(props)
-        if (!errorMessage)
-            throw Error('Expected an error message as argument to DownloadResultView')
-        this.errorMessage = errorMessage
-    }
+    errorMessage = null
 
     render = () => {
         const res = this.getDownloadResult()
@@ -232,11 +226,17 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderError = (message : string) => {
+        assert(this.errorMessage != null,
+               "Expected errorMessage to be set in DownloadResultView")
+        const errorMessage = this.errorMessage + (message ? ': ' : '')
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>{this.errorMessage}</Text>
-            <Text style={{textAlign: 'center', marginBottom: 20}}>
-                 {message}
-            </Text>
+            <T>{this.errorMessage}</T>
+            { message
+                ? <T style={{textAlign: 'center', marginBottom: 20}}>
+                     {message}
+                  </T>
+                : undefined
+            }
             <LargeButton label="Refresh" onPress={this.refreshPage} />
         </View>
     }

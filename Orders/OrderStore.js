@@ -3,11 +3,12 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
 import { barStore } from '../Bar/BarStore.js'
+import { paymentStore } from '../Payment/PaymentStore.js'
 import { getStripeToken } from '../Payment/StripeAPI.js'
 // import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
@@ -167,10 +168,11 @@ class OrderStore {
     @action setState = (orderState : OrderState) => {
         if (orderState.orderList)
             this.setOrderList(orderState.orderList)
-        if (orderState.orderToken)
+        if (orderState.orderToken) {
             this.setOrderToken(orderState.orderToken)
-        if (orderState.orderResultDownload)
-            this.orderResultDownload.setState(orderState.orderResultDownload)
+            if (orderState.orderResultDownload)
+                this.orderResultDownload.setState(orderState.orderResultDownload)
+        }
     }
 
     /*********************************************************************/
@@ -178,7 +180,6 @@ class OrderStore {
     getActiveOrderToken = () => this.activeOrderID
 
     @action setOrderToken = (token) => {
-        log("SETTING ORDER TOKEN...", token)
         this.activeOrderID = token
     }
 
@@ -188,6 +189,7 @@ class OrderStore {
 
     @action clearOrderToken = () => {
         this.activeOrderID = null
+        this.orderResultDownload.reset()
     }
 
     placeActiveOrderStub = () => {
@@ -203,9 +205,16 @@ class OrderStore {
 
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        return this.placeActiveOrderStub()
-    
-        const stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+        // return this.placeActiveOrderStub()
+
+        try {
+            const stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+        } catch (err) {
+            if (!(err instanceof NetworkError))
+                throw err
+            this.orderResultDownload.downloadError(err.message)
+            return
+        }
         const userName = loginStore.userName
         const currency = 'Sterling'
         const total    = this.orderListTotal(this.orderList)

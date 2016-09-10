@@ -22,11 +22,8 @@ const log = _.logger('DiscoverPage.js')
 
 @observer
 export class DiscoverPage extends DownloadResultView {
-    constructor(props) {
-        super(props, "Error downloading list of bars:")
-    }
-
-    refreshPage = store.initialize
+    errorMessage      = "Error downloading list of bars"
+    refreshPage       = store.initialize
     getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
     renderNotStarted  = () => <View />
 
