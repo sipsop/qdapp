@@ -365,7 +365,7 @@ class OrderItem(graphene.ObjectType):
     barID = BarID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedOptionStrings = graphene.List(graphene.String()).NonNull
+    selectedStringOptions = graphene.List(graphene.String()).NonNull
     amount = graphene.Int().NonNull
 
 # For inputs you have to use 'InputObjectType' for some reason...
@@ -374,7 +374,7 @@ class OrderItemInput(graphene.InputObjectType):
     barID = BarID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedOptionStrings = graphene.List(graphene.String()).NonNull
+    selectedStringOptions = graphene.List(graphene.String()).NonNull
     amount = graphene.Int().NonNull
 
 
@@ -385,10 +385,11 @@ def shortid():
 
 class PlaceOrder(graphene.Mutation):
     class Input:
-        userName = graphene.String().NonNull
-        currency = graphene.String().NonNull
-        price = graphene.Float().NonNull
-        orderList = graphene.List(OrderItemInput).NonNull
+        barID       = BarID
+        userName    = graphene.String().NonNull
+        currency    = graphene.String().NonNull
+        price       = graphene.Float().NonNull
+        orderList   = graphene.List(OrderItemInput).NonNull
         stripeToken = graphene.String().NonNull
 
     errorMessage = graphene.String()

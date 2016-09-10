@@ -1,5 +1,8 @@
 import Strip from './Stripe.js'
 import { NetworkError } from '../HTTP.js'
+import * as _ from '../Curry.js'
+
+const { log, assert } = _.utils('./Payment/StripeAPI.js')
 
 /*********************************************************************/
 
@@ -9,6 +12,8 @@ import type { Card } from './PaymentStore.js'
 export type CardToken = String
 
 /*********************************************************************/
+
+const stripeURL = 'https://api.stripe.com/v1/'
 
 const stripeTestAPIKey = "sk_test_8MKOs1GQ5iKWE5mAi44c36yY"
 const stripeAPIKey = stripeTestAPIKey
@@ -37,20 +42,19 @@ const stripePostRequest = async (resource: string, properties: Object): Promise 
         .map(([key, value]) => `${key}=${value}`)
         .reduce((previous, current) => `${previous}&${current}`, '')
 
+    const url = `${stripeURL}${resource}`
+    const httpOptions = {
+        method: 'POST',
+        headers: {
+            Accept:         'application/json',
+            Authorization:  `Bearer ${stripeAPIKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body,
+    }
     var response
     try {
-        response = await fetch(
-            `${STRIPE_URL}${resource}`,
-            { method: 'POST'
-            , headers:
-                { Accept:         'application/json'
-                , Authorization:  `Bearer ${stripeAPIKey}`
-                , 'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            },
-            20 * 1000,  // timeout
-            body,
-        )
+        response = await fetch(url, httpOptions)
     } catch (err) {
         throw new NetworkError(err.mesage)
     }
