@@ -229,15 +229,23 @@ export class DownloadResultView<T> extends PureComponent {
         assert(this.errorMessage != null,
                "Expected errorMessage to be set in DownloadResultView")
         const errorMessage = this.errorMessage + (message ? ': ' : '')
+        const errorTextStyle = {
+            fontSize: 20,
+            color: config.theme.primary.dark,
+            // color: config.theme.removeColor,
+            textAlign: 'center',
+        }
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <T>{this.errorMessage}</T>
+            <T style={errorTextStyle}>{this.errorMessage}</T>
             { message
-                ? <T style={{textAlign: 'center', marginBottom: 20}}>
-                     {message}
-                  </T>
+                ? <T style={errorTextStyle}>{message}</T>
                 : undefined
             }
-            <LargeButton label="Refresh" onPress={this.refreshPage} />
+            <LargeButton
+                style={{marginTop: 20}}
+                label="Refresh"
+                onPress={this.refreshPage}
+                />
         </View>
     }
 }
