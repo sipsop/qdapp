@@ -9,6 +9,7 @@ import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
 import { barStore } from '../Bar/BarStore.js'
 import { paymentStore } from '../Payment/PaymentStore.js'
+import { loginStore } from '../Login.js'
 import { getStripeToken } from '../Payment/StripeAPI.js'
 // import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
@@ -28,7 +29,6 @@ import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
     id:                 ID,
-    barID:              BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<Int>>,
     amount:             Int,
@@ -83,8 +83,10 @@ class OrderStore {
     }
 
     @action removeOrderItem = (orderItem1 : OrderItem) => {
-        this.orderList = this.orderList.filter(
-            orderItem2 => orderItem2.id !== orderItem1.id
+        this.setOrderList(
+            this.orderList.filter(
+                orderItem2 => orderItem2.id !== orderItem1.id
+            )
         )
     }
 
@@ -93,6 +95,7 @@ class OrderStore {
     }
 
     @action setOrderList = (orderList : Array<OrderItem>) => {
+        assert(orderList != null)
         this.orderList = orderList
     }
 
@@ -198,35 +201,61 @@ class OrderStore {
             queueSize:      2,
             estimatedTime:  90,
             receipt:        'x4J',
-            userName:       'Mark F',
+            userName:       'Mark',
             orderList:      this.orderList.slice(),
         })
     }
 
+    selectedStringOptions = (orderItem : OrderItem) : Array<Array<String>> => {
+        const menuItem = barStore.getMenuItem(orderItem.menuItemID)
+        return barStore.getMenuItemStringOptions(menuItem, orderItem.selectedOptions)
+    }
+
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        // return this.placeActiveOrderStub()
+        return this.placeActiveOrderStub()
 
+        const barID    = barStore.barID
+        /* TODO: force lorgin at payment screen... */
+        const userName = loginStore.userName || 'Mark'
+        const currency = 'Sterling'
+
+        assert(barID != null)
+        assert(userName != null)
+
+        var stripeToken
         try {
-            const stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+            stripeToken = await getStripeToken(paymentStore.getSelectedCard())
         } catch (err) {
+            log('Stripe token error', err)
             if (!(err instanceof NetworkError))
                 throw err
             this.orderResultDownload.downloadError(err.message)
             return
         }
-        const userName = loginStore.userName
-        const currency = 'Sterling'
-        const total    = this.orderListTotal(this.orderList)
+        log('Got stripe token', stripeToken)
 
-        const result = await downloadManager.graphQLMutate(`
+        const total     = this.orderListTotal(this.orderList)
+        const orderList = this.orderList.map(orderItem => {
+            return {
+                id:                     orderItem.id,
+                menuItemID:             orderItem.menuItemID,
+                selectedStringOptions:  this.selectedStringOptions(orderItem),
+                amount:                 orderItem.amount,
+            }
+        })
+
+        /* TODO: Utility to build queries correctly and safely */
+        const query = `
             mutation {
                 placeOrder(
-                        userName: "${userName}",
-                        currency: "${currency}",
-                        price:    "${total}",
-                        orderList: ${JSON.stringify(this.orderList)}
-                        stripeToken: ${stripeToken}) {
+                        barID:       ${JSON.stringify(barStore.barID)}
+                        userName:    ${JSON.stringify(userName)},
+                        currency:    ${JSON.stringify(currency)},
+                        price:       ${JSON.stringify(total)},
+                        orderList:   ${JSON.stringify(orderList)},
+                        stripeToken: ${JSON.stringify(stripeToken)}
+                        ) {
                     errorMessage
                     userName
                 	queueSize
@@ -234,7 +263,11 @@ class OrderStore {
                     receipt
                 }
             }
-        `)
+        `
+        console.log('Sending query:', query)
+        const result = await downloadManager.graphQLMutate(query)
+
+        log('Order placed:', result)
 
         if (result.errorMessage) {
             this.orderResultDownload.downloadError(result.errorMessage)
@@ -242,6 +275,14 @@ class OrderStore {
             this.orderResultDownload.downloadFinished(result)
         }
     })
+}
+
+
+export type OrderItem = {
+    id:                 ID,
+    menuItemID:         MenuItemID,
+    selectedOptions:    Array<Array<Int>>,
+    amount:             Int,
 }
 
 export const orderStore = new OrderStore()

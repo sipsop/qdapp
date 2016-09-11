@@ -145,7 +145,3 @@ export class SimpleMenuItem extends PureComponent {
         </View>
     }
 }
-
-const formatOptions = (menuItem, orderItem) => {
-
-}
