@@ -80,13 +80,11 @@ export class PlaceOrderDownloadView extends DownloadResultView {
     }
 
     renderFinished = (orderResult : OrderResult) => {
-        return <View>
-            <Receipt
-                bar={barStore.getBar()}
-                orderResult={orderResult}
-                showEstimate={true}
-                />
-        </View>
+        return <Receipt
+                    bar={barStore.getBar()}
+                    orderResult={orderResult}
+                    showEstimate={true}
+                    />
     }
 }
 
@@ -114,6 +112,7 @@ class Receipt extends PureComponent {
     render = () => {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
+        assert(orderResult.orderList != null)
 
         // this.updateEstimate()
 

@@ -83,8 +83,10 @@ class OrderStore {
     }
 
     @action removeOrderItem = (orderItem1 : OrderItem) => {
-        this.orderList = this.orderList.filter(
-            orderItem2 => orderItem2.id !== orderItem1.id
+        this.setOrderList(
+            this.orderList.filter(
+                orderItem2 => orderItem2.id !== orderItem1.id
+            )
         )
     }
 
@@ -93,6 +95,7 @@ class OrderStore {
     }
 
     @action setOrderList = (orderList : Array<OrderItem>) => {
+        assert(orderList != null)
         this.orderList = orderList
     }
 
@@ -210,7 +213,7 @@ class OrderStore {
 
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        // return this.placeActiveOrderStub()
+        return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
