@@ -502,7 +502,7 @@ drinks:
         name: Sauvignon Blanc or Fume Blanc
         desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
         abv: 10% to 13%
-        image: https://pixabay.com/en/a-glass-of-wine-alcohol-white-wine-428316/
+        image: https://pixabay.com/en/glass-white-wine-wine-glasses-1396260/
         license: https://www.pexels.com/photo-license/
         tags: |
             #wine
@@ -561,6 +561,7 @@ drinks:
     cheninBlanc:
         name: Chenin Blanc
         desc: A light bodied white wine similar to Saugvignon Blanc.
+        image: https://pixabay.com/en/alcohol-alcoholic-anniversary-1239004/
         tags: |
             #white
             #light
@@ -586,6 +587,7 @@ drinks:
         name: Gewurztraminer
         desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine.
         abv: 11.5% to 15%
+        image: https://pixabay.com/en/alcohol-alcoholic-anniversary-1239004/
         tags: |
             #wine
             #white
@@ -603,6 +605,7 @@ drinks:
         name: Viognier
         desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.
         abv: 13.5% to 15%
+        image: https://pixabay.com/en/wine-glasses-white-wine-tasting-1266944/
         tags: |
             #wine
             #white
