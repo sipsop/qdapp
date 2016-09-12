@@ -299,7 +299,7 @@ drinks:
     canaletto:
         name: Canaletto Montepulciano D'Abruzzo
         desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
-        image: https://pixabay.com/en/glass-red-wine-drink-679520/ 
+        image: https://pixabay.com/en/glass-red-wine-drink-679520/
         tags: |
             #wine
             #red
