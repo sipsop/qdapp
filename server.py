@@ -8,6 +8,11 @@ import time
 import string
 import random
 import graphene
+import rethinkdb as r
+
+conn = r.connect()
+items_table = r.db('qdodger').table('itemDefs')
+items = list(items_table.run(conn))
 
 # ID  = graphene.ID().NonNull
 ID  = graphene.String().NonNull
@@ -246,20 +251,6 @@ guiness = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit
 heineken = "https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg"
 rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPntmIjnA4/s1600/PB170236.JPG"
 
-def option(price1, price2):
-    return MenuItemOption(
-        name="Choose",
-        optionType=OptionType.Single,
-        optionList=[
-            "pint",
-            "half-pint",
-        ],
-        prices=[
-            price1, price2
-        ],
-        defaultOption=0,
-    )
-
 zero = Price(
     currency=Currency.Sterling,
     option=PriceOption.Relative,
@@ -272,7 +263,13 @@ fiftyP = Price(
     price=0.5,
 )
 
-top_option = MenuItemOption(
+onePound = Price(
+    currency=Currency.Sterling,
+    option=PriceOption.Relative,
+    price=1,
+)
+
+beer_top_options = MenuItemOption(
     name="Options",
     optionType=OptionType.AtMostOne,
     optionList=[
@@ -286,62 +283,111 @@ top_option = MenuItemOption(
         zero,
         fiftyP,
         zero,
-        zero,
     ], #+ [zero] * 100,
     defaultOption=None,
 )
+
+spirit_top_options = MenuItemOption(
+    name="Options",
+    optionType=OptionType.AtMostOne,
+    optionList=[
+        "Coke",
+        "Redbull",
+        "etc",
+    ],
+    prices=[
+        fiftyP,
+        onePound,
+        zero,
+    ],
+    defaultOption=None,
+)
+#============================================================================#
+
+def beer_option(price1, price2):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "pint",
+            "half-pint",
+        ],
+        prices=[
+            price1, price2
+        ],
+        defaultOption=0,
+    )
+
+def wine_options(small, medium, large, bottle):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "small glass",
+            "medium glass",
+            "large glass",
+            "bottle",
+        ],
+        prices=[small, medium, large, bottle],
+        defaultOption=1,
+    )
+
+def spirit_options(single, double):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "single",
+            "double",
+        ],
+        prices=[single, double],
+        defaultOption=0,
+    )
+
+#= Price Generation ========================================================#
+
+def generate_decreasing(lower_bounds, max_price):
+    upper = max_price
+    for lower in lower_bounds:
+        upper = random.choice(generate_prices(lower, upper))
+        yield upper
+
+def generate_prices(lower, upper):
+    return [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
+
+#= Menu =====================================================================#
+
+for item in items:
+    if '#beer' in item['tags']:
+        price1, price2 = generate_decreasing([2.20, 1.70], 6.50)
+        item['price']   = price1
+        item['options'] = [ beer_option(price1, price2), beer_top_options ]
+
+    elif '#wine' in item['tags']:
+        bottle, large, medium, small = generate_decreasing(
+            [8.50, 4.20, 3.20, 2.70], 23.0)
+        item['price']   = medium
+        item['options'] = [ wine_options(small, medium, large, bottle) ]
+
+    elif '#spirit' in item['tags']:
+        double, single = generate_decreasing([4.20, 3.10], 9.10)
+        item['price'] = single
+        item['options'] = [ spirit_options(single, double), spirit_top_options ]
 
 def makeMenu(placeID):
     return Menu(
         placeID=placeID,
         beer=SubMenu(
             image=beer,
-            menuItems=[
-                MenuItem(
-                    id='1',
-                    name="Guiness",
-                    desc="Guiness is a dry irish stout from Dublin, Ireland.",
-                    images=[guiness],
-                    tags=['0', '20', '30', '42'],
-                    price=Price.pounds(3.40),
-                    options=[
-                        option(Price.pounds(3.40), Price.pounds(2.60)),
-                        top_option,
-                    ],
-                ),
-                MenuItem(
-                    id='2',
-                    name="Heineken",
-                    desc="Heineken is a pale lager",
-                    images=[heineken],
-                    tags=['0', '22', '31', '40', '41'],
-                    price=Price.pounds(3.20),
-                    options=[
-                        option(Price.pounds(3.20), Price.pounds(2.30)),
-                        top_option,
-                    ],
-                ),
-                MenuItem(
-                    id='3',
-                    name="Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Lager",
-                    desc="This beer has a rather long name...",
-                    images=[rockBottom],
-                    tags=['0', '22', '31', '42'],
-                    price=Price.pounds(3.20),
-                    options=[
-                        option(Price.pounds(4.20), Price.pounds(3.40)),
-                        top_option,
-                    ],
-                ),
-            ],
+            menuItems=[item for item in items if '#beer' in item['tags']],
         ),
         wine=SubMenu(
             image=wine,
-            menuItems=[],
+            menuItems=[item for item in items if '#wine' in item['tags']],
         ),
         spirits=SubMenu(
             image=spirits,
-            menuItems=[],
+            menuItems=[item for item in items if '#spirit' in item['tags']],
         ),
         cocktails=SubMenu(
             image=cocktails,

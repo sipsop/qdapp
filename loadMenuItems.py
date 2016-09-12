@@ -6,7 +6,7 @@ from curry.typing import alias, typeddict, URL
 import rethinkdb as r
 
 conn = r.connect()
-menuItems = r.db('qdodger').table('menuItems')
+menuItems = r.db('qdodger').table('itemDefs')
 
 fresh_id = uuid.uuid4
 
