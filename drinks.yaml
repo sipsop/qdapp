@@ -382,7 +382,7 @@ drinks:
     shiraz:
         name: Shiraz
         desc: A dark  and full bodied red wine
-        tag: |
+        tags: |
             #dark
             #fullbodied
             #tannins
@@ -395,7 +395,7 @@ drinks:
         name: Cabernet Franc
         desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish.
         abv: 12.5% and above
-        tag: |
+        tags: |
             #tannins
             #red
             #blueberry
@@ -703,7 +703,7 @@ drinks:
     tavel:
         name: Tavel
         desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.
-        tag: |
+        tags: |
             #dry
             #nutty
             #fruity
