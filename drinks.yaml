@@ -1,40 +1,39 @@
 drinks:
-    beer:
-        guiness:
-            name: Guiness
-            desc: Guiness is a dry Irish stout from Dublin, Ireland
-            image: https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg
-            tags: |
-                #beer
-                #stout
-                #dark
-                #blah
+    guiness:
+        name: Guiness
+        desc: Guiness is a dry Irish stout from Dublin, Ireland
+        image: https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg
+        tags: |
+            #beer
+            #stout
+            #dark
+            #blah
 
-        heineken:
-            name: Heineken
-            desc: Heineken is a pale lager
-            image: https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg
-            tags: |
-                #beer
-                #lager
-                #hops
+    heineken:
+        name: Heineken
+        desc: Heineken is a pale lager
+        image: https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg
+        tags: |
+            #beer
+            #lager
+            #hops
 
-        rockBottom:
-            name: Rock Buttom Cask Conditioned Bourbon Chocolate Oatmeal Lager
-            desc: Beer with a rather long name...
-            tags: |
-                #beer
-                #lager
-                #dark
+    rockBottom:
+        name: Rock Buttom Cask Conditioned Bourbon Chocolate Oatmeal Lager
+        desc: Beer with a rather long name...
+        tags: |
+            #beer
+            #lager
+            #dark
 
-        stellaArtois:
-            name: Stella Artois
-            desc: American style premium pale lager.
-            tags: |
-                #bestsellingbeer
-                #lager
-                #Pale
-                #LowMalt
+    stellaArtois:
+        name: Stella Artois
+        desc: American style premium pale lager.
+        tags: |
+            #bestsellingbeer
+            #lager
+            #Pale
+            #LowMalt
 
 ####beer
 ###lager
@@ -283,451 +282,450 @@ drinks:
 
 
 
-    wine:
-        ### Red
+    ### Wine
 
-        # wine bodies: light, medium-bodied, heavy
+    ### Red
 
-        poggio:
-            name: Poggio Castagno Chianti Classico
-            desc: A classic Chianti with complex flavours
-            tags: |
-                #wine
-                #red
+    # wine bodies: light, medium-bodied, heavy
 
-        canaletto:
-            name: Canaletto Montepulciano D'Abruzzo
-            desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
-            # image:
-            tags: |
-                #wine
-                #red
-                #fruity
+    poggio:
+        name: Poggio Castagno Chianti Classico
+        desc: A classic Chianti with complex flavours
+        tags: |
+            #wine
+            #red
 
-        merlot:
-            name: Merlot
-            desc: Merlot is a popular and easy-to-drink red wine.
-            abv: 13.5% to 15%
-            tags: |
-                #wine
-                #red
-                #ripe
-                #soft
-                #lowacidity
-                #herbalflavours
-                #plums
-                #blackcherry
-                #popular
-                #easy-drinking
-                #medium-bodied
+    canaletto:
+        name: Canaletto Montepulciano D'Abruzzo
+        desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
+        # image:
+        tags: |
+            #wine
+            #red
+            #fruity
 
-        cabernetSaugvignon:
-            name: Cabernet Sauvignon
-            desc: Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
-            abv: 13.5% to 15%
-            tags: |
-                #wine
-                #red
-                #ruby
-                #darkpurple
-                #oak
-                #rich
-                #fullbodied
-                #tannins
+    merlot:
+        name: Merlot
+        desc: Merlot is a popular and easy-to-drink red wine.
+        abv: 13.5% to 15%
+        tags: |
+            #wine
+            #red
+            #ripe
+            #soft
+            #lowacidity
+            #herbalflavours
+            #plums
+            #blackcherry
+            #popular
+            #easy-drinking
+            #medium-bodied
 
-        pinotNoir:
-            name: Pinot Noir
-            desc: Pinot noir is a light fruity and smooth red wine.
-            abv: 11.5 % to 14%
-            tags: |
-                #wine
-                #red
-                #light-bodied
-                #smooth
-                #silky
-                #fruity
-                #cherry
-                #plums
-                #strawberry
+    cabernetSaugvignon:
+        name: Cabernet Sauvignon
+        desc: Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
+        abv: 13.5% to 15%
+        tags: |
+            #wine
+            #red
+            #ruby
+            #darkpurple
+            #oak
+            #rich
+            #fullbodied
+            #tannins
 
-        rioja:
-            name: Rioja
-            desc: |
-                Rioja is a red wine from the Rioja region in Spain, not unlike
-                Cabinet Saugvignon, but with some cherry fruitiness.
-            tags: |
-                #wine
-                #red
-                #spanish
-                #tannins
-                #fruity
-                #cherry
-                #oak
+    pinotNoir:
+        name: Pinot Noir
+        desc: Pinot noir is a light fruity and smooth red wine.
+        abv: 11.5 % to 14%
+        tags: |
+            #wine
+            #red
+            #light-bodied
+            #smooth
+            #silky
+            #fruity
+            #cherry
+            #plums
+            #strawberry
 
-        malbec:
-            name: Malbec
-            desc: Mallbec is a popular and easy to drink red wine with a tonne of juicy and fruity flavours.
-            abv: 13.5-15%
-            tags: |
-                #tannins
-                #red
-                #fullbodied
-                #red
-                #darkfruit
-                #blackberry
-                #plum
-                #cherry
-                #malbec
+    rioja:
+        name: Rioja
+        desc: |
+            Rioja is a red wine from the Rioja region in Spain, not unlike
+            Cabinet Saugvignon, but with some cherry fruitiness.
+        tags: |
+            #wine
+            #red
+            #spanish
+            #tannins
+            #fruity
+            #cherry
+            #oak
 
-        shiraz:
-            name: Shiraz
-            desc: A dark  and full bodied red wine
-            tag: |
-                #dark
-                #fullbodied
-                #tannins
-                #red
-                #acidic
-                #blackberry
-                #blackpepper
+    malbec:
+        name: Malbec
+        desc: Mallbec is a popular and easy to drink red wine with a tonne of juicy and fruity flavours.
+        abv: 13.5-15%
+        tags: |
+            #tannins
+            #red
+            #fullbodied
+            #red
+            #darkfruit
+            #blackberry
+            #plum
+            #cherry
+            #malbec
 
-        cabernetFranc:
-            name: Cabernet Franc
-            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish.
-            abv: 12.5% and above
-            tag: |
-                #tannins
-                #red
-                #blueberry
-                #dark
-                #mediumbodied
-                #vanilla
-                #blackberry
-                #cherry
-                #acidic
+    shiraz:
+        name: Shiraz
+        desc: A dark  and full bodied red wine
+        tag: |
+            #dark
+            #fullbodied
+            #tannins
+            #red
+            #acidic
+            #blackberry
+            #blackpepper
 
-        sangiovese:
-            name: Sangiovese
-            desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity.
-            abv: 13.5% to 14.5%
-            tags: |
-                #light
-                #acidic
-                #cherry
-                #red
-                #strawberry
-                #cherry
-                #lightoak
-                #plum
-                #tannins
+    cabernetFranc:
+        name: Cabernet Franc
+        desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish.
+        abv: 12.5% and above
+        tag: |
+            #tannins
+            #red
+            #blueberry
+            #dark
+            #mediumbodied
+            #vanilla
+            #blackberry
+            #cherry
+            #acidic
 
-        beaujlaisNouveau:
-            name: Beaujolais Nouveau
-            desc: It is a fruity french red wine and is released in the same year of its harvest.
-            abv: 12.5% to 13%
-            tags: |
-                #wine
-                #red
-                #fruity
-                #easytodrink
-                #cherry
-                #strawberry
-                #raspberry
-                #soft
+    sangiovese:
+        name: Sangiovese
+        desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity.
+        abv: 13.5% to 14.5%
+        tags: |
+            #light
+            #acidic
+            #cherry
+            #red
+            #strawberry
+            #cherry
+            #lightoak
+            #plum
+            #tannins
 
-        barolo:
-            name: Barolo
-            desc: This is a rich taste full-bodied italian wine which grows better with age.
-            abv: 13.5% to 15%
-            tags: |
-                #wine
-                #red
-                #crimsonred
-                #fullbodied
-                #tannins
-                #acidic
-                #rich
-                #exoticaromas
-                #tar
-                #roses
-                #licorice
-                #mint
-                #spice
-                #herbs
+    beaujlaisNouveau:
+        name: Beaujolais Nouveau
+        desc: It is a fruity french red wine and is released in the same year of its harvest.
+        abv: 12.5% to 13%
+        tags: |
+            #wine
+            #red
+            #fruity
+            #easytodrink
+            #cherry
+            #strawberry
+            #raspberry
+            #soft
 
-        dolcetto:
-            name: Dolcetto
-            desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food.
-            abv: 11.5% to 13.5%
-            tags: |
-                #wine
-                #red
-                #soft
-                #sweet
-                #blackcherry
-                #licorice
-                #pruneflavours
-                #bitterfinish
+    barolo:
+        name: Barolo
+        desc: This is a rich taste full-bodied italian wine which grows better with age.
+        abv: 13.5% to 15%
+        tags: |
+            #wine
+            #red
+            #crimsonred
+            #fullbodied
+            #tannins
+            #acidic
+            #rich
+            #exoticaromas
+            #tar
+            #roses
+            #licorice
+            #mint
+            #spice
+            #herbs
 
-        zinfandel:
-            name: Zinfandel
-            desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins.
-            abv: 14% to 15.5%
-            tags: |
-                #wine
-                #red
-                #pepper
-                #berry
-                #moderateacidity
-                #tannins
+    dolcetto:
+        name: Dolcetto
+        desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food.
+        abv: 11.5% to 13.5%
+        tags: |
+            #wine
+            #red
+            #soft
+            #sweet
+            #blackcherry
+            #licorice
+            #pruneflavours
+            #bitterfinish
 
-
-        ###White
-
-        sauvignonBlanc:
-            name: Sauvignon Blanc or Fume Blanc
-            desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
-            abv: 10% to 13%
-            tags: |
-                #wine
-                #white
-                #popular
-                #dry
-                #fruity
-                #tropicalflavour
-                #acidic
-                #crisp
-
-        pinotGrigio:
-            name: Pinot Grigio or Pinot Gris
-            desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine.
-            abv: 11.5% to 13%
-            tags: |
-                #white
-                #light
-                #dry
-                #refreshing
-                #zesty
-                #citrus
-
-        chardonnay:
-            name: Chardonnay
-            desc: This is the wolrd most famous white wine.
-            abv: 13% to 14.5%
-            tags: |
-                #white
-                #wine
-                #crisp
-                #fruity
-                #oak
-                #aromatic
-
-        riesling:
-            name: Riesling
-            desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry.
-            abv: 6% to 8% (German) and 10.5 to 12.5% (American, Austrian and Australian)
-            tags: |
-                #light
-                #fresh
-                #white
-                #sweet
-                #acidic
-                #apple
-                #crisp
-                #acidic
-                #floral
-                #intensemineral
-
-        cheninBlanc:
-            name: Chenin Blanc
-            desc: A light bodied white wine similar to Saugvignon Blanc.
-            tags: |
-                #white
-                #light
-                #zesty
-                #acidic
-
-        moscato:
-            name: Moascato or Muscat
-            desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
-            abv: 5% to 7%
-            tags: |
-                #sweet
-                #fruity
-                #white
-                #wine
-                #dessert
-                #honey
-                #acidic
-                #citrus
-
-        gewurztraminer:
-            name: Gewurztraminer
-            desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine.
-            abv: 11.5% to 15%
-            tags: |
-                #wine
-                #white
-                #lychees
-                #grapefruit
-                #pineapple
-                #fruity
-                #spice
-                #herbs
-                #fullbodied
-                #rose
-                #aciditymediumlow
-
-        viognier:
-            name: Viognier
-            desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.
-            abv: 13.5% to 15%
-            tags: |
-                #wine
-                #white
-                #tropicalaroma
-                #flatinnose
-                #crisp
-                #dry
-                #lowacidity
-
-        semillon:
-            name: Semillon
-            desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.
-            abv: 11.5% to 13.5%
-            tags: |
-                #white
-                #wine
-                #dry
-                #fruity
-                #citrus
-                #oak
-                #fullbodied
-                #zesty
-                #lemon
-                #lime
-                #rich
-                #creamy
-                #lanolin
-                #mediumacidity
+    zinfandel:
+        name: Zinfandel
+        desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins.
+        abv: 14% to 15.5%
+        tags: |
+            #wine
+            #red
+            #pepper
+            #berry
+            #moderateacidity
+            #tannins
 
 
+    ###White
 
-        # wine, rose
+    sauvignonBlanc:
+        name: Sauvignon Blanc or Fume Blanc
+        desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
+        abv: 10% to 13%
+        tags: |
+            #wine
+            #white
+            #popular
+            #dry
+            #fruity
+            #tropicalflavour
+            #acidic
+            #crisp
 
-        grenache:
-            name: Grenache Rosé
-            desc: |
-                Grenache is a dry, acidic and fruity Rosé.
-            tags: |
-                #wine
-                #rosé
-                #fruity
-                #lowinacidity
-                #dry
-                #cherry
-                #lowintannin
-                #grenache
+    pinotGrigio:
+        name: Pinot Grigio or Pinot Gris
+        desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine.
+        abv: 11.5% to 13%
+        tags: |
+            #white
+            #light
+            #dry
+            #refreshing
+            #zesty
+            #citrus
 
-        zinfandel:
-            name: Zinfandel Rosé
-            desc: Zinfandel is a moderately sweet and dry
-            tags: |
-                #popular
-                #fruity
-                #sweet
-                #acidic
-                #lemon
-                #strawberry
-                #rose
-                #wine
-                #zinfandel
+    chardonnay:
+        name: Chardonnay
+        desc: This is the wolrd most famous white wine.
+        abv: 13% to 14.5%
+        tags: |
+            #white
+            #wine
+            #crisp
+            #fruity
+            #oak
+            #aromatic
 
-        provence:
-            name: Provence
-            desc: The most famous rose region in the world, the rose wines of Provence are versatile.
-            tags: |
-                #crisp
-                #fresh
-                #dry
-                #popular
-                #rosepetal
-                #fruity
-                #spicy
-                #rose
-                #wine
-                #provence
+    riesling:
+        name: Riesling
+        desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry.
+        abv: 6% to 8% (German) and 10.5 to 12.5% (American, Austrian and Australian)
+        tags: |
+            #light
+            #fresh
+            #white
+            #sweet
+            #acidic
+            #apple
+            #crisp
+            #acidic
+            #floral
+            #intensemineral
 
-        syrah:
-            name: Syrah
-            desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend.
-            tags: |
-                #rubyred
-                #boldflavours
-                #fruity
-                #wine
-                #rose
-                #whitepepper
-                #cherry
-                #strawberry
-                #syrah
+    cheninBlanc:
+        name: Chenin Blanc
+        desc: A light bodied white wine similar to Saugvignon Blanc.
+        tags: |
+            #white
+            #light
+            #zesty
+            #acidic
 
-        tempranillo:
-            name: Tempranillo
-            desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja.
-            tags: |
-                #acidity
-                #refreshing
-                #fruity
-                #wine
-                #rose
-                #strawberry
-                #raspberry
-                #tempranillo
+    moscato:
+        name: Moascato or Muscat
+        desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
+        abv: 5% to 7%
+        tags: |
+            #sweet
+            #fruity
+            #white
+            #wine
+            #dessert
+            #honey
+            #acidic
+            #citrus
+
+    gewurztraminer:
+        name: Gewurztraminer
+        desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine.
+        abv: 11.5% to 15%
+        tags: |
+            #wine
+            #white
+            #lychees
+            #grapefruit
+            #pineapple
+            #fruity
+            #spice
+            #herbs
+            #fullbodied
+            #rose
+            #aciditymediumlow
+
+    viognier:
+        name: Viognier
+        desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.
+        abv: 13.5% to 15%
+        tags: |
+            #wine
+            #white
+            #tropicalaroma
+            #flatinnose
+            #crisp
+            #dry
+            #lowacidity
+
+    semillon:
+        name: Semillon
+        desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.
+        abv: 11.5% to 13.5%
+        tags: |
+            #white
+            #wine
+            #dry
+            #fruity
+            #citrus
+            #oak
+            #fullbodied
+            #zesty
+            #lemon
+            #lime
+            #rich
+            #creamy
+            #lanolin
+            #mediumacidity
+
+    # wine, rose
+
+    grenache:
+        name: Grenache Rosé
+        desc: |
+            Grenache is a dry, acidic and fruity Rosé.
+        tags: |
+            #wine
+            #rosé
+            #fruity
+            #lowinacidity
+            #dry
+            #cherry
+            #lowintannin
+            #grenache
+
+    zinfandel:
+        name: Zinfandel Rosé
+        desc: Zinfandel is a moderately sweet and dry
+        tags: |
+            #popular
+            #fruity
+            #sweet
+            #acidic
+            #lemon
+            #strawberry
+            #rose
+            #wine
+            #zinfandel
+
+    provence:
+        name: Provence
+        desc: The most famous rose region in the world, the rose wines of Provence are versatile.
+        tags: |
+            #crisp
+            #fresh
+            #dry
+            #popular
+            #rosepetal
+            #fruity
+            #spicy
+            #rose
+            #wine
+            #provence
+
+    syrah:
+        name: Syrah
+        desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend.
+        tags: |
+            #rubyred
+            #boldflavours
+            #fruity
+            #wine
+            #rose
+            #whitepepper
+            #cherry
+            #strawberry
+            #syrah
+
+    tempranillo:
+        name: Tempranillo
+        desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja.
+        tags: |
+            #acidity
+            #refreshing
+            #fruity
+            #wine
+            #rose
+            #strawberry
+            #raspberry
+            #tempranillo
 
 
-        pinotNoir:
-            name: Pinot Noir Rosé
-            desc: Pinot Noir is an elegant and delighful Rosé.
-            tags: |
-                #wine
-                #rose
-                #acidic
-                #soft
-                #fruity
-                #crisp
-                #apple
-                #raspberry
-                #watermelon
-                #strawberry
-                #pinotnoir
+    pinotNoir:
+        name: Pinot Noir Rosé
+        desc: Pinot Noir is an elegant and delighful Rosé.
+        tags: |
+            #wine
+            #rose
+            #acidic
+            #soft
+            #fruity
+            #crisp
+            #apple
+            #raspberry
+            #watermelon
+            #strawberry
+            #pinotnoir
 
-        tavel:
-            name: Tavel
-            desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.
-            tag: |
-                #dry
-                #nutty
-                #fruity
-                #wine
-                #rose
-                #foodwine
-                #tavel
+    tavel:
+        name: Tavel
+        desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.
+        tag: |
+            #dry
+            #nutty
+            #fruity
+            #wine
+            #rose
+            #foodwine
+            #tavel
 
-        sangiovese:
-            name: Saniovese rose
-            desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish.
-            tags: |
-                #roses
-                #wine
-                #rose
-                #strawberry
-                #acidity
-                #dry
-                #fruity
-                #sanioveserose
+    sangiovese:
+        name: Saniovese rose
+        desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish.
+        tags: |
+            #roses
+            #wine
+            #rose
+            #strawberry
+            #acidity
+            #dry
+            #fruity
+            #sanioveserose
 
-        # wine, sparkling champagne
+    # wine, sparkling champagne
 
     prosecco:
         name: Prosecco
@@ -886,64 +884,64 @@ drinks:
             #crisp
             #mcc
 
-    spirits:
-        smirnoff:
-            name: Smirnoff
-            desc: |
-                jfkdk
-                fjdkfjdk
-            tags: |
-                #spirit
+    ### Spirits
+    smirnoff:
+        name: Smirnoff
+        desc: |
+            jfkdk
+            fjdkfjdk
+        tags: |
+            #spirit
 
-        greyGoose:
-            name: Grey Goose Vodka
-            abv: 40%
-            desc:
-            tags: |
-                #spirit
-                #vodka
-                #premium
-                #french
-                #france
-                #grain
+    greyGoose:
+        name: Grey Goose Vodka
+        abv: 40%
+        desc:
+        tags: |
+            #spirit
+            #vodka
+            #premium
+            #french
+            #france
+            #grain
 
-        russianStandard:
-            name: Russian Standard Vodka
-            abv: 40%
-            desc:
-            tags: |
-                #spirit
-                #vodka
-                #russian
-                #russia
-                #grain
+    russianStandard:
+        name: Russian Standard Vodka
+        abv: 40%
+        desc:
+        tags: |
+            #spirit
+            #vodka
+            #russian
+            #russia
+            #grain
 
-        absolut:
-            name: Absolut Vodka
-            abv: 40%
-            desc: A versatile and pure vodka, with a distinct character of grain, followed by a hint of dried fruit.
-            tags: |
-                #spirit
-                #vodka
-                #absolut
-                #premium
-                #grain
+    absolut:
+        name: Absolut Vodka
+        abv: 40%
+        desc: A versatile and pure vodka, with a distinct character of grain, followed by a hint of dried fruit.
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
 
-        ciroc:
-            name: Ciroc Vodka
-            abv: 40%
-            desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
-            tags: |
-                #spirit
-                #vodka
-                #ciroc
-                #premium
-                #grapes
+    ciroc:
+        name: Ciroc Vodka
+        abv: 40%
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #grapes
 
+    ### Cocktails
 
-    cocktails:
-        longIslandIceTea:
-            name: Long Island Ice Tea
+    # longIslandIceTea:
+    #     name: Long Island Ice Tea
 
 
 menuOptions:
