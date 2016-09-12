@@ -5,10 +5,14 @@
 from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import time
+import string
+import random
 import graphene
 
 # ID  = graphene.ID().NonNull
 ID  = graphene.String().NonNull
+BarID = ID
+MenuItemID = ID
 URL = graphene.String().NonNull
 
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
@@ -117,6 +121,7 @@ class Day(graphene.Enum):
 class Time(graphene.ObjectType):
     hour    = graphene.Int()
     minute  = graphene.Int()
+    second  = graphene.Int()
 
 class OpeningTime(graphene.ObjectType):
     # day = graphene.NonNull(Day)
@@ -226,48 +231,6 @@ class Query(graphene.ObjectType):
         placeID = args['placeID']
         return makeMenu(placeID)
 
-    # def resolve_bar(self, args, info):
-    #     # time.sleep(8)
-    #     id = args['id']
-    #     # if id != eagleID:
-    #     #     raise ValueError("Expected id=1")
-    #     print("returning bar!", args)
-    #     return Bar(
-    #         id=id,
-    #         name='The Eagle',
-    #         desc='''
-    #             The Eagle is a traditional English pub dating back to the 16th
-    #             century, serving breakfast, lunch and evening meals.
-    #         ''',
-    #         barType=BarType.Pub,
-    #         signedUp=True,
-    #         images=[outsideURL, insideURL],
-    #         tags=['#pub', '#traditional', '#lunch', '#dinner'],
-    #         phone="01223 505020",
-    #         website="www.eagle-cambridge.co.uk",
-    #         openingTimes=[
-    #             None,
-    #             None,
-    #             None,
-    #             None,
-    #             None,
-    #             OpeningTime(
-    #                 # day=Day.Friday,
-    #                 openTime=Time(hour=11, minute=0),
-    #                 closeTime=Time(23, minute=30),
-    #             ),
-    #             None,
-    #         ],
-    #         address=Address(
-    #             lat=52.204139,
-    #             lon=0.118045,
-    #             city='Cambridge',
-    #             street='Benet Street',
-    #             number='8',
-    #             postcode='CB2 3QN',
-    #             )
-    #         )
-
     def resolve_menuTags(self, args, info):
         return menuTags
 
@@ -285,7 +248,7 @@ rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPn
 
 def option(price1, price2):
     return MenuItemOption(
-        name="Size",
+        name="Choose",
         optionType=OptionType.Single,
         optionList=[
             "pint",
@@ -310,7 +273,7 @@ fiftyP = Price(
 )
 
 top_option = MenuItemOption(
-    name="Top",
+    name="Options",
     optionType=OptionType.AtMostOne,
     optionList=[
         "tops (lemonade)",
@@ -394,33 +357,70 @@ def makeMenu(placeID):
     )
 
 
-schema = graphene.Schema(query=Query, executor=GeventExecutor())
-# query = '''
-#     query {
-#         bar(id: "1") {
-#             id
-#             name
-#             address {
-#                 lat
-#                 lon
-#                 city
-#                 street
-#                 number
-#                 postcode
-#             }
-#         }
-#     }
-# '''
-# result = schema.execute(query)
-# print(result.data['bar'])
+############################################################################
+# Mutation
+############################################################################
 
-# print("===========================")
-# result = schema.execute(query)
-# print(result.data)
-# print("===========================")
+class OrderItem(graphene.ObjectType):
+    barID = BarID
+    menuItemID = MenuItemID
+    # e.g. [['pint'], ['lime']]
+    selectedStringOptions = graphene.List(graphene.String()).NonNull
+    amount = graphene.Int().NonNull
 
-from flask import Flask
-from flask_graphql import GraphQLView
-app = Flask(__name__)
-app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
-app.run(host='0.0.0.0', debug=True)
+# For inputs you have to use 'InputObjectType' for some reason...
+# http://stackoverflow.com/questions/32304486/how-to-make-a-mutation-query-for-inserting-a-list-of-array-fields-in-graphql
+class OrderItemInput(graphene.InputObjectType):
+    barID = BarID
+    menuItemID = MenuItemID
+    # e.g. [['pint'], ['lime']]
+    selectedStringOptions = graphene.List(graphene.String()).NonNull
+    amount = graphene.Int().NonNull
+
+
+characters = string.ascii_letters + '0123456789!?@*$+/|'
+
+def shortid():
+    return ''.join(random.sample(characters, 3))
+
+class PlaceOrder(graphene.Mutation):
+    class Input:
+        barID       = BarID
+        userName    = graphene.String().NonNull
+        currency    = graphene.String().NonNull
+        price       = graphene.Float().NonNull
+        orderList   = graphene.List(OrderItemInput).NonNull
+        stripeToken = graphene.String().NonNull
+
+    errorMessage = graphene.String()
+    queueSize = graphene.Int().NonNull
+    estimatedTime = graphene.Int().NonNull
+    receipt = graphene.String().NonNull
+    userName = graphene.String().NonNull
+    # orderList = graphene.List(OrderItem).NonNull
+
+    @classmethod
+    def mutate(cls, instance, args, info):
+        # TODO: Authentication
+        print("Placing Order:", args)
+        assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
+        queueSize = 2
+        return PlaceOrder(
+            errorMessage=None,
+            queueSize=queueSize,
+            estimatedTime=queueSize * 90,
+            receipt=shortid(),
+            userName=args['userName'],
+        )
+
+class Mutations(graphene.ObjectType):
+    placeOrder = graphene.Field(PlaceOrder)
+
+schema = graphene.Schema(query=Query, mutation=Mutations, executor=GeventExecutor())
+
+if __name__ == '__main__':
+    from flask import Flask
+    from flask_graphql import GraphQLView
+    app = Flask(__name__)
+    app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
+    app.run(host='0.0.0.0', debug=True)

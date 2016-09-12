@@ -10,6 +10,7 @@ import type { Float } from './Types.js'
 const log = logger('Cache.js')
 
 export type CacheInfo = {
+    noCache:      Bool,
     refreshAfter: Float,
     expiresAfter: Float,
 }

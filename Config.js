@@ -8,6 +8,23 @@ const purple400 = '#AB47BC'
 const purple500 = '#9C27B0'
 const purple700 = '#7B1FA2'
 
+const purple500Trans = (t) => `rgba(156, 39, 176, ${t})`
+const purple700Trans = (t) => `rgba(123, 31, 162, ${t})`
+
+const lightGreen = t => `rgba(82, 246, 11, ${t})`
+const brown = t => `rgba(145, 106, 17, ${t})`
+const yellow = t => `rgba(230, 221, 10, ${t})`
+const red = t => `rgba(217, 0, 0, ${t})`
+const darkBlue = t => `rgba(15, 39, 110, ${t})`
+const grey = t => `rgba(0, 0, 0, ${t})`
+
+// const menuItemBackgroundColor = yellow(0.10)
+// const menuItemBackgroundColor = lightGreen(0.10)
+// const menuItemBackgroundColor = purple700Trans(0.05)
+// const menuItemBackgroundColor = red(0.10)
+// const menuItemBackgroundColor = darkBlue(0.05)
+const menuItemBackgroundColor = grey(0.03)
+
 const pinkPalette = {
     light:  pink400,
     medium: pink500,
@@ -35,12 +52,17 @@ export const config = {
         secondary:      purplePalette,
         addColor:       'rgb(51, 162, 37)',
         removeColor:    '#900',
+        // menuItemBackgroundColor: grey(0.03),
+        // menuItemBackgroundColorSecondary: grey(0.06),
+        menuItemBackgroundColor: purple700Trans(0.03),
+        menuItemBackgroundColorSecondary: purple700Trans(0.06),
     },
     nearbyCacheInfo: {
         nearbyRefreshAfter: 20 * Minute,
         nearbyExpiresAfter: 3 * Day,
     },
     defaultCacheInfo: {
+        noCache:     false,
         refreshAfter: Day,
         expiresAfter: Month,
     },

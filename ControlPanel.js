@@ -7,7 +7,7 @@ import { T } from './AppText.js'
 import { loginStore } from './Store.js'
 import { drawerStore } from './SideMenu.js'
 import { SmallOkCancelModal, SimpleModal } from './Modals.js'
-import { CreditCardList } from './Payment/Popup.js'
+import { CreditCardList } from './Payment/PaymentModal.js'
 import { config } from './Config.js'
 import * as _ from './Curry.js'
 

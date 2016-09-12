@@ -1,4 +1,4 @@
-import { React, Component, View, Modal, PureComponent, T } from './Component.js'
+import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from './Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
 import * as _ from './Curry.js'
 
@@ -8,6 +8,24 @@ import { observer } from 'mobx-react/native'
 const log = _.logger('./Modals.js')
 
 @observer
+export class Message extends PureComponent {
+    modal = null
+
+    show = () => this.modal.show()
+    close = () => this.modal.close()
+
+    render = () => {
+        return <SmallOkCancelModal
+                    ref={ref => this.modal = ref}
+                    showOkButton={false}
+                    showCancelButton={false}
+                    closeOnTouch={true}
+                    {...this.props}
+                    />
+    }
+}
+
+@observer
 export class SmallOkCancelModal extends PureComponent {
     /* properties:
         message: String
@@ -15,9 +33,18 @@ export class SmallOkCancelModal extends PureComponent {
         onClose: () => void
         okLabel: String
         cancelLabel
+        showOkButton: bool
+        showCancelButton: bool
+        closeOnTouch: bool
     */
 
     @observable visible = false
+
+    static defaultProps = {
+        showOkButton: true,
+        showCancelButton: true,
+        closeOnTouch: false,
+    }
 
     @action show = () => {
         this.visible = true
@@ -30,7 +57,8 @@ export class SmallOkCancelModal extends PureComponent {
     }
 
     @action confirm = () => {
-        this.props.onConfirm()
+        if (this.props.onConfirm)
+            this.props.onConfirm()
         this.close()
     }
 
@@ -48,43 +76,68 @@ export class SmallOkCancelModal extends PureComponent {
             }
         }
 
-        return <Modal
-                visible={this.visible}
-                onRequestClose={this.close}
-                transparent={true}
-                >
-            <View style={
+
+        var content = <View
+                style={
                     { flex: 1
                     , justifyContent: 'center'
                     , backgroundColor: 'rgba(0, 0, 0, 0.6)'
                     }
                 }>
+            <View style={
+                    { backgroundColor: '#fff'
+                    , margin: 20
+                    , padding: 10
+                    , borderRadius: 20
+                    }
+                }>
+                {
+                    this.props.message
+                        ? <T style={textStyle}>{this.props.message}</T>
+                        : this.props.children
+                }
                 <View style={
-                        { backgroundColor: '#fff'
-                        , margin: 20
-                        , padding: 10
-                        , borderRadius: 20
+                        { flexDirection: 'row'
+                        , justifyContent: 'flex-end'
                         }
                     }>
-                    <T style={textStyle}>{this.props.message}</T>
-                    <View style={
-                            { flexDirection: 'row'
-                            , justifyContent: 'flex-end'
-                            }
-                        }>
-                        <SecondaryButton
-                            label={this.props.cancelLabel || 'Cancel'}
-                            onPress={this.close}
-                            {...buttonProps}
-                            />
-                        <PrimaryButton
-                            label={this.props.okLabel || 'Ok'}
-                            onPress={this.confirm}
-                            {...buttonProps}
-                            />
-                    </View>
+                    {
+                        this.props.showCancelButton
+                            ? <SecondaryButton
+                                label={this.props.cancelLabel || 'Cancel'}
+                                onPress={this.close}
+                                {...buttonProps}
+                                />
+                            : undefined
+                    }
+                    {
+                        this.props.showOkButton
+                            ? <PrimaryButton
+                                label={this.props.okLabel || 'Ok'}
+                                onPress={this.confirm}
+                                {...buttonProps}
+                                />
+                            : undefined
+                    }
                 </View>
             </View>
+        </View>
+
+        if (this.props.closeOnTouch) {
+            content = <TouchableOpacity
+                            onPress={this.close}
+                            style={{flex: 1}}
+                            >
+                {content}
+            </TouchableOpacity>
+        }
+
+        return  <Modal
+                visible={this.visible}
+                onRequestClose={this.close}
+                transparent={true}
+                >
+            {content}
         </Modal>
     }
 }
@@ -129,12 +182,16 @@ export class OkCancelModal extends PureComponent {
         okLabel: String
             label to show on the Ok button
         cancelLabel
+        okDisabled: bool
+        cancelDisabled: bool
     */
 
     static defaultProps = {
         okLabel: 'Ok',
         cancelLabel: 'Cancel',
         showCancelButton: true,
+        cancelDisabled: false,
+        okDisabled: false,
     }
 
     render = () => {
@@ -145,6 +202,7 @@ export class OkCancelModal extends PureComponent {
                 onPress={this.props.cancelModal}
                 primary={false}
                 style={{flex: 1, margin: 5, height: 55}}
+                disabled={this.props.cancelDisabled}
                 />
         }
 
@@ -154,13 +212,14 @@ export class OkCancelModal extends PureComponent {
                 label={this.props.okLabel || 'Ok'}
                 onPress={this.props.okModal}
                 style={{flex: 1, margin: 5, height: 55}}
+                disabled={this.props.okDisabled}
                 />
         }
 
         return <Modal visible={this.props.visible}
                       onRequestClose={this.props.cancelModal}>
             <View style={{flex: 1, alignItems: 'stretch'}}>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', marginBottom: 20, backgroundColor: "#fff"}}>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: "#fff"}}>
                     {this.props.children}
                 </View>
                 <View style={

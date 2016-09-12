@@ -12,7 +12,9 @@ import { observer } from 'mobx-react/native'
 import { Page } from '../Page.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
-import { Popup } from '../Payment/Popup.js'
+import { PaymentModal } from '../Payment/PaymentModal.js'
+import { OrderList } from './OrderList.js'
+import { ReceiptModal } from './Receipt.js'
 import { store, tabStore, orderStore } from '../Store.js'
 import { config } from '../Config.js'
 
@@ -38,21 +40,13 @@ export class OrderPage extends Page {
 
     renderOrderList = () => {
         return <View style={{flex: 1}}>
-            <Popup
+            <PaymentModal
                 visible={this.popupVisible}
                 onClose={() => this.popupVisible = false}
                 />
-            <ScrollView style={{flex: 1}}>
-                {
-                    orderStore.menuItemsOnOrder.map(
-                        menuItem =>
-                            <MenuItem
-                                key={menuItem.id}
-                                menuItem={menuItem}
-                                currentPage={3}
-                                />
-                    )
-                }
+            <ReceiptModal />
+            <ScrollView>
+                <OrderList orderList={orderStore.orderList} />
             </ScrollView>
             <OrderButton onPress={this.handleOrderPress} />
         </View>

@@ -25,9 +25,7 @@ import { merge, safeAutorun, log } from '../Curry.js'
 
 @observer
 export class BarPageFetcher extends DownloadResultView {
-    constructor(props) {
-        super(props, "Error downloading bar page")
-    }
+    errorMessage = "Error downloading bar page"
 
     refreshPage = () => {
         barStore.refreshBar()

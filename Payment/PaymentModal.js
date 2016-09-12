@@ -20,27 +20,37 @@ import { getCreditCardIcon } from './CreditCardInfo.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Payment/Popup.js')
+const { log, assert } = _.utils('Payment/PaymentModal.js')
 
 @observer
-export class Popup extends PureComponent {
+export class PaymentModal extends PureComponent {
     /* properties:
         visible: bool
         onClose: () => void
     */
+
+    payNow = () => {
+        orderStore.setFreshOrderToken()
+        orderStore.placeActiveOrder()
+        this.props.onClose()
+    }
+
     render = () => {
         const textStyle = {
             textAlign: 'center',
         }
         const bar = barStore.getBar()
 
+        log("OK DISABLED", paymentStore.selectedCardNumber)
+
         return <OkCancelModal
                     visible={this.props.visible}
                     showOkButton={true}
                     showCancelButton={false}
                     cancelModal={this.props.onClose}
-                    okModal={this.props.onClose}
+                    okModal={this.payNow}
                     okLabel={`Pay Now (${orderStore.totalText})`}
+                    okDisabled={paymentStore.selectedCardNumber == null}
                     >
                 <View style={{flex: 1}}>
                     <LazyBarPhoto

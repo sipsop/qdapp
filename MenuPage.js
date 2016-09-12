@@ -1,16 +1,11 @@
 // TODO: Enable flow type checking
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
-  AppRegistry,
-  Image,
-  StyleSheet,
-  TextInput,
-  View,
-  ScrollView,
-  ListView,
-  Picker,
-  TouchableOpacity,
+    Image,
+    View,
+    ScrollView,
+    TouchableOpacity,
 } from 'react-native'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
@@ -22,11 +17,11 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from './Page.js'
 import { createOrderItem, orderStore } from './Orders/OrderStore.js'
+import { OrderList } from './Orders/OrderList.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Price, sumPrices } from './Price.js'
-import { DownloadResultView } from './HTTP.js'
 import { SizeTracker } from './SizeTracker.js'
 import { PickerCollection, PickerItem } from './Pickers.js'
 import { LargeButton } from './Button.js'
@@ -61,9 +56,10 @@ export class MenuView extends Page {
                     <View style={{flex: 1, marginTop: 5}}>
                         {
                             tagStore.getActiveMenuItems().map(
-                                menuItem =>
+                                (menuItem, i) =>
                                     <MenuItem
                                         key={menuItem.id}
+                                        rowNumber={i}
                                         menuItem={menuItem}
                                         />
                             )
@@ -98,6 +94,7 @@ class OrderButton extends PureComponent {
 @observer
 export class MenuItem extends PureComponent {
     /* properties:
+        rowNumber: Int
         menuItem: MenuItem
     */
 
@@ -113,30 +110,57 @@ export class MenuItem extends PureComponent {
         this.showModalFor = null
     }
 
+    @computed get haveOrderItems() : Array<OrderItem> {
+        return orderStore.getOrderList(this.props.menuItem.id).length > 0
+    }
+
     render = () => {
         const menuItem = this.props.menuItem
-        const image = menuItem.images[0]
-
-        return <View>
-            <TouchableOpacity onPress={this.showModal}>
-                <View style={styles.primaryMenuItemView}>
-                    <Image source={{uri: image}} style={styles.image} />
-                    <View style={viewStyles.content}>
-                        <MenuItemHeader menuItem={menuItem} />
+        const isEven = this.props.rowNumber % 2 === 0
+        const backgroundColor = isEven
+            ? '#fff'
+            : config.theme.menuItemBackgroundColor
+        const marginBottom = this.haveOrderItems ? 10 : 0
+        return <View style={{/*marginBottom: marginBottom*/}}>
+            <View style={{backgroundColor: backgroundColor}}>
+                <TouchableOpacity onPress={this.showModal}>
+                    <View style={styles.primaryMenuItemView}>
+                        <MenuItemImage menuItem={menuItem} />
+                        <View style={viewStyles.content}>
+                            <MenuItemHeader menuItem={menuItem} />
+                        </View>
                     </View>
-                </View>
-            </TouchableOpacity>
-            <OrderList
+                </TouchableOpacity>
+                <MenuItemOrderList
                     menuItem={menuItem}
                     showModalFor={this.showModalFor}
                     onModalClose={this.modalClosed}
                     />
+            </View>
+            <View style={{backgroundColor: '#fff', height: marginBottom}} />
         </View>
     }
 }
 
+export class MenuItemImage extends PureComponent {
+    /* properties:
+        menuItem: MenuItem
+        style: style object
+    */
+
+    render = () => {
+        const style = this.props.style || styles.image
+        const menuItem = this.props.menuItem
+        const image =
+            menuItem.images && menuItem.images.length > 0
+                ? menuItem.images[0]
+                : undefined
+        return <Image source={{uri: image}} style={style} />
+    }
+}
+
 @observer
-class OrderList extends PureComponent {
+class MenuItemOrderList extends PureComponent {
     /* properties:
         menuItem: MenuItem
         showModalFor: ?OrderItem
@@ -172,11 +196,6 @@ class OrderList extends PureComponent {
                 </View>
                 <PriceColumn orderItems={this.orderItems} />
             </View>
-            {
-                this.orderItems.length === 0
-                    ? undefined
-                    : <View style={{marginBottom: 20}} />
-            }
         </View>
     }
 
@@ -197,7 +216,7 @@ class OrderList extends PureComponent {
 }
 
 @observer
-class PriceColumn extends PureComponent {
+export class PriceColumn extends PureComponent {
     /* properties:
         orderItems: [OrderItem]
     */
@@ -205,7 +224,11 @@ class PriceColumn extends PureComponent {
         return <View style={{minWidth: 60}}>
             {
                 this.props.orderItems.map((orderItem, i) =>
-                    <PriceEntry key={orderItem.id} rowNumber={i} orderItem={orderItem} />
+                    <PriceEntry
+                        key={orderItem.id}
+                        rowNumber={i}
+                        orderItem={orderItem}
+                        />
                 )
             }
         </View>
@@ -463,6 +486,7 @@ export class OrderSelection extends PureComponent {
                     showModal={this.showModal}
                     onFirstAccept={this.handleFirstAccept}
                     onFirstCancel={this.handleFirstCancel}
+                    okLabel={this.showModal ? 'Add' : 'Change'}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>

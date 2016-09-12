@@ -53,10 +53,9 @@ export const searchNearby = async (
     const url = buildURL(BaseURL, params)
 
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude}`
-    const isRelevant = () => true
     const options = { method: 'GET' }
     const jsonDownloadResult = await downloadManager.fetchJSON(
-        key, url, options, isRelevant, config.nearbyCacheInfo)
+        key, url, options, config.nearbyCacheInfo)
     return jsonDownloadResult.update(parseResponse)
 }
 

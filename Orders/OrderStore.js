@@ -3,11 +3,24 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
+import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
 import { barStore } from '../Bar/BarStore.js'
+import { paymentStore } from '../Payment/PaymentStore.js'
+import { loginStore } from '../Login.js'
+import { getStripeToken } from '../Payment/StripeAPI.js'
+// import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
+
+const uuid = () => {
+    var id = ""
+    for (var i = 0; i < 4; i++) {
+        id += shortid.generate()
+    }
+    return id
+}
 
 /*********************************************************************/
 
@@ -15,7 +28,7 @@ import type { BarID, MenuItemID } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
-    barID:              BarID,
+    id:                 ID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<Int>>,
     amount:             Int,
@@ -25,9 +38,17 @@ export type OrderState = {
     orderList: Array<OrderItem>,
 }
 
+export type OrderResult = {
+    queueSize:      Int,
+    estimatedTime:  Float,
+    receipt:        String,
+    userName:       String,
+    // orderList:      Array<OrderItem>,
+}
+
 /*********************************************************************/
 
-const log = _.logger('OrderStore.js')
+const { log, assert } = _.utils('./Orders/OrderStore.js')
 
 class OrderStore {
 
@@ -36,9 +57,14 @@ class OrderStore {
     // Update asynchronously
     @observable total : Float = 0.0
 
-    @computed get menuItemsOnOrder() : Array<MenuItem> {
+    @observable activeOrderID : ?ID = null
+    @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
+
+    getOrderResultDownload = () => this.orderResultDownload
+
+    getMenuItemsOnOrder = (orderList : Array<OrderItem>) : Array<MenuItem> => {
         const seen = []
-        return this.orderList.map(orderItem => {
+        return orderList.map(orderItem => {
                 if (!_.includes(seen, orderItem.menuItemID)) {
                     seen.push(orderItem.menuItemID)
                     return barStore.getMenuItem(orderItem.menuItemID)
@@ -48,13 +74,19 @@ class OrderStore {
             .filter(menuItem => menuItem != null)
     }
 
+    @computed get menuItemsOnOrder() : Array<MenuItem> {
+        return this.getMenuItemsOnOrder(this.orderList)
+    }
+
     @action addOrderItem = (orderItem : OrderItem) => {
         this.orderList.push(orderItem)
     }
 
     @action removeOrderItem = (orderItem1 : OrderItem) => {
-        this.orderList = this.orderList.filter(
-            orderItem2 => orderItem2.id !== orderItem1.id
+        this.setOrderList(
+            this.orderList.filter(
+                orderItem2 => orderItem2.id !== orderItem1.id
+            )
         )
     }
 
@@ -63,11 +95,13 @@ class OrderStore {
     }
 
     @action setOrderList = (orderList : Array<OrderItem>) => {
+        assert(orderList != null)
         this.orderList = orderList
     }
 
     @action clearOrderList = () => {
         this.setOrderList([])
+        this.clearOrderToken()
     }
 
     @computed get currency() {
@@ -101,9 +135,13 @@ class OrderStore {
         return _.any(this.orderList.map(orderItem => orderItem.amount > 0))
     }
 
+    orderListTotal = (orderList : Array<OrderItem>) : Float => {
+        return _.sum(orderList.map(this.getTotal))
+    }
+
     // Update the total asynchronously for UI responsiveness (see the autorun below)
     @computed get _total() : Float {
-        return _.sum(this.orderList.map(this.getTotal))
+        return this.orderListTotal(this.orderList)
     }
 
     @computed get totalText() : String {
@@ -124,15 +162,127 @@ class OrderStore {
 
     getState = () : OrderState => {
         return {
-            orderList: this.orderList,
+            orderList:  this.orderList,
+            orderToken: this.getActiveOrderToken(),
+            orderResultDownload: this.orderResultDownload.getState(),
         }
     }
 
     @action setState = (orderState : OrderState) => {
-        this.setOrderList(orderState.orderList)
+        if (orderState.orderList)
+            this.setOrderList(orderState.orderList)
+        if (orderState.orderToken) {
+            this.setOrderToken(orderState.orderToken)
+            if (orderState.orderResultDownload)
+                this.orderResultDownload.setState(orderState.orderResultDownload)
+        }
     }
 
     /*********************************************************************/
+
+    getActiveOrderToken = () => this.activeOrderID
+
+    @action setOrderToken = (token) => {
+        this.activeOrderID = token
+    }
+
+    @action setFreshOrderToken = () => {
+        this.setOrderToken(uuid())
+    }
+
+    @action clearOrderToken = () => {
+        this.activeOrderID = null
+        this.orderResultDownload.reset()
+    }
+
+    placeActiveOrderStub = () => {
+        this.orderResultDownload.downloadFinished({
+            errorMessage:   null,
+            queueSize:      2,
+            estimatedTime:  90,
+            receipt:        'x4J',
+            userName:       'Mark',
+            orderList:      this.orderList.slice(),
+        })
+    }
+
+    selectedStringOptions = (orderItem : OrderItem) : Array<Array<String>> => {
+        const menuItem = barStore.getMenuItem(orderItem.menuItemID)
+        return barStore.getMenuItemStringOptions(menuItem, orderItem.selectedOptions)
+    }
+
+    /* Submit order to server */
+    placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
+        return this.placeActiveOrderStub()
+
+        const barID    = barStore.barID
+        /* TODO: force lorgin at payment screen... */
+        const userName = loginStore.userName || 'Mark'
+        const currency = 'Sterling'
+
+        assert(barID != null)
+        assert(userName != null)
+
+        var stripeToken
+        try {
+            stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+        } catch (err) {
+            log('Stripe token error', err)
+            if (!(err instanceof NetworkError))
+                throw err
+            this.orderResultDownload.downloadError(err.message)
+            return
+        }
+        log('Got stripe token', stripeToken)
+
+        const total     = this.orderListTotal(this.orderList)
+        const orderList = this.orderList.map(orderItem => {
+            return {
+                id:                     orderItem.id,
+                menuItemID:             orderItem.menuItemID,
+                selectedStringOptions:  this.selectedStringOptions(orderItem),
+                amount:                 orderItem.amount,
+            }
+        })
+
+        /* TODO: Utility to build queries correctly and safely */
+        const query = `
+            mutation {
+                placeOrder(
+                        barID:       ${JSON.stringify(barStore.barID)}
+                        userName:    ${JSON.stringify(userName)},
+                        currency:    ${JSON.stringify(currency)},
+                        price:       ${JSON.stringify(total)},
+                        orderList:   ${JSON.stringify(orderList)},
+                        stripeToken: ${JSON.stringify(stripeToken)}
+                        ) {
+                    errorMessage
+                    userName
+                	queueSize
+                    estimatedTime
+                    receipt
+                }
+            }
+        `
+        console.log('Sending query:', query)
+        const result = await downloadManager.graphQLMutate(query)
+
+        log('Order placed:', result)
+
+        if (result.errorMessage) {
+            this.orderResultDownload.downloadError(result.errorMessage)
+        } else {
+            this.orderResultDownload.downloadFinished(result)
+        }
+    })
+}
+
+
+export type OrderItem = {
+    id:                 ID,
+    menuItemID:         MenuItemID,
+    selectedOptions:    Array<Array<Int>>,
+    amount:             Int,
 }
 
 export const orderStore = new OrderStore()

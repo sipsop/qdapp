@@ -4,9 +4,9 @@ import {
     React,
     Component,
     ActivityIndicator,
-    Text,
     View,
     TouchableOpacity,
+    T,
 } from './Component.js';
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -20,6 +20,8 @@ import { store } from './Store.js'
 import * as _ from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
+
+const { log, assert } = _.utils('./HTTP.js')
 
 /*********************************************************************/
 
@@ -64,10 +66,31 @@ export class DownloadResult<T> {
         return new CombinedDownloadResult(downloadResults)
     }
 
+    getState = () => {
+        return {
+            state:      this.state,
+            message:    this.message,
+            value:      this.value,
+        }
+    }
+
+    @action setState = (downloadState) => {
+        this.state   = downloadState.state
+        this.message = downloadState.message
+        this.value   = downloadState.value
+    }
+
     @action from = (downloadResult : DownloadResult<T>) => {
         this.state   = downloadResult.state
         this.message = downloadResult.message
         this.value   = downloadResult.value
+    }
+
+    @action reset = () : DownloadResult<T> => {
+        this.state = 'NotStarted'
+        this.message = undefined
+        this.value = undefined
+        return this
     }
 
     @action downloadStarted = () : DownloadResult<T> => {
@@ -153,12 +176,8 @@ export class DownloadResultView<T> extends PureComponent {
         downloadResult: DownloadResult
     */
 
-    constructor(props : {downloadResult: DownloadResult<T>}, errorMessage : string) {
-        super(props)
-        if (!errorMessage)
-            throw Error('Expected an error message as argument to DownloadResultView')
-        this.errorMessage = errorMessage
-    }
+    inProgressMessage = null
+    errorMessage = null
 
     render = () => {
         const res = this.getDownloadResult()
@@ -191,20 +210,51 @@ export class DownloadResultView<T> extends PureComponent {
         throw Error('NotImplemented')
     }
 
-    renderInProgress = () => <Loader />
+    renderInProgress = () => {
+        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            {
+                this.inProgressMessage
+                    ? <T style={{fontSize: 20, color: '#000'}}>
+                        {this.inProgressMessage}
+                      </T>
+                    : undefined
+            }
+            <View>
+                <Loader />
+            </View>
+        </View>
+    }
 
     renderError = (message : string) => {
+        assert(this.errorMessage != null,
+               "Expected errorMessage to be set in DownloadResultView")
+        const errorMessage = this.errorMessage + (message ? ': ' : '')
+        const errorTextStyle = {
+            fontSize: 20,
+            color: config.theme.primary.dark,
+            // color: config.theme.removeColor,
+            textAlign: 'center',
+        }
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>{this.errorMessage}</Text>
-            <Text style={{textAlign: 'center', marginBottom: 20}}>
-                 {message}
-            </Text>
-            <LargeButton label="Refresh" onPress={this.refreshPage} />
+            <T style={errorTextStyle}>{this.errorMessage}</T>
+            { message
+                ? <T style={errorTextStyle}>{message}</T>
+                : undefined
+            }
+            <LargeButton
+                style={{marginTop: 20}}
+                label="Refresh"
+                onPress={this.refreshPage}
+                />
         </View>
     }
 }
 
 class DownloadManager {
+
+    graphQLMutate = async (query) => {
+        return await this.graphQL('', query, null, { noCache: true })
+    }
 
     /* Execute a GraphQL query */
     graphQL = async /*<T>*/(
@@ -213,7 +263,6 @@ class DownloadManager {
             /* GraphQL query string to execute */
             query : string,
             /* Callback that decides whether the download is still relevant */
-            isRelevantCB : () => boolean,
             cacheInfo    : CacheInfo,
             ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
@@ -226,9 +275,9 @@ class DownloadManager {
         }
         var result
         try {
-            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, isRelevantCB, cacheInfo)
+            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, cacheInfo)
         } catch (err) {
-            console.error(err)
+            _.logError(err)
         }
         return result.update(value => value.data)
     }
@@ -241,14 +290,9 @@ class DownloadManager {
             url : URL,
             /* HTTP options to pass to fetch() */
             httpOptions : HTTPOptions,
-            /* Callback that decides whether the download is still relevant */
-            isRelevantCB : () => boolean,
             cacheInfo : CacheInfo,
         ) : Promise<DownloadResult<T>> => {
-
-        if (!url)
-            throw Error("dude I need a URL..." + key)
-
+        assert(url)
         /* Try a fresh download... */
         return await fetchJSONWithTimeouts(key, url, httpOptions, 12000, 20000, cacheInfo)
     }
@@ -279,10 +323,15 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        return await _fetchJSON(url, httpOptions, refreshTimeout)
+        return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
-        return await _fetchJSON(url, httpOptions, expiredTimeout)
+        return await simpleFetchJSON(url, httpOptions, expiredTimeout)
+    }
+
+    if (cacheInfo && cacheInfo.noCache) {
+        /* Don't cache anything... */
+        return await refreshCallback()
     }
 
     try {
@@ -295,14 +344,13 @@ const fetchJSONWithTimeouts = async /*<T>*/(
     }
 }
 
-const _fetchJSON = async /*<T>*/(
+export const simpleFetchJSON = async /*<T>*/(
         url             : URL,
         httpOptions     : HTTPOptions,
         downloadTimeout : Float,
         ) : Promise<T> => {
     var response : Response
     try {
-        console.log("Starting fetch...", url, httpOptions)
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await _.timeout(downloadTimeout, fetchPromise)
         // response = await fetch(url, httpOptions)
