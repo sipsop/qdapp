@@ -4,6 +4,7 @@
 # from graphql.execution.middlewares.gevent import GeventExecutionMiddleware, run_in_greenlet
 from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
+import yaml
 import time
 import string
 import random
@@ -169,59 +170,41 @@ class TagInfo(graphene.ObjectType):
 
 class TagEdge(graphene.ObjectType):
     srcID = graphene.String().NonNull
-    dstID = graphene.String().NonNull
+    dstIDs = graphene.List(graphene.String()).NonNull
 
 class Tags(graphene.ObjectType):
     tagInfo  = graphene.List(TagInfo).NonNull
     tagGraph = graphene.List(TagEdge).NonNull
 
-menuTags = Tags(
-    tagInfo=[
-        TagInfo('0', 'beer',       excludes=['1', '2', '3', '4']),
-        TagInfo('1', 'wine',       excludes=['0', '2', '3', '4']),
-        TagInfo('2', 'spirits',    excludes=['0', '1', '3', '4']),
-        TagInfo('3', 'cocktails',  excludes=['0', '1', '2', '4']),
-        TagInfo('4', 'water',      excludes=['0', '1', '2', '3']),
-        TagInfo('20', 'stout',     excludes=['21', '22']),
-        TagInfo('21', 'ale',       excludes=['20', '22']),
-        TagInfo('22', 'lager',     excludes=['20', '21']),
-        TagInfo('30', 'tap',       excludes=['31', '32']),
-        TagInfo('31', 'bottle',    excludes=['30', '32']),
-        TagInfo('32', 'can',       excludes=['30', '31']),
-        TagInfo('40', 'hops',      excludes=[]),
-        TagInfo('41', 'light',     excludes=['42']),
-        TagInfo('42', 'dark',      excludes=['41']),
-        TagInfo('43', 'fruity',    excludes=[]),
-        TagInfo('44', 'chocolate', excludes=[]),
-        TagInfo('45', 'bacon', excludes=[]),
-    ],
-    tagGraph=[
-        TagEdge(srcID='0', dstID='20'),
-        TagEdge(srcID='0', dstID='21'),
-        TagEdge(srcID='0', dstID='22'),
-        TagEdge(srcID='0', dstID='30'),
-        TagEdge(srcID='0', dstID='31'),
-        TagEdge(srcID='0', dstID='32'),
-        TagEdge(srcID='20', dstID='40'),
-        TagEdge(srcID='20', dstID='41'),
-        TagEdge(srcID='20', dstID='42'),
-        TagEdge(srcID='20', dstID='43'),
-        TagEdge(srcID='20', dstID='44'),
-        TagEdge(srcID='20', dstID='45'),
-        TagEdge(srcID='21', dstID='40'),
-        TagEdge(srcID='21', dstID='41'),
-        TagEdge(srcID='21', dstID='42'),
-        TagEdge(srcID='21', dstID='43'),
-        TagEdge(srcID='21', dstID='44'),
-        TagEdge(srcID='21', dstID='45'),
-        TagEdge(srcID='22', dstID='40'),
-        TagEdge(srcID='22', dstID='41'),
-        TagEdge(srcID='22', dstID='42'),
-        TagEdge(srcID='22', dstID='43'),
-        TagEdge(srcID='22', dstID='44'),
-        TagEdge(srcID='22', dstID='45'),
-    ],
-)
+def parse_tags(yaml_file):
+    tags_yaml = yaml.load(yaml_file)
+    groups = tags_yaml['tags']['groups']
+    edges  = tags_yaml['tags']['edges']
+
+    def resolve_tags(category):
+        if category in categories:
+            return categories[category]
+        return ['#' + category] # category is a tag, e.g. 'beer'
+
+    categories = {category: tags.split() for category, tags in groups.items()}
+    tagGraph = []
+    tagInfo  = []
+    for category, children_str in edges.items():
+        src_tags = resolve_tags(category)
+        dst_tags = [ tag for child in children_str.split()
+                             for tag in resolve_tags(child) ]
+        for src_tag in src_tags:
+            tagGraph.append(TagEdge(srcID=src_tag, dstIDs=dst_tags))
+
+    for tags in categories.values():
+        for tag in tags:
+            excludes = list(tags)
+            excludes.remove(tag)
+            tagInfo.append(TagInfo(tag, tag, excludes=excludes))
+
+    return Tags(tagInfo=tagInfo, tagGraph=tagGraph)
+
+menuTags = parse_tags(open('Tags.yaml'))
 
 eagleID = 'ChIJuQdxBb1w2EcRvnxVeL5abUw'
 
@@ -349,11 +332,16 @@ def spirit_options(single, double):
 def generate_decreasing(lower_bounds, max_price):
     upper = max_price
     for lower in lower_bounds:
-        upper = random.choice(generate_prices(lower, upper))
-        yield upper
+        price = random.choice(generate_prices(lower, upper))
+        yield price
+        upper = price.price
+
 
 def generate_prices(lower, upper):
-    return [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
+    prices = [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
+    return [Price(currency=Currency.Sterling,
+                  option=PriceOption.Absolute,
+                  price=price) for price in prices]
 
 #= Menu =====================================================================#
 
@@ -379,15 +367,15 @@ def makeMenu(placeID):
         placeID=placeID,
         beer=SubMenu(
             image=beer,
-            menuItems=[item for item in items if '#beer' in item['tags']],
+            menuItems=[MenuItem(**item) for item in items if '#beer' in item['tags']],
         ),
         wine=SubMenu(
             image=wine,
-            menuItems=[item for item in items if '#wine' in item['tags']],
+            menuItems=[MenuItem(**item) for item in items if '#wine' in item['tags']],
         ),
         spirits=SubMenu(
             image=spirits,
-            menuItems=[item for item in items if '#spirit' in item['tags']],
+            menuItems=[MenuItem(**item) for item in items if '#spirit' in item['tags']],
         ),
         cocktails=SubMenu(
             image=cocktails,

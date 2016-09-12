@@ -276,9 +276,10 @@ class MenuItemHeader extends PureComponent {
                 <View style={{flex: 1}}>
                     <T style={styles.keywordText}>
                         {
-                            menuItem.tags.map(
-                                    tagID => '#' + tagStore.getTagName(tagID)
-                                ).join(' ')
+                            menuItem.tags
+                                .filter(tagStore.tagIsDefined)
+                                .map(tagStore.getTagName)
+                                .join(' ')
                         }
                     </T>
                     <T style={styles.infoText} numberOfLines={3}>

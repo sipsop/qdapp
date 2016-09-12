@@ -28,12 +28,12 @@ const { log, assert } = _.utils('./HTTP.js')
 export type HTTPOptions = RequestOptions
 
 /*********************************************************************/
-
-const HOST = 'http://192.168.0.6:5000'
-// const HOST = 'http://192.168.0.20:5000'
-// const HOST : string = 'http://172.24.176.169:5000'
-// const HOST = 'http://localhost:5000/graphql'
-// const HOST = 'http://10.147.18.19:5000'
+var HOST
+HOST = 'http://192.168.0.6:5000'
+HOST = 'http://192.168.0.28:5000'
+// HOST : string = 'http://172.24.176.169:5000'
+// HOST = 'http://localhost:5000/graphql'
+// HOST = 'http://10.147.18.19:5000'
 
 export class TimeoutError {
     message : string
@@ -273,12 +273,14 @@ class DownloadManager {
             },
             body: query,
         }
-        var result
-        try {
-            result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, cacheInfo)
-        } catch (err) {
-            _.logError(err)
+        const result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, cacheInfo)
+        const value = result.value
+        if (value && value.errors && value.errors.length > 0) {
+            /* GraphQL error */
+            const errorMessage = value.errors[0].message
+            return result.downloadError(errorMessage)
         }
+
         return result.update(value => value.data)
     }
 
