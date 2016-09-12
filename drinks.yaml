@@ -29,21 +29,21 @@ drinks:
 
         stellaArtois:
             name: Stella Artois
-            desc: American style premium pale lager.  
+            desc: American style premium pale lager.
             tags: |
                 #bestsellingbeer
                 #lager
                 #Pale
                 #LowMalt
-        
+
 ####beer
 ###lager
-    
+
     ##pale lagers and pilsners
-    
-    americanLager:   
+
+    americanLager:
         name: American Lager
-        desc: American lager is a light in coulur, slightly hoppy and well carbonated beer. 
+        desc: American lager is a light in coulur, slightly hoppy and well carbonated beer.
         abv: 4.5% to 5.5%
         tags: |
             #beer
@@ -52,11 +52,11 @@ drinks:
             #hoppy
             #spicyfood
             #lightinflavour
-            
+
     germanHelles:
         name: German Helles
-        desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness. 
-        abv: 4.5% to 6% 
+        desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness.
+        abv: 4.5% to 6%
         tags: |
             #beer
             #lager
@@ -65,10 +65,10 @@ drinks:
             #lesshoppy
             #fullbodied
             #lowbitter
-    
+
     germanPilsner:
         name: German Pilsner
-        desc: German Pilsner is a light pale lager with a distinct flavour and hop aroma. 
+        desc: German Pilsner is a light pale lager with a distinct flavour and hop aroma.
         abv: 4.5% to 5%
         tags: |
             #beer
@@ -79,26 +79,26 @@ drinks:
             #mediumhop
             #fish
             #spicy
-    
+
     czech/BohemianPilsner:
         name: Czech or Bohemian Pilsner
-        desc: It is a crystal clear, light straw to golden colour beer which has a distinct flavour with a spicy bitterness and floral flavours or aromas.  
-        abv: 4.5% to 5.5% 
+        desc: It is a crystal clear, light straw to golden colour beer which has a distinct flavour with a spicy bitterness and floral flavours or aromas.
+        abv: 4.5% to 5.5%
         tags: |
             #beer
             #lager
             #paleLager
             #bitterhop
-            #strawcolour 
+            #strawcolour
             #floralaroma
             #floralflavour
             #smooth
             #crisp
             #spicyfood
-    
+
     ##dark lager
-    
-    amberAmercanLager
+
+    amberAmercanLager:
         name: Amber American Lager
         desc: Amber American Lager are known for its sweet, creamy malt flavours with moderate hop aromas due to caramel malts.
         abv: 4.8% to 5.4%
@@ -113,10 +113,10 @@ drinks:
             #caramelaroma
             #smooth
             #dark
-    
+
     oktoberfest:
-        name: Oktoberfest or Marzen 
-        desc: Oktoberfest is a full-bodied, toasty, balanced in sweet taste and a dark copper coloured dark lager beer 
+        name: Oktoberfest or Marzen
+        desc: Oktoberfest is a full-bodied, toasty, balanced in sweet taste and a dark copper coloured dark lager beer
         abv: 5% to 6%
         tags: |
             #beer
@@ -126,11 +126,11 @@ drinks:
             #hoppy
             #darkcopper
             #fullbodied
-            #oktoberfest 
-    
-    germanSchwarzbier: 
-        name: Gemran Schwarzbier 
-        desc: This beer has an opaque, black or brown colour with hints of either coffee or chocolate flavour and produced in Germany. 
+            #oktoberfest
+
+    germanSchwarzbier:
+        name: Gemran Schwarzbier
+        desc: This beer has an opaque, black or brown colour with hints of either coffee or chocolate flavour and produced in Germany.
         abv: 4.4% to 5.4%
         tags: |
             #beer
@@ -142,11 +142,11 @@ drinks:
             #black
             #brown
             #malt
-            #darkincolour 
-    
+            #darkincolour
+
     viennaLager:
-        name: Vienna Lager 
-        desc: Vienna Lager has light malt sweetness and is a medium bodied with reddish-amber or copper colour. This type of beer is more famous in North America. 
+        name: Vienna Lager
+        desc: Vienna Lager has light malt sweetness and is a medium bodied with reddish-amber or copper colour. This type of beer is more famous in North America.
         abv: 4.7% to 5.5%
         tags: |
             #beer
@@ -156,15 +156,15 @@ drinks:
             ##sweet
             #maltyflavour
             #hoppy
-            #crisp 
+            #crisp
             #mediumbodied
-            
-    ##german Bock 
-    
+
+    ##german Bock
+
     traditionalBock:
         name: Traditional Bock
-        desc: Tradional Bock is a strong and dark Gemran lager. 
-        abv: 6.3% to 7.2% 
+        desc: Tradional Bock is a strong and dark Gemran lager.
+        abv: 6.3% to 7.2%
         tags: |
             #beer
             #lager
@@ -174,29 +174,29 @@ drinks:
             #toasty
             #darkcoppercolour
             #smooth
-            #rich 
+            #rich
             #toasty
-    
+
     doppelbock:
-        name: Doppelbock 
-        desc: Doppelbock is German Bock lager with a strong, clear, dark and malty with very little bitterness. 
+        name: Doppelbock
+        desc: Doppelbock is German Bock lager with a strong, clear, dark and malty with very little bitterness.
         abv: 7% to 10%
         tags: |
             #beer
             #lager
             #germanBoc
             #fullbodied
-            #strong 
+            #strong
             #dark
             #clear
-            #malt 
+            #malt
             #softbody
             #GermanNobleHops
-    
+
     weizenbock:
-        name: Weizenbock 
-        desc: It is a full-bodied, rich and malty beer which has pale to amber colour and it varies depending on malt's colour.  
-        abv: 6.5% to 9% 
+        name: Weizenbock
+        desc: It is a full-bodied, rich and malty beer which has pale to amber colour and it varies depending on malt's colour.
+        abv: 6.5% to 9%
         tags: |
             #beer
             #lager
@@ -208,11 +208,11 @@ drinks:
             #amber
             #pale
             #slightlyspicy
-            #cloveflavour 
-            
+            #cloveflavour
+
     maibock:
         name: Maibock
-        desc: Maibock is a strong lager of German origin which has hoppy aromas and is golden in colour with a refreshing finish.  
+        desc: Maibock is a strong lager of German origin which has hoppy aromas and is golden in colour with a refreshing finish.
         abv: 6.3% to 7.4%
         tags: |
             #beer
@@ -220,20 +220,20 @@ drinks:
             #germanBock
             #pale
             #hoppy
-            #malty 
+            #malty
             #hopbitternesslow
-            #toasted 
-            #breadymalt 
-            #germanNobleHops 
+            #toasted
+            #breadymalt
+            #germanNobleHops
             #bitter
 
 ###ale
 
     ##brownAle
-    
+
     americanBrownAle:
         name: American Brown Ale
-        desc: It is a medium to full-bodied, deep copper to very dark brown and clear brown ale which is drier than english brown ale.  
+        desc: It is a medium to full-bodied, deep copper to very dark brown and clear brown ale which is drier than english brown ale.
         abv: 4.3% to 6.2%
         ibu: 20-30
         tags: |
@@ -245,14 +245,14 @@ drinks:
             #roastedmalt
             #chocolate
             #brown
-            #caramel 
+            #caramel
             #dry
-            #citrus 
-            #toasty 
-    
-    englishBrownAle: 
+            #citrus
+            #toasty
+
+    englishBrownAle:
         name: English Brown Ale
-        desc: English Brown Ale varies depending either if it is from northeastern England then it is strong, malty and nutty and from southern England it is darker, sweeter and low in alcohol. 
+        desc: English Brown Ale varies depending either if it is from northeastern England then it is strong, malty and nutty and from southern England it is darker, sweeter and low in alcohol.
         abv: 4.2% to 5.4%
         ibu: 20-30
         tags: |
@@ -262,16 +262,16 @@ drinks:
             #dark
             #nutty
             #malt
-            #caramel 
+            #caramel
             #strong
-            #foodfriendly 
-            
-    ##paleAle 
-    
+            #foodfriendly
+
+    ##paleAle
+
     AmercanAmberAle:
         name: American Amber Ale
-        desc: 
-        abv: 4.5% to 6.2% 
+        desc:
+        abv: 4.5% to 6.2%
         ibu: 25-40
         tags: |
             #beer
@@ -280,9 +280,9 @@ drinks:
             #malty
             #caramel
             #amber
-            
-        
-    
+
+
+
     wine:
         ### Red
 
@@ -363,10 +363,10 @@ drinks:
                 #fruity
                 #cherry
                 #oak
-        
+
         malbec:
             name: Malbec
-            desc: Mallbec is a popular and easy to drink red wine with a tonne of juicy and fruity flavours.  
+            desc: Mallbec is a popular and easy to drink red wine with a tonne of juicy and fruity flavours.
             abv: 13.5-15%
             tags: |
                 #tannins
@@ -377,11 +377,11 @@ drinks:
                 #blackberry
                 #plum
                 #cherry
-                #malbec 
-        
+                #malbec
+
         shiraz:
-            name: Shiraz 
-            desc: A dark  and full bodied red wine 
+            name: Shiraz
+            desc: A dark  and full bodied red wine
             tag: |
                 #dark
                 #fullbodied
@@ -390,11 +390,11 @@ drinks:
                 #acidic
                 #blackberry
                 #blackpepper
-                
+
         cabernetFranc:
             name: Cabernet Franc
-            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish. 
-            abv: 12.5% and above 
+            desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish.
+            abv: 12.5% and above
             tag: |
                 #tannins
                 #red
@@ -403,12 +403,12 @@ drinks:
                 #mediumbodied
                 #vanilla
                 #blackberry
-                #cherry 
+                #cherry
                 #acidic
-                
-        sangiovese: 
+
+        sangiovese:
             name: Sangiovese
-            desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity. 
+            desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity.
             abv: 13.5% to 14.5%
             tags: |
                 #light
@@ -420,10 +420,10 @@ drinks:
                 #lightoak
                 #plum
                 #tannins
-        
+
         beaujlaisNouveau:
             name: Beaujolais Nouveau
-            desc: It is a fruity french red wine and is released in the same year of its harvest. 
+            desc: It is a fruity french red wine and is released in the same year of its harvest.
             abv: 12.5% to 13%
             tags: |
                 #wine
@@ -434,10 +434,10 @@ drinks:
                 #strawberry
                 #raspberry
                 #soft
-        
+
         barolo:
             name: Barolo
-            desc: This is a rich taste full-bodied italian wine which grows better with age. 
+            desc: This is a rich taste full-bodied italian wine which grows better with age.
             abv: 13.5% to 15%
             tags: |
                 #wine
@@ -453,11 +453,11 @@ drinks:
                 #licorice
                 #mint
                 #spice
-                #herbs 
-        
+                #herbs
+
         dolcetto:
             name: Dolcetto
-            desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food. 
+            desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food.
             abv: 11.5% to 13.5%
             tags: |
                 #wine
@@ -468,51 +468,51 @@ drinks:
                 #licorice
                 #pruneflavours
                 #bitterfinish
-                
-        zinfandel: 
+
+        zinfandel:
             name: Zinfandel
-            desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins. 
-            abv 14% to 15.5%
+            desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins.
+            abv: 14% to 15.5%
             tags: |
                 #wine
                 #red
                 #pepper
                 #berry
                 #moderateacidity
-                #tannins 
-                
-                
+                #tannins
+
+
         ###White
 
         sauvignonBlanc:
             name: Sauvignon Blanc or Fume Blanc
             desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
-            abv: 10% to 13% 
+            abv: 10% to 13%
             tags: |
                 #wine
                 #white
                 #popular
                 #dry
                 #fruity
-                #tropicalflavour 
+                #tropicalflavour
                 #acidic
                 #crisp
-       
+
         pinotGrigio:
             name: Pinot Grigio or Pinot Gris
-            desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine. 
+            desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine.
             abv: 11.5% to 13%
             tags: |
                 #white
                 #light
                 #dry
                 #refreshing
-                #zesty 
+                #zesty
                 #citrus
-       
+
         chardonnay:
             name: Chardonnay
-            desc: This is the wolrd most famous white wine. 
+            desc: This is the wolrd most famous white wine.
             abv: 13% to 14.5%
             tags: |
                 #white
@@ -521,10 +521,10 @@ drinks:
                 #fruity
                 #oak
                 #aromatic
-       
+
         riesling:
             name: Riesling
-            desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry. 
+            desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry.
             abv: 6% to 8% (German) and 10.5 to 12.5% (American, Austrian and Australian)
             tags: |
                 #light
@@ -536,21 +536,21 @@ drinks:
                 #crisp
                 #acidic
                 #floral
-                #intensemineral 
-    
+                #intensemineral
+
         cheninBlanc:
             name: Chenin Blanc
-            desc: A light bodied white wine similar to Saugvignon Blanc. 
+            desc: A light bodied white wine similar to Saugvignon Blanc.
             tags: |
                 #white
                 #light
                 #zesty
                 #acidic
-        
-        moscato:        
+
+        moscato:
             name: Moascato or Muscat
             desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
-            abv: 5% to 7% 
+            abv: 5% to 7%
             tags: |
                 #sweet
                 #fruity
@@ -560,46 +560,46 @@ drinks:
                 #honey
                 #acidic
                 #citrus
-        
+
         gewurztraminer:
             name: Gewurztraminer
-            desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine. 
+            desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine.
             abv: 11.5% to 15%
             tags: |
                 #wine
                 #white
-                #lychees 
+                #lychees
                 #grapefruit
                 #pineapple
                 #fruity
                 #spice
                 #herbs
                 #fullbodied
-                #rose 
+                #rose
                 #aciditymediumlow
-        
+
         viognier:
             name: Viognier
-            desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.  
-            abv: 13.5% to 15% 
+            desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.
+            abv: 13.5% to 15%
             tags: |
                 #wine
                 #white
                 #tropicalaroma
                 #flatinnose
-                #crisp 
+                #crisp
                 #dry
-                #lowacidity 
-        
+                #lowacidity
+
         semillon:
-            name: Semillon 
-            desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.  
+            name: Semillon
+            desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.
             abv: 11.5% to 13.5%
-            tags: | 
+            tags: |
                 #white
                 #wine
                 #dry
-                #fruity 
+                #fruity
                 #citrus
                 #oak
                 #fullbodied
@@ -610,9 +610,9 @@ drinks:
                 #creamy
                 #lanolin
                 #mediumacidity
-                
-                
-                
+
+
+
         # wine, rose
 
         grenache:
@@ -626,7 +626,7 @@ drinks:
                 #lowinacidity
                 #dry
                 #cherry
-                #lowintannin 
+                #lowintannin
                 #grenache
 
         zinfandel:
@@ -642,10 +642,10 @@ drinks:
                 #rose
                 #wine
                 #zinfandel
-        
+
         provence:
             name: Provence
-            desc: The most famous rose region in the world, the rose wines of Provence are versatile. 
+            desc: The most famous rose region in the world, the rose wines of Provence are versatile.
             tags: |
                 #crisp
                 #fresh
@@ -657,13 +657,13 @@ drinks:
                 #rose
                 #wine
                 #provence
-         
+
         syrah:
             name: Syrah
-            desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend. 
+            desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend.
             tags: |
                 #rubyred
-                #boldflavours 
+                #boldflavours
                 #fruity
                 #wine
                 #rose
@@ -671,20 +671,20 @@ drinks:
                 #cherry
                 #strawberry
                 #syrah
-        
+
         tempranillo:
             name: Tempranillo
-            desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja. 
+            desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja.
             tags: |
                 #acidity
-                #refreshing 
-                #fruity 
+                #refreshing
+                #fruity
                 #wine
                 #rose
                 #strawberry
                 #raspberry
                 #tempranillo
-    
+
 
         pinotNoir:
             name: Pinot Noir Rosé
@@ -701,10 +701,10 @@ drinks:
                 #watermelon
                 #strawberry
                 #pinotnoir
-        
+
         tavel:
             name: Tavel
-            desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.  
+            desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.
             tag: |
                 #dry
                 #nutty
@@ -713,12 +713,12 @@ drinks:
                 #rose
                 #foodwine
                 #tavel
-                
+
         sangiovese:
             name: Saniovese rose
-            desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish. 
+            desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish.
             tags: |
-                #roses 
+                #roses
                 #wine
                 #rose
                 #strawberry
@@ -726,12 +726,12 @@ drinks:
                 #dry
                 #fruity
                 #sanioveserose
-        
-        # wine, sparkling champagne 
-        
-    prosecco: 
+
+        # wine, sparkling champagne
+
+    prosecco:
         name: Prosecco
-        desc: It is a light sparkling italian wine. Easy to drink and often drank as an alternative to Champagne.  
+        desc: It is a light sparkling italian wine. Easy to drink and often drank as an alternative to Champagne.
         tags: |
             #sparkling
             #white
@@ -743,23 +743,23 @@ drinks:
             #sweet
             #celebration
             #prosecco
-            
-    champagne: 
+
+    champagne:
         name: Champagne
-        desc: It is most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France. 
+        desc: It is most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France.
         tags: |
             #french
             #sparkling
             #white
             #celebration
-            #france 
+            #france
             #fizzy
             #light
             #champagne
-    
+
     cremant:
-        name: Cremant 
-        desc: It is mostly known for its' low amount of carbon dioxide. 
+        name: Cremant
+        desc: It is mostly known for its' low amount of carbon dioxide.
         tags: |
             #creamy
             #wine
@@ -767,37 +767,37 @@ drinks:
             #crisp
             #fruity
             #cremant
-            
+
     cava:
         name: Cava
-        desc: It is a Spanish sparkling white or pink wine from Spain.  
+        desc: It is a Spanish sparkling white or pink wine from Spain.
         tags: |
             #spanish
             #white
             #pink
             #sparkling
             #light
-            #celebration 
+            #celebration
             #fizzy
             #Spain
             #dry
             #cava
-    
-    espumate: 
+
+    espumate:
         name: Espumate
-        desc: It is low level and cheap sparkling wine from Portugal. 
+        desc: It is low level and cheap sparkling wine from Portugal.
         tags: |
             #cheap
             #wine
             #sparkling
-            #acidic 
+            #acidic
             #earthy
-            #fruity 
+            #fruity
             #espumate
-            
+
     asti:
-        name: Asti 
-        desc: A sweet italian sparkler wine made in the region of Asti. 
+        name: Asti
+        desc: A sweet italian sparkler wine made in the region of Asti.
         alcohol content: 8%
         tags: |
             #wine
@@ -805,13 +805,13 @@ drinks:
             #sweet
             #white
             #floralaroma
-            #peachflavour 
-            #acidity 
+            #peachflavour
+            #acidity
             #asti
-    
+
     trentoDoc:
         name: Trento Doc
-        desc: It is an Italian unique sparkling wine with a dry, smooth, rounded and elegant flavour.  
+        desc: It is an Italian unique sparkling wine with a dry, smooth, rounded and elegant flavour.
         alcohol content: above 11%
         tags: |
             #wine
@@ -820,14 +820,14 @@ drinks:
             #dry
             #smooth
             #trentodoc
-     
+
     sekt:
         name: Sekt or Schaumwein
-        desc: This wine is produced in Germany and is usually sweeter and lower in alcohol than champagne and other sparkling wine. 
+        desc: This wine is produced in Germany and is usually sweeter and lower in alcohol than champagne and other sparkling wine.
         alcohol content: 6%
         tags: |
             #wine
-            #sparkling 
+            #sparkling
             #golden
             #sweet
             #aromasofapples
@@ -835,23 +835,22 @@ drinks:
             #aromasofwhiteflower
             #lowalcohol
             #sekt
-    
+
     pezsgö:
         name: Pezsgö
-        desc: Pezsgo is a sparkling wine produced in Hiungary which is well crafted and perfect for celebrations. 
+        desc: Pezsgo is a sparkling wine produced in Hiungary which is well crafted and perfect for celebrations.
         alcohol content: above 11%
         tags: |
-            #wine 
+            #wine
             #sparkling
             #creamy
             #toasty
             #dry
             #pezsgo
-    
+
     sovetskoyeShampanskoye:
-        name:Sovetskoye Shampanskoye
-        desc:This is Russian champagne and a popular brand among rich in Soviet Union. 
-        alcohol content:
+        name: Sovetskoye Shampanskoye
+        desc: This is Russian champagne and a popular brand among rich in Soviet Union.
         tags: |
             #wine
             #sparkling
@@ -860,10 +859,10 @@ drinks:
             #hintofpeach
             #refreshing
             #sovetskoyeshanpanskoye
-            
+
     shiraz:
         name: Shiraz
-        desc: A famous red sparkling wine produced in Australia. 
+        desc: A famous red sparkling wine produced in Australia.
         abv: 13% or above
         tags: |
             #wine
@@ -875,18 +874,18 @@ drinks:
             #juicy
             #berry
             #shiraz
-    
+
     methodeCapClassique:
-        name: Methode Cap Classique 
-        desc: It is a South African elegant sparkling wine 
+        name: Methode Cap Classique
+        desc: It is a South African elegant sparkling wine
         abv: 11.5% or above
         tags: |
             #wine
             #sparkling
             #fruity
-            #crisp 
+            #crisp
             #mcc
-        
+
     spirits:
         smirnoff:
             name: Smirnoff
@@ -899,7 +898,7 @@ drinks:
         greyGoose:
             name: Grey Goose Vodka
             abv: 40%
-            desc: 
+            desc:
             tags: |
                 #spirit
                 #vodka
@@ -907,7 +906,7 @@ drinks:
                 #french
                 #france
                 #grain
-                
+
         russianStandard:
             name: Russian Standard Vodka
             abv: 40%
@@ -918,7 +917,7 @@ drinks:
                 #russian
                 #russia
                 #grain
-                
+
         absolut:
             name: Absolut Vodka
             abv: 40%
@@ -929,7 +928,7 @@ drinks:
                 #absolut
                 #premium
                 #grain
-                
+
         ciroc:
             name: Ciroc Vodka
             abv: 40%
@@ -940,8 +939,8 @@ drinks:
                 #ciroc
                 #premium
                 #grapes
-            
-    
+
+
     cocktails:
         longIslandIceTea:
             name: Long Island Ice Tea
