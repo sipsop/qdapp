@@ -16,13 +16,14 @@ const brown = t => `rgba(145, 106, 17, ${t})`
 const yellow = t => `rgba(230, 221, 10, ${t})`
 const red = t => `rgba(217, 0, 0, ${t})`
 const darkBlue = t => `rgba(15, 39, 110, ${t})`
+const grey = t => `rgba(0, 0, 0, ${t})`
 
 // const menuItemBackgroundColor = yellow(0.10)
 // const menuItemBackgroundColor = lightGreen(0.10)
 // const menuItemBackgroundColor = purple700Trans(0.05)
 // const menuItemBackgroundColor = red(0.10)
 // const menuItemBackgroundColor = darkBlue(0.05)
-const menuItemBackgroundColor = `rgba(0, 0, 0, 0.03)`
+const menuItemBackgroundColor = grey(0.03)
 
 const pinkPalette = {
     light:  pink400,
@@ -51,7 +52,10 @@ export const config = {
         secondary:      purplePalette,
         addColor:       'rgb(51, 162, 37)',
         removeColor:    '#900',
-        menuItemBackgroundColor: menuItemBackgroundColor,
+        // menuItemBackgroundColor: grey(0.03),
+        // menuItemBackgroundColorSecondary: grey(0.06),
+        menuItemBackgroundColor: purple700Trans(0.03),
+        menuItemBackgroundColorSecondary: purple700Trans(0.08),
     },
     nearbyCacheInfo: {
         nearbyRefreshAfter: 20 * Minute,

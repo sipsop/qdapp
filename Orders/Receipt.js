@@ -24,10 +24,10 @@ import { getStripeToken } from '../Payment/StripeAPI.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Orders/PlaceOrder.js')
+const { log, assert } = _.utils('Orders/Receipt.js')
 
 @observer
-export class PlaceOrderModal extends PureComponent {
+export class ReceiptModal extends PureComponent {
     @computed get visible() {
         return orderStore.getActiveOrderToken() != null
     }
@@ -141,6 +141,7 @@ class Receipt extends PureComponent {
             }
             {/*<OrderTotal orderResult={orderResult} />*/}
             <Info orderResult={orderResult} />
+            <View style={{height: 15, backgroundColor: '#fff'}} />
             <OrderList
                 orderList={orderResult.orderList}
                 simple={true}
@@ -165,7 +166,7 @@ class Info extends PureComponent {
                     }
                 }>
             Your order has been placed!{'\n'}
-            Show this page to claim your order.
+            Claim your order with this receipt.
         </T>
     }
 }
@@ -200,16 +201,6 @@ class ReceiptHeader extends PureComponent {
                             , minHeight: 300
                             }
                         }>
-                        {/*
-                        <T style={
-                                { fontSize: 60
-                                , numberOfLines: 1
-                                , color: config.theme.primary.medium
-                                }
-                            }>
-                            {orderResult.userName}
-                        </T>
-                        */}
                         <T style={
                                 { fontSize: 100
                                 , color: config.theme.primary.medium

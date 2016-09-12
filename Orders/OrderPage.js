@@ -14,7 +14,7 @@ import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { PaymentModal } from '../Payment/PaymentModal.js'
 import { OrderList } from './OrderList.js'
-import { PlaceOrderModal } from './PlaceOrder.js'
+import { ReceiptModal } from './Receipt.js'
 import { store, tabStore, orderStore } from '../Store.js'
 import { config } from '../Config.js'
 
@@ -44,7 +44,7 @@ export class OrderPage extends Page {
                 visible={this.popupVisible}
                 onClose={() => this.popupVisible = false}
                 />
-            <PlaceOrderModal />
+            <ReceiptModal />
             <ScrollView>
                 <OrderList orderList={orderStore.orderList} />
             </ScrollView>

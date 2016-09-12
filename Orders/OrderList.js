@@ -38,9 +38,10 @@ export class OrderList extends Page {
         return <View>
             {
                 menuItems.map(
-                    menuItem =>
+                    (menuItem, i) =>
                         <SimpleMenuItem
                             key={menuItem.id}
+                            rowNumber={i}
                             menuItem={menuItem}
                             />
                 )
@@ -80,12 +81,16 @@ const itemTextStyle = {
 export class SimpleMenuItem extends PureComponent {
     /* properties:
         menuItem: MenuItem
+        rowNumber: Int
     */
     render = () => {
         const menuItem = this.props.menuItem
         const orderItems = orderStore.getOrderList(menuItem.id)
         const orderListHeight = orderItems.length * 50
-        return <View >
+        const backgroundColor = this.props.rowNumber % 2 === 0
+            ? '#fff'
+            : config.theme.menuItemBackgroundColorSecondary
+        return <View>
             <MenuItemImage
                 menuItem={menuItem}
                 style={
@@ -96,6 +101,7 @@ export class SimpleMenuItem extends PureComponent {
                     , borderWidth: 0.5
                     , borderColor: '#000'
                     , borderRadius: 10
+                    , marginTop: -15
                     , marginLeft: 10
                     , marginRight: 10
                     }
@@ -107,19 +113,17 @@ export class SimpleMenuItem extends PureComponent {
                     , justifyContent: 'center'
                     , paddingLeft: 5
                     , paddingRight: 5
-                    , marginTop: 15
-                    , marginBottom: 15
                     }
                 }>
                 <ScrollView horizontal={true}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                        <HeaderText style={{marginLeft: 100}}>
+                        <HeaderText style={{marginLeft: 100}} fontSize={20}>
                             {menuItem.name}
                         </HeaderText>
                     </View>
                 </ScrollView>
             </View>
-            <View>
+            <View style={{paddingTop: 15, paddingBottom: 15, backgroundColor: backgroundColor}}>
                 {
                     orderItems.map((orderItem, rowNumber) => {
                         const stringOpts = _.flatten(
