@@ -52,9 +52,10 @@ export class OrderList extends Page {
         return <View>
             {
                 menuItems.map(
-                    menuItem =>
+                    (menuItem, i) =>
                         <MenuItem
                             key={menuItem.id}
+                            rowNumber={i}
                             menuItem={menuItem}
                             />
                 )

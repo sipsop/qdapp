@@ -1,16 +1,11 @@
 // TODO: Enable flow type checking
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
-  AppRegistry,
-  Image,
-  StyleSheet,
-  TextInput,
-  View,
-  ScrollView,
-  ListView,
-  Picker,
-  TouchableOpacity,
+    Image,
+    View,
+    ScrollView,
+    TouchableOpacity,
 } from 'react-native'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
@@ -22,6 +17,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from './Page.js'
 import { createOrderItem, orderStore } from './Orders/OrderStore.js'
+import { OrderList } from './Orders/OrderList.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
@@ -60,9 +56,10 @@ export class MenuView extends Page {
                     <View style={{flex: 1, marginTop: 5}}>
                         {
                             tagStore.getActiveMenuItems().map(
-                                menuItem =>
+                                (menuItem, i) =>
                                     <MenuItem
                                         key={menuItem.id}
+                                        rowNumber={i}
                                         menuItem={menuItem}
                                         />
                             )
@@ -97,6 +94,7 @@ class OrderButton extends PureComponent {
 @observer
 export class MenuItem extends PureComponent {
     /* properties:
+        rowNumber: Int
         menuItem: MenuItem
     */
 
@@ -112,22 +110,34 @@ export class MenuItem extends PureComponent {
         this.showModalFor = null
     }
 
+    @computed get haveOrderItems() : Array<OrderItem> {
+        return orderStore.getOrderList(this.props.menuItem.id).length > 0
+    }
+
     render = () => {
         const menuItem = this.props.menuItem
-        return <View>
-            <TouchableOpacity onPress={this.showModal}>
-                <View style={styles.primaryMenuItemView}>
-                    <MenuItemImage menuItem={menuItem} />
-                    <View style={viewStyles.content}>
-                        <MenuItemHeader menuItem={menuItem} />
+        const isEven = this.props.rowNumber % 2 === 0
+        const backgroundColor = isEven
+            ? '#fff'
+            : config.theme.menuItemBackgroundColor
+        const marginBottom = this.haveOrderItems ? 10 : 0
+        return <View style={{/*marginBottom: marginBottom*/}}>
+            <View style={{backgroundColor: backgroundColor}}>
+                <TouchableOpacity onPress={this.showModal}>
+                    <View style={styles.primaryMenuItemView}>
+                        <MenuItemImage menuItem={menuItem} />
+                        <View style={viewStyles.content}>
+                            <MenuItemHeader menuItem={menuItem} />
+                        </View>
                     </View>
-                </View>
-            </TouchableOpacity>
-            <MenuItemOrderList
-                menuItem={menuItem}
-                showModalFor={this.showModalFor}
-                onModalClose={this.modalClosed}
-                />
+                </TouchableOpacity>
+                <MenuItemOrderList
+                    menuItem={menuItem}
+                    showModalFor={this.showModalFor}
+                    onModalClose={this.modalClosed}
+                    />
+            </View>
+            <View style={{backgroundColor: '#fff', height: marginBottom}} />
         </View>
     }
 }
@@ -186,11 +196,6 @@ class MenuItemOrderList extends PureComponent {
                 </View>
                 <PriceColumn orderItems={this.orderItems} />
             </View>
-            {
-                this.orderItems.length === 0
-                    ? undefined
-                    : <View style={{marginBottom: 20}} />
-            }
         </View>
     }
 
