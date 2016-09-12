@@ -55,7 +55,7 @@ export const config = {
         // menuItemBackgroundColor: grey(0.03),
         // menuItemBackgroundColorSecondary: grey(0.06),
         menuItemBackgroundColor: purple700Trans(0.03),
-        menuItemBackgroundColorSecondary: purple700Trans(0.08),
+        menuItemBackgroundColorSecondary: purple700Trans(0.06),
     },
     nearbyCacheInfo: {
         nearbyRefreshAfter: 20 * Minute,

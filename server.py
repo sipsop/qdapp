@@ -248,7 +248,7 @@ rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPn
 
 def option(price1, price2):
     return MenuItemOption(
-        name="Size",
+        name="Choose",
         optionType=OptionType.Single,
         optionList=[
             "pint",
@@ -273,7 +273,7 @@ fiftyP = Price(
 )
 
 top_option = MenuItemOption(
-    name="Top",
+    name="Options",
     optionType=OptionType.AtMostOne,
     optionList=[
         "tops (lemonade)",

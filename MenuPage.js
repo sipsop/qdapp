@@ -486,6 +486,7 @@ export class OrderSelection extends PureComponent {
                     showModal={this.showModal}
                     onFirstAccept={this.handleFirstAccept}
                     onFirstCancel={this.handleFirstCancel}
+                    okLabel={this.showModal ? 'Add' : 'Change'}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
