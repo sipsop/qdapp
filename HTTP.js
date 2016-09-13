@@ -250,10 +250,29 @@ export class DownloadResultView<T> extends PureComponent {
     }
 }
 
+export const graphQLArg = (obj) => {
+    if (typeof(obj) === 'number') {
+        return JSON.stringify(obj)
+    } else if (typeof(obj) === 'string') {
+        return JSON.stringify(obj)
+    } else if (Array.isArray(obj)) {
+        const items = obj.map(graphQLArg).join(', ')
+        return `[ ${items} ]`
+    } else if (typeof(obj) === 'object') {
+        const fields = Object.keys(obj).map(key => {
+            const value = graphQLArg(obj[key])
+            return `${key}: ${value}`
+        }).join(', ')
+        return `{ ${fields} }`
+    } else {
+        throw Error(`Unknown type: ${typeof(obj)}`)
+    }
+}
+
 class DownloadManager {
 
     graphQLMutate = async (query) => {
-        return await this.graphQL('', query, null, { noCache: true })
+        return await this.graphQL('DO_NOT_CACHE', query, { noCache: true })
     }
 
     /* Execute a GraphQL query */

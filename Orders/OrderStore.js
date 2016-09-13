@@ -3,7 +3,7 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager, NetworkError, graphQLArg } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
@@ -283,25 +283,6 @@ class OrderStore {
         }
         this.orderResultDownload = orderResultDownload
     })
-}
-
-const graphQLArg = (obj) => {
-    if (typeof(obj) === 'number') {
-        return JSON.stringify(obj)
-    } else if (typeof(obj) === 'string') {
-        return JSON.stringify(obj)
-    } else if (Array.isArray(obj)) {
-        const items = obj.map(graphQLArg).join(', ')
-        return `[ ${items} ]`
-    } else if (typeof(obj) === 'object') {
-        const fields = Object.keys(obj).map(key => {
-            const value = graphQLArg(obj[key])
-            return `${key}: ${value}`
-        }).join(', ')
-        return `{ ${fields} }`
-    } else {
-        throw Error(`Unknown type: ${typeof(obj)}`)
-    }
 }
 
 export type OrderItem = {
