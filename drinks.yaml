@@ -314,7 +314,7 @@ drinks:
         images: |
             https://pixabay.com/en/red-wine-glass-red-1369425/
             https://pixabay.com/en/bottle-wine-red-label-drinking-1425179/
-       license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red

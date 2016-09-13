@@ -119,7 +119,7 @@ class BarStore {
 
     _setBarID = async (barID) => {
         const bar = this.getBar()
-        if (bar && bar.id === barID)
+        if (bar && bar.id === barID && this.menu)
             return /* All done */
 
         console.log("Setting bar with placeID =", barID)
