@@ -350,13 +350,12 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         return await simpleFetchJSON(url, httpOptions, expiredTimeout)
     }
 
-    if (cacheInfo && cacheInfo.noCache) {
-        /* Don't cache anything... */
-        return await refreshCallback()
-    }
-
+    var result
     try {
-        const result = await cache.get(key, refreshCallback, /*expiredCallback, */ cacheInfo = cacheInfo)
+        if (cacheInfo && cacheInfo.noCache)
+            result = await refreshCallback()
+        else
+            result = await cache.get(key, refreshCallback, /*expiredCallback, */ cacheInfo = cacheInfo)
         return new DownloadResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))
