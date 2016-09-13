@@ -4,6 +4,7 @@ import {
     View,
     ScrollView,
     PureComponent,
+    ListView,
     T,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
@@ -31,21 +32,36 @@ export class OrderList extends Page {
             store for the orders
     */
 
+    constructor(props) {
+        super(props)
+        this._dataSource = new ListView.DataSource({
+            rowHasChanged: (i, j) => i !== j,
+        })
+    }
+
+    get nItems() {
+        return this.props.menuItems.length
+    }
+
+    get dataSource() {
+        return this._dataSource.cloneWithRows(_.range(this.nItems * 10))
+    }
+
     renderView = () => {
-        return <View>
-            {
-                this.props.menuItems.map(
-                    (menuItem, i) => {
-                        return <MenuItem
-                                    key={menuItem.id}
-                                    rowNumber={i}
-                                    menuItem={menuItem}
-                                    orderStore={this.props.orderStore}
-                                    />
-                    }
-                )
-            }
-        </View>
+        return <ListView
+                    dataSource={this.dataSource}
+                    renderRow={this.renderRow} />
+    }
+
+    renderRow = (i) => {
+        const menuItem = this.props.menuItems[i % this.nItems]
+        log("RENDERING menu item...", i)
+        return <MenuItem
+                    key={menuItem.id}
+                    rowNumber={i}
+                    menuItem={menuItem}
+                    orderStore={this.props.orderStore}
+                    />
     }
 }
 

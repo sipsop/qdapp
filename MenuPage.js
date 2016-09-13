@@ -51,16 +51,14 @@ export class MenuPage extends BarPageFetcher {
 export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
-            <ScrollView style={{flex: 1}}>
-                <TagView>
-                    <View style={{flex: 1, marginTop: 5}}>
-                        <OrderList
-                            orderStore={orderStore}
-                            menuItems={tagStore.getActiveMenuItems()}
-                            />
-                    </View>
-                </TagView>
-            </ScrollView>
+            <TagView>
+                <View style={{flex: 1, marginTop: 5}}>
+                    <OrderList
+                        orderStore={orderStore}
+                        menuItems={tagStore.getActiveMenuItems()}
+                        />
+                </View>
+            </TagView>
             <OrderButton />
         </View>
     }
@@ -396,7 +394,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get amountPickerItem() {
-        log("recomputing amountPickerItem", this.props.rowNumber)
+        // log("recomputing amountPickerItem", this.props.rowNumber)
         const subTotal = this.props.orderStore.getSubTotal(this.orderItem) || 0.0
         const numbers = range(N+1)
         return new PickerItem(
@@ -410,7 +408,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get optionPickerItems() {
-        log("recomputing optionPickerItems", this.props.rowNumber)
+        // log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
         return menuItem.options.map((menuOptionItem, i) => {
             return new PickerItem(
