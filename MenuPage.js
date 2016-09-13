@@ -146,7 +146,6 @@ export class MenuItem extends PureComponent {
 }
 
 const getImageURL = (url : URL) => {
-    log("GETTING IMAGE URL", url, url.startsWith('/static'))
     if (url.startsWith('/static'))
         return HOST + url
     return url
@@ -165,6 +164,7 @@ export class MenuItemImage extends PureComponent {
             menuItem.images && menuItem.images.length > 0
                 ? getImageURL(menuItem.images[0])
                 : undefined
+        console.log('Image URL', menuItem.name, image)
         return <Image source={{uri: image}} style={style} />
     }
 }

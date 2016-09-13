@@ -10,6 +10,7 @@ import { tabStore } from './Tabs.js'
 import { barStore } from './Bar/BarStore.js'
 import { orderStore } from './Orders/OrderStore.js'
 import { loginStore } from './Login.js'
+import { tagStore } from './Tags.js'
 import { mapStore } from './Maps/MapStore.js'
 import { paymentStore } from './Payment/PaymentStore.js'
 
@@ -85,4 +86,4 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore, barStore, loginStore, mapStore, orderStore }
+export { favStore, tabStore, barStore, loginStore, mapStore, orderStore, tagStore }

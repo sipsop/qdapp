@@ -12,7 +12,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
-import { store, barStore } from './Store.js'
+import { barStore } from './Bar/BarStore.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
 import * as _ from './Curry.js'
 

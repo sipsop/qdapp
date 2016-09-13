@@ -20,10 +20,10 @@ images = (
 
 for filename in images:
     _, image = os.path.split(filename)
+    image = image.strip()
     item_id, _ = os.path.splitext(image)
     shutil.copyfile(filename, os.path.join('static', image))
-    print(item_id)
     result = itemDefs.get(item_id)                                \
                      .update({'images': ['/static/' + image]})    \
                      .run(conn)
-    print(result)
+    print(item_id, list(filter(result.get, result)))
