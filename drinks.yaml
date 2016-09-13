@@ -292,6 +292,7 @@ drinks:
         name: Poggio Castagno Chianti Classico
         desc: A classic Chianti with complex flavours
         image: https://pixabay.com/en/red-wine-romance-abendstimmung-742359/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -300,6 +301,7 @@ drinks:
         name: Canaletto Montepulciano D'Abruzzo
         desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
         image: https://pixabay.com/en/glass-red-wine-drink-679520/ 
+       license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -312,7 +314,7 @@ drinks:
         images: |
             https://pixabay.com/en/red-wine-glass-red-1369425/
             https://pixabay.com/en/bottle-wine-red-label-drinking-1425179/
-        license: https://www.pexels.com/photo-license/
+       license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -331,6 +333,7 @@ drinks:
         desc: Cabernet Sauvignon is a full-bodied red wine aged in oak and rich in tannins.
         abv: 13.5% to 15%
         image: https://pixabay.com/en/red-wine-carafe-cup-red-vase-1204078/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -346,6 +349,7 @@ drinks:
         desc: Pinot noir is a light fruity and smooth red wine.
         abv: 11.5 % to 14%
         image: https://pixabay.com/en/welcome-drink-christmas-party-wine-1071956/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -361,6 +365,7 @@ drinks:
         name: Rioja
         desc: Rioja is a red wine from the Rioja region in Spain, not unlike Cabinet Saugvignon, but with some cherry fruitiness.
         image: https://pixabay.com/en/wine-glass-wine-glass-png-free-1237433/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -390,6 +395,7 @@ drinks:
         name: Shiraz
         desc: A dark  and full bodied red wine
         image: https://pixabay.com/en/wine-red-alcohol-glass-drop-933236/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #dark
             #fullbodied
@@ -404,6 +410,7 @@ drinks:
         desc: A tannic earthy red wine simlar to or lighter than Cabernet Sauvignon and it has a smooth finish.
         abv: 12.5% and above
         image: https://pixabay.com/en/wine-glasses-outdoor-cafe-890371/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #tannins
             #red
@@ -420,6 +427,7 @@ drinks:
         desc: A savory red wine offering a wide range of tastes from very earthy to round and fruity.
         abv: 13.5% to 14.5%
         image: https://pixabay.com/en/wine-splash-glass-red-alcohol-1543170/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #light
             #acidic
@@ -436,6 +444,7 @@ drinks:
         desc: It is a fruity french red wine and is released in the same year of its harvest.
         abv: 12.5% to 13%
         image: https://pixabay.com/en/wine-red-glass-splashing-splash-315003/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -451,6 +460,7 @@ drinks:
         desc: This is a rich taste full-bodied italian wine which grows better with age.
         abv: 13.5% to 15%
         image: https://pixabay.com/en/wine-bowl-glass-of-wine-792877/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -472,6 +482,7 @@ drinks:
         desc: Dolcetto, an italian wine is known as everday's wine because of its soft tanning, a light easy drinking, and being suitable with any type of food.
         abv: 11.5% to 13.5%
         image: https://pixabay.com/en/wine-glasses-outdoor-cafe-890370/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -486,7 +497,8 @@ drinks:
         name: Zinfandel
         desc: Zinfandel is a robust, high in alcohol, moderate in acidity red wine with tannins.
         abv: 14% to 15.5%
-        image: https://pixabay.com/en/red-wine-wine-glass-river-glasses-805577/
+        image: https://pixabay.com/en/glass-of-wine-wine-glass-drink-1128583/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -503,7 +515,7 @@ drinks:
         desc: Sauvignon Blanc is the most popular white wine in the UK which is classy, refreshing and great with food.
         abv: 10% to 13%
         image: https://pixabay.com/en/glass-white-wine-wine-glasses-1396260/
-        license: https://www.pexels.com/photo-license/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #white
@@ -518,8 +530,8 @@ drinks:
         name: Pinot Grigio or Pinot Gris
         desc: A popular refreshing and zesty white wine. It's medium to full-bodied wine.
         abv: 11.5% to 13%
-        image: https://pixabay.com/en/a-glass-of-wine-wine-alcohol-glass-259858/
-        license: https://www.pexels.com/photo-license/
+        image: https://pixabay.com/en/a-glass-of-wine-alcohol-white-wine-428316/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #white
             #light
@@ -533,6 +545,7 @@ drinks:
         desc: This is the wolrd most famous white wine.
         abv: 13% to 14.5%
         image: https://pixabay.com/en/wine-white-wine-glass-1644213/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #white
             #wine
@@ -546,6 +559,7 @@ drinks:
         desc: An aromatic refreshing white wine with a flavour of apples and it's flavours range from very sweet to bone dry.
         abv: 6% to 8% (German) and 10.5 to 12.5% (American, Austrian and Australian)
         image:  https://pixabay.com/en/a-glass-of-wine-alcohol-white-wine-428315/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #light
             #fresh
@@ -562,6 +576,7 @@ drinks:
         name: Chenin Blanc
         desc: A light bodied white wine similar to Saugvignon Blanc.
         image: https://pixabay.com/en/alcohol-alcoholic-anniversary-1239004/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #white
             #light
@@ -573,6 +588,7 @@ drinks:
         desc: A fragrant dessert wine produced as both sweet semi-sparkling or still wine.
         abv: 5% to 7%
         image: https://pixabay.com/en/drinks-alcohol-event-1283608/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #sweet
             #fruity
@@ -587,7 +603,8 @@ drinks:
         name: Gewurztraminer
         desc: It is a strong, full-bodied and highly perfumed and lychee-nut flavoured white wine.
         abv: 11.5% to 15%
-        image: https://pixabay.com/en/alcohol-alcoholic-anniversary-1239004/
+        image: https://pixabay.com/en/wine-glasses-drink-wine-alcohol-1246240/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #white
@@ -606,6 +623,7 @@ drinks:
         desc: Viognier is a unique wine which is well distinguished by their floral aromas and terpenes.
         abv: 13.5% to 15%
         image: https://pixabay.com/en/wine-glasses-white-wine-tasting-1266944/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #white
@@ -620,6 +638,7 @@ drinks:
         desc: This is France's 3rd most important white wine which is full-bodied, lanolin and can range from rich, creamy, lemon-flavoured to zesty.
         abv: 11.5% to 13.5%
         image: https://pixabay.com/en/wine-alk-alcohol-white-wine-1574625/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #white
             #wine
@@ -640,8 +659,9 @@ drinks:
 
     grenache:
         name: Grenache Rosé
-        desc: |
-            Grenache is a dry, acidic and fruity Rosé.
+        desc: Grenache is a dry, acidic and fruity Rosé.
+        image: https://pixabay.com/en/wine-rose-glass-glasses-pink-791133/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #rosé
@@ -655,6 +675,8 @@ drinks:
     zinfandel:
         name: Zinfandel Rosé
         desc: Zinfandel is a moderately sweet and dry
+        image: https://pixabay.com/en/wine-rose-garden-water-terrace-1447969/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #popular
             #fruity
@@ -669,6 +691,8 @@ drinks:
     provence:
         name: Provence
         desc: The most famous rose region in the world, the rose wines of Provence are versatile.
+        image: https://en.wikipedia.org/wiki/Rosé#/media/File:Sancerre_rose_Wine.jpg
+        license: googlefree
         tags: |
             #crisp
             #fresh
@@ -684,6 +708,8 @@ drinks:
     syrah:
         name: Syrah
         desc: Syrah is a full-bodied with a strong notes of cherries, white pepper and strawberries. You won't find may Syrah rose wines in Europe, but it is widely used in Frech roses as part of a blend.
+        image: https://pixabay.com/en/2016-france-sport-football-funny-1447856/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #rubyred
             #boldflavours
@@ -698,6 +724,8 @@ drinks:
     tempranillo:
         name: Tempranillo
         desc: This wine tastes amazing and gives a fruity flavour with refreshing acidity. This is also famouse for being used in the red wines of Rioja.
+        image: https://pixabay.com/en/wine-rose-bottles-glass-alcohol-511228/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #acidity
             #refreshing
@@ -712,6 +740,7 @@ drinks:
     pinotNoir:
         name: Pinot Noir Rosé
         desc: Pinot Noir is an elegant and delighful Rosé.
+        image: https://pixabay.com/en/wine-camping-rosé-wine-cup-878985/
         tags: |
             #wine
             #rose
@@ -728,6 +757,8 @@ drinks:
     tavel:
         name: Tavel
         desc: Tavel is a unique, historic style and a beautiful vintage known for being extra dry compared to other rose wines. It is believed to have been the faviourite of writer Ernest Hemingway.
+        image: https://pixabay.com/en/wine-pink-glass-rose-blush-315000/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #dry
             #nutty
@@ -740,6 +771,8 @@ drinks:
     sangiovese:
         name: Saniovese rose
         desc: This wine has strong notes of roses, fresh strawberries, and a hint of bitter on the finish.
+        image: https://pixabay.com/en/rhineland-palatinate-wine-rose-wine-204388/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #roses
             #wine
