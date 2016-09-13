@@ -18,7 +18,7 @@ import { store, tabStore } from '../Store.js'
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
 
-import { OrderList } from './OrderList.js'
+import { SimpleOrderList } from './OrderList.js'
 import { paymentStore } from '../Payment/PaymentStore.js'
 import { getStripeToken } from '../Payment/StripeAPI.js'
 
@@ -142,9 +142,9 @@ class Receipt extends PureComponent {
             {/*<OrderTotal orderResult={orderResult} />*/}
             <Info orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
-            <OrderList
+            <SimpleOrderList
+                menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
                 orderList={orderResult.orderList}
-                simple={true}
                 />
             <OrderTotal orderResult={orderResult} />
         </ScrollView>

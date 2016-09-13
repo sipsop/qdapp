@@ -25,44 +25,65 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 @observer
 export class OrderList extends Page {
     /* properties:
-        orderList: [OrderItem]
+        menuItems: [MenuItem]
+            menu items to show
+        orderStore: OrderStore
+            store for the orders
     */
+
     renderView = () => {
-        const menuItemsOnOrder = orderStore.getMenuItemsOnOrder(this.props.orderList)
-        if (this.props.simple)
-            return this.renderSimpleMenuItems(menuItemsOnOrder)
-        return this.renderDetailedMenuItems(menuItemsOnOrder)
-    }
-
-    renderSimpleMenuItems = (menuItems) => {
         return <View>
             {
-                menuItems.map(
-                    (menuItem, i) =>
-                        <SimpleMenuItem
-                            key={menuItem.id}
-                            rowNumber={i}
-                            menuItem={menuItem}
-                            />
+                this.props.menuItems.map(
+                    (menuItem, i) => {
+                        return <MenuItem
+                                    key={menuItem.id}
+                                    rowNumber={i}
+                                    menuItem={menuItem}
+                                    orderStore={this.props.orderStore}
+                                    />
+                    }
+                )
+            }
+        </View>
+    }
+}
+
+@observer
+export class SimpleOrderList extends Page {
+    /* properties:
+        menuItems: [MenuItem]
+            menu items to show
+        orderList: [OrderItem]
+            order items to show
+    */
+
+    renderView = () => {
+        assert(this.props.menuItems != null)
+        assert(this.props.orderList != null)
+        return <View>
+            {
+                this.props.menuItems.map(
+                    (menuItem, i) => {
+                        const orderItems = getOrderItems(menuItem, this.props.orderList)
+                        return <SimpleMenuItem
+                                    key={menuItem.id}
+                                    rowNumber={i}
+                                    menuItem={menuItem}
+                                    orderItems={orderItems}
+                                    />
+                    }
                 )
             }
         </View>
     }
 
-    renderDetailedMenuItems = (menuItems) => {
-        return <View>
-            {
-                menuItems.map(
-                    (menuItem, i) =>
-                        <MenuItem
-                            key={menuItem.id}
-                            rowNumber={i}
-                            menuItem={menuItem}
-                            />
-                )
-            }
-        </View>
-    }
+}
+
+const getOrderItems = (menuItem, orderItems) => {
+    return orderItems.filter(
+        orderItem => menuItem.id === orderItem.menuItemID
+    )
 }
 
 const titleTextStyle = {
@@ -81,11 +102,12 @@ const itemTextStyle = {
 export class SimpleMenuItem extends PureComponent {
     /* properties:
         menuItem: MenuItem
+        orderItems: [OrderItem]
         rowNumber: Int
     */
     render = () => {
         const menuItem = this.props.menuItem
-        const orderItems = orderStore.getOrderList(menuItem.id)
+        const orderItems = this.props.orderItems
         const orderListHeight = orderItems.length * 50
         const backgroundColor = this.props.rowNumber % 2 === 0
             ? '#fff'

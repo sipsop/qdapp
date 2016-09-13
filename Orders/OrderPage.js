@@ -46,7 +46,10 @@ export class OrderPage extends Page {
                 />
             <ReceiptModal />
             <ScrollView>
-                <OrderList orderList={orderStore.orderList} />
+                <OrderList
+                    orderStore={orderStore}
+                    menuItems={orderStore.menuItemsOnOrder}
+                    />
             </ScrollView>
             <OrderButton onPress={this.handleOrderPress} />
         </View>
