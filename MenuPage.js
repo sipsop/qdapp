@@ -51,14 +51,13 @@ export class MenuPage extends BarPageFetcher {
 export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
-            <TagView>
-                <View style={{flex: 1, marginTop: 5}}>
-                    <OrderList
-                        orderStore={orderStore}
-                        menuItems={tagStore.getActiveMenuItems()}
-                        />
-                </View>
-            </TagView>
+            <View style={{flex: 1, marginTop: 5}}>
+                <OrderList
+                    orderStore={orderStore}
+                    menuItems={tagStore.getActiveMenuItems()}
+                    renderHeader={() => <TagView />}
+                    />
+            </View>
             <OrderButton />
         </View>
     }

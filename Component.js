@@ -37,8 +37,13 @@ export class SimpleListView extends PureComponent {
         renderRow(i : Int) => void
         N: Int
             total number of items
-        renderHeader: ?() => Component
-        renderFooter: ?() => Component
+
+        other props: passed to ListView, e.g.
+            renderHeader: ?() => Component
+            renderFooter: ?() => Component
+            initialPageSize: Int
+            pageSize: Int
+            etc
     */
     constructor(props) {
         super(props)
@@ -54,17 +59,9 @@ export class SimpleListView extends PureComponent {
     render = () => {
         return <ListView
                     dataSource={this.dataSource}
-                    renderRow={this.renderRow} />
+                    {...this.props} />
     }
 
-    renderRow = (i) => {
-        i -= 1
-        if (i === -1)
-            return this.props.renderHeader ? this.props.renderHeader() : <View />
-        if (i === this.props.N)
-            return this.props.renderFooter ? this.props.renderFooter() : <View />
-        return this.props.renderRow(i)
-    }
 }
 
 class T extends PureComponent {

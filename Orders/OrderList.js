@@ -41,6 +41,8 @@ export class OrderList extends Page {
     renderView = () => {
         return <SimpleListView
                     N={this.nItems}
+                    initialListSize={4}
+                    pageSize={1}
                     renderRow={this.renderRow}
                     renderHeader={this.props.renderHeader}
                     renderFooter={this.props.renderFooter} />

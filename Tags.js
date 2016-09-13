@@ -298,21 +298,18 @@ export class TagView extends DownloadResultView {
 
         const excludedTags = this.getAllExcludedTags()
 
-        return <View style={{flex: 1}}>
-            <View>
-                {rows.map((rowOfTags, i) =>
-                    <TagRow
-                        key={i}
-                        rowNumber={i}
-                        rowOfTags={rowOfTags}
-                        menuItems={menuItems}
-                        isExcluded={tagID => false}
-                        /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
-                        />
-                    )
-                }
-            </View>
-            {this.props.children}
+        return <View>
+            {rows.map((rowOfTags, i) =>
+                <TagRow
+                    key={i}
+                    rowNumber={i}
+                    rowOfTags={rowOfTags}
+                    menuItems={menuItems}
+                    isExcluded={tagID => false}
+                    /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
+                    />
+                )
+            }
         </View>
     }
 
