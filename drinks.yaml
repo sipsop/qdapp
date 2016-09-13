@@ -789,6 +789,8 @@ drinks:
     prosecco:
         name: Prosecco
         desc: It is a light sparkling italian wine. Easy to drink and often drank as an alternative to Champagne.
+        image: https://pixabay.com/en/sparkling-wine-bubbles-glasses-two-1030754/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #sparkling
             #white
@@ -804,6 +806,8 @@ drinks:
     champagne:
         name: Champagne
         desc: It is most popular sparkling wine worldwide and is produced from grapes grown in the Champagne region of France.
+        image: https://pixabay.com/en/drink-champagne-alcohol-celebration-1436421/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #french
             #sparkling
@@ -817,6 +821,8 @@ drinks:
     cremant:
         name: Cremant
         desc: It is mostly known for its' low amount of carbon dioxide.
+        image: https://pixabay.com/en/alcohol-bar-drinks-party-event-1281704/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #creamy
             #wine
@@ -828,6 +834,8 @@ drinks:
     cava:
         name: Cava
         desc: It is a Spanish sparkling white or pink wine from Spain.
+        image: 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #spanish
             #white
@@ -843,6 +851,8 @@ drinks:
     espumate:
         name: Espumate
         desc: It is low level and cheap sparkling wine from Portugal.
+        image: https://pixabay.com/en/champagne-glasses-luxury-festive-583410/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #cheap
             #wine
@@ -856,6 +866,8 @@ drinks:
         name: Asti
         desc: A sweet italian sparkler wine made in the region of Asti.
         alcohol content: 8%
+        image: https://pixabay.com/en/champagne-champagne-glasses-drink-590767/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -870,6 +882,8 @@ drinks:
         name: Trento Doc
         desc: It is an Italian unique sparkling wine with a dry, smooth, rounded and elegant flavour.
         alcohol content: above 11%
+        image: https://pixabay.com/en/champagne-champagne-glass-drink-590768/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -883,6 +897,7 @@ drinks:
         desc: This wine is produced in Germany and is usually sweeter and lower in alcohol than champagne and other sparkling wine.
         alcohol content: 6%
         image: https://pixabay.com/en/glass-champagne-bubbly-glassware-297666/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -896,8 +911,10 @@ drinks:
 
     pezsgö:
         name: Pezsgö
-        desc: Pezsgo is a sparkling wine produced in Hiungary which is well crafted and perfect for celebrations.
+        desc: Pezsgo is a sparkling wine produced in Hungary which is well crafted and perfect for celebrations.
         alcohol content: above 11%
+        image: https://pixabay.com/en/bottle-of-sparkling-wine-solemnly-588332/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -909,6 +926,8 @@ drinks:
     sovetskoyeShampanskoye:
         name: Sovetskoye Shampanskoye
         desc: This is Russian champagne and a popular brand among rich in Soviet Union.
+        image: https://pixabay.com/en/new-year-bubbly-sparkling-wine-656038/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -923,6 +942,7 @@ drinks:
         desc: A famous red sparkling wine produced in Australia.
         abv: 13% or above
         image: https://pixabay.com/en/red-wine-glass-macro-drink-red-wine-1004255/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
@@ -938,6 +958,8 @@ drinks:
         name: Methode Cap Classique
         desc: It is a South African elegant sparkling wine
         abv: 11.5% or above
+        image: https://pixabay.com/en/glasses-sparkling-wine-cheers-213156/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #sparkling
