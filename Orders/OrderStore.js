@@ -29,6 +29,7 @@ import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
     id:                 ID,
+    barID:              BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<Int>>,
     amount:             Int,
@@ -224,6 +225,7 @@ class OrderStore {
         assert(userName != null)
 
         var stripeToken
+        this.orderResultDownload.downloadStarted()
         try {
             stripeToken = await getStripeToken(paymentStore.getSelectedCard())
         } catch (err) {
@@ -265,15 +267,13 @@ class OrderStore {
             }
         `
         console.log('Sending query:', query)
-        const result = await downloadManager.graphQLMutate(query)
+        const orderResultDownload = await downloadManager.graphQLMutate(query)
+        log('Order placed:', orderResultDownload)
 
-        log('Order placed:', result)
-
-        if (result.errorMessage) {
-            this.orderResultDownload.downloadError(result.errorMessage)
-        } else {
-            this.orderResultDownload.downloadFinished(result)
-        }
+        const result = orderResultDownload.value
+        if (result)
+            result.orderList = this.orderList
+        this.orderResultDownload = result
     })
 }
 

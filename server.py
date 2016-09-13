@@ -6,6 +6,7 @@ from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import yaml
 import time
+import inspect
 import string
 import random
 import graphene
@@ -15,21 +16,47 @@ conn = r.connect()
 items_table = r.db('qdodger').table('itemDefs')
 items = list(items_table.run(conn))
 
+GRAPHENE_TYPES = (
+    graphene.ObjectType,
+    graphene.Enum,
+    graphene.InputObjectType,
+)
+
+def nonNull(ty):
+    if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
+        return graphene.Field(ty)
+    return ty
+    
+    # For some reason this is broken...
+    if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
+        return graphene.NonNull(graphene.Field(ty))
+    return graphene.NonNull(ty)
+
+String = nonNull(graphene.String())
+NullString = graphene.String()
+Int   = nonNull(graphene.Int())
+NullInt = graphene.Int()
+Float = nonNull(graphene.Float())
+
+def List(ty):
+    return nonNull(graphene.List(ty))
+
 # ID  = graphene.ID().NonNull
-ID  = graphene.String().NonNull
+ID  = String
 BarID = ID
 MenuItemID = ID
-URL = graphene.String().NonNull
+URL = String
+
 
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
 insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
 
 class Drink(graphene.ObjectType):
     id = ID
-    name = graphene.String().NonNull
-    desc = graphene.String()
-    images = graphene.List(URL).NonNull
-    tags = graphene.List(graphene.String().NonNull)
+    name = String
+    desc = NullString
+    images = graphene.List(URL)
+    tags = List(String)
 
 class Currency(graphene.Enum):
     Sterling = 0
@@ -41,9 +68,9 @@ class PriceOption(graphene.Enum):
     Relative = 1    # relative price, e.g. +0.50 (for add-ons)
 
 class Price(graphene.ObjectType):
-    currency = graphene.NonNull(Currency)
-    option = graphene.NonNull(PriceOption)
-    price = graphene.Float().NonNull
+    currency = nonNull(Currency)
+    option = nonNull(PriceOption)
+    price = Float
 
     @classmethod
     def pounds(cls, price):
@@ -76,44 +103,42 @@ class OptionType(graphene.Enum):
 class MenuItemOption(graphene.ObjectType):
     id = ID
     # menu option name (e.g. "Size")
-    name    = graphene.String().NonNull
+    name    = String
 
     # type of option list
-    optionType = graphene.NonNull(OptionType)
+    optionType = nonNull(OptionType)
 
     # List of options to choose from, e.g. ["pint", "half-pint"]
-    optionList = graphene.List(graphene.String()).NonNull
+    optionList = List(String)
 
     # List of prices for each option, e.g. [Price(3.40), Price(2.60)]
-    prices  = graphene.List(Price).NonNull
+    prices  = List(Price)
 
     # Index of the default option. If there is no default, this is null
     # (only allowed when optionType == 'ZeroOrMore' or 'ZeroOrOne')
-    defaultOption = graphene.Int()
+    defaultOption = NullInt
 
 class MenuItem(graphene.ObjectType):
     id      = ID
-    name    = graphene.String().NonNull
-    desc    = graphene.String()
-    images  = graphene.List(URL)
-    tags    = graphene.List(graphene.String())
-    price   = graphene.NonNull(Price)
-    options = graphene.List(MenuItemOption).NonNull
+    name    = String
+    desc    = NullString
+    images  = List(URL)
+    tags    = List(String)
+    price   = nonNull(Price)
+    options = List(MenuItemOption)
 
 
 class SubMenu(graphene.ObjectType):
     image     = URL
-    menuItems = graphene.List(MenuItem).NonNull
+    menuItems = List(MenuItem)
 
 class Menu(graphene.ObjectType):
     placeID   = ID
-    beer      = graphene.NonNull(SubMenu)
-    wine      = graphene.NonNull(SubMenu)
-    spirits   = graphene.NonNull(SubMenu)
-    cocktails = graphene.NonNull(SubMenu)
-    water     = graphene.NonNull(SubMenu)
-    # snacks    = graphene.NonNull(SubMenu)
-    # food      = graphene.NonNull(SubMenu)
+    beer      = nonNull(SubMenu)
+    wine      = nonNull(SubMenu)
+    spirits   = nonNull(SubMenu)
+    cocktails = nonNull(SubMenu)
+    water     = nonNull(SubMenu)
 
 class Day(graphene.Enum):
     Sunday    = 0
@@ -125,9 +150,9 @@ class Day(graphene.Enum):
     Saturday  = 6
 
 class Time(graphene.ObjectType):
-    hour    = graphene.Int()
-    minute  = graphene.Int()
-    second  = graphene.Int()
+    hour    = NullInt
+    minute  = NullInt
+    second  = NullInt
 
 class OpeningTime(graphene.ObjectType):
     # day = graphene.NonNull(Day)
@@ -135,12 +160,12 @@ class OpeningTime(graphene.ObjectType):
     closeTime = graphene.Field(Time)
 
 class Address(graphene.ObjectType):
-    lat = graphene.Float().NonNull
-    lon = graphene.Float().NonNull
-    city = graphene.String().NonNull
-    street = graphene.String().NonNull
-    number = graphene.String().NonNull
-    postcode = graphene.String().NonNull
+    lat      = Float
+    lon      = Float
+    city     = String
+    street   = String
+    number   = String
+    postcode = String
 
 class BarType(graphene.Enum):
     Pub = 0
@@ -148,12 +173,12 @@ class BarType(graphene.Enum):
 
 # class Bar(graphene.ObjectType):
 #     id     = ID
-#     name   = graphene.String().NonNull
+#     name   = String
 #     desc   = graphene.String()
 #     barType = graphene.NonNull(BarType)
 #     signedUp = graphene.Boolean().NonNull
 #     images = graphene.List(URL).NonNull
-#     tags   = graphene.List(graphene.String().NonNull)
+#     tags   = graphene.List(String)
 #     phone  = graphene.String()
 #     website = graphene.String()
 #     openingTimes = graphene.List(OpeningTime).NonNull
@@ -164,17 +189,17 @@ class BarType(graphene.Enum):
     #     return menu
 
 class TagInfo(graphene.ObjectType):
-    tagID    = graphene.String().NonNull
-    tagName  = graphene.String().NonNull
-    excludes = graphene.List(ID).NonNull
+    tagID    = String
+    tagName  = String
+    excludes = List(ID)
 
 class TagEdge(graphene.ObjectType):
-    srcID = graphene.String().NonNull
-    dstIDs = graphene.List(graphene.String()).NonNull
+    srcID  = String
+    dstIDs = List(String)
 
 class Tags(graphene.ObjectType):
-    tagInfo  = graphene.List(TagInfo).NonNull
-    tagGraph = graphene.List(TagEdge).NonNull
+    tagInfo  = List(TagInfo)
+    tagGraph = List(TagEdge)
 
 def parse_tags(yaml_file):
     tags_yaml = yaml.load(yaml_file)
@@ -396,20 +421,22 @@ def makeMenu(placeID):
 ############################################################################
 
 class OrderItem(graphene.ObjectType):
-    barID = BarID
+    # barID = BarID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = graphene.List(graphene.String()).NonNull
-    amount = graphene.Int().NonNull
+    selectedStringOptions = List(graphene.String())
+    amount = Int
 
 # For inputs you have to use 'InputObjectType' for some reason...
 # http://stackoverflow.com/questions/32304486/how-to-make-a-mutation-query-for-inserting-a-list-of-array-fields-in-graphql
 class OrderItemInput(graphene.InputObjectType):
-    barID = BarID
+    # barID = BarID
+    # ID of the OrderItem
+    id = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = graphene.List(graphene.String()).NonNull
-    amount = graphene.Int().NonNull
+    selectedStringOptions = List(List(String))
+    amount = Int
 
 
 characters = string.ascii_letters + '0123456789!?@*$+/|'
@@ -419,18 +446,18 @@ def shortid():
 
 class PlaceOrder(graphene.Mutation):
     class Input:
-        barID       = BarID
-        userName    = graphene.String().NonNull
-        currency    = graphene.String().NonNull
-        price       = graphene.Float().NonNull
-        orderList   = graphene.List(OrderItemInput).NonNull
-        stripeToken = graphene.String().NonNull
+        barID       = String
+        userName    = String
+        currency    = String
+        price       = Float
+        orderList   = List(OrderItemInput)
+        stripeToken = String
 
-    errorMessage = graphene.String()
-    queueSize = graphene.Int().NonNull
-    estimatedTime = graphene.Int().NonNull
-    receipt = graphene.String().NonNull
-    userName = graphene.String().NonNull
+    errorMessage    = NullString
+    queueSize       = Int
+    estimatedTime   = Int
+    receipt         = String
+    userName        = String
     # orderList = graphene.List(OrderItem).NonNull
 
     @classmethod
