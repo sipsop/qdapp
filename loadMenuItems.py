@@ -32,10 +32,9 @@ def tag_to_tag_id(tag_name):
 
 def prepare_item(item_name, item):
     images = []
-    if 'image' in item or 'images' in item:
+    if item.get('image') or item.get('images'):
         images = item.get('image') or item.get('images')
         images = fmap(str.strip, images.split())
-        print(images)
 
     if 'name' not in item or 'desc' not in item or 'tags' not in item:
         raise ValueError("Invalid item with name " + item_name)

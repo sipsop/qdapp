@@ -48,6 +48,28 @@ MenuItemID = ID
 URL = String
 
 
+#=========================================================================#
+# Stupid graphene murders your fields
+
+# Currency
+Sterling = 0
+Euros    = 1
+Dollars  = 2
+
+# PriceOption
+Absolute = 0
+Relative = 1
+
+# OptionType
+Single      = 0
+AtMostOne   = 1
+ZeroOrMore  = 2
+OneOrMore   = 3
+
+
+
+#=========================================================================#
+
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
 insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
 
@@ -59,45 +81,46 @@ class Drink(graphene.ObjectType):
     tags = List(String)
 
 class Currency(graphene.Enum):
-    Sterling = 0
-    Euros    = 1
-    Dollars  = 2
+    Sterling = Sterling
+    Euros    = Euros
+    Dollars  = Dollars
 
 class PriceOption(graphene.Enum):
-    Absolute = 0    # absolute price, e.g. 3.40
-    Relative = 1    # relative price, e.g. +0.50 (for add-ons)
+    Absolute = Absolute    # absolute price, e.g. 3.40
+    Relative = Relative    # relative price, e.g. +0.50 (for add-ons)
 
 class Price(graphene.ObjectType):
-    currency = nonNull(Currency)
-    option = nonNull(PriceOption)
+    currency = graphene.Field(Currency)
+    option = graphene.Field(PriceOption)
     price = Float
 
     @classmethod
-    def pounds(cls, price):
+    def pounds(cls, price, option=1):
         return Price(
-            currency=Currency.Sterling,
-            option=PriceOption.Absolute,
+            currency=Sterling,
+            option=option,
             price=price)
 
     @classmethod
     def euros(cls, price):
         return Price(
-            currency=Currency.Euros,
-            option=PriceOption.Absolute,
+            currency=Euros,
+            option=Absolute,
             price=price)
 
     @classmethod
     def dollars(cls, price):
         return Price(
-            currency=Currency.Dollars,
-            option=PriceOption.Absolute,
+            currency=Dollars,
+            option=Absolute,
             price=price)
 
+
 class OptionType(graphene.Enum):
-    Single     = 0
-    AtMostOne  = 1
-    ZeroOrMore = 2
-    OneOrMore  = 3
+    Single     = Single
+    AtMostOne  = AtMostOne
+    ZeroOrMore = ZeroOrMore
+    OneOrMore  = OneOrMore
 
 
 class MenuItemOption(graphene.ObjectType):
@@ -244,27 +267,14 @@ guiness = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit
 heineken = "https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg"
 rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPntmIjnA4/s1600/PB170236.JPG"
 
-zero = Price(
-    currency=Currency.Sterling,
-    option=PriceOption.Relative,
-    price=0.0,
-)
-
-fiftyP = Price(
-    currency=Currency.Sterling,
-    option=PriceOption.Relative,
-    price=0.5,
-)
-
-onePound = Price(
-    currency=Currency.Sterling,
-    option=PriceOption.Relative,
-    price=1,
-)
+Relative = 1
+zero     = Price.pounds(0.0, Relative)
+fiftyP   = Price.pounds(0.5, Relative)
+onePound = Price.pounds(1.0, Relative)
 
 beer_top_options = MenuItemOption(
     name="Options",
-    optionType=OptionType.AtMostOne,
+    optionType=AtMostOne,
     optionList=[
         "tops (lemonade)",
         "shandy",
@@ -282,7 +292,7 @@ beer_top_options = MenuItemOption(
 
 spirit_top_options = MenuItemOption(
     name="Options",
-    optionType=OptionType.AtMostOne,
+    optionType=AtMostOne,
     optionList=[
         "Coke",
         "Redbull",
@@ -300,7 +310,7 @@ spirit_top_options = MenuItemOption(
 def beer_option(price1, price2):
     return MenuItemOption(
         name="Choose",
-        optionType=OptionType.Single,
+        optionType=Single,
         optionList=[
             "pint",
             "half-pint",
@@ -314,7 +324,7 @@ def beer_option(price1, price2):
 def wine_options(small, medium, large, bottle):
     return MenuItemOption(
         name="Choose",
-        optionType=OptionType.Single,
+        optionType=Single,
         optionList=[
             "small glass",
             "medium glass",
@@ -328,7 +338,7 @@ def wine_options(small, medium, large, bottle):
 def spirit_options(single, double):
     return MenuItemOption(
         name="Choose",
-        optionType=OptionType.Single,
+        optionType=Single,
         optionList=[
             "single",
             "double",
@@ -349,9 +359,7 @@ def generate_decreasing(lower_bounds, max_price):
 
 def generate_prices(lower, upper):
     prices = [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
-    return [Price(currency=Currency.Sterling,
-                  option=PriceOption.Absolute,
-                  price=price) for price in prices]
+    return [Price.pounds(price) for price in prices]
 
 #= Menu =====================================================================#
 

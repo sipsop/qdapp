@@ -54,7 +54,7 @@ class BarStore {
     /*************************** Network *********************************/
 
     _getBarMenu = async (placeID : PlaceID) : Promise<DownloadResult<Menu>> => {
-        const fragments = `
+        const menuQuery = `
             fragment PriceFragment on Price {
                 currency
                 option
@@ -83,9 +83,7 @@ class BarStore {
                     }
                 }
             }
-        `
 
-        const menuQuery = fragments + `
             query {
                 menu(placeID : "${placeID}") {
                     beer {
