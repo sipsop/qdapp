@@ -40,7 +40,7 @@ export class OrderList extends PureComponent {
 
     render = () => {
         return <SimpleListView
-                    N={this.nItems * 10}
+                    N={this.nItems}
                     initialListSize={4}
                     /* pageSize={1} */
                     /* scrollRenderAheadDistance={400} */
@@ -51,8 +51,8 @@ export class OrderList extends PureComponent {
     }
 
     renderRow = (i) => {
-        const menuItem = this.props.menuItems[i % this.nItems]
-        log("RENDERING menu item...", i)
+        const menuItem = this.props.menuItems[i]
+        // log("RENDERING menu item...", i)
         return <MenuItem
                     key={menuItem.id}
                     rowNumber={i}
