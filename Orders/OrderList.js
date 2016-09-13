@@ -4,13 +4,13 @@ import {
     View,
     ScrollView,
     PureComponent,
-    SimpleListView,
     T,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { barStore, orderStore } from '../Store.js'
+import { SimpleListView } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem, MenuItemImage } from '../MenuPage.js'
 import { Header, HeaderText } from '../Header.js'
@@ -24,7 +24,7 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 // assert(MenuItemImage != null)
 
 @observer
-export class OrderList extends Page {
+export class OrderList extends PureComponent {
     /* properties:
         menuItems: [MenuItem]
             menu items to show
@@ -38,11 +38,13 @@ export class OrderList extends Page {
         return this.props.menuItems.length
     }
 
-    renderView = () => {
+    render = () => {
         return <SimpleListView
-                    N={this.nItems}
+                    N={this.nItems * 10}
                     initialListSize={4}
-                    pageSize={1}
+                    /* pageSize={1} */
+                    /* scrollRenderAheadDistance={400} */
+                    removeClippedSubviews={true}
                     renderRow={this.renderRow}
                     renderHeader={this.props.renderHeader}
                     renderFooter={this.props.renderFooter} />

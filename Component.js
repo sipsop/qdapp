@@ -32,38 +32,6 @@ const isString = (s : String) => {
     return typeof(s) === 'string'
 }
 
-export class SimpleListView extends PureComponent {
-    /* properties:
-        renderRow(i : Int) => void
-        N: Int
-            total number of items
-
-        other props: passed to ListView, e.g.
-            renderHeader: ?() => Component
-            renderFooter: ?() => Component
-            initialPageSize: Int
-            pageSize: Int
-            etc
-    */
-    constructor(props) {
-        super(props)
-        this._dataSource = new ListView.DataSource({
-            rowHasChanged: (i, j) => i !== j,
-        })
-    }
-
-    get dataSource() {
-        return this._dataSource.cloneWithRows(_.range(this.props.N + 2))
-    }
-
-    render = () => {
-        return <ListView
-                    dataSource={this.dataSource}
-                    {...this.props} />
-    }
-
-}
-
 class T extends PureComponent {
     /* properties:
         style

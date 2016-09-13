@@ -52,7 +52,16 @@ export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
             <View style={{flex: 1, marginTop: 5}}>
+                {/*
+                    NOTE: Pass a key to OrderList to ensure it does not
+                          reuse state. This has the effect of "reloading"
+                          the entire listview. Otherwise, if the user has
+                          scrolled down say 100 items, then switching from
+                          e.g. wine to beer will render 100 beer items, even
+                          though only a few are visible.
+                */}
                 <OrderList
+                    key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
                     menuItems={tagStore.getActiveMenuItems()}
                     renderHeader={() => <TagView />}
