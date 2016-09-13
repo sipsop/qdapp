@@ -15,6 +15,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { HOST } from './HTTP.js'
 import { Page } from './Page.js'
 import { createOrderItem, orderStore } from './Orders/OrderStore.js'
 import { OrderList } from './Orders/OrderList.js'
@@ -144,6 +145,13 @@ export class MenuItem extends PureComponent {
     }
 }
 
+const getImageURL = (url : URL) => {
+    log("GETTING IMAGE URL", url, url.startsWith('/static'))
+    if (url.startsWith('/static'))
+        return HOST + url
+    return url
+}
+
 export class MenuItemImage extends PureComponent {
     /* properties:
         menuItem: MenuItem
@@ -155,7 +163,7 @@ export class MenuItemImage extends PureComponent {
         const menuItem = this.props.menuItem
         const image =
             menuItem.images && menuItem.images.length > 0
-                ? menuItem.images[0]
+                ? getImageURL(menuItem.images[0])
                 : undefined
         return <Image source={{uri: image}} style={style} />
     }

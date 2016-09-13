@@ -493,8 +493,14 @@ class Query(graphene.ObjectType):
 schema = graphene.Schema(query=Query, executor=GeventExecutor())
 
 if __name__ == '__main__':
-    from flask import Flask
+    from flask import Flask, send_from_directory
     from flask_graphql import GraphQLView
-    app = Flask(__name__)
+    # set the project root directory as the static folder, you can set others.
+    app = Flask(__name__, static_url_path='')
+
+    @app.route('/static/<path:path>')
+    def send_images(path):
+        return send_from_directory('static', path)
+
     app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
     app.run(host='0.0.0.0', debug=True)
