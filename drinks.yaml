@@ -741,6 +741,7 @@ drinks:
         name: Pinot Noir Rosé
         desc: Pinot Noir is an elegant and delighful Rosé.
         image: https://pixabay.com/en/wine-camping-rosé-wine-cup-878985/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #rose
