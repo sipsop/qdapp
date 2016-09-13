@@ -78,6 +78,10 @@ export class DownloadResult<T> {
         this.state   = downloadState.state
         this.message = downloadState.message
         this.value   = downloadState.value
+        if (downloadState.state === 'InProcess') {
+            this.state = 'Error'
+            this.message = 'Please try again'
+        }
     }
 
     @action from = (downloadResult : DownloadResult<T>) => {
