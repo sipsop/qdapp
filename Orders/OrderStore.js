@@ -249,14 +249,14 @@ class OrderStore {
 
         /* TODO: Utility to build queries correctly and safely */
         const query = `
-            mutation {
+            query {
                 placeOrder(
-                        barID:       ${JSON.stringify(barStore.barID)}
-                        userName:    ${JSON.stringify(userName)},
-                        currency:    ${JSON.stringify(currency)},
-                        price:       ${JSON.stringify(total)},
-                        orderList:   ${JSON.stringify(orderList)},
-                        stripeToken: ${JSON.stringify(stripeToken)}
+                        barID:       ${graphQLArg(barStore.barID)}
+                        userName:    ${graphQLArg(userName)},
+                        currency:    ${graphQLArg(currency)},
+                        price:       ${graphQLArg(total)},
+                        orderList:   ${graphQLArg(orderList)},
+                        stripeToken: ${graphQLArg(stripeToken)}
                         ) {
                     errorMessage
                     userName
@@ -270,13 +270,39 @@ class OrderStore {
         const orderResultDownload = await downloadManager.graphQLMutate(query)
         log('Order placed:', orderResultDownload)
 
-        const result = orderResultDownload.value
-        if (result)
-            result.orderList = this.orderList
-        this.orderResultDownload = result
+        if (orderResultDownload.value) {
+            orderResultDownload.update(value => {
+                const result = value.placeOrder
+                result.orderList = this.orderList
+                assert(result.userName != null)
+                assert(result.queueSize != null)
+                assert(result.estimatedTime != null)
+                assert(result.receipt != null)
+                return result
+            })
+        }
+        this.orderResultDownload = orderResultDownload
     })
 }
 
+const graphQLArg = (obj) => {
+    if (typeof(obj) === 'number') {
+        return JSON.stringify(obj)
+    } else if (typeof(obj) === 'string') {
+        return JSON.stringify(obj)
+    } else if (Array.isArray(obj)) {
+        const items = obj.map(graphQLArg).join(', ')
+        return `[ ${items} ]`
+    } else if (typeof(obj) === 'object') {
+        const fields = Object.keys(obj).map(key => {
+            const value = graphQLArg(obj[key])
+            return `${key}: ${value}`
+        }).join(', ')
+        return `{ ${fields} }`
+    } else {
+        throw Error(`Unknown type: ${typeof(obj)}`)
+    }
+}
 
 export type OrderItem = {
     id:                 ID,

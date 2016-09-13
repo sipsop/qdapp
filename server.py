@@ -26,7 +26,7 @@ def nonNull(ty):
     if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
         return graphene.Field(ty)
     return ty
-    
+
     # For some reason this is broken...
     if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
         return graphene.NonNull(graphene.Field(ty))
@@ -233,21 +233,6 @@ menuTags = parse_tags(open('Tags.yaml'))
 
 eagleID = 'ChIJuQdxBb1w2EcRvnxVeL5abUw'
 
-class Query(graphene.ObjectType):
-
-    # bar  = graphene.Field(Bar, id=ID)
-    barListTags = graphene.Field(Tags)
-    menuTags = graphene.Field(Tags)
-    menu = graphene.Field(Menu, placeID=ID)
-
-    def resolve_menu(self, args, info):
-        placeID = args['placeID']
-        return makeMenu(placeID)
-
-    def resolve_menuTags(self, args, info):
-        return menuTags
-
-
 beer = "http://www.menshealth.com/sites/menshealth.com/files/styles/slideshow-desktop/public/images/slideshow2/beer-intro.jpg?itok=hhBQBwWj"
 wine = "https://employee.foxandhound.com/Portals/0/images/slideshow/wine-pour-slide2.jpg"
 spirits = "https://biotechinasia.files.wordpress.com/2015/10/two-whisky-glasses.jpg"
@@ -444,26 +429,48 @@ characters = string.ascii_letters + '0123456789!?@*$+/|'
 def shortid():
     return ''.join(random.sample(characters, 3))
 
-class PlaceOrder(graphene.Mutation):
-    class Input:
-        barID       = String
-        userName    = String
-        currency    = String
-        price       = Float
-        orderList   = List(OrderItemInput)
-        stripeToken = String
+# class PlaceOrder(graphene.Mutation):
+#     class Input:
+#         barID       = String
+#         userName    = String
+#         currency    = String
+#         price       = Float
+#         orderList   = List(OrderItemInput)
+#         stripeToken = String
 
+class PlaceOrder(graphene.ObjectType):
     errorMessage    = NullString
     queueSize       = Int
     estimatedTime   = Int
     receipt         = String
     userName        = String
-    # orderList = graphene.List(OrderItem).NonNull
 
-    @classmethod
-    def mutate(cls, instance, args, info):
+
+class Query(graphene.ObjectType):
+
+    # bar  = graphene.Field(Bar, id=ID)
+    barListTags = graphene.Field(Tags)
+    menuTags = graphene.Field(Tags)
+    menu = graphene.Field(Menu, placeID=ID)
+
+    placeOrder = graphene.Field(PlaceOrder,
+        barID       = String,
+        userName    = String,
+        currency    = String,
+        price       = Float,
+        orderList   = List(OrderItemInput),
+        stripeToken = String,
+        )
+
+    def resolve_menu(self, args, *_):
+        placeID = args['placeID']
+        return makeMenu(placeID)
+
+    def resolve_menuTags(self, args, *_):
+        return menuTags
+
+    def resolve_placeOrder(self, args, *_):
         # TODO: Authentication
-        print("Placing Order:", args)
         assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
         queueSize = 2
         return PlaceOrder(
@@ -474,10 +481,8 @@ class PlaceOrder(graphene.Mutation):
             userName=args['userName'],
         )
 
-class Mutations(graphene.ObjectType):
-    placeOrder = graphene.Field(PlaceOrder)
 
-schema = graphene.Schema(query=Query, mutation=Mutations, executor=GeventExecutor())
+schema = graphene.Schema(query=Query, executor=GeventExecutor())
 
 if __name__ == '__main__':
     from flask import Flask
