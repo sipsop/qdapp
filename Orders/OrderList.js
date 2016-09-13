@@ -4,7 +4,7 @@ import {
     View,
     ScrollView,
     PureComponent,
-    ListView,
+    SimpleListView,
     T,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
@@ -30,27 +30,20 @@ export class OrderList extends Page {
             menu items to show
         orderStore: OrderStore
             store for the orders
+        renderHeader: ?() => Component
+        renderFooter: ?() => Component
     */
-
-    constructor(props) {
-        super(props)
-        this._dataSource = new ListView.DataSource({
-            rowHasChanged: (i, j) => i !== j,
-        })
-    }
 
     get nItems() {
         return this.props.menuItems.length
     }
 
-    get dataSource() {
-        return this._dataSource.cloneWithRows(_.range(this.nItems * 10))
-    }
-
     renderView = () => {
-        return <ListView
-                    dataSource={this.dataSource}
-                    renderRow={this.renderRow} />
+        return <SimpleListView
+                    N={this.nItems}
+                    renderRow={this.renderRow}
+                    renderHeader={this.props.renderHeader}
+                    renderFooter={this.props.renderFooter} />
     }
 
     renderRow = (i) => {
@@ -60,8 +53,7 @@ export class OrderList extends Page {
                     key={menuItem.id}
                     rowNumber={i}
                     menuItem={menuItem}
-                    orderStore={this.props.orderStore}
-                    />
+                    orderStore={this.props.orderStore} />
     }
 }
 
