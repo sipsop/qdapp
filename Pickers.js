@@ -65,6 +65,7 @@ export class PickerCollection extends PureComponent {
             be a single ScrollView
         okLabel: String
         cancelLabel: String
+        showOkButton: Bool
 
         showModal: bool
             whether to show the choice modal window the first time
@@ -111,11 +112,6 @@ export class PickerCollection extends PureComponent {
         this.closeModal()
     }
 
-    get showOkButton() {
-        return this.props.pickerItems.length > 1 ||
-               this.props.pickerItems[0].optionType !== 'Single'
-    }
-
     render = () => {
         const pickerItems = this.props.pickerItems
 
@@ -124,7 +120,7 @@ export class PickerCollection extends PureComponent {
                     visible={this.modalVisible}
                     cancelModal={this.cancelModal}
                     okModal={this.okModal}
-                    showOkButton={this.showOkButton}
+                    showOkButton={this.props.showOkButton}
                     okLabel={this.props.okLabel}
                     cancelLabel={this.props.cancelLabel}
                     >
@@ -146,7 +142,7 @@ export class PickerCollection extends PureComponent {
                     itemNumber={i}
                     allSelectedOptions={this.selectedInModal}
                     pickerItem={pickerItem}
-                    confirmImmediately={!this.showOkButton}
+                    confirmImmediately={!this.props.showOkButton}
                     confirmSelection={this.okModal}
                     useListView={this.props.useListView}
                     lazyLoad={i > 0}

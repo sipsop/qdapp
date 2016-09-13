@@ -506,6 +506,7 @@ export class OrderSelection extends PureComponent {
                     onFirstAccept={this.handleFirstAccept}
                     onFirstCancel={this.handleFirstCancel}
                     okLabel={this.showModal ? 'Add' : 'Change'}
+                    showOkButton={true}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
@@ -518,6 +519,7 @@ export class OrderSelection extends PureComponent {
                     onAcceptChanges={this.handleAcceptAmountChanges}
                     rowNumber={this.props.rowNumber}
                     useListView={true}
+                    showOkButton={false}
                     />
             </View>
             <TouchableOpacity
