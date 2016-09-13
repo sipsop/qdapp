@@ -4,26 +4,59 @@
 # from graphql.execution.middlewares.gevent import GeventExecutionMiddleware, run_in_greenlet
 from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
+import yaml
 import time
+import inspect
 import string
 import random
 import graphene
+import rethinkdb as r
+
+conn = r.connect()
+items_table = r.db('qdodger').table('itemDefs')
+items = list(items_table.run(conn))
+
+GRAPHENE_TYPES = (
+    graphene.ObjectType,
+    graphene.Enum,
+    graphene.InputObjectType,
+)
+
+def nonNull(ty):
+    if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
+        return graphene.Field(ty)
+    return ty
+
+    # For some reason this is broken...
+    if inspect.isclass(ty) and issubclass(ty, GRAPHENE_TYPES):
+        return graphene.NonNull(graphene.Field(ty))
+    return graphene.NonNull(ty)
+
+String = nonNull(graphene.String())
+NullString = graphene.String()
+Int   = nonNull(graphene.Int())
+NullInt = graphene.Int()
+Float = nonNull(graphene.Float())
+
+def List(ty):
+    return nonNull(graphene.List(ty))
 
 # ID  = graphene.ID().NonNull
-ID  = graphene.String().NonNull
+ID  = String
 BarID = ID
 MenuItemID = ID
-URL = graphene.String().NonNull
+URL = String
+
 
 outsideURL = "http://blog.laterooms.com/wp-content/uploads/2014/01/The-Eagle-Cambridge.jpg"
 insideURL = "http://www.vintagewings.ca/Portals/0/Vintage_Stories/News%20Stories%20L/EaglePubRedux/Eagle14.jpg"
 
 class Drink(graphene.ObjectType):
     id = ID
-    name = graphene.String().NonNull
-    desc = graphene.String()
-    images = graphene.List(URL).NonNull
-    tags = graphene.List(graphene.String().NonNull)
+    name = String
+    desc = NullString
+    images = graphene.List(URL)
+    tags = List(String)
 
 class Currency(graphene.Enum):
     Sterling = 0
@@ -35,9 +68,9 @@ class PriceOption(graphene.Enum):
     Relative = 1    # relative price, e.g. +0.50 (for add-ons)
 
 class Price(graphene.ObjectType):
-    currency = graphene.NonNull(Currency)
-    option = graphene.NonNull(PriceOption)
-    price = graphene.Float().NonNull
+    currency = nonNull(Currency)
+    option = nonNull(PriceOption)
+    price = Float
 
     @classmethod
     def pounds(cls, price):
@@ -70,44 +103,42 @@ class OptionType(graphene.Enum):
 class MenuItemOption(graphene.ObjectType):
     id = ID
     # menu option name (e.g. "Size")
-    name    = graphene.String().NonNull
+    name    = String
 
     # type of option list
-    optionType = graphene.NonNull(OptionType)
+    optionType = nonNull(OptionType)
 
     # List of options to choose from, e.g. ["pint", "half-pint"]
-    optionList = graphene.List(graphene.String()).NonNull
+    optionList = List(String)
 
     # List of prices for each option, e.g. [Price(3.40), Price(2.60)]
-    prices  = graphene.List(Price).NonNull
+    prices  = List(Price)
 
     # Index of the default option. If there is no default, this is null
     # (only allowed when optionType == 'ZeroOrMore' or 'ZeroOrOne')
-    defaultOption = graphene.Int()
+    defaultOption = NullInt
 
 class MenuItem(graphene.ObjectType):
     id      = ID
-    name    = graphene.String().NonNull
-    desc    = graphene.String()
-    images  = graphene.List(URL)
-    tags    = graphene.List(graphene.String())
-    price   = graphene.NonNull(Price)
-    options = graphene.List(MenuItemOption).NonNull
+    name    = String
+    desc    = NullString
+    images  = List(URL)
+    tags    = List(String)
+    price   = nonNull(Price)
+    options = List(MenuItemOption)
 
 
 class SubMenu(graphene.ObjectType):
     image     = URL
-    menuItems = graphene.List(MenuItem).NonNull
+    menuItems = List(MenuItem)
 
 class Menu(graphene.ObjectType):
     placeID   = ID
-    beer      = graphene.NonNull(SubMenu)
-    wine      = graphene.NonNull(SubMenu)
-    spirits   = graphene.NonNull(SubMenu)
-    cocktails = graphene.NonNull(SubMenu)
-    water     = graphene.NonNull(SubMenu)
-    # snacks    = graphene.NonNull(SubMenu)
-    # food      = graphene.NonNull(SubMenu)
+    beer      = nonNull(SubMenu)
+    wine      = nonNull(SubMenu)
+    spirits   = nonNull(SubMenu)
+    cocktails = nonNull(SubMenu)
+    water     = nonNull(SubMenu)
 
 class Day(graphene.Enum):
     Sunday    = 0
@@ -119,9 +150,9 @@ class Day(graphene.Enum):
     Saturday  = 6
 
 class Time(graphene.ObjectType):
-    hour    = graphene.Int()
-    minute  = graphene.Int()
-    second  = graphene.Int()
+    hour    = NullInt
+    minute  = NullInt
+    second  = NullInt
 
 class OpeningTime(graphene.ObjectType):
     # day = graphene.NonNull(Day)
@@ -129,12 +160,12 @@ class OpeningTime(graphene.ObjectType):
     closeTime = graphene.Field(Time)
 
 class Address(graphene.ObjectType):
-    lat = graphene.Float().NonNull
-    lon = graphene.Float().NonNull
-    city = graphene.String().NonNull
-    street = graphene.String().NonNull
-    number = graphene.String().NonNull
-    postcode = graphene.String().NonNull
+    lat      = Float
+    lon      = Float
+    city     = String
+    street   = String
+    number   = String
+    postcode = String
 
 class BarType(graphene.Enum):
     Pub = 0
@@ -142,12 +173,12 @@ class BarType(graphene.Enum):
 
 # class Bar(graphene.ObjectType):
 #     id     = ID
-#     name   = graphene.String().NonNull
+#     name   = String
 #     desc   = graphene.String()
 #     barType = graphene.NonNull(BarType)
 #     signedUp = graphene.Boolean().NonNull
 #     images = graphene.List(URL).NonNull
-#     tags   = graphene.List(graphene.String().NonNull)
+#     tags   = graphene.List(String)
 #     phone  = graphene.String()
 #     website = graphene.String()
 #     openingTimes = graphene.List(OpeningTime).NonNull
@@ -158,82 +189,49 @@ class BarType(graphene.Enum):
     #     return menu
 
 class TagInfo(graphene.ObjectType):
-    tagID    = graphene.String().NonNull
-    tagName  = graphene.String().NonNull
-    excludes = graphene.List(ID).NonNull
+    tagID    = String
+    tagName  = String
+    excludes = List(ID)
 
 class TagEdge(graphene.ObjectType):
-    srcID = graphene.String().NonNull
-    dstID = graphene.String().NonNull
+    srcID  = String
+    dstIDs = List(String)
 
 class Tags(graphene.ObjectType):
-    tagInfo  = graphene.List(TagInfo).NonNull
-    tagGraph = graphene.List(TagEdge).NonNull
+    tagInfo  = List(TagInfo)
+    tagGraph = List(TagEdge)
 
-menuTags = Tags(
-    tagInfo=[
-        TagInfo('0', 'beer',       excludes=['1', '2', '3', '4']),
-        TagInfo('1', 'wine',       excludes=['0', '2', '3', '4']),
-        TagInfo('2', 'spirits',    excludes=['0', '1', '3', '4']),
-        TagInfo('3', 'cocktails',  excludes=['0', '1', '2', '4']),
-        TagInfo('4', 'water',      excludes=['0', '1', '2', '3']),
-        TagInfo('20', 'stout',     excludes=['21', '22']),
-        TagInfo('21', 'ale',       excludes=['20', '22']),
-        TagInfo('22', 'lager',     excludes=['20', '21']),
-        TagInfo('30', 'tap',       excludes=['31', '32']),
-        TagInfo('31', 'bottle',    excludes=['30', '32']),
-        TagInfo('32', 'can',       excludes=['30', '31']),
-        TagInfo('40', 'hops',      excludes=[]),
-        TagInfo('41', 'light',     excludes=['42']),
-        TagInfo('42', 'dark',      excludes=['41']),
-        TagInfo('43', 'fruity',    excludes=[]),
-        TagInfo('44', 'chocolate', excludes=[]),
-        TagInfo('45', 'bacon', excludes=[]),
-    ],
-    tagGraph=[
-        TagEdge(srcID='0', dstID='20'),
-        TagEdge(srcID='0', dstID='21'),
-        TagEdge(srcID='0', dstID='22'),
-        TagEdge(srcID='0', dstID='30'),
-        TagEdge(srcID='0', dstID='31'),
-        TagEdge(srcID='0', dstID='32'),
-        TagEdge(srcID='20', dstID='40'),
-        TagEdge(srcID='20', dstID='41'),
-        TagEdge(srcID='20', dstID='42'),
-        TagEdge(srcID='20', dstID='43'),
-        TagEdge(srcID='20', dstID='44'),
-        TagEdge(srcID='20', dstID='45'),
-        TagEdge(srcID='21', dstID='40'),
-        TagEdge(srcID='21', dstID='41'),
-        TagEdge(srcID='21', dstID='42'),
-        TagEdge(srcID='21', dstID='43'),
-        TagEdge(srcID='21', dstID='44'),
-        TagEdge(srcID='21', dstID='45'),
-        TagEdge(srcID='22', dstID='40'),
-        TagEdge(srcID='22', dstID='41'),
-        TagEdge(srcID='22', dstID='42'),
-        TagEdge(srcID='22', dstID='43'),
-        TagEdge(srcID='22', dstID='44'),
-        TagEdge(srcID='22', dstID='45'),
-    ],
-)
+def parse_tags(yaml_file):
+    tags_yaml = yaml.load(yaml_file)
+    groups = tags_yaml['tags']['groups']
+    edges  = tags_yaml['tags']['edges']
+
+    def resolve_tags(category):
+        if category in categories:
+            return categories[category]
+        return ['#' + category] # category is a tag, e.g. 'beer'
+
+    categories = {category: tags.split() for category, tags in groups.items()}
+    tagGraph = []
+    tagInfo  = []
+    for category, children_str in edges.items():
+        src_tags = resolve_tags(category)
+        dst_tags = [ tag for child in children_str.split()
+                             for tag in resolve_tags(child) ]
+        for src_tag in src_tags:
+            tagGraph.append(TagEdge(srcID=src_tag, dstIDs=dst_tags))
+
+    for tags in categories.values():
+        for tag in tags:
+            excludes = list(tags)
+            excludes.remove(tag)
+            tagInfo.append(TagInfo(tag, tag, excludes=excludes))
+
+    return Tags(tagInfo=tagInfo, tagGraph=tagGraph)
+
+menuTags = parse_tags(open('Tags.yaml'))
 
 eagleID = 'ChIJuQdxBb1w2EcRvnxVeL5abUw'
-
-class Query(graphene.ObjectType):
-
-    # bar  = graphene.Field(Bar, id=ID)
-    barListTags = graphene.Field(Tags)
-    menuTags = graphene.Field(Tags)
-    menu = graphene.Field(Menu, placeID=ID)
-
-    def resolve_menu(self, args, info):
-        placeID = args['placeID']
-        return makeMenu(placeID)
-
-    def resolve_menuTags(self, args, info):
-        return menuTags
-
 
 beer = "http://www.menshealth.com/sites/menshealth.com/files/styles/slideshow-desktop/public/images/slideshow2/beer-intro.jpg?itok=hhBQBwWj"
 wine = "https://employee.foxandhound.com/Portals/0/images/slideshow/wine-pour-slide2.jpg"
@@ -245,20 +243,6 @@ snacks = "https://www.google.co.uk/search?q=peanuts&client=ubuntu&hs=sBq&source=
 guiness = "https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg"
 heineken = "https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg"
 rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPntmIjnA4/s1600/PB170236.JPG"
-
-def option(price1, price2):
-    return MenuItemOption(
-        name="Choose",
-        optionType=OptionType.Single,
-        optionList=[
-            "pint",
-            "half-pint",
-        ],
-        prices=[
-            price1, price2
-        ],
-        defaultOption=0,
-    )
 
 zero = Price(
     currency=Currency.Sterling,
@@ -272,7 +256,13 @@ fiftyP = Price(
     price=0.5,
 )
 
-top_option = MenuItemOption(
+onePound = Price(
+    currency=Currency.Sterling,
+    option=PriceOption.Relative,
+    price=1,
+)
+
+beer_top_options = MenuItemOption(
     name="Options",
     optionType=OptionType.AtMostOne,
     optionList=[
@@ -286,62 +276,116 @@ top_option = MenuItemOption(
         zero,
         fiftyP,
         zero,
-        zero,
     ], #+ [zero] * 100,
     defaultOption=None,
 )
+
+spirit_top_options = MenuItemOption(
+    name="Options",
+    optionType=OptionType.AtMostOne,
+    optionList=[
+        "Coke",
+        "Redbull",
+        "etc",
+    ],
+    prices=[
+        fiftyP,
+        onePound,
+        zero,
+    ],
+    defaultOption=None,
+)
+#============================================================================#
+
+def beer_option(price1, price2):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "pint",
+            "half-pint",
+        ],
+        prices=[
+            price1, price2
+        ],
+        defaultOption=0,
+    )
+
+def wine_options(small, medium, large, bottle):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "small glass",
+            "medium glass",
+            "large glass",
+            "bottle",
+        ],
+        prices=[small, medium, large, bottle],
+        defaultOption=1,
+    )
+
+def spirit_options(single, double):
+    return MenuItemOption(
+        name="Choose",
+        optionType=OptionType.Single,
+        optionList=[
+            "single",
+            "double",
+        ],
+        prices=[single, double],
+        defaultOption=0,
+    )
+
+#= Price Generation ========================================================#
+
+def generate_decreasing(lower_bounds, max_price):
+    upper = max_price
+    for lower in lower_bounds:
+        price = random.choice(generate_prices(lower, upper))
+        yield price
+        upper = price.price
+
+
+def generate_prices(lower, upper):
+    prices = [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
+    return [Price(currency=Currency.Sterling,
+                  option=PriceOption.Absolute,
+                  price=price) for price in prices]
+
+#= Menu =====================================================================#
+
+for item in items:
+    if '#beer' in item['tags']:
+        price1, price2 = generate_decreasing([2.20, 1.70], 6.50)
+        item['price']   = price1
+        item['options'] = [ beer_option(price1, price2), beer_top_options ]
+
+    elif '#wine' in item['tags']:
+        bottle, large, medium, small = generate_decreasing(
+            [8.50, 4.20, 3.20, 2.70], 23.0)
+        item['price']   = medium
+        item['options'] = [ wine_options(small, medium, large, bottle) ]
+
+    elif '#spirit' in item['tags']:
+        double, single = generate_decreasing([4.20, 3.10], 9.10)
+        item['price'] = single
+        item['options'] = [ spirit_options(single, double), spirit_top_options ]
 
 def makeMenu(placeID):
     return Menu(
         placeID=placeID,
         beer=SubMenu(
             image=beer,
-            menuItems=[
-                MenuItem(
-                    id='1',
-                    name="Guiness",
-                    desc="Guiness is a dry irish stout from Dublin, Ireland.",
-                    images=[guiness],
-                    tags=['0', '20', '30', '42'],
-                    price=Price.pounds(3.40),
-                    options=[
-                        option(Price.pounds(3.40), Price.pounds(2.60)),
-                        top_option,
-                    ],
-                ),
-                MenuItem(
-                    id='2',
-                    name="Heineken",
-                    desc="Heineken is a pale lager",
-                    images=[heineken],
-                    tags=['0', '22', '31', '40', '41'],
-                    price=Price.pounds(3.20),
-                    options=[
-                        option(Price.pounds(3.20), Price.pounds(2.30)),
-                        top_option,
-                    ],
-                ),
-                MenuItem(
-                    id='3',
-                    name="Rock Bottom Cask Conditioned Bourbon Chocolate Oatmeal Lager",
-                    desc="This beer has a rather long name...",
-                    images=[rockBottom],
-                    tags=['0', '22', '31', '42'],
-                    price=Price.pounds(3.20),
-                    options=[
-                        option(Price.pounds(4.20), Price.pounds(3.40)),
-                        top_option,
-                    ],
-                ),
-            ],
+            menuItems=[MenuItem(**item) for item in items if '#beer' in item['tags']],
         ),
         wine=SubMenu(
             image=wine,
-            menuItems=[],
+            menuItems=[MenuItem(**item) for item in items if '#wine' in item['tags']],
         ),
         spirits=SubMenu(
             image=spirits,
-            menuItems=[],
+            menuItems=[MenuItem(**item) for item in items if '#spirit' in item['tags']],
         ),
         cocktails=SubMenu(
             image=cocktails,
@@ -362,20 +406,22 @@ def makeMenu(placeID):
 ############################################################################
 
 class OrderItem(graphene.ObjectType):
-    barID = BarID
+    # barID = BarID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = graphene.List(graphene.String()).NonNull
-    amount = graphene.Int().NonNull
+    selectedStringOptions = List(graphene.String())
+    amount = Int
 
 # For inputs you have to use 'InputObjectType' for some reason...
 # http://stackoverflow.com/questions/32304486/how-to-make-a-mutation-query-for-inserting-a-list-of-array-fields-in-graphql
 class OrderItemInput(graphene.InputObjectType):
-    barID = BarID
+    # barID = BarID
+    # ID of the OrderItem
+    id = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = graphene.List(graphene.String()).NonNull
-    amount = graphene.Int().NonNull
+    selectedStringOptions = List(List(String))
+    amount = Int
 
 
 characters = string.ascii_letters + '0123456789!?@*$+/|'
@@ -383,26 +429,48 @@ characters = string.ascii_letters + '0123456789!?@*$+/|'
 def shortid():
     return ''.join(random.sample(characters, 3))
 
-class PlaceOrder(graphene.Mutation):
-    class Input:
-        barID       = BarID
-        userName    = graphene.String().NonNull
-        currency    = graphene.String().NonNull
-        price       = graphene.Float().NonNull
-        orderList   = graphene.List(OrderItemInput).NonNull
-        stripeToken = graphene.String().NonNull
+# class PlaceOrder(graphene.Mutation):
+#     class Input:
+#         barID       = String
+#         userName    = String
+#         currency    = String
+#         price       = Float
+#         orderList   = List(OrderItemInput)
+#         stripeToken = String
 
-    errorMessage = graphene.String()
-    queueSize = graphene.Int().NonNull
-    estimatedTime = graphene.Int().NonNull
-    receipt = graphene.String().NonNull
-    userName = graphene.String().NonNull
-    # orderList = graphene.List(OrderItem).NonNull
+class PlaceOrder(graphene.ObjectType):
+    errorMessage    = NullString
+    queueSize       = Int
+    estimatedTime   = Int
+    receipt         = String
+    userName        = String
 
-    @classmethod
-    def mutate(cls, instance, args, info):
+
+class Query(graphene.ObjectType):
+
+    # bar  = graphene.Field(Bar, id=ID)
+    barListTags = graphene.Field(Tags)
+    menuTags = graphene.Field(Tags)
+    menu = graphene.Field(Menu, placeID=ID)
+
+    placeOrder = graphene.Field(PlaceOrder,
+        barID       = String,
+        userName    = String,
+        currency    = String,
+        price       = Float,
+        orderList   = List(OrderItemInput),
+        stripeToken = String,
+        )
+
+    def resolve_menu(self, args, *_):
+        placeID = args['placeID']
+        return makeMenu(placeID)
+
+    def resolve_menuTags(self, args, *_):
+        return menuTags
+
+    def resolve_placeOrder(self, args, *_):
         # TODO: Authentication
-        print("Placing Order:", args)
         assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
         queueSize = 2
         return PlaceOrder(
@@ -413,10 +481,8 @@ class PlaceOrder(graphene.Mutation):
             userName=args['userName'],
         )
 
-class Mutations(graphene.ObjectType):
-    placeOrder = graphene.Field(PlaceOrder)
 
-schema = graphene.Schema(query=Query, mutation=Mutations, executor=GeventExecutor())
+schema = graphene.Schema(query=Query, executor=GeventExecutor())
 
 if __name__ == '__main__':
     from flask import Flask

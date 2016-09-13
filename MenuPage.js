@@ -51,22 +51,22 @@ export class MenuPage extends BarPageFetcher {
 export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
-            <ScrollView style={{flex: 1}}>
-                <TagView>
-                    <View style={{flex: 1, marginTop: 5}}>
-                        {
-                            tagStore.getActiveMenuItems().map(
-                                (menuItem, i) =>
-                                    <MenuItem
-                                        key={menuItem.id}
-                                        rowNumber={i}
-                                        menuItem={menuItem}
-                                        />
-                            )
-                        }
-                    </View>
-                </TagView>
-            </ScrollView>
+            <View style={{flex: 1, marginTop: 5}}>
+                {/*
+                    NOTE: Pass a key to OrderList to ensure it does not
+                          reuse state. This has the effect of "reloading"
+                          the entire listview. Otherwise, if the user has
+                          scrolled down say 100 items, then switching from
+                          e.g. wine to beer will render 100 beer items, even
+                          though only a few are visible.
+                */}
+                <OrderList
+                    key={tagStore.tagSelection.join(';')}
+                    orderStore={orderStore}
+                    menuItems={tagStore.getActiveMenuItems()}
+                    renderHeader={() => <TagView />}
+                    />
+            </View>
             <OrderButton />
         </View>
     }
@@ -96,13 +96,14 @@ export class MenuItem extends PureComponent {
     /* properties:
         rowNumber: Int
         menuItem: MenuItem
+        orderStore: OrderStore
     */
 
     @observable showModalFor : ?OrderItem = null
 
     @action showModal = () => {
         const orderItem = createOrderItem(this.props.menuItem)
-        orderStore.addOrderItem(orderItem)
+        this.props.orderStore.addOrderItem(orderItem)
         this.showModalFor = orderItem
     }
 
@@ -111,7 +112,7 @@ export class MenuItem extends PureComponent {
     }
 
     @computed get haveOrderItems() : Array<OrderItem> {
-        return orderStore.getOrderList(this.props.menuItem.id).length > 0
+        return this.props.orderStore.getOrderList(this.props.menuItem.id).length > 0
     }
 
     render = () => {
@@ -135,6 +136,7 @@ export class MenuItem extends PureComponent {
                     menuItem={menuItem}
                     showModalFor={this.showModalFor}
                     onModalClose={this.modalClosed}
+                    orderStore={this.props.orderStore}
                     />
             </View>
             <View style={{backgroundColor: '#fff', height: marginBottom}} />
@@ -166,10 +168,11 @@ class MenuItemOrderList extends PureComponent {
         showModalFor: ?OrderItem
             order item that we should show a modal for (just once)
         onModalClose: () => void
+        orderStore: OrderStore
     */
 
     @computed get orderItems() : Array<OrderItem> {
-        return orderStore.getOrderList(this.props.menuItem.id)
+        return this.props.orderStore.getOrderList(this.props.menuItem.id)
     }
 
     render = () => {
@@ -194,7 +197,10 @@ class MenuItemOrderList extends PureComponent {
                         this.orderItems.map(this.renderOrderItem)
                     }
                 </View>
-                <PriceColumn orderItems={this.orderItems} />
+                <PriceColumn
+                    orderItems={this.orderItems}
+                    orderStore={this.props.orderStore}
+                    />
             </View>
         </View>
     }
@@ -205,13 +211,14 @@ class MenuItemOrderList extends PureComponent {
             : false
 
         return <OrderSelection
-            key={orderItem.id}
-            rowNumber={i}
-            menuItem={this.props.menuItem}
-            orderItem={orderItem}
-            showModal={showModal}
-            onModalClose={this.props.onModalClose}
-            />
+                    key={orderItem.id}
+                    rowNumber={i}
+                    menuItem={this.props.menuItem}
+                    orderStore={this.props.orderStore}
+                    orderItem={orderItem}
+                    showModal={showModal}
+                    onModalClose={this.props.onModalClose}
+                    />
     }
 }
 
@@ -219,6 +226,7 @@ class MenuItemOrderList extends PureComponent {
 export class PriceColumn extends PureComponent {
     /* properties:
         orderItems: [OrderItem]
+        orderStore: OrderStore
     */
     render = () => {
         return <View style={{minWidth: 60}}>
@@ -228,6 +236,7 @@ export class PriceColumn extends PureComponent {
                         key={orderItem.id}
                         rowNumber={i}
                         orderItem={orderItem}
+                        orderStore={this.props.orderStore}
                         />
                 )
             }
@@ -240,9 +249,10 @@ class PriceEntry extends PureComponent {
     /* properties:
         orderItem: OrderItem
         rowNumber: Int
+        orderStore: OrderStore
     */
     render = () => {
-        const total = orderStore.getTotal(this.props.orderItem)
+        const total = this.props.orderStore.getTotal(this.props.orderItem)
         console.log("re-rendering price for orderItem", this.props.rowNumber)
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -276,9 +286,10 @@ class MenuItemHeader extends PureComponent {
                 <View style={{flex: 1}}>
                     <T style={styles.keywordText}>
                         {
-                            menuItem.tags.map(
-                                    tagID => '#' + tagStore.getTagName(tagID)
-                                ).join(' ')
+                            menuItem.tags
+                                .filter(tagStore.tagIsDefined)
+                                .map(tagStore.getTagName)
+                                .join(' ')
                         }
                     </T>
                     <T style={styles.infoText} numberOfLines={3}>
@@ -391,8 +402,8 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get amountPickerItem() {
-        log("recomputing amountPickerItem", this.props.rowNumber)
-        const subTotal = orderStore.getSubTotal(this.orderItem) || 0.0
+        // log("recomputing amountPickerItem", this.props.rowNumber)
+        const subTotal = this.props.orderStore.getSubTotal(this.orderItem) || 0.0
         const numbers = range(N+1)
         return new PickerItem(
             "Number of Drinks:",
@@ -405,7 +416,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @computed get optionPickerItems() {
-        log("recomputing optionPickerItems", this.props.rowNumber)
+        // log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
         return menuItem.options.map((menuOptionItem, i) => {
             return new PickerItem(
@@ -423,7 +434,7 @@ export class OrderSelection extends PureComponent {
         return {
             price: price,
             option: 'Absolute',
-            currency: orderStore.currency,
+            currency: this.props.orderStore.currency,
         }
     }
 
@@ -433,7 +444,7 @@ export class OrderSelection extends PureComponent {
 
     @action handleDecrease = () => {
         if (this.orderItem.amount === 0)
-            orderStore.removeOrderItem(this.orderItem)
+            this.props.orderStore.removeOrderItem(this.orderItem)
         else
             this.orderItem.amount = max(0, this.orderItem.amount - 1)
     }
@@ -460,7 +471,7 @@ export class OrderSelection extends PureComponent {
 
     @action handleFirstCancel = () => {
         // this.orderItem.showModal = false
-        orderStore.removeOrderItem(this.orderItem)
+        this.props.orderStore.removeOrderItem(this.orderItem)
         this.handleClose()
     }
 

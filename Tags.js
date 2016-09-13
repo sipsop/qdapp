@@ -28,14 +28,14 @@ const tagQuery = `
             }
             tagGraph {
                 srcID
-                dstID
+                dstIDs
             }
         }
     }
 `
 
 /* Root tags: beer, wine, spirits, cocktails, water, ... */
-export const rootIDs = [ '0', '1', '2', '3', '4' ]
+export const rootIDs = [ '#beer', '#wine', '#spirit', '#cocktail', '#water' ]
 
 export class TagStore {
     /*
@@ -84,7 +84,7 @@ export class TagStore {
 
     constructor() {
         this.tagDownloadResult   = emptyResult()
-        this.tagSelection        = ['0']
+        this.tagSelection        = ['#beer']
         this.tagSelectionHistory = new Map()
     }
 
@@ -101,14 +101,17 @@ export class TagStore {
     }
 
     @computed get tagGraph() {
-        const result = new Map()
-        const edges = this.tags.tagGraph.forEach((edge) => {
-            if (!result.has(edge.srcID))
-                result.set(edge.srcID, [])
-            const dstIDs = result.get(edge.srcID)
-            dstIDs.push(edge.dstID)
-        })
-        return result
+        return new Map(this.tags.tagGraph.map(
+            edge => [edge.srcID, edge.dstIDs]
+        ))
+        // const result = new Map()
+        // const edges = this.tags.tagGraph.forEach((edge) => {
+        //     if (!result.has(edge.srcID))
+        //         result.set(edge.srcID, [])
+        //     const dstIDs = result.get(edge.srcID)
+        //     dstIDs.push(edge.dstID)
+        // })
+        // return result
     }
 
     @computed get tagNames() {
@@ -188,6 +191,10 @@ export class TagStore {
     }
 
     getTagName = (tagID) => this.tagNames.get(tagID)
+
+    tagIsDefined = (tagID : TagID) : Bool => {
+        return this.tagNames.has(tagID)
+    }
 
     _clearTags = (tagIDs) => {
         this.tagSelection = this.tagSelection.filter(
@@ -291,21 +298,18 @@ export class TagView extends DownloadResultView {
 
         const excludedTags = this.getAllExcludedTags()
 
-        return <View style={{flex: 1}}>
-            <View>
-                {rows.map((rowOfTags, i) =>
-                    <TagRow
-                        key={i}
-                        rowNumber={i}
-                        rowOfTags={rowOfTags}
-                        menuItems={menuItems}
-                        isExcluded={tagID => false}
-                        /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
-                        />
-                    )
-                }
-            </View>
-            {this.props.children}
+        return <View>
+            {rows.map((rowOfTags, i) =>
+                <TagRow
+                    key={i}
+                    rowNumber={i}
+                    rowOfTags={rowOfTags}
+                    menuItems={menuItems}
+                    isExcluded={tagID => false}
+                    /*isExcluded={tagID => _.includes(excludedTags, tagID)}*/
+                    />
+                )
+            }
         </View>
     }
 
@@ -344,7 +348,7 @@ export class TagRow extends Component {
     }
 
     render = () => {
-        const tagIDs = this.props.rowOfTags
+        const tagIDs = this.props.rowOfTags.filter(tagStore.tagIsDefined)
         const tagNames = tagIDs.map(tagStore.getTagName)
         return <ButtonRow
                 rowNumber={this.props.rowNumber}

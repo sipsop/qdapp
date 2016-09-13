@@ -6,7 +6,7 @@ from curry.typing import alias, typeddict, URL
 import rethinkdb as r
 
 conn = r.connect()
-menuItems = r.db('qdodger').table('menuItems')
+menuItems = r.db('qdodger').table('itemDefs')
 
 fresh_id = uuid.uuid4
 
@@ -32,8 +32,10 @@ def tag_to_tag_id(tag_name):
 
 def prepare_item(item_name, item):
     images = []
-    if 'image' in item:
-        images = fmap(str.strip, item['image'].split('\n'))
+    if 'image' in item or 'images' in item:
+        images = item.get('image') or item.get('images')
+        images = fmap(str.strip, images.split())
+        print(images)
 
     if 'name' not in item or 'desc' not in item or 'tags' not in item:
         raise ValueError("Invalid item with name " + item_name)
@@ -51,7 +53,7 @@ def load_items_from_file(contents, dry_run=False):
     results = [prepare_item(item_name, item)
                    for item_name, item in drink_list.items()]
     if not dry_run:
-        menuItems.delete()
+        menuItems.delete().run(conn)
         menuItems.insert(results).run(conn)
 
 if __name__ == '__main__':

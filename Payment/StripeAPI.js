@@ -56,15 +56,18 @@ const stripePostRequest = async (resource: string, properties: Object): Promise 
     try {
         response = await fetch(url, httpOptions)
     } catch (err) {
+        log('NetworkError', err.message)
         throw new NetworkError(err.mesage)
     }
 
     const result = await response.json()
     if (response.status !== 200) {
         /* There was some error, return the Stripe API error message */
+        log(response.status)
         throw new NetworkError(result.message)
     }
 
     /* All good, return Stripe token */
+    log(result.id)
     return result.id
 }

@@ -10,6 +10,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { barStore, orderStore } from '../Store.js'
+import { SimpleListView } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem, MenuItemImage } from '../MenuPage.js'
 import { Header, HeaderText } from '../Header.js'
@@ -23,46 +24,78 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 // assert(MenuItemImage != null)
 
 @observer
-export class OrderList extends Page {
+export class OrderList extends PureComponent {
     /* properties:
-        orderList: [OrderItem]
+        menuItems: [MenuItem]
+            menu items to show
+        orderStore: OrderStore
+            store for the orders
+        renderHeader: ?() => Component
+        renderFooter: ?() => Component
     */
+
+    get nItems() {
+        return this.props.menuItems.length
+    }
+
+    render = () => {
+        return <SimpleListView
+                    N={this.nItems}
+                    initialListSize={4}
+                    /* pageSize={1} */
+                    /* scrollRenderAheadDistance={400} */
+                    removeClippedSubviews={true}
+                    renderRow={this.renderRow}
+                    renderHeader={this.props.renderHeader}
+                    renderFooter={this.props.renderFooter} />
+    }
+
+    renderRow = (i) => {
+        const menuItem = this.props.menuItems[i]
+        // log("RENDERING menu item...", i)
+        return <MenuItem
+                    key={menuItem.id}
+                    rowNumber={i}
+                    menuItem={menuItem}
+                    orderStore={this.props.orderStore} />
+    }
+}
+
+@observer
+export class SimpleOrderList extends Page {
+    /* properties:
+        menuItems: [MenuItem]
+            menu items to show
+        orderList: [OrderItem]
+            order items to show
+    */
+
     renderView = () => {
-        const menuItemsOnOrder = orderStore.getMenuItemsOnOrder(this.props.orderList)
-        if (this.props.simple)
-            return this.renderSimpleMenuItems(menuItemsOnOrder)
-        return this.renderDetailedMenuItems(menuItemsOnOrder)
-    }
-
-    renderSimpleMenuItems = (menuItems) => {
+        assert(this.props.menuItems != null)
+        assert(this.props.orderList != null)
         return <View>
             {
-                menuItems.map(
-                    (menuItem, i) =>
-                        <SimpleMenuItem
-                            key={menuItem.id}
-                            rowNumber={i}
-                            menuItem={menuItem}
-                            />
+                this.props.menuItems.map(
+                    (menuItem, i) => {
+                        const orderItems = getOrderItems(menuItem, this.props.orderList)
+                        return <SimpleMenuItem
+                                    key={menuItem.id}
+                                    rowNumber={i}
+                                    menuItem={menuItem}
+                                    orderItems={orderItems}
+                                    />
+                    }
                 )
             }
         </View>
     }
 
-    renderDetailedMenuItems = (menuItems) => {
-        return <View>
-            {
-                menuItems.map(
-                    (menuItem, i) =>
-                        <MenuItem
-                            key={menuItem.id}
-                            rowNumber={i}
-                            menuItem={menuItem}
-                            />
-                )
-            }
-        </View>
-    }
+}
+
+const getOrderItems = (menuItem, orderItems) => {
+    return orderItems.filter(
+        orderItem => menuItem.id === orderItem.menuItemID
+    )
 }
 
 const titleTextStyle = {
@@ -81,11 +114,12 @@ const itemTextStyle = {
 export class SimpleMenuItem extends PureComponent {
     /* properties:
         menuItem: MenuItem
+        orderItems: [OrderItem]
         rowNumber: Int
     */
     render = () => {
         const menuItem = this.props.menuItem
-        const orderItems = orderStore.getOrderList(menuItem.id)
+        const orderItems = this.props.orderItems
         const orderListHeight = orderItems.length * 50
         const backgroundColor = this.props.rowNumber % 2 === 0
             ? '#fff'

@@ -3,7 +3,7 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager, NetworkError, graphQLArg } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
@@ -29,6 +29,7 @@ import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
     id:                 ID,
+    barID:              BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<Int>>,
     amount:             Int,
@@ -213,7 +214,7 @@ class OrderStore {
 
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        return this.placeActiveOrderStub()
+        // return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
@@ -224,6 +225,7 @@ class OrderStore {
         assert(userName != null)
 
         var stripeToken
+        this.orderResultDownload.downloadStarted()
         try {
             stripeToken = await getStripeToken(paymentStore.getSelectedCard())
         } catch (err) {
@@ -247,14 +249,14 @@ class OrderStore {
 
         /* TODO: Utility to build queries correctly and safely */
         const query = `
-            mutation {
+            query {
                 placeOrder(
-                        barID:       ${JSON.stringify(barStore.barID)}
-                        userName:    ${JSON.stringify(userName)},
-                        currency:    ${JSON.stringify(currency)},
-                        price:       ${JSON.stringify(total)},
-                        orderList:   ${JSON.stringify(orderList)},
-                        stripeToken: ${JSON.stringify(stripeToken)}
+                        barID:       ${graphQLArg(barStore.barID)}
+                        userName:    ${graphQLArg(userName)},
+                        currency:    ${graphQLArg(currency)},
+                        price:       ${graphQLArg(total)},
+                        orderList:   ${graphQLArg(orderList)},
+                        stripeToken: ${graphQLArg(stripeToken)}
                         ) {
                     errorMessage
                     userName
@@ -265,18 +267,23 @@ class OrderStore {
             }
         `
         console.log('Sending query:', query)
-        const result = await downloadManager.graphQLMutate(query)
+        const orderResultDownload = await downloadManager.graphQLMutate(query)
+        log('Order placed:', orderResultDownload)
 
-        log('Order placed:', result)
-
-        if (result.errorMessage) {
-            this.orderResultDownload.downloadError(result.errorMessage)
-        } else {
-            this.orderResultDownload.downloadFinished(result)
+        if (orderResultDownload.value) {
+            orderResultDownload.update(value => {
+                const result = value.placeOrder
+                result.orderList = this.orderList
+                assert(result.userName != null)
+                assert(result.queueSize != null)
+                assert(result.estimatedTime != null)
+                assert(result.receipt != null)
+                return result
+            })
         }
+        this.orderResultDownload = orderResultDownload
     })
 }
-
 
 export type OrderItem = {
     id:                 ID,

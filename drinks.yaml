@@ -300,8 +300,8 @@ drinks:
     canaletto:
         name: Canaletto Montepulciano D'Abruzzo
         desc: A fruity, juicy wine from the Abruzzo region of Central Italy. Great with rich pasta sauces
-        image: https://pixabay.com/en/glass-red-wine-drink-679520/ 
-       license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
+        image: https://pixabay.com/en/glass-red-wine-drink-679520/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #wine
             #red
@@ -834,7 +834,7 @@ drinks:
     cava:
         name: Cava
         desc: It is a Spanish sparkling white or pink wine from Spain.
-        image: 
+        image:
         license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #spanish

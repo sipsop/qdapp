@@ -186,6 +186,7 @@ class BarStore {
         //             throw Error("Menu item must have an ID")
         //     })
         // })
+        log('menuItems:', menuItems)
         return _.flatten(menuItems)
     }
 

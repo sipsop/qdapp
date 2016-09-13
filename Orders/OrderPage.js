@@ -45,9 +45,10 @@ export class OrderPage extends Page {
                 onClose={() => this.popupVisible = false}
                 />
             <ReceiptModal />
-            <ScrollView>
-                <OrderList orderList={orderStore.orderList} />
-            </ScrollView>
+            <OrderList
+                orderStore={orderStore}
+                menuItems={orderStore.menuItemsOnOrder}
+                />
             <OrderButton onPress={this.handleOrderPress} />
         </View>
     }

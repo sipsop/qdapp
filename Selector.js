@@ -20,6 +20,8 @@ import { Button } from './Button.js'
 import { config } from './Config.js'
 import * as _ from './Curry.js'
 
+const { log, assert } = _.utils('./Selector.js')
+
 const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,
 })
@@ -64,6 +66,7 @@ export class Selector extends PureComponent {
 
     renderSelectorItem = (i) => {
         const children = this.children
+        log("RENDERING SELECTOR ITEM", i)
         return <SelectorItem
                     key={i}
                     rowNumber={i}
