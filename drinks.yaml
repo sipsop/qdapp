@@ -44,6 +44,8 @@ drinks:
         name: American Lager
         desc: American lager is a light in coulur, slightly hoppy and well carbonated beer.
         abv: 4.5% to 5.5%
+        image: https://static.pexels.com/photos/52994/beer-ale-bitter-fermented-52994.jpeg
+        license: https://www.pexels.com/photo-license/
         tags: |
             #beer
             #paleLager
@@ -56,6 +58,8 @@ drinks:
         name: German Helles
         desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness.
         abv: 4.5% to 6%
+        image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538749/
+        license: https://www.pexels.com/photo-license/ 
         tags: |
             #beer
             #lager
@@ -69,6 +73,8 @@ drinks:
         name: German Pilsner
         desc: German Pilsner is a light pale lager with a distinct flavour and hop aroma.
         abv: 4.5% to 5%
+        image: https://static.pexels.com/photos/8744/mug-glass-beer.jpg
+        license: https://www.pexels.com/photo-license/
         tags: |
             #beer
             #lager
