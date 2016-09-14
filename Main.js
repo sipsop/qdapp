@@ -7,6 +7,7 @@ import {
   ScrollView,
   ListView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
@@ -28,6 +29,7 @@ import { cache } from './Cache.js'
 
     render = () => {
         return  <SideMenu content={<ControlPanel />}>
+            <StatusBar hidden={true} />
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <TabView>
                     <View tabLabel='Discover' style={{flex: 1}}>

@@ -50,6 +50,10 @@ To #import "RCTView.h"
 
 see https://github.com/lelandrichardson/react-native-maps/issues/371
 
+For the ``@interface` error see:
+
+    https://github.com/airbnb/react-native-maps/issues/371
+
 Now build the app and run it in a simulator:
 
 ```bash
