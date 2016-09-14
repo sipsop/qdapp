@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
-import { observable, computed, transaction } from 'mobx'
+import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
@@ -86,6 +86,17 @@ export class TagStore {
         this.tagDownloadResult   = emptyResult()
         this.tagSelection        = ['#beer']
         this.tagSelectionHistory = new Map()
+    }
+
+    getState = () => {
+        return {
+            tagSelection: this.tagSelection,
+        }
+    }
+
+    @action setState = (tagState) => {
+        if (Array.isArray(tagState.tagSelection))
+            this.tagSelection = tagState.tagSelection
     }
 
     fetchTags = async () => {

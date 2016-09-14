@@ -59,6 +59,8 @@ export class Store {
             orderStore.setState(state.orderState)
         if (state.mapState)
             mapStore.setState(state.mapState)
+        if (state.tagState)
+            tagStore.setState(state.tagState)
     })
 
     getState = () => {
@@ -69,6 +71,7 @@ export class Store {
             loginState: loginStore.getState(),
             orderState: orderStore.getState(),
             mapState:   mapStore.getState(),
+            tagState:   tagStore.getState(),
         })
     }
 
