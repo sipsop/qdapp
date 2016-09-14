@@ -15,9 +15,9 @@
     "merge": "^1.2.0",
     "mobx": "^2.4.1",
     "mobx-react": "^3.5.3",
-    "react": "^15.2.1",
+    "react": "^15.3.1",
     "react-addons-pure-render-mixin": "^15.3.0",
-    "react-native": "^0.31.0",
+    "react-native": "^0.33.0",
     "react-native-awesome-card-io": "^0.2.4",
     "react-native-credit-card-input": "^0.2.3",
     "react-native-drawer": "^2.3.0",
@@ -40,12 +40,12 @@
   },
   "rnpm": {
     "assets": [
-        "Roboto_Mono/RobotoMono-Regular.ttf",
-        "Roboto_Mono/RobotoMono-Bold.ttf",
-        "Open_Sans/OpenSans-Regular.ttf",
-        "Open_Sans/OpenSans-Semibold.ttf",
-        "Open_Sans/OpenSans-Bold.ttf",
-        "Open_Sans/OpenSans-ExtraBold.ttf"
+      "Roboto_Mono/RobotoMono-Regular.ttf",
+      "Roboto_Mono/RobotoMono-Bold.ttf",
+      "Open_Sans/OpenSans-Regular.ttf",
+      "Open_Sans/OpenSans-Semibold.ttf",
+      "Open_Sans/OpenSans-Bold.ttf",
+      "Open_Sans/OpenSans-ExtraBold.ttf"
     ]
   }
 }

@@ -61,7 +61,7 @@ export class BarCard extends PureComponent {
             // borderTopRightRadius: radius,
         }
 
-        const { height, width } = Dimensions.get('screen')
+        const { height, width } = Dimensions.get('window')
 
         const currentBar = barStore.getBar()
         const currentBarName = currentBar ? currentBar.name : ""

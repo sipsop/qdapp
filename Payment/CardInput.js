@@ -75,4 +75,5 @@ export class CardInput2 extends PureComponent {
     }
 }
 
-UIManager.setLayoutAnimationEnabledExperimental(true)
+if (Platform.OS !== 'ios')
+    UIManager.setLayoutAnimationEnabledExperimental(true)

@@ -19,6 +19,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import * as _ from './Curry.js'
 
+const fontFamily = Platform.OS === 'android' ? 'Roboto' : 'Arial'
+
 const { log, assert } = _.utils('./Component.js')
 
 class PureComponent extends Component {
@@ -39,7 +41,7 @@ class T extends PureComponent {
         ellipsizeMode
     */
     render = () => {
-        const style = {fontFamily: 'Roboto', ...this.props.style}
+        const style = {fontFamily: fontFamily, ...this.props.style}
         const children = this.props.children
         // if (Array.isArray(children))
         //     assert(_.all(children.map(isString)), "" + children)
