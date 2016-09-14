@@ -59,7 +59,7 @@ drinks:
         desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness.
         abv: 4.5% to 6%
         image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538749/
-        license: https://www.pexels.com/photo-license/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
@@ -89,6 +89,8 @@ drinks:
         name: Czech or Bohemian Pilsner
         desc: It is a crystal clear, light straw to golden colour beer which has a distinct flavour with a spicy bitterness and floral flavours or aromas.
         abv: 4.5% to 5.5%
+        image: https://pixabay.com/en/beer-brew-craft-1361141/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
@@ -107,6 +109,8 @@ drinks:
         name: Amber American Lager
         desc: Amber American Lager are known for its sweet, creamy malt flavours with moderate hop aromas due to caramel malts.
         abv: 4.8% to 5.4%
+        image: https://static.pexels.com/photos/1862/summer-sunshine-alcohol-drink-medium.jpg 
+        license: https://www.pexels.com/photo-license/
         tags: |
             #beer
             #lager
@@ -123,6 +127,8 @@ drinks:
         name: Oktoberfest or Marzen
         desc: Oktoberfest is a full-bodied, toasty, balanced in sweet taste and a dark copper coloured dark lager beer
         abv: 5% to 6%
+        image: https://pixabay.com/en/beer-beer-garden-thirst-glass-mug-1290633/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
