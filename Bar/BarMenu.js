@@ -130,6 +130,7 @@ const menuPadding = 5
                             , justifyContent: 'flex-end'
                             , alignItems: 'center'
                             , borderRadius: radius
+                            , backgroundColor: 'rgba(0,0,0,0)'
                             }
                         }>
                         <T style={

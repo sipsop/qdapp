@@ -78,7 +78,12 @@ export class BarCard extends PureComponent {
                         {/* Push footer to bottom */}
                         <View style={{flex: 1}} />
                         <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                            <View style={
+                                    { flex: 1
+                                    , justifyContent: 'flex-end'
+                                    , backgroundColor: 'rgba(0,0,0,0)'
+                                    }
+                                }>
                                 <BarCardFooter bar={bar} />
                             </View>
                         </LinearGradient>

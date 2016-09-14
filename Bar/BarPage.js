@@ -279,6 +279,7 @@ export class BarPhoto extends PureComponent {
                                 , height: 55
                                 , justifyContent: 'center'
                                 , alignItems: 'center'
+                                , backgroundColor: 'rgba(0,0,0,0)'
                                 }
                             }>
                             <MaterialIcon name="arrow-back" size={30} color='#fff' />
@@ -287,7 +288,7 @@ export class BarPhoto extends PureComponent {
                     : <View style={{flex: 1}} />
             }
             <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
                     <BarCardFooter bar={this.props.bar} showMapButton={false} />
                 </View>
             </LinearGradient>
