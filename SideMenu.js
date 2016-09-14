@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, Platform } from 'react-native'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -27,7 +27,7 @@ export class SideMenu extends PureComponent {
                     content={content}
                     openDrawerOffset={0.25}
                     panCloseMask={0.25}
-                    styles={drawerStyles}
+                    styles={drawerStore.drawerStyle}
                     disabled={drawerStore.disabled}
                     tweenHandler={Drawer.tweenPresets.parallax}
                     tapToClose={true}
@@ -60,18 +60,26 @@ class DrawerStore {
     toggleOpenClose = () => {
         this.open = !this.open
     }
+
+    @computed get drawerStyle() {
+        var drawerStyle = {}
+        if (this.open && !this.disabled) {
+            drawerStyle = {
+                shadowColor: '#000000',
+                shadowOpacity: 0.8
+                // shadowRadius: 3,
+            }
+        }
+        return { drawer: drawerStyle, main: {} }
+    }
 }
 
 export const drawerStore = new DrawerStore()
 
-
-const drawerStyles = {
-    drawer: {
-        shadowColor: '#000000',
-        shadowOpacity: 0.8,
-        // shadowRadius: 3,
-    },
-    main: {
-        // paddingLeft: 3,
-    },
-}
+// const drawerStyle =
+//     Platform.OS === 'android'
+//         ? { shadowColor: '#000000'
+//           , shadowOpacity: 0.8
+//           // , shadowRadius: 3
+//           }
+//         : {}
