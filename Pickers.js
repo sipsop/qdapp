@@ -20,6 +20,8 @@ import * as _ from './Curry.js'
 
 const rowHeight = 55
 
+const { assert, log } = _.utils('./Pickers.js')
+
 export class PickerItem {
     /* Attributes:
         title: str
@@ -66,6 +68,7 @@ export class PickerCollection extends PureComponent {
         okLabel: String
         cancelLabel: String
         showOkButton: Bool
+        renderHeader: ?() => Component
 
         showModal: bool
             whether to show the choice modal window the first time
@@ -146,11 +149,16 @@ export class PickerCollection extends PureComponent {
                     confirmSelection={this.okModal}
                     useListView={this.props.useListView}
                     lazyLoad={i > 0}
+                    /* renderHeader={this.props.renderHeader} */
                     />
         )
+        var view = ScrollView
         if (this.props.useListView)
-            return result
-        return <ScrollView>{result}</ScrollView>
+            view = View
+        return <ScrollView>
+            {this.props.renderHeader ? this.props.renderHeader() : undefined}
+            {result}
+        </ScrollView>
     }
 }
 

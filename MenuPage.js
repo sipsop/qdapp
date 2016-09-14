@@ -11,12 +11,14 @@ import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+
 // import Modal from 'react-native-modalbox'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { HOST } from './HTTP.js'
 import { Page } from './Page.js'
+import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { createOrderItem, orderStore } from './Orders/OrderStore.js'
 import { OrderList } from './Orders/OrderList.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
@@ -145,7 +147,10 @@ export class MenuItem extends PureComponent {
     }
 }
 
-const getImageURL = (url : URL) => {
+const getImageURL = (menuItem : MenuItem) => {
+    if (!menuItem.images || menuItem.images.length === 0)
+        return undefined
+    const url = menuItem.images[0]
     if (url.startsWith('/static'))
         return HOST + url
     return url
@@ -160,11 +165,7 @@ export class MenuItemImage extends PureComponent {
     render = () => {
         const style = this.props.style || styles.image
         const menuItem = this.props.menuItem
-        const image =
-            menuItem.images && menuItem.images.length > 0
-                ? getImageURL(menuItem.images[0])
-                : undefined
-        console.log('Image URL', menuItem.name, image)
+        const image = getImageURL(menuItem)
         return <Image source={{uri: image}} style={style} />
     }
 }
@@ -427,8 +428,10 @@ export class OrderSelection extends PureComponent {
         // log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
         return menuItem.options.map((menuOptionItem, i) => {
+            /* Use the name of the menu item for the first option (e.g. 'Guiness') */
+            const name = i === 0 ? menuItem.name : menuOptionItem.name
             return new PickerItem(
-                menuOptionItem.name,
+                name,
                 menuOptionItem.optionList,
                 menuOptionItem.prices,
                 menuOptionItem.defaultOption || -1,
@@ -487,6 +490,22 @@ export class OrderSelection extends PureComponent {
         return this.props.showModal
     }
 
+    renderHeader = () => {
+        const url = getImageURL(this.props.menuItem)
+        // return <View style={{height: 200, backgroundColor: '#000'}} />
+        if (!url)
+            return <View />
+
+        console.log("RENDERing imAGE HEADER", url)
+        return <LazyComponent style={{height: 200}}>
+            <Image
+                key={url}
+                source={{uri: url}}
+                style={{height: 200}}
+                />
+        </LazyComponent>
+    }
+
     render = () => {
         console.log("re-rendering OrderItem", this.props.rowNumber)
         return <View style={
@@ -496,7 +515,7 @@ export class OrderSelection extends PureComponent {
                     , alignItems: 'center'
                     , height: rowHeight
                     }
-                }>
+                }   >
             <View style={{flex: 2, height: buttonHeight}}>
                 <PickerCollection
                     pickerItems={this.optionPickerItems}
@@ -507,6 +526,7 @@ export class OrderSelection extends PureComponent {
                     onFirstCancel={this.handleFirstCancel}
                     okLabel={this.showModal ? 'Add' : 'Change'}
                     showOkButton={true}
+                    renderHeader={this.renderHeader}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
