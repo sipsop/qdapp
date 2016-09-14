@@ -1,0 +1,75 @@
+tags:
+    groups:
+        ### Beer
+        categories: |
+            #beer
+            #wine
+            #spirit
+            #cocktail
+            #water
+
+        beerCategories: |
+            #stout
+            #ale
+            #lager
+
+        beerOptions: |
+            #tap
+            #bottle
+            #can
+
+        beerDarkness: |
+            #light
+            #medium
+            #dark
+
+        ### Wine
+
+        wineCategories: |
+            #red
+            #white
+            #rose
+            #champagne
+            #sparkling
+            #cava
+
+        ### spirits
+
+        spiritCategories: |
+            #whisky
+            #vodka
+            #gin
+            #rum
+            #brandy
+            #cognac
+            #tequila
+            #vermouth
+            #aperitif
+            #liqueur
+            #alcopop
+            #sherry
+            #port
+
+        whiskyCategories: |
+            #malt
+            #blended
+            #bourbon
+            #irish
+
+        liqueurCategories: |
+            #cream
+            #flavoured
+            #schnapps
+
+    edges:
+        roots: categories
+
+        beer: |
+            beerCategories
+            beerOptions
+
+        beerOptions: beerDarkness
+        wine: wineCategories
+        spirit: spiritCategories
+        whisky: whiskyCategories
+        liqueur: liqueurCategories
