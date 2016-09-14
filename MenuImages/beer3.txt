@@ -1,4 +1,0 @@
-
-license: https://www.pexels.com/photo-license/
-
-url: https://static.pexels.com/photos/52994/beer-ale-bitter-fermented-52994.jpeg
