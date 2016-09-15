@@ -214,7 +214,7 @@ class OrderStore {
 
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        // return this.placeActiveOrderStub()
+        return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
@@ -266,9 +266,9 @@ class OrderStore {
                 }
             }
         `
-        console.log('Sending query:', query)
+        // console.log('Sending query:', query)
         const orderResultDownload = await downloadManager.graphQLMutate(query)
-        log('Order placed:', orderResultDownload)
+        // log('Order placed:', orderResultDownload)
 
         if (orderResultDownload.value) {
             orderResultDownload.update(value => {
