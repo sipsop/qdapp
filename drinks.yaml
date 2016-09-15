@@ -3,7 +3,7 @@ drinks:
         name: Guiness
         desc: Guiness is a dry Irish stout from Dublin, Ireland
         image: https://pixabay.com/en/ireland-guinness-beer-brewery-foam-531137/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #stout
@@ -14,7 +14,7 @@ drinks:
         name: Heineken
         desc: Heineken is a pale lager
         image: https://pixabay.com/en/beer-father-s-day-drink-refreshment-210197/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -24,7 +24,7 @@ drinks:
         name: Rock Buttom Cask Conditioned Bourbon Chocolate Oatmeal Lager
         desc: Beer with a rather long name...
         image: https://pixabay.com/en/salzburg-austria-unterberg-summit-708785/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -34,7 +34,7 @@ drinks:
         name: Stella Artois
         desc: American style premium pale lager.
         image: https://pixabay.com/en/beer-mug-beer-glass-beer-beer-place-938758/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #bestsellingbeer
             #lager
@@ -46,9 +46,9 @@ drinks:
 
     ##pale lagers and pilsners
 
-    americanLager:
+    americanLager2:
         name: American Lager
-        desc: American lager is a light in coulur, slightly hoppy and well carbonated beer.
+        desc: American lager is light in colour, slightly hoppy and well carbonated beer.
         abv: 4.5% to 5.5%
         image: https://static.pexels.com/photos/52994/beer-ale-bitter-fermented-52994.jpeg
         license: https://www.pexels.com/photo-license/
@@ -65,7 +65,7 @@ drinks:
         desc: It is a tradional German full-bodied lager beer which is mildly sweet, light-coulred with low bitterness.
         abv: 4.5% to 6%
         image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538749/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -96,7 +96,7 @@ drinks:
         desc: It is a crystal clear, light straw to golden colour beer which has a distinct flavour with a spicy bitterness and floral flavours or aromas.
         abv: 4.5% to 5.5%
         image: https://pixabay.com/en/beer-brew-craft-1361141/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -115,7 +115,7 @@ drinks:
         name: Amber American Lager
         desc: Amber American Lager are known for its sweet, creamy malt flavours with moderate hop aromas due to caramel malts.
         abv: 4.8% to 5.4%
-        image: https://static.pexels.com/photos/1862/summer-sunshine-alcohol-drink-medium.jpg 
+        image: https://static.pexels.com/photos/1862/summer-sunshine-alcohol-drink-medium.jpg
         license: https://www.pexels.com/photo-license/
         tags: |
             #beer
@@ -134,7 +134,7 @@ drinks:
         desc: Oktoberfest is a full-bodied, toasty, balanced in sweet taste and a dark copper coloured dark lager beer
         abv: 5% to 6%
         image: https://pixabay.com/en/beer-beer-garden-thirst-glass-mug-1290633/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -150,7 +150,7 @@ drinks:
         desc: This beer has an opaque, black or brown colour with hints of either coffee or chocolate flavour and produced in Germany.
         abv: 4.4% to 5.4%
         image: https://pixabay.com/en/beer-dark-liquid-bar-brown-164261/
-        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
