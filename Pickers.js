@@ -41,6 +41,11 @@ export class PickerItem {
     // @observable selected
     // @observable selectedInModal
 
+    title           : String
+    prices          : Array<Price>
+    defaultOption   : Int // -1 for 'no default'
+    selected        : Array<Int>
+
     constructor(title, labels, prices, defaultOption, selection, optionType) {
         this.title = title
         this.labels = labels
@@ -287,9 +292,18 @@ class PickerButton extends PureComponent {
         })
         const labels = _.flatten(nonDefaultLabels)
         if (labels.length === 0) {
-            const firstItem = this.props.pickerItems[0]
-            return firstItem.labels[0]
+            /* All labels are defaults, return the default label for the first option */
+            return this.getDefaultLabel()
         }
         return _.flatten(nonDefaultLabels).join(' + ')
+    }
+
+    getDefaultLabel = () => {
+        const firstItem = this.props.pickerItems[0]
+        const optionIndex =
+            firstItem.defaultOption !== -1
+                ? firstItem.defaultOption
+                : 0
+        return firstItem.labels[firstItem.defaultOption]
     }
 }

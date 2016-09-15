@@ -496,7 +496,6 @@ export class OrderSelection extends PureComponent {
         if (!url)
             return <View />
 
-        console.log("RENDERing imAGE HEADER", url)
         return <LazyComponent style={{height: 200}}>
             <Image
                 key={url}
