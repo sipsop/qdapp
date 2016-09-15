@@ -348,6 +348,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
+        log("Fetching new data....", key, url)
         return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
@@ -356,10 +357,11 @@ const fetchJSONWithTimeouts = async /*<T>*/(
 
     var result
     try {
-        if (cacheInfo && cacheInfo.noCache)
+        if (cacheInfo && cacheInfo.noCache) {
             result = await refreshCallback()
-        else
+        } else {
             result = await cache.get(key, refreshCallback, /*expiredCallback, */ cacheInfo = cacheInfo)
+        }
         return new DownloadResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))
