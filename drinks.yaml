@@ -143,6 +143,8 @@ drinks:
         name: Gemran Schwarzbier
         desc: This beer has an opaque, black or brown colour with hints of either coffee or chocolate flavour and produced in Germany.
         abv: 4.4% to 5.4%
+        image: https://pixabay.com/en/beer-dark-liquid-bar-brown-164261/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
@@ -159,6 +161,8 @@ drinks:
         name: Vienna Lager
         desc: Vienna Lager has light malt sweetness and is a medium bodied with reddish-amber or copper colour. This type of beer is more famous in North America.
         abv: 4.7% to 5.5%
+        image: https://pixabay.com/en/dark-beer-beer-drink-eat-food-51052/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -176,6 +180,8 @@ drinks:
         name: Traditional Bock
         desc: Tradional Bock is a strong and dark Gemran lager.
         abv: 6.3% to 7.2%
+        image: https://pixabay.com/en/beer-drink-alcohol-dark-1145094/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -192,6 +198,8 @@ drinks:
         name: Doppelbock
         desc: Doppelbock is German Bock lager with a strong, clear, dark and malty with very little bitterness.
         abv: 7% to 10%
+        image: https://pixabay.com/en/beer-drink-alcohol-dark-1145094/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -208,6 +216,8 @@ drinks:
         name: Weizenbock
         desc: It is a full-bodied, rich and malty beer which has pale to amber colour and it varies depending on malt's colour.
         abv: 6.5% to 9%
+        image: https://pixabay.com/en/beer-a-pint-cup-alcohol-199650/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -225,6 +235,8 @@ drinks:
         name: Maibock
         desc: Maibock is a strong lager of German origin which has hoppy aromas and is golden in colour with a refreshing finish.
         abv: 6.3% to 7.4%
+        image: https://pixabay.com/en/beer-drink-wheat-beer-glass-foam-1620319/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #lager
@@ -247,6 +259,8 @@ drinks:
         desc: It is a medium to full-bodied, deep copper to very dark brown and clear brown ale which is drier than english brown ale.
         abv: 4.3% to 6.2%
         ibu: 20-30
+        image: https://pixabay.com/en/beer-refreshment-wheat-beer-drink-1555613/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #ale
@@ -266,6 +280,8 @@ drinks:
         desc: English Brown Ale varies depending either if it is from northeastern England then it is strong, malty and nutty and from southern England it is darker, sweeter and low in alcohol.
         abv: 4.2% to 5.4%
         ibu: 20-30
+        image: https://pixabay.com/en/beer-wheat-yeast-foam-wheat-beer-1379581/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #ale
@@ -284,6 +300,8 @@ drinks:
         desc:
         abv: 4.5% to 6.2%
         ibu: 25-40
+        image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538754/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/
         tags: |
             #beer
             #ale
