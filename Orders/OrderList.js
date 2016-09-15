@@ -47,7 +47,9 @@ export class OrderList extends PureComponent {
                     removeClippedSubviews={true}
                     renderRow={this.renderRow}
                     renderHeader={this.props.renderHeader}
-                    renderFooter={this.props.renderFooter} />
+                    renderFooter={this.props.renderFooter}
+                    enableEmptySections={true}
+                    />
     }
 
     renderRow = (i) => {
