@@ -341,7 +341,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        log("Fetching new data....", key, url)
+        // log("Fetching new data....", key, url)
         return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
