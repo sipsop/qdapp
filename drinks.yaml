@@ -2,7 +2,8 @@ drinks:
     guiness:
         name: Guiness
         desc: Guiness is a dry Irish stout from Dublin, Ireland
-        image: https://i.kinja-img.com/gawker-media/image/upload/s--neYeJnUZ--/c_fit,fl_progressive,q_80,w_636/zjlpotk0twzrtockzipu.jpg
+        image: https://pixabay.com/en/ireland-guinness-beer-brewery-foam-531137/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #stout
@@ -12,7 +13,8 @@ drinks:
     heineken:
         name: Heineken
         desc: Heineken is a pale lager
-        image: https://upload.wikimedia.org/wikipedia/commons/a/ad/Heineken_lager_beer_made_in_China.jpg
+        image: https://pixabay.com/en/beer-father-s-day-drink-refreshment-210197/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
@@ -21,6 +23,8 @@ drinks:
     rockBottom:
         name: Rock Buttom Cask Conditioned Bourbon Chocolate Oatmeal Lager
         desc: Beer with a rather long name...
+        image: https://pixabay.com/en/salzburg-austria-unterberg-summit-708785/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #beer
             #lager
@@ -29,6 +33,8 @@ drinks:
     stellaArtois:
         name: Stella Artois
         desc: American style premium pale lager.
+        image: https://pixabay.com/en/beer-mug-beer-glass-beer-beer-place-938758/
+        license: https://pixabay.com/en/blog/posts/public-domain-images-what-is-allowed-and-what-is-4/ 
         tags: |
             #bestsellingbeer
             #lager
