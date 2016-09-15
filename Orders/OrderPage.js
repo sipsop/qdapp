@@ -38,10 +38,8 @@ export class OrderPage extends Page {
 
     renderOrderList = () => {
         return <View style={{flex: 1}}>
-            {/*
-            <PaymentModal />
-            <ReceiptModal />
-            */}
+            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>
+            <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
             <OrderList
                 orderStore={orderStore}
                 menuItems={orderStore.menuItemsOnOrder}

@@ -31,7 +31,6 @@ export class ReceiptModal extends PureComponent {
     @observable showConfirmText = false
 
     @computed get visible() {
-        log("COMPUTING RECEIPT MODAL VISIBILITY", orderStore.getActiveOrderToken() != null)
         return orderStore.getActiveOrderToken() != null
     }
 
