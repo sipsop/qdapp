@@ -1,5 +1,5 @@
 import {
-    React, Component, View, TouchableOpacity, ScrollView, ListView,
+    React, Component, Platform, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
@@ -28,20 +28,33 @@ const { log, assert } = _.utils('Orders/Receipt.js')
 
 @observer
 export class ReceiptModal extends PureComponent {
+    @observable showConfirmText = false
+
     @computed get visible() {
+        log("COMPUTING RECEIPT MODAL VISIBILITY", orderStore.getActiveOrderToken() != null)
         return orderStore.getActiveOrderToken() != null
     }
 
     handleClose = () => {
-        this.confirmCloseModal.show()
+        if (Platform.OS === 'android') {
+            this.confirmCloseModal.show()
+        } else {
+            if (this.showConfirmText)
+                this.close() // close double tapped
+            else
+                this.showConfirmText = true
+        }
     }
 
     @action close = () => {
         orderStore.clearOrderList()
+        orderStore.clearActiveOrderToken()
         tabStore.setCurrentTab(2)
     }
 
     render = () => {
+        if (!this.visible)
+            return <View />
         return <OkCancelModal
                     visible={this.visible}
                     showCancelButton={false}
@@ -56,6 +69,20 @@ export class ReceiptModal extends PureComponent {
                 onConfirm={this.close}
                 />
             <PlaceOrderDownloadView />
+            {
+                this.showConfirmText
+                    ?    <T style={
+                                    { fontSize: 18
+                                    , color: '#000'
+                                    , textAlign: 'center'
+                                    , marginTop: 10
+                                    , marginBottom: 10
+                                    }
+                                }>
+                            Close this window?
+                        </T>
+                    :   undefined
+            }
         </OkCancelModal>
     }
 }

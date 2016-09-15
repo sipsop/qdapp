@@ -13,7 +13,7 @@ const lockOpts = {
     closable: true,
     // code: true,
     // magicLink: true,
-    connections: [/*"google", "facebook", "sms" "github",*/ "email", "touchid"],
+    connections: [/*"google", "facebook", "sms" "github",*/ "email", /* "touchid" */],
     authParams: {
         scope: "openid email offline_access",
     },
@@ -42,6 +42,7 @@ class LoginStore {
         if (this.userToken) {
             return
         }
+        log("SHOWING LOCK.........")
         lock.show(lockOpts, (err, profile, userToken) => {
             if (err) {
                 console.log("login error", err)

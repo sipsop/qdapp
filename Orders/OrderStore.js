@@ -58,6 +58,7 @@ class OrderStore {
     // Update asynchronously
     @observable total : Float = 0.0
 
+    @observable paymentModalVisible = false
     @observable activeOrderID : ?ID = null
     @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
 
@@ -183,6 +184,10 @@ class OrderStore {
 
     getActiveOrderToken = () => this.activeOrderID
 
+    @action setPaymentModalVisibility = (visible : Bool) => {
+        this.paymentModalVisible = visible
+    }
+
     @action setOrderToken = (token) => {
         this.activeOrderID = token
     }
@@ -191,8 +196,11 @@ class OrderStore {
         this.setOrderToken(uuid())
     }
 
-    @action clearOrderToken = () => {
+    @action clearActiveOrderToken = () => {
         this.activeOrderID = null
+    }
+
+    @action clearOrderToken = () => {
         this.orderResultDownload.reset()
     }
 

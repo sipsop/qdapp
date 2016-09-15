@@ -26,10 +26,8 @@ const largeButtonStyle = {
 @observer
 export class OrderPage extends Page {
 
-    @observable popupVisible = false
-
     handleOrderPress = () => {
-        this.popupVisible = true
+        orderStore.setPaymentModalVisibility(true)
     }
 
     renderView = () => {
@@ -40,11 +38,10 @@ export class OrderPage extends Page {
 
     renderOrderList = () => {
         return <View style={{flex: 1}}>
-            <PaymentModal
-                visible={this.popupVisible}
-                onClose={() => this.popupVisible = false}
-                />
+            {/*
+            <PaymentModal />
             <ReceiptModal />
+            */}
             <OrderList
                 orderStore={orderStore}
                 menuItems={orderStore.menuItemsOnOrder}
