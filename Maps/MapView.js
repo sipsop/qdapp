@@ -115,6 +115,7 @@ class MapMarker extends PureComponent {
     }
 
     @action handleMarkerPress = () => {
+        log('SELECTING MARKER....', this.props.bar.name)
         mapStore.setCurrentMarker(this.props.bar)
     }
 
@@ -160,6 +161,7 @@ class MapMarker extends PureComponent {
             description={description}
             pinColor={pubColor}
             onPress={this.handleMarkerPress}
+            onSelect={this.handleMarkerPress}
             onCalloutPress={this.handleCalloutPress}
             />
     }
