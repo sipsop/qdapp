@@ -385,9 +385,9 @@ drinks:
     
     americanIPA: 
         name: American IPA
-        desc:
-        abv:
-        ibu:
+        desc: American IPA are known for it's stong bitterness, more hops with citrus/herbal flavour. 
+        abv: 5.55 to 7.5% 
+        ibu: 40-70
         image:
         license:
         tags: |
@@ -396,11 +396,101 @@ drinks:
             #indiapaleale
             #IPA
             #hoppy
-            #herba;
+            #herbal
             #citrus
             #bitter
         
-
+    imperial/DoubleIPA:
+        name: Imperial or Double IPA
+        desc: This beer is known for its strong flavour and high hop bitterness. 
+        abv: 7.5% to 10.5% 
+        ibu: 65-100
+        image:
+        license:
+        tags: | 
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #hoppy
+            #strong
+            #goldcolour
+            #lightbrown 
+            #cleartohazy
+            #malty
+    
+    englishIPA: 
+        name: English IPA
+        desc: This beer is similar to American IPA with lower/weaker alcohol and hoppy flavour. 
+        abv: 4.5 to 5.5% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #goldcolour
+            #coppercolour
+            #clear
+    
+    ##porter
+        
+    americanImperialPorter: 
+        name: American Imperial Porter
+        desc: It is a full-bodied dark brown or black beer. 
+        abv: 7% to 12%
+        ibu: 35-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #porter 
+            #blackcolour
+            #opaque
+            #caramel
+            #cocoa
+    
+    englishBrownPorter:
+        name: English Brown Porter
+        desc: It is a sweet, medium bitter and soft beer.  
+        abv: 4.55 to 6% 
+        ibu: 20-30
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #porter
+            #browncolour
+            #opaque 
+            #nutty
+            #chocolate
+            #caramel
+            #toffee
+            
+    robustPorter:
+        name: Robust Porter
+        desc: Robust porter is a dark and full-bodied beer with a subtle caramel flavour.  
+        abv: 5% to 6.5% 
+        ibu: 25-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #porter
+            #hoppy
+            #bitter
+            #roastedmaltflavour
+            #caramel
+            #opaque
+            #verydarkcolour
+            #black
+    
+            
 
     ### Wine
 
