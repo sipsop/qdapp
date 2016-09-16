@@ -350,9 +350,55 @@ drinks:
             #deepgold
             #clear
             #crisp
+    
+    englishBitter: 
+        name: English Bitter
+        desc: This is a british term used for pale ale which is light to medium bodied beer. 
+        abv: 3% to 7%  
+        ibu: 20-35
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #fruity
+            #hoppy
+    
+    englishPaleAle:
+        name: English pale Ale
+        desc: English Pale Ale are known for their strong bitter flavour. 
+        abv: 4.5% to 5.5% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #malty
+            #earthy
+            #clear
             
-            
-        
+    ##indiaPaleAle(IPA)        
+    
+    americanIPA: 
+        name: American IPA
+        desc:
+        abv:
+        ibu:
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #hoppy
+            #herba;
+            #citrus
+            #bitter
         
 
 
