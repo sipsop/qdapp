@@ -564,7 +564,7 @@ drinks:
     
     irishDryStout:
         name: Irish Dry Stout 
-        desc: it is an Irish standard stout with a dryer taste. 
+        desc: it is an Irish standard stout with a dryer taste such as Guinness. 
         abv: 3.8% to 5% 
         ibu: 30-40
         image:
