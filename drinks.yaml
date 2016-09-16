@@ -303,7 +303,7 @@ drinks:
 
     AmercanAmberAle:
         name: American Amber Ale
-        desc:
+        desc: It is a medium bodied malty beer with caramel flavour. 
         abv: 4.5% to 6.2%
         ibu: 25-40
         image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538754/
@@ -316,6 +316,44 @@ drinks:
             #caramel
             #amber
 
+    americanPaleAle:
+        name: American Pale Ale
+        desc: This style of pale ale is produced in America. 
+        abv: 4.5% to 6.2% 
+        ibu: 30-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #lightcoppercolour
+            #palegold
+            #lightamber
+    
+    blondeAle
+        name: Blonde Ale
+        desc: This ale is clear, crisp and low-medium bitterness with a nice balance of hops and malt. 
+        abv: 3.8% to 5.5% 
+        ibu: 15-28 
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #malty
+            #fruityaroma
+            #lightyellow
+            #deepgold
+            #clear
+            #crisp
+            
+            
+        
+        
 
 
     ### Wine
