@@ -6,6 +6,7 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import { TextHeader } from '../Header.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
@@ -160,7 +161,7 @@ export class CreditCard extends PureComponent {
                 </View>
                 */}
                 <View style={{flex: 3, flexDirection: 'row'}}>
-                    <T style={{flex: 1, textAlign: 'right', ...textStyle}}>•••• •••• ••••</T>
+                    <T style={{flex: 1, textAlign: 'right', ...textStyle}}>•••• </T>
                     <T style={{width: 70, ...textStyle, textAlign: 'center'}}>
                         {' ' + card.cardNumber.slice(card.cardNumber.length - 4)}
                     </T>

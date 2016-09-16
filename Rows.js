@@ -7,12 +7,33 @@ import { config } from './Config.js'
 
 const rowHeight = 55
 
-export class RowButton extends PureComponent {
+export class RowTextButton extends PureComponent {
     /* properties:
         onPress() -> void
         icon: Component
+        text: str
+        fontColor: String
+        borderBottomColor: String
+    */
+    render = () => {
+        return <RowButton {...this.props}>
+            <RowText text={this.props.text} fontColor={this.props.fontColor} />
+        </RowButton>
+    }
+}
+
+export class RowButton extends PureComponent {
+    /* properties:
+        onPress() -> void
+        borderBottomColor
+        icon: Component
             optional icon
     */
+
+    static defaultProps = {
+        borderBottomColor: config.theme.primary.medium,
+    }
+
     render = () => {
         return (
             <TouchableOpacity
@@ -20,7 +41,7 @@ export class RowButton extends PureComponent {
                         { flex: 0
                         , height: rowHeight
                         , borderBottomWidth: 0.5
-                        , borderBottomColor: config.theme.primary.medium
+                        , borderBottomColor: this.props.borderBottomColor
                         , marginLeft: 10
                         , marginRight: 10
                         }
@@ -40,25 +61,14 @@ export class RowButton extends PureComponent {
     }
 }
 
-export class RowTextButton extends PureComponent {
-    /* properties:
-        onPress() -> void
-        icon: Component
-        text: str
-    */
-    render = () => {
-        return <RowButton {...this.props}>
-            <RowText text={this.props.text} />
-        </RowButton>
-    }
-}
-
 export class RowText extends PureComponent {
     /* properties:
         text: str
+        style: style object
+        fontColor: String
     */
     render = () => {
-        return <T style={{fontSize: 20, color: '#000'}}>
+        return <T style={{fontSize: 20, color: this.props.fontColor, ...this.props.style}}>
             {this.props.text}
         </T>
     }

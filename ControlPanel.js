@@ -15,7 +15,7 @@ import { config } from './Config.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
 
-const icon = (iconName, color="#000") => <Icon name={iconName} size={30} color={color} />
+const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 
 const { log, assert } = _.utils('./ControlPanel.js')
 assert(drawerStore != null, 'drawerStore is null')
@@ -26,8 +26,8 @@ export class ControlPanel extends PureComponent {
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
-            <OrderHistory />
             <PaymentConfig />
+            <OrderHistory />
             <Settings />
             <Signout />
         </View>
@@ -40,7 +40,8 @@ class PaymentConfig extends PureComponent {
 
     render = () => {
         return <View>
-            <RowTextButton text="Payment"
+            <SideMenuEntry
+                text="Payment"
                 icon={icon("credit-card", "rgb(19, 58, 194)")}
                 onPress={() => {
                     drawerStore.disable()
@@ -52,6 +53,10 @@ class PaymentConfig extends PureComponent {
                     onClose={drawerStore.enable}
                     >
                 <ScrollView>
+                    <TextHeader
+                        label="Payment Details"
+                        rowHeight={55}
+                        />
                     <CreditCardList />
                 </ScrollView>
             </SimpleModal>
@@ -65,8 +70,8 @@ class OrderHistory extends PureComponent {
 
     render = () => {
         return <View>
-            <RowTextButton
-                text="Order History"
+            <SideMenuEntry
+                text="History"
                 icon={icon("glass", config.theme.primary.dark)}
                     onPress={() => {
                     drawerStore.disable()
@@ -96,9 +101,13 @@ class Settings extends PureComponent {
         })
     })
 
+    deleteAccount = _.logErrors(async () => {
+        // TODO: implement
+    })
+
     render = () => {
         return <View>
-            <RowTextButton
+            <SideMenuEntry
                 text="Settings"
                 icon={icon("cog", "rgba(0, 0, 0, 0.60)")}
                 onPress={() => {
@@ -118,7 +127,7 @@ class Settings extends PureComponent {
                         />
                     <TextSelectorRow
                         label={"Delete Account"}
-                        onPress={this.clearCache}
+                        onPress={this.deleteAccount}
                         confirmMessage="Are you sure you want to delete your account? This operation cannot be undone."
                         />
                 </LazyComponent>
@@ -135,7 +144,7 @@ class Signout extends PureComponent {
         return <View>
             {
                 loginStore.isLoggedIn
-                    ? <RowTextButton
+                    ? <SideMenuEntry
                         text="Sign Out"
                         icon={icon("sign-out", config.theme.removeColor)}
                         onPress={() => {
@@ -165,7 +174,15 @@ class LoginInfo extends PureComponent {
     }
 
     renderLoggedIn = () => {
-        return <View style={{flex: 0, height: 200, justifyContent: 'center', backgroundColor: '#000'}}>
+        return <View style={
+                { flex: 0
+                , height: 200
+                , justifyContent: 'center'
+                // , backgroundColor: 'rgba(24, 7, 51, 0.8)'
+                // , borderBottomWidth: 0.5
+                // , borderBottomColor: 'rgba(255, 255, 255, 1.0)'
+                }
+            }>
             <View style={{flex: 0, height: 140, justifyContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={{uri: loginStore.picture}} style={{width: 100, height: 100}} />
             </View>
@@ -179,7 +196,7 @@ class LoginInfo extends PureComponent {
     }
 
     renderLoggedOut = () => {
-        return <RowTextButton
+        return <SideMenuEntry
                     text="Sign In"
                     icon={icon("sign-in")}
                     onPress={loginStore.login}
@@ -187,3 +204,5 @@ class LoginInfo extends PureComponent {
 
     }
 }
+
+const SideMenuEntry = props => <RowTextButton {...props} fontColor='#fff' borderBottomColor='rgba(255, 255, 255, 0.8)' />
