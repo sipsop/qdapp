@@ -16,7 +16,7 @@ import { barStore } from './Bar/BarStore.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
 import * as _ from './Curry.js'
 
-const log = _.logger('Tags.js')
+const { log, assert } = _.utils('./Tags.js')
 
 const tagQuery = `
     query tags {
@@ -183,10 +183,10 @@ export class TagStore {
             // this._restoreHistory(tagID)
         })
 
-        // console.log("excluded:", excluded)
-        // console.log("reachableExcluded:", reachableExcluded)
-        // console.log("New tag selection:", this.tagSelection)
-        // console.log("New menu item list", this.getActiveMenuItems().map(menuItem => menuItem.name))
+        // log("excluded:", excluded)
+        // log("reachableExcluded:", reachableExcluded)
+        // log("New tag selection:", this.tagSelection)
+        // log("New menu item list", this.getActiveMenuItems().map(menuItem => menuItem.name))
     }
 
     /* Pop a tag when deselected/cleared */

@@ -134,7 +134,7 @@ class BarStore {
             return
         }
 
-        console.log("Setting bar with placeID =", barID)
+        log("Setting bar with placeID =", barID)
 
         transaction(() => {
             this.barID = barID

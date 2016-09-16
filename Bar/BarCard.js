@@ -22,7 +22,7 @@ import { config } from '../Config.js'
 
 const white = 'rgba(255, 255, 255, 1.0)'
 
-const log = _.logger('Bar/BarCard.js')
+const { log, assert } = _.utils('./Bar/BarCard.js')
 
 @observer
 export class BarCard extends PureComponent {
@@ -50,7 +50,7 @@ export class BarCard extends PureComponent {
         const imageHeight = 200
         const radius = 5
 
-        // console.log("barcard: ", bar, bar.id, bar.name, bar.desc)
+        // log("barcard: ", bar, bar.id, bar.name, bar.desc)
         // return <T>card here... {bar.id} {bar.name}</T>
 
         const imageStyle = {

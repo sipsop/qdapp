@@ -31,6 +31,8 @@ import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
 import { MapView } from './Maps/MapView.js'
 
+const { log, assert } = _.utils('index.android.js')
+
 
 class App extends Component {
     render = () => {
@@ -285,7 +287,7 @@ const counterStore = new CounterStore()
     constructor(props) {
         super(props)
         autorun(() => {
-            console.log("updating value from store...")
+            log("updating value from store...")
             this.value = counterStore.count.value.x
         })
     }
@@ -311,7 +313,4 @@ const counterStore = new CounterStore()
 }
 
 // AppRegistry.registerComponent('AwesomeProject', () => MobxTest);
-
-// console.log(rootNode)
-
 // AppRegistry.registerComponent('AwesomeProject', () => MapView)

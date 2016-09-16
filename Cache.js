@@ -2,12 +2,12 @@ import { AsyncStorage } from 'react-native'
 
 import { NetworkError } from './HTTP.js'
 import { Hour, Day, Month, getTime } from './Time.js'
-import { promise, chunking, logger } from './Curry.js'
 import { config } from './Config.js'
+import * as _ from './Curry.js'
 
 import type { Float } from './Types.js'
 
-const log = logger('Cache.js')
+const { log, assert } = _.utils('./Cache.js')
 
 export type CacheInfo = {
     noCache:      Bool,
@@ -66,7 +66,7 @@ export class Storage {
         const entriesToDelete = []
         const accessTimes = []
         const now = getTime()
-        const chunks = chunking(allKeys, 100)
+        const chunks = _.chunking(allKeys, 100)
         for (var i = 0; i < chunks.length; i++) {
             const keys = chunks[i]
             const cacheEntries = await this.getMulti(keys)
@@ -134,10 +134,10 @@ class Cache {
         const now = getTime()
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
-            console.log("Reusing value from cache...", key)
+            log("Reusing value from cache...", key)
             return cacheEntry.value
         } else {
-            console.log("Refreshing cache entry...", key)
+            log("Refreshing cache entry...", key)
             try {
                 cacheEntry = await this.refreshKey(key, refreshCallback, cacheInfo)
                 return cacheEntry.value

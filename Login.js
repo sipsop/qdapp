@@ -2,7 +2,7 @@ import Auth0Lock from 'react-native-lock'
 import { observable, action, computed } from 'mobx'
 import * as _ from './Curry.js'
 
-const log = _.logger('Login.js')
+const { log, assert } = _.utils('Login.js')
 
 var lock = new Auth0Lock({
     clientId: 'phA8QFWKknNtcDwVefccBf82sIp4bw6c',
@@ -44,7 +44,7 @@ class LoginStore {
         }
         lock.show(lockOpts, (err, profile, userToken) => {
             if (err) {
-                console.log("login error", err)
+                log("login error", err)
                 return
             }
             // Authentication worked!

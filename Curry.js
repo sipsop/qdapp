@@ -9,7 +9,7 @@ export const DEV = true
 export const asData = x => {
     if (x == null)
         return null
-    JSON.parse(JSON.stringify(x))
+    return JSON.parse(JSON.stringify(x))
 }
 
 export const log = (...args) => {
@@ -391,7 +391,7 @@ export const timeout = async (timeout, promise) => {
     const tPromise = timeoutError(timeout)
     const result = await Promise.race([tPromise, promise])
     if (result == timedout) {
-        console.log("download timed out...")
+        log('./Curry.js', 'download timed out...')
         throw new TimeoutError()
     }
     return result

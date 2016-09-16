@@ -17,7 +17,6 @@ class FavStore {
     @observable favBars = []
 
     toggleFavItem = (menuItemID) => {
-        console.log("CALLING LOG IN")
         loginStore.login()
         toggle(this.favItems, menuItemID)
     }
@@ -49,10 +48,6 @@ const toggle = (idList, id) => {
 }
 
 export const favStore = new FavStore()
-
-autorun(() => {
-    console.log(JSON.stringify(favStore.getState()))
-})
 
 /* Components */
 

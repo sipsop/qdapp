@@ -22,7 +22,9 @@ import { OrderPage } from './Orders/OrderPage.js'
 import { TabView } from './Tabs.js'
 import { store, loginStore } from './Store.js'
 import { cache } from './Cache.js'
+import * as _ from './Curry.js'
 
+const { log, assert } = _.utils('./Main.js')
 
 @observer export class Main extends Component {
 
@@ -51,7 +53,7 @@ import { cache } from './Cache.js'
     renderTabBar = () => <ScrollableTabBar />
 }
 
-console.log("----------------------------------------------------------------")
+log("----------------------------------------------------------------")
 
 // loginStore.login()
 

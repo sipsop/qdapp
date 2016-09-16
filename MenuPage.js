@@ -262,7 +262,7 @@ class PriceEntry extends PureComponent {
     */
     render = () => {
         const total = this.props.orderStore.getTotal(this.props.orderItem)
-        console.log("re-rendering price for orderItem", this.props.rowNumber)
+        log("re-rendering price for orderItem", this.props.rowNumber)
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <T style={{marginRight: 5, color: '#000'}}>
@@ -393,8 +393,6 @@ const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
 
-// spy(console.log)
-
 @observer
 export class OrderSelection extends PureComponent {
     /* properties:
@@ -516,7 +514,7 @@ export class OrderSelection extends PureComponent {
     }
 
     render = () => {
-        console.log("re-rendering OrderItem", this.props.rowNumber)
+        log("re-rendering OrderItem", this.props.rowNumber)
         return <View style={
                     { flex: 0
                     , flexDirection: 'row'
