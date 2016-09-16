@@ -4,11 +4,14 @@ import { observer } from 'mobx-react/native'
 
 import { RowTextButton } from './Rows.js'
 import { T } from './AppText.js'
-import { loginStore } from './Store.js'
+import { store, loginStore, tabStore } from './Store.js'
 import { drawerStore } from './SideMenu.js'
 import { SmallOkCancelModal, SimpleModal } from './Modals.js'
+import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/PaymentModal.js'
+import { LazyComponent } from './LazyComponent.js'
 import { config } from './Config.js'
+import { cache } from './Cache.js'
 import * as _ from './Curry.js'
 
 const icon = (iconName, color="#000") => <Icon name={iconName} size={30} color={color} />
@@ -19,10 +22,6 @@ assert(drawerStore != null, 'drawerStore is null')
 
 @observer
 export class ControlPanel extends PureComponent {
-
-    signoutModal = null
-    paymentModal = null
-
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
@@ -36,6 +35,8 @@ export class ControlPanel extends PureComponent {
 
 @observer
 class PaymentConfig extends PureComponent {
+    paymentModal = null
+
     render = () => {
         return <View>
             <RowTextButton text="Payment"
@@ -59,13 +60,53 @@ class PaymentConfig extends PureComponent {
 
 @observer
 class Settings extends PureComponent {
+    settingsModal = null
+
+    clearCache = _.logErrors(async () => {
+        await cache.clearAll()
+        transaction(() => {
+            store.clearData()
+            this.settingsModal.close()
+            tabStore.setCurrentTab(0)
+            drawerStore.setClosed()
+        })
+    })
+
     render = () => {
-        return <RowTextButton text="Settings" icon={icon("cog", "rgba(0, 0, 0, 0.60)")} />
+        return <View>
+            <RowTextButton
+                text="Settings"
+                icon={icon("cog", "rgba(0, 0, 0, 0.60)")}
+                onPress={() => {
+                    drawerStore.disable()
+                    this.settingsModal.show()
+                }}
+                />
+            <SimpleModal
+                    ref={ref => this.settingsModal = ref}
+                    onClose={drawerStore.enable}
+                    >
+                <LazyComponent style={{flex: 1}}>
+                    <TextSelectorRow
+                        label={"Clear Cache"}
+                        onPress={this.clearCache}
+                        confirmMessage="Delete any cached images, outstanding orders and related data?"
+                        />
+                    <TextSelectorRow
+                        label={"Delete Account"}
+                        onPress={this.clearCache}
+                        confirmMessage="Are you sure you want to delete your account? This operation cannot be undone."
+                        />
+                </LazyComponent>
+            </SimpleModal>
+        </View>
     }
 }
 
 @observer
 class Signout extends PureComponent {
+    signoutModal = null
+
     render = () => {
         return <View>
             {
@@ -86,6 +127,7 @@ class Signout extends PureComponent {
                 onConfirm={loginStore.logout}
                 onClose={() => drawerStore.enable()}
                 />
+
         </View>
     }
 }

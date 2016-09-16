@@ -104,6 +104,13 @@ class MapStore {
         }
     }
 
+    emptyState = () => {
+        return {
+            currentMarker:   null,
+            currentLocation: this.currentLocation,
+        }
+    }
+
     @action setState = (mapState) => {
         this.currentMarker = mapState.currentMarker
         this.currentLocation = mapState.currentLocation

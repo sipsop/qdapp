@@ -18,6 +18,7 @@ import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Button } from './Button.js'
 import { config } from './Config.js'
+import { SmallOkCancelModal } from './Modals.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Selector.js')
@@ -66,7 +67,6 @@ export class Selector extends PureComponent {
 
     renderSelectorItem = (i) => {
         const children = this.children
-        log("RENDERING SELECTOR ITEM", i)
         return <SelectorItem
                     key={i}
                     rowNumber={i}
@@ -113,16 +113,7 @@ export class SelectorItem extends PureComponent {
             //         onPress={this.props.onPress}
             //         style={{flex: 1, margin: 5}}
             //     >
-            <TouchableOpacity
-                    style={
-                        { flex: 1
-                        , height: 55
-                        , borderBottomWidth: 0.5
-                        , borderBottomColor: config.theme.primary.medium
-                        }
-                    }
-                    onPress={this.props.onPress}
-                    >
+            <SelectorRow onPress={this.props.onPress}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                         {this.props.children}
@@ -131,9 +122,72 @@ export class SelectorItem extends PureComponent {
                         {icon}
                     </View>
                 </View>
-            </TouchableOpacity>
-            // </Button>
+            </SelectorRow>
         )
     }
+}
 
+@observer
+export class SelectorRow extends PureComponent {
+    /* properties:
+        children: [Component]
+        onPress: () => void
+    */
+    render = () => {
+        return <TouchableOpacity
+                    style={
+                        { flex: 0
+                        , height: 55
+                        , justifyContent: 'center'
+                        , alignItems: 'center'
+                        , borderBottomWidth: 0.5
+                        , borderBottomColor: config.theme.primary.medium
+                        }
+                    }
+                    onPress={this.props.onPress}
+                    >
+            {this.props.children}
+        </TouchableOpacity>
+    }
+}
+
+@observer
+export class TextSelectorRow extends PureComponent {
+    /* properties:
+        label: String
+        onPress: () => void
+        confirmMessage: ?String
+    */
+
+    confirmModal = null
+
+    showConfirmModal = () => {
+        log('SHOWING CONFIRM MODAL')
+        this.confirmModal.show()
+    }
+
+    render = () => {
+        const style = { fontSize: 20, color: '#000', ...this.props.style }
+
+        const confirmModal =
+            this.props.confirmMessage
+                ? <SmallOkCancelModal
+                    ref={ref => this.confirmModal = ref}
+                    message={this.props.confirmMessage}
+                    onConfirm={this.props.onPress}
+                    />
+                : undefined
+
+        const onPress =
+            this.props.confirmMessage
+                ? this.showConfirmModal
+                : this.props.onPress
+
+        return <SelectorRow onPress={onPress}>
+            <T style={style}>
+                {this.props.label}
+            </T>
+            {confirmModal}
+        </SelectorRow>
+    }
 }

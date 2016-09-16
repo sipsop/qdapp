@@ -5,6 +5,7 @@ import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
+import { tagStore } from '../Tags.js'
 
 /************************* Types ***********************************/
 
@@ -40,9 +41,12 @@ class BarStore {
         return { barID: this.barID }
     }
 
+    emptyState = () => {
+        return { barID: null }
+    }
+
     @action setState = async ({barID}) => {
-        if (barID)
-            await this._setBarID(barID)
+        await this._setBarID(barID)
     }
 
     /*************************** Getters *********************************/
@@ -120,6 +124,16 @@ class BarStore {
         if (bar && bar.id === barID && this.menu)
             return /* All done */
 
+        if (!barID) {
+            /* Clear the download results */
+            transaction(() => {
+                this.barID = barID
+                this.bar.reset()
+                this.menuDownloadResult.reset()
+            })
+            return
+        }
+
         console.log("Setting bar with placeID =", barID)
 
         transaction(() => {
@@ -145,6 +159,7 @@ class BarStore {
                 }
             })
         }
+        await tagStore.fetchTags()
     }
 
     @action setBarDownloadResult = (downloadResult) => {
@@ -184,7 +199,6 @@ class BarStore {
         //             throw Error("Menu item must have an ID")
         //     })
         // })
-        log('menuItems:', menuItems)
         return _.flatten(menuItems)
     }
 

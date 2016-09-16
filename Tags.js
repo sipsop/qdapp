@@ -84,13 +84,19 @@ export class TagStore {
 
     constructor() {
         this.tagDownloadResult   = emptyResult()
-        this.tagSelection        = ['#beer']
+        this.tagSelection        = []
         this.tagSelectionHistory = new Map()
     }
 
     getState = () => {
         return {
             tagSelection: this.tagSelection,
+        }
+    }
+
+    emptyState = () => {
+        return {
+            tagSelection: [],
         }
     }
 
@@ -108,10 +114,14 @@ export class TagStore {
     }
 
     @computed get tags() {
+        if (!this.tagDownloadResult.value)
+            return { tagInfo: [], tagGraph: [] }
         return this.tagDownloadResult.value
     }
 
     @computed get tagGraph() {
+        if (!this.tags)
+            return new Map()
         return new Map(this.tags.tagGraph.map(
             edge => [edge.srcID, edge.dstIDs]
         ))
@@ -126,9 +136,6 @@ export class TagStore {
     }
 
     @computed get tagNames() {
-        if (!this.tags)
-            return new Map()
-
         const tagNames = this.tags.tagInfo.map(
             tagInfo => [tagInfo.tagID, tagInfo.tagName])
         return new Map(tagNames)
@@ -146,7 +153,7 @@ export class TagStore {
 
     getExcludedTags = (tagID) => {
         /* Figure out which tags should be excluded */
-        const excludes = this.getTagExcludes().get(tagID)
+        const excludes = this.getTagExcludes().get(tagID) || []
         return this.tagSelection.filter(
             (tagID) => _.includes(excludes, tagID))
     }
@@ -378,4 +385,3 @@ export class TagRow extends Component {
 }
 
 export const tagStore = new TagStore()
-tagStore.fetchTags()

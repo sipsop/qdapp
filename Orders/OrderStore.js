@@ -169,6 +169,14 @@ class OrderStore {
         }
     }
 
+    emptyState = () => {
+        return {
+            orderList: [],
+            orderToken: null,
+            orderResultDownload: emptyResult(),
+        }
+    }
+
     @action setState = (orderState : OrderState) => {
         if (orderState.orderList)
             this.setOrderList(orderState.orderList)

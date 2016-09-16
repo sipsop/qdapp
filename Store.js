@@ -21,7 +21,7 @@ export class Store {
     constructor() {
         this.discoverScrollView = null
         this.previousState = null
-        setTimeout(this.saveToLocalStorage, 5000)
+        setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
 
     switchToDiscoverPage = (scrollToTop) => {
@@ -75,15 +75,38 @@ export class Store {
         })
     }
 
-    saveToLocalStorage = _.logErrors(async () => {
-        const state = this.getState()
+    emptyState = () => {
+        return {
+            payState:   paymentStore.getState(),
+            loginState: loginStore.getState(),
+
+            barState:   barStore.emptyState(),
+            tabState:   tabStore.emptyState(),
+            orderState: orderStore.emptyState(),
+            mapState:   mapStore.emptyState(),
+            tagState:   tagStore.emptyState(),
+        }
+    }
+
+    saveToLocalStorage = async (state) => {
         if (!_.deepEqual(state, this.previousState)) {
             // log("Saving state now...", state)
             this.previousState = state
             await cache.set('qd:state', state)
         }
-        setTimeout(this.saveToLocalStorage, 1000)
+    }
+
+    periodicallySaveToLocalStorage = _.logErrors(async () => {
+        const state = this.getState()
+        await this.saveToLocalStorage(state)
+        setTimeout(this.periodicallySaveToLocalStorage, 1000)
     })
+
+    @action clearData = () => {
+        const emptyState = this.emptyState()
+        this.setState(emptyState)
+        // await this.saveToLocalStorage(emptyState)
+    }
 }
 
 const popup = (title, message) => Alert.alert(title, message)

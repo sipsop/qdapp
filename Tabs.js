@@ -14,7 +14,6 @@ import { drawerStore } from './SideMenu.js'
 @observer
 export class TabView extends PureComponent {
     render = () => {
-        console.log("RENDERING TAB VIEW")
         return <ScrollableTabView
                     ref={tabStore.setTabView}
                     renderTabBar={() => <TabBarWithMenu />}
@@ -95,6 +94,10 @@ class TabStore {
 
     getState = () => {
         return { currentPage: this.currentPage }
+    }
+
+    emptyState = () => {
+        return { currentPage: 0 }
     }
 
     @action setState = async ({currentPage}) => {
