@@ -30,7 +30,7 @@ import { PickerCollection, PickerItem } from './Pickers.js'
 import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { FavItemContainer } from './Fav.js'
-import { min, max, logger, range, deepEqual } from './Curry.js'
+import * as _ from './Curry.js'
 import { store, tabStore } from './Store.js'
 import { tagStore } from './Tags.js'
 import { size } from './Size.js'
@@ -43,7 +43,7 @@ import type { OrderItem } from './Orders/OrderStore.js'
 
 /*********************************************************************/
 
-const log = logger('MenuPage.js')
+const { log, assert } = _.utils('MenuPage.js')
 
 @observer
 export class MenuPage extends BarPageFetcher {
@@ -413,7 +413,7 @@ export class OrderSelection extends PureComponent {
     @computed get amountPickerItem() {
         // log("recomputing amountPickerItem", this.props.rowNumber)
         const subTotal = this.props.orderStore.getSubTotal(this.orderItem) || 0.0
-        const numbers = range(N+1)
+        const numbers = _.range(N+1)
         return new PickerItem(
             "Number of Drinks:",
             numbers.map(i => "" + i),
@@ -427,16 +427,20 @@ export class OrderSelection extends PureComponent {
     @computed get optionPickerItems() {
         // log("recomputing optionPickerItems", this.props.rowNumber)
         const menuItem = this.props.menuItem
-        return menuItem.options.map((menuOptionItem, i) => {
+        return menuItem.options.map((menuItemOption, i) => {
             /* Use the name of the menu item for the first option (e.g. 'Guiness') */
-            const name = i === 0 ? menuItem.name : menuOptionItem.name
+            const name = i === 0 ? menuItem.name : menuItemOption.name
+            const selectedOptions = this.orderItem.selectedOptions[i]
+            const selectedIntOptions = selectedOptions.map(
+                stringOption => _.find(menuItemOption.optionList, stringOption)
+            )
             return new PickerItem(
                 name,
-                menuOptionItem.optionList,
-                menuOptionItem.prices,
-                menuOptionItem.defaultOption || -1,
-                this.orderItem.selectedOptions[i].slice(), // NOTE: The copy here is very important!
-                menuOptionItem.optionType,
+                menuItemOption.optionList,
+                menuItemOption.prices,
+                menuItemOption.defaultOption || -1,
+                selectedIntOptions,
+                menuItemOption.optionType,
             )
         })
     }
@@ -450,14 +454,14 @@ export class OrderSelection extends PureComponent {
     }
 
     @action handleIncrease = () => {
-        this.orderItem.amount = min(N, this.orderItem.amount + 1)
+        this.orderItem.amount = _.min(N, this.orderItem.amount + 1)
     }
 
     @action handleDecrease = () => {
         if (this.orderItem.amount === 0)
             this.props.orderStore.removeOrderItem(this.orderItem)
         else
-            this.orderItem.amount = max(0, this.orderItem.amount - 1)
+            this.orderItem.amount = _.max(0, this.orderItem.amount - 1)
     }
 
     handleClose = () => {
@@ -470,8 +474,14 @@ export class OrderSelection extends PureComponent {
         this.handleClose()
     }
 
-    @action handleAcceptOptions = (allSelectedOptions : [[number]]) => {
-        this.orderItem.selectedOptions = allSelectedOptions
+    @action handleAcceptOptions = (allSelectedOptions : [[Int]]) => {
+        const menuItem = this.props.menuItem
+        const stringOptions = allSelectedOptions.map(
+            (options, i) => options.map(
+                intOption => menuItem.options[i].optionList[intOption]
+            )
+        )
+        this.orderItem.selectedOptions = stringOptions
         this.handleClose()
     }
 

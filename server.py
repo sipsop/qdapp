@@ -423,7 +423,7 @@ class OrderItem(graphene.ObjectType):
     ID = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = List(graphene.String())
+    selectedOptions = List(graphene.String())
     amount = Int
 
 # For inputs you have to use 'InputObjectType' for some reason...
@@ -434,7 +434,7 @@ class OrderItemInput(graphene.InputObjectType):
     id = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedStringOptions = List(List(String))
+    selectedOptions = List(List(String))
     amount = Int
 
 

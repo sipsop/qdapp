@@ -13,13 +13,13 @@ import * as _ from './Curry.js'
 /* type Selection = [Index] */
 
 /* updateSelection: schema.OptionType -> Selection -> Index -> Selection */
-export const updateSelection = (optionType, selection, index) => {
+export const updateSelection = (optionType : OptionType, selection : [String], option : String) => {
     newSelection = selection.slice()
-    updateSelectionInPlace(optionType, newSelection, index)
+    updateSelectionInPlace(optionType, newSelection, option)
     return newSelection
 }
 
-export const canDeselect = (optionType, selection) => {
+export const canDeselect = (optionType : OptionType, selection : [String]) => {
     if (optionType === 'Single')
         return false
     if (optionType === 'OneOrMore')
@@ -27,27 +27,27 @@ export const canDeselect = (optionType, selection) => {
     return true
 }
 
-export const removeIndex = (selection, index) => {
-    const i = _.find(selection, index)
+export const removeOption = (selection : [String], option : String) => {
+    const i = _.find(selection, option)
     selection.splice(i, 1)
 }
 
-export const updateSelectionInPlace = (optionType, selection, index) => {
+export const updateSelectionInPlace = (optionType : OptionType, selection : [String], option : String) => {
     if (optionType === 'Single') {
         if (selection.length === 1)
-            selection[0] = index
+            selection[0] = option
         else
-            selection.push(index)
+            selection.push(option)
     } else if (optionType === 'AtMostOne') {
-        if (_.includes(selection, index))
-            removeIndex(selection, index)
+        if (_.includes(selection, option))
+            removeOption(selection, option)
         else
-            updateSelectionInPlace('Single', selection, index)
+            updateSelectionInPlace('Single', selection, option)
     } else if (optionType === 'ZeroOrMore' || optionType === 'OneOrMore') {
-        if (canDeselect(optionType, selection) && _.includes(selection, index)) {
-            removeIndex(selection, index)
+        if (canDeselect(optionType, selection) && _.includes(selection, option)) {
+            removeOption(selection, option)
         } else {
-            selection.push(index)
+            selection.push(option)
         }
     } else {
         throw Error("Unknown option type: " + optionType)

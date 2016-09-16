@@ -283,27 +283,9 @@ class PickerButton extends PureComponent {
 
     renderLabels = () => {
         /* Get all non-default labels */
-        const nonDefaultLabels = this.props.pickerItems.map((pickerItem, i) => {
-            if (pickerItem.selected.length == 1 &&
-                    pickerItem.selected[0] == pickerItem.defaultOption) {
-                return []
-            }
-            return pickerItem.selected.map(itemIndex => pickerItem.labels[itemIndex])
-        })
-        const labels = _.flatten(nonDefaultLabels)
-        if (labels.length === 0) {
-            /* All labels are defaults, return the default label for the first option */
-            return this.getDefaultLabel()
-        }
-        return _.flatten(nonDefaultLabels).join(' + ')
-    }
-
-    getDefaultLabel = () => {
-        const firstItem = this.props.pickerItems[0]
-        const optionIndex =
-            firstItem.defaultOption !== -1
-                ? firstItem.defaultOption
-                : 0
-        return firstItem.labels[firstItem.defaultOption]
+        const allLabels = this.props.pickerItems.map(
+            pickerItem => pickerItem.selected.map(i => pickerItem.labels[i])
+        )
+        return _.flatten(allLabels).join(' + ')
     }
 }

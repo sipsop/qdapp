@@ -232,24 +232,6 @@ class BarStore {
         return null
     }
 
-    /* Get the string options for menu item, e.g. [['pint'], ['lime']] */
-    getMenuItemStringOptions = (menuItem, selectedOptions : Array<Array<Int>>) : Array<Array<String>> => {
-        return _.zipWith(menuItem.options, selectedOptions,
-            (menuItemOption, selection) => {
-                return selection.map(i => menuItemOption.optionList[i])
-            }
-        )
-    }
-
-    /* Get the string options for menu item, e.g. [[0], [2]] */
-    getOrderItemIntOptions = (menuItem, selectedStringOptions : Array<Array<String>>) : Array<Array<Int>> => {
-        return _.zipWith(menuItem.options, selectedOptions,
-            (menuItemOption, selection) => {
-                return selection.map(s => _.find(menuItemOption.optionList, s))
-            }
-        )
-    }
-
     /*********************************************************************/
     /* Functions that can be invoked async without catching errors */
 

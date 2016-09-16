@@ -162,12 +162,7 @@ export class SimpleMenuItem extends PureComponent {
             <View style={{paddingTop: 15, paddingBottom: 15, backgroundColor: backgroundColor}}>
                 {
                     orderItems.map((orderItem, rowNumber) => {
-                        const stringOpts = _.flatten(
-                            barStore.getMenuItemStringOptions(
-                                menuItem, orderItem.selectedOptions
-                            )
-                        )
-                        const opts = stringOpts.join(' + ')
+                        const opts = orderItem.selectedOptions.join(' + ')
                         const price = orderStore.getTotal(orderItem).toFixed(2)
                         return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
                             <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...itemTextStyle}}>

@@ -6,7 +6,11 @@ export const DEV = true
 /*********************** Error Handling ******************************/
 
 /* Force a MobX value to a javascript object */
-export const asData = x => JSON.parse(JSON.stringify(x))
+export const asData = x => {
+    if (x == null)
+        return null
+    JSON.parse(JSON.stringify(x))
+}
 
 export const log = (...args) => {
     console.log(...args.map(asData))

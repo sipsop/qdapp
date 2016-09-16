@@ -254,17 +254,19 @@ export class DownloadResultView<T> extends PureComponent {
     }
 }
 
-export const graphQLArg = (obj) => {
+export const graphQLArg = (obj) => _graphQLArg(_.asData(obj))
+
+const _graphQLArg = (obj) => {
     if (typeof(obj) === 'number') {
         return JSON.stringify(obj)
     } else if (typeof(obj) === 'string') {
         return JSON.stringify(obj)
     } else if (Array.isArray(obj)) {
-        const items = obj.map(graphQLArg).join(', ')
+        const items = obj.map(_graphQLArg).join(', ')
         return `[ ${items} ]`
     } else if (typeof(obj) === 'object') {
         const fields = Object.keys(obj).map(key => {
-            const value = graphQLArg(obj[key])
+            const value = _graphQLArg(obj[key])
             return `${key}: ${value}`
         }).join(', ')
         return `{ ${fields} }`

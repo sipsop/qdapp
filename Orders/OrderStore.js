@@ -31,7 +31,7 @@ export type OrderItem = {
     id:                 ID,
     barID:              BarID,
     menuItemID:         MenuItemID,
-    selectedOptions:    Array<Array<Int>>,
+    selectedOptions:    Array<Array<String>>,
     amount:             Int,
 }
 
@@ -125,9 +125,16 @@ class OrderStore {
         }
 
         const allPrices = _.zipWith(menuItem.options, orderItem.selectedOptions,
-            (menuItemOption, indices) => indices.map(i => menuItemOption.prices[i])
+            (menuItemOption, options) => {
+                return options.map(option => this.getOptionPrice(menuItemOption, option))
+            }
         )
         return sumPrices(_.flatten(allPrices))
+    }
+
+    getOptionPrice = (menuItemOption : MenuItemOption, option : String) : Price => {
+        const i = _.find(menuItemOption.optionList, option)
+        return menuItemOption.prices[i]
     }
 
     getTotal = (orderItem : OrderItem) : Float => {
@@ -217,11 +224,6 @@ class OrderStore {
         })
     }
 
-    selectedStringOptions = (orderItem : OrderItem) : Array<Array<String>> => {
-        const menuItem = barStore.getMenuItem(orderItem.menuItemID)
-        return barStore.getMenuItemStringOptions(menuItem, orderItem.selectedOptions)
-    }
-
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
         // return this.placeActiveOrderStub()
@@ -252,7 +254,7 @@ class OrderStore {
             return {
                 id:                     orderItem.id,
                 menuItemID:             orderItem.menuItemID,
-                selectedStringOptions:  this.selectedStringOptions(orderItem),
+                selectedOptions:        orderItem.selectedOptions,
                 amount:                 orderItem.amount,
             }
         })
@@ -278,7 +280,7 @@ class OrderStore {
                 }
             }
         `
-        console.log('Sending query:', query)
+        log('Sending query:', query)
         const orderResultDownload = await downloadManager.graphQLMutate(query)
         log('Order placed:', orderResultDownload)
 
@@ -300,7 +302,7 @@ class OrderStore {
 export type OrderItem = {
     id:                 ID,
     menuItemID:         MenuItemID,
-    selectedOptions:    Array<Array<Int>>,
+    selectedOptions:    Array<Array<String>>,
     amount:             Int,
 }
 
@@ -335,8 +337,10 @@ export const createOrderItem = (menuItem : MenuItem) : OrderItem => {
     }
 }
 
-const getMenuItemDefaultOptions = (menuItemOption : MenuItemOption) : Int => {
+const getMenuItemDefaultOptions = (menuItemOption : MenuItemOption) : String => {
     if (menuItemOption.defaultOption == undefined)
         return []
-    return updateSelection(menuItemOption.optionType, [], menuItemOption.defaultOption)
+    assert(menuItemOption.defaultOption >= 0)
+    const option = menuItemOption.optionList[menuItemOption.defaultOption]
+    return updateSelection(menuItemOption.optionType, [], option)
 }
