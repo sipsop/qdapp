@@ -132,14 +132,20 @@ export class SelectorRow extends PureComponent {
     /* properties:
         children: [Component]
         onPress: () => void
+        align: 'left' | 'right' | 'center'
     */
     render = () => {
+        var alignItems = 'center'
+        if (this.props.align === 'left')
+            alignItems = 'flex-start'
+        else if (this.props.align === 'right')
+            alignItems = 'flex-end'
         return <TouchableOpacity
                     style={
                         { flex: 0
                         , height: 55
                         , justifyContent: 'center'
-                        , alignItems: 'center'
+                        , alignItems: alignItems
                         , borderBottomWidth: 0.5
                         , borderBottomColor: config.theme.primary.medium
                         }
@@ -157,17 +163,22 @@ export class TextSelectorRow extends PureComponent {
         label: String
         onPress: () => void
         confirmMessage: ?String
+        align: 'left' | 'right' | 'center'
     */
 
     confirmModal = null
 
     showConfirmModal = () => {
-        log('SHOWING CONFIRM MODAL')
         this.confirmModal.show()
     }
 
     render = () => {
-        const style = { fontSize: 20, color: '#000', ...this.props.style }
+        const style = this.props.style || {}
+        const textStyle = {
+            fontSize: 20,
+            color: '#000',
+            ...style
+        }
 
         const confirmModal =
             this.props.confirmMessage
@@ -183,8 +194,8 @@ export class TextSelectorRow extends PureComponent {
                 ? this.showConfirmModal
                 : this.props.onPress
 
-        return <SelectorRow onPress={onPress}>
-            <T style={style}>
+        return <SelectorRow onPress={onPress} align={this.props.align}>
+            <T style={textStyle}>
                 {this.props.label}
             </T>
             {confirmModal}

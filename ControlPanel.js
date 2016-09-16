@@ -2,6 +2,7 @@ import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, Pure
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { TextHeader } from './Header.js'
 import { RowTextButton } from './Rows.js'
 import { T } from './AppText.js'
 import { store, loginStore, tabStore } from './Store.js'
@@ -119,18 +120,26 @@ class Settings extends PureComponent {
                     ref={ref => this.settingsModal = ref}
                     onClose={drawerStore.enable}
                     >
-                <LazyComponent style={{flex: 1}}>
+                <View style={{flex: 1}}>
+                    <TextHeader
+                        label="Settings"
+                        rowHeight={55}
+                        />
                     <TextSelectorRow
                         label={"Clear Cache"}
                         onPress={this.clearCache}
                         confirmMessage="Delete any cached images, outstanding orders and related data?"
+                        align='left'
+                        style={{paddingLeft: 10}}
                         />
                     <TextSelectorRow
                         label={"Delete Account"}
                         onPress={this.deleteAccount}
                         confirmMessage="Are you sure you want to delete your account? This operation cannot be undone."
+                        align='left'
+                        style={{paddingLeft: 10}}
                         />
-                </LazyComponent>
+                </View>
             </SimpleModal>
         </View>
     }
