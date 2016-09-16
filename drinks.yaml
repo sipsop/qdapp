@@ -490,6 +490,95 @@ drinks:
             #verydarkcolour
             #black
     
+    ##stout
+    
+    americanStout: 
+        name: American Stout
+        desc: It is a bold and black beer which finishes with a note of dry-roasted bitterness.   
+        abv: 5% to 7%
+        ibu: 35-75
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout 
+            #chocolate
+            #coffee
+            #hoppy
+            #black
+    
+    americanImperialStout:
+        name: American Imperial Stout
+        desc: It is a medium bodied to fullbodied with rich malty flavour. 
+        abv: 7% to 12%
+        ibu: 50-80
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #maltyflavour
+            #blackcolour 
+            #hoppy
+            #opaque
+            #bitter
+            #chocolate
+            #cocoa 
+
+    oatmealStout:
+        name: Oatmeal Stout
+        desc: This is a smooth, rich with dark malt flavours beer. 
+        abv: 3.8% to 6% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #darkbrown
+            #black
+            #opaque
+            #hoppy
+            #malty 
+            
+    milkStout:
+        name: Milk Stout
+        desc: It is a dark and delicious beer which contains lactose (milk sugar). 
+        abv: 3% to 6% 
+        ibu: 15-25
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #sweetcaramel
+            #chocolateflavour 
+            #blackcolour
+            #opaque
+            #sweet
+            #milk
+    
+    irishDryStout:
+        name: Irish Dry Stout 
+        desc: it is an Irish standard stout with a dryer taste. 
+        abv: 3.8% to 5% 
+        ibu: 30-40
+        image:
+        license:
+        tags: | 
+            #beer
+            #ale
+            #stout 
+            #black
+            #bitter
+            #cleartoopaque 
+            #hoppy
+            
+        
             
 
     ### Wine
