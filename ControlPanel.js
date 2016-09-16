@@ -10,6 +10,7 @@ import { SmallOkCancelModal, SimpleModal } from './Modals.js'
 import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/PaymentModal.js'
 import { LazyComponent } from './LazyComponent.js'
+import { OrderHistoryModal, orderHistoryStore } from './Orders/History.js'
 import { config } from './Config.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
@@ -25,7 +26,7 @@ export class ControlPanel extends PureComponent {
     render = () => {
         return <View style={{flex: 1}}>
             <LoginInfo />
-            <RowTextButton text="Recent Orders" icon={icon("glass", config.theme.primary.dark)} />
+            <OrderHistory />
             <PaymentConfig />
             <Settings />
             <Signout />
@@ -54,6 +55,29 @@ class PaymentConfig extends PureComponent {
                     <CreditCardList />
                 </ScrollView>
             </SimpleModal>
+        </View>
+    }
+}
+
+@observer
+class OrderHistory extends PureComponent {
+    orderHistoryModal = null
+
+    render = () => {
+        return <View>
+            <RowTextButton
+                text="Order History"
+                icon={icon("glass", config.theme.primary.dark)}
+                    onPress={() => {
+                    drawerStore.disable()
+                    this.orderHistoryModal.show()
+                    orderHistoryStore.fetchOrderHistory()
+                }}
+                />
+            <OrderHistoryModal
+                ref={ref => this.orderHistoryModal = ref}
+                onClose={drawerStore.enable}
+                />
         </View>
     }
 }

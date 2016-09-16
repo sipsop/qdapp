@@ -172,6 +172,11 @@ class Day(graphene.Enum):
     Friday    = 5
     Saturday  = 6
 
+class Date(graphene.ObjectType):
+    year    = Int
+    month   = Int
+    day     = Int
+
 class Time(graphene.ObjectType):
     hour    = NullInt
     minute  = NullInt
@@ -446,8 +451,10 @@ def shortid():
 #         orderList   = List(OrderItemInput)
 #         stripeToken = String
 
-class PlaceOrder(graphene.ObjectType):
+class OrderResult(graphene.ObjectType):
     errorMessage    = NullString
+    date            = Date
+    time            = Time
     queueSize       = Int
     estimatedTime   = Int
     receipt         = String
@@ -461,7 +468,7 @@ class Query(graphene.ObjectType):
     menuTags = graphene.Field(Tags)
     menu = graphene.Field(Menu, placeID=ID)
 
-    placeOrder = graphene.Field(PlaceOrder,
+    placeOrder = graphene.Field(OrderResult,
         barID       = String,
         userName    = String,
         currency    = String,
@@ -481,7 +488,7 @@ class Query(graphene.ObjectType):
         # TODO: Authentication
         assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
         queueSize = 2
-        return PlaceOrder(
+        return OrderResult(
             errorMessage=None,
             queueSize=queueSize,
             estimatedTime=queueSize * 90,

@@ -38,6 +38,12 @@ export type OpeningTime = {
     close:  ?Time,
 }
 
+export type DateType = {
+    year:   Int,
+    month:  Int,
+    day:    Int,
+}
+
 export type Time = {
     hour:   Int,
     minute: Int,

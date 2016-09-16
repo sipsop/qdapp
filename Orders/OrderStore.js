@@ -24,7 +24,7 @@ const uuid = () => {
 
 /*********************************************************************/
 
-import type { BarID, MenuItemID } from '../Bar/Bar.js'
+import type { BarID, MenuItemID, DateType, Time } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
@@ -40,11 +40,13 @@ export type OrderState = {
 }
 
 export type OrderResult = {
+    date:           DateType,
+    time:           Time,
     queueSize:      Int,
     estimatedTime:  Float,
     receipt:        String,
     userName:       String,
-    // orderList:      Array<OrderItem>,
+    orderList:      Array<OrderItem>,
 }
 
 /*********************************************************************/
@@ -267,6 +269,8 @@ class OrderStore {
                         stripeToken: ${graphQLArg(stripeToken)}
                         ) {
                     errorMessage
+                    date
+                    time
                     userName
                 	queueSize
                     estimatedTime
