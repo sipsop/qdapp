@@ -361,7 +361,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         if (cacheInfo && cacheInfo.noCache)
             result = await refreshCallback()
         else
-            result = await cache.get(key, refreshCallback, /*expiredCallback, */ cacheInfo = cacheInfo)
+            result = await cache.get(key, refreshCallback, null, cacheInfo)
         return new DownloadResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))

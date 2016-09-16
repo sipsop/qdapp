@@ -6,9 +6,12 @@ import { observer } from 'mobx-react/native'
 // import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { TextHeader } from '../Header.js'
+import { SimpleListView } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
 import { orderStore } from './OrderStore.js'
+import { config } from '../Config.js'
+import { Second } from '../Time.js'
 import * as _ from '../Curry.js'
 
 /***************************************************************************/
@@ -24,19 +27,32 @@ const historyQuery = `
         recentOrders(n: 100) {
             orderHistory {
                 barID
-                date
-                time
+                date {
+                    year
+                    month
+                    day
+                }
+                time {
+                    hour
+                    minute
+                    second
+                }
                 userName
                 queueSize
                 estimatedTime
                 receipt
-                orderList
+                orderList {
+                    id
+                    menuItemID
+                    selectedOptions
+                    amount
+                }
             }
         }
     }
 `
 
-const cacheInfo : CacheInfo = {refreshAfter: 0}
+const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
 
 @observer
 export class OrderHistoryModal extends PureComponent {
@@ -86,7 +102,7 @@ export class OrderHistory extends DownloadResultView {
     renderRow = (i) => {
         const orderHistory = orderHistoryStore.orderHistory
         const orderResult = orderHistory[i]
-        return <T>{orderResult.barID} {orderResult.date}</T>
+        return <T>{orderResult.barID}</T>
     }
 }
 
@@ -111,13 +127,8 @@ class OrderHistoryStore {
     @computed get orderHistory() : Array<OrderResult> {
         if (!this.orderHistoryDownload.value)
             return []
-        const orderHistory = this.orderHistoryDownload.value.orderHistory
-        return orderHistory.map(orderResult => {
-            /* orderResult has String options, convert them to Int options */
-            // TODO: REMOVE
-            orderResult.orderList = orderStore.orderList
-            return orderResult
-        })
+
+        return this.orderHistoryDownload.value.orderHistory
     }
 }
 

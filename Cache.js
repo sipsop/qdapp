@@ -134,7 +134,7 @@ class Cache {
         const now = getTime()
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
-            log("Reusing value from cache...", key)
+            log("Reusing value from cache...", key, cacheEntry.refreshAfter)
             return cacheEntry.value
         } else {
             log("Refreshing cache entry...", key)
@@ -190,8 +190,8 @@ class CacheEntry {
         this.value = value
         this.refreshAfter = refreshAfter
         this.expiresAfter = expiresAfter
-        if (!refreshAfter || !expiresAfter)
-            throw Error("Cannot construct cache entry without refreshAfter or expiresAfter")
+        if (refreshAfter == null || expiresAfter == null)
+            throw Error(`Cannot construct cache entry without refreshAfter or expiresAfter ${key} ${value}`)
     }
 
     toBlob = () => {

@@ -29,7 +29,7 @@ import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
     id:                 ID,
-    barID:              BarID,
+    // barID:              BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<String>>,
     amount:             Int,
@@ -271,8 +271,11 @@ class OrderStore {
                         stripeToken: ${graphQLArg(stripeToken)}
                         ) {
                     errorMessage
-                    date
-                    time
+                    time {
+                        hour
+                        minute
+                        second
+                    }
                     userName
                 	queueSize
                     estimatedTime

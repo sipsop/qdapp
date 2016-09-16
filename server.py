@@ -420,7 +420,7 @@ def makeMenu(placeID):
 
 class OrderItem(graphene.ObjectType):
     # barID = BarID
-    ID = ID
+    id = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
     selectedOptions = List(graphene.String())
@@ -455,8 +455,8 @@ def shortid():
 class OrderResult(graphene.ObjectType):
     errorMessage    = NullString
     barID           = String
-    date            = Date
-    time            = Time
+    date            = graphene.Field(Date)
+    time            = graphene.Field(Time)
     queueSize       = Int
     estimatedTime   = Int
     receipt         = String
@@ -497,6 +497,8 @@ class Query(graphene.ObjectType):
         queueSize = 2
         return OrderResult(
             errorMessage=None,
+            date=Date(year=2016, day=16, month=9),
+            time=Time(hour=10, minute=5, second=30),
             queueSize=queueSize,
             estimatedTime=queueSize * 90,
             receipt=shortid(),
@@ -505,15 +507,17 @@ class Query(graphene.ObjectType):
         )
 
     def resolve_recentOrders(self, args, *_):
+        n = args['n']
         orderHistory = [
             OrderResult(
                 errorMessage=None,
+                barID='The Eagle',
                 date=Date(year=2016, day=16, month=9),
                 time=Time(hour=10, minute=5, second=30),
                 queueSize=0,
                 estimatedTime=0,
                 receipt=shortid(),
-                userName=args['Mark'],
+                userName='Mark',
                 orderList=[],
             ),
         ]
