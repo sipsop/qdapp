@@ -5,8 +5,10 @@ import { observer } from 'mobx-react/native'
 // import Icon from 'react-native-vector-icons/FontAwesome'
 // import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
+import { TextHeader } from '../Header.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
+import { orderStore } from './OrderStore.js'
 import * as _ from '../Curry.js'
 
 /***************************************************************************/
@@ -21,6 +23,7 @@ const historyQuery = `
     query history {
         recentOrders(n: 100) {
             orderHistory {
+                barID
                 date
                 time
                 userName
@@ -49,14 +52,48 @@ export class OrderHistoryModal extends PureComponent {
                     ref={ref => this.modal =ref}
                     onClose={this.props.onClose}
                     >
-            <SimpleListView />
+            <OrderHistory />
         </SimpleModal>
     }
 }
 
+@observer
+export class OrderHistory extends DownloadResultView {
+    errorMessage = "Error downloading order history..."
+    getDownloadResult = () => orderHistoryStore.getOrderHistoryDownload()
+    refreshPage = () => orderHistoryStore.fetchOrderHistory()
+    renderNotStarted = () => <View />
+
+    @computed get nItems() {
+        return orderHistoryStore.orderHistory.length
+    }
+
+    renderFinished = (_) => {
+        return <SimpleListView
+                    N={this.nItems}
+                    initialListSize={4}
+                    renderRow={this.renderRow}
+                    renderHeader={this.renderHeader}
+                    enableEmptySections={true} />
+    }
+
+    renderHeader = () => {
+        return <TextHeader
+                    label="Order History"
+                    rowHeight={55} />
+    }
+
+    renderRow = (i) => {
+        const orderHistory = orderHistoryStore.orderHistory
+        const orderResult = orderHistory[i]
+        return <T>{orderResult.barID} {orderResult.date}</T>
+    }
+}
 
 class OrderHistoryStore {
     @observable orderHistoryDownload = emptyResult()
+
+    getOrderHistoryDownload = () => this.orderHistoryDownload
 
     fetchOrderHistory = _.logErrors(async () => {
         await this._fetchOrderHistory()
@@ -74,7 +111,13 @@ class OrderHistoryStore {
     @computed get orderHistory() : Array<OrderResult> {
         if (!this.orderHistoryDownload.value)
             return []
-        return this.orderHistoryDownload.value.orderHistory
+        const orderHistory = this.orderHistoryDownload.value.orderHistory
+        return orderHistory.map(orderResult => {
+            /* orderResult has String options, convert them to Int options */
+            // TODO: REMOVE
+            orderResult.orderList = orderStore.orderList
+            return orderResult
+        })
     }
 }
 
