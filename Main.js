@@ -7,6 +7,7 @@ import {
   ScrollView,
   ListView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
@@ -23,6 +24,8 @@ import { TabView } from './Tabs.js'
 import { store, loginStore } from './Store.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
+import { PaymentModal } from './Payment/PaymentModal.js'
+import { ReceiptModal } from './Orders/Receipt.js'
 
 const { log, assert } = _.utils('./Main.js')
 
@@ -30,7 +33,12 @@ const { log, assert } = _.utils('./Main.js')
 
     render = () => {
         return  <SideMenu content={<ControlPanel />}>
+            <StatusBar hidden={true} />
             <View style={{flex: 1, flexDirection: 'row'}}>
+                {/*
+                <PaymentModal />
+                <ReceiptModal />
+                */}
                 <TabView>
                     <View tabLabel='Discover' style={{flex: 1}}>
                         <DiscoverPage />

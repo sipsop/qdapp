@@ -35,13 +35,6 @@ HOST = 'http://192.168.0.6:5000'
 // HOST = 'http://localhost:5000/graphql'
 // HOST = 'http://10.147.18.19:5000'
 
-export class TimeoutError {
-    message : string
-    constructor() {
-        this.message = "Downloading is taking too long, please try again later."
-    }
-}
-
 export class NetworkError {
     message : string
     constructor(message : string, status : string) {
@@ -338,7 +331,7 @@ const fetchJSON = async /*<T>*/(
 }
 
 const isNetworkError = (e : Error) : boolean =>
-    e instanceof NetworkError || e instanceof TimeoutError
+    e instanceof NetworkError || e instanceof _.TimeoutError
 
 const fetchJSONWithTimeouts = async /*<T>*/(
         key             : string,
@@ -350,6 +343,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
+        // log("Fetching new data....", key, url)
         return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
@@ -358,7 +352,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
 
     var result
     try {
-        if (cacheInfo && cacheInfo.noCache)
+        if (cacheInfo && cacheInfo.noCache) {
             result = await refreshCallback()
         else
             result = await cache.get(key, refreshCallback, null, cacheInfo)

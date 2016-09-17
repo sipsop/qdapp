@@ -123,6 +123,7 @@ export class SelectableButton extends Component {
                 , textDecorationLine: textDecoration
                 , fontWeight: fontWeight
                 , textAlign: 'center'
+                , backgroundColor: 'rgba(0, 0, 0, 0)'
                 }
             }>
             {this.props.renderLabel(this.props.label)}

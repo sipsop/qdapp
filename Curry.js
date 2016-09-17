@@ -360,6 +360,13 @@ export const product = xs => fold((x, y) => x * y, 1, xs)
 
 /*********************** Async Stuff ******************************/
 
+export class TimeoutError {
+    message : string
+    constructor() {
+        this.message = "Downloading is taking too long, please try again later."
+    }
+}
+
 export const promise = f => {
     return (...args) => {
         new Promise((resolve, reject) => {

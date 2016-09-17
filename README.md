@@ -17,9 +17,20 @@
 * For IOS: first install XCode. Then install Cocaopods and install dependencies:
 
 ```bash
-    $ brew install cocaopods
-    $ ( cd ios; pod install )
+    $ react-native link
+    $ react-native upgrade # say Y to overwriting any files
+    $ react-native run-ios
 ```
+
+If there is a complaints about missing FontAwesome, see
+
+    http://stackoverflow.com/questions/35317197/how-to-link-react-native-vector-icons-to-project
+
+and
+
+    http://codewithchris.com/common-mistakes-with-adding-custom-fonts-to-your-ios-app/
+
+(especially Step 4).
 
 If this fails to build with a compile error of react-native-maps, try the following:
 
@@ -27,7 +38,7 @@ If this fails to build with a compile error of react-native-maps, try the follow
 Change
 
 AIRMap.h line 12
-From #import 
+From #import
 To #import "RCTComponent.h"
 
 and
@@ -38,6 +49,10 @@ To #import "RCTView.h"
 ```
 
 see https://github.com/lelandrichardson/react-native-maps/issues/371
+
+For the ``@interface` error see:
+
+    https://github.com/airbnb/react-native-maps/issues/371
 
 Now build the app and run it in a simulator:
 

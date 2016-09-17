@@ -1,4 +1,3 @@
-import Strip from './Stripe.js'
 import { NetworkError } from '../HTTP.js'
 import * as _ from '../Curry.js'
 

@@ -2,6 +2,7 @@ package com.awesomeproject;
 
 import com.facebook.react.ReactActivity;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 import com.auth0.lock.react.LockReactPackage;
 // import com.zyu.ReactNativeWheelPickerPackage;
 // import com.oblador.vectoricons.VectorIconsPackage;
@@ -23,6 +24,7 @@ public class MainActivity extends ReactActivity {
     // protected List<ReactPackage> getPackages() {
     //      return Arrays.asList(
     //         new MainReactPackage(),
+            new MapsPackage(),
     //        new MapsPackage(),
     //         new LockReactPackage(),
     //         new MapsPackage()

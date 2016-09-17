@@ -1,16 +1,19 @@
-import React, { Component } from 'react';
 import {
-  View,
-  ScrollView,
-  ListView,
-  TouchableOpacity,
-} from 'react-native'
+    React,
+    Component,
+    View,
+    ScrollView,
+    ListView,
+    TouchableOpacity,
+    Platform,
+    T,
+    PureComponent,
+} from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import NativeMapView from 'react-native-maps'
 
-import { PureComponent } from '../Component.js'
 import { Map } from '../Map.js'
 import { merge, logger } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
@@ -153,14 +156,120 @@ class MapMarker extends PureComponent {
                 ? pubColor
                 : passiveColor
 
+        const androidProps = {
+            title: title,
+            description: description,
+            onCalloutPress: this.handleCalloutPress,
+        }
+
+        const iosProps = {
+
+        }
+
+        const props = androidProps // Platform.OS === 'android' ? androidProps : iosProps
+
         return <NativeMapView.Marker
-            ref={markerRef => {this.markerRef = markerRef}}
-            coordinate={getBarCoords(bar)}
-            title={title}
-            description={description}
-            pinColor={pubColor}
-            onPress={this.handleMarkerPress}
-            onCalloutPress={this.handleCalloutPress}
-            />
+                    ref={markerRef => {this.markerRef = markerRef}}
+                    coordinate={getBarCoords(bar)}
+                    pinColor={pubColor}
+                    onPress={this.handleMarkerPress}
+                    onSelect={this.handleMarkerPress}
+                    {...props}
+                    >
+            {
+                Platform.OS === 'ios' && false // TODO: remove 'false'
+                    ? <NativeMapView.Callout tooltip={true}>
+                        <MarkerCallout
+                            title={title}
+                            description={description}
+                            onPress={this.handleMarkerPress}
+                            />
+                      </NativeMapView.Callout>
+                    : undefined
+            }
+        </NativeMapView.Marker>
     }
+}
+
+@observer
+class MarkerCallout extends PureComponent {
+    /* properties:
+        title: String
+        description: String
+        onPress() => void
+    */
+    render = () => {
+        const textStyle = {
+            color: '#000',
+        }
+        const height = 30
+        return <CustomCallout style={{width: 140, height: height, backgroundColor: '#fff'}}>
+            <TouchableOpacity style={{flex: 1}} onPress={this.props.onPress}>
+                <View style={{flex: 1, height: height}}>
+                    <T fontSize={16} style={{...textStyle, fontWeight: 'bold'}}>
+                        {this.props.title}
+                    </T>
+                    <T fontSize={14} style={textStyle}>
+                        {this.props.description}
+                    </T>
+                </View>
+            </TouchableOpacity>
+        </CustomCallout>
+    }
+}
+
+@observer
+class CustomCallout extends PureComponent {
+    render = () => {
+        return (
+            <View style={[styles.container, this.props.style]}>
+                <View style={styles.bubble}>
+                    <View style={styles.amount}>
+                    {this.props.children}
+                    </View>
+                </View>
+                <View style={styles.arrowBorder} />
+                <View style={styles.arrow} />
+            </View>
+        )
+    }
+}
+
+
+const styles = {
+    container: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+    },
+    bubble: {
+        width: 140,
+        minHeight: 80,
+        flexDirection: 'row',
+        alignSelf: 'flex-start',
+        backgroundColor: '#4da2ab',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 6,
+        borderColor: '#007a87',
+        borderWidth: 0.5,
+    },
+    amount: {
+        flex: 1,
+    },
+    arrow: {
+        backgroundColor: 'transparent',
+        borderWidth: 16,
+        borderColor: 'transparent',
+        borderTopColor: '#4da2ab',
+        alignSelf: 'center',
+        marginTop: -32,
+    },
+        arrowBorder: {
+        backgroundColor: 'transparent',
+        borderWidth: 16,
+        borderColor: 'transparent',
+        borderTopColor: '#007a87',
+        alignSelf: 'center',
+        marginTop: -0.5,
+    },
 }

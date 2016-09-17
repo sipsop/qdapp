@@ -117,6 +117,8 @@ const menuPadding = 5
         const radius = 20
         const style = {borderRadius: radius, ...this.props.style}
 
+        console.log("LOADING IMAGE", submenu.image)
+
         return <TouchableOpacity onPress={this.handleCardPress}>
             <Image source={{uri: submenu.image}} style={style}>
                 {/* Push footer to bottom */}
@@ -130,6 +132,7 @@ const menuPadding = 5
                             , justifyContent: 'flex-end'
                             , alignItems: 'center'
                             , borderRadius: radius
+                            , backgroundColor: 'rgba(0,0,0,0)'
                             }
                         }>
                         <T style={
