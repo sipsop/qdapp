@@ -52,8 +52,10 @@ export class ReceiptModal extends PureComponent {
                     >
             <SmallOkCancelModal
                 ref={ref => this.confirmCloseModal = ref}
-                message="Close this screen?"
+                message="Did you collect your drinks?"
                 onConfirm={this.close}
+                okLabel="Yes"
+                cancelLabel="Not Yet"
                 />
             <PlaceOrderDownloadView />
         </OkCancelModal>
