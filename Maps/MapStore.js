@@ -143,7 +143,8 @@ class MapStore {
 
     /* Focus the given bar on the map */
     @action focusBar = (bar : Bar, switchToDiscoverPage = true) => {
-        log("FOCUSSING BAR", bar.name)
+        // return
+        // log("FOCUSSING BAR", bar.name)
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }

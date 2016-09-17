@@ -104,7 +104,7 @@ class MapMarker extends PureComponent {
         super(props)
         /* Set a timeout for the marker update, as 'markerRef.showCallout()'
            doesn't work when done immediately on load */
-        setTimeout(this.autoUpdateCallout, 500)
+        setTimeout(this.autoUpdateCallout, 2000)
     }
 
     autoUpdateCallout = () => {
