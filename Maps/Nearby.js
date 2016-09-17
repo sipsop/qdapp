@@ -53,6 +53,7 @@ export const searchNearby = async (
     const url = buildURL(BaseURL, params)
 
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude}`
+    console.log("fetching from Nearby with key", key)
     const options = { method: 'GET' }
     const jsonDownloadResult = await downloadManager.fetchJSON(
         key, url, options, config.nearbyCacheInfo)
