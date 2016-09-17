@@ -511,7 +511,7 @@ class Query(graphene.ObjectType):
         orderHistory = [
             OrderResult(
                 errorMessage=None,
-                barID='The Eagle',
+                barID='TODO',
                 date=Date(year=2016, day=16, month=9),
                 time=Time(hour=10, minute=5, second=30),
                 queueSize=0,

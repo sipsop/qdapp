@@ -208,7 +208,9 @@ export class TagStore {
         return result
     }
 
-    getTagName = (tagID) => this.tagNames.get(tagID)
+    getTagName = (tagID) => {
+        return this.tagNames.get(tagID).slice(1)
+    }
 
     tagIsDefined = (tagID : TagID) : Bool => {
         return this.tagNames.has(tagID)
@@ -367,7 +369,6 @@ export class TagRow extends Component {
 
     render = () => {
         const tagIDs = this.props.rowOfTags.filter(tagStore.tagIsDefined)
-        const tagNames = tagIDs.map(tagStore.getTagName)
         return <ButtonRow
                 rowNumber={this.props.rowNumber}
                 clearRow={this.clearRow}
