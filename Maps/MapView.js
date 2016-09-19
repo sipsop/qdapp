@@ -31,10 +31,6 @@ const log = logger('Maps/MapView.js')
 @observer
 export class MapView extends DownloadResultView {
     errorMessage = "Error downloading map"
-    constructor(props) {
-        super(props)
-        this.mapRef = null
-    }
 
     @action handleRegionChange = (region) => {
         mapStore.region = region
@@ -60,6 +56,8 @@ export class MapView extends DownloadResultView {
 
         const style2 = _.clone(style)
         style2.position = 'absolute'
+
+        // return <View style={{flex: 0, height: 300}} />
 
         return (
             <View style={{flex: 0, height: 300}}>

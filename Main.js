@@ -35,10 +35,8 @@ const { log, assert } = _.utils('./Main.js')
         return  <SideMenu content={<ControlPanel />}>
             <StatusBar hidden={true} />
             <View style={{flex: 1, flexDirection: 'row'}}>
-                {/*
-                <PaymentModal />
-                <ReceiptModal />
-                */}
+                {/*<PaymentModal />
+                <ReceiptModal />*/}
                 <TabView>
                     <View tabLabel='Discover' style={{flex: 1}}>
                         <DiscoverPage />
