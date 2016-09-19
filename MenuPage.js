@@ -266,7 +266,7 @@ class PriceEntry extends PureComponent {
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <T style={{marginRight: 5, color: '#000'}}>
-                    {'£' + total.toFixed(2)}
+                    {orderStore.formatPrice(total)}
                 </T>
             </View>
         )

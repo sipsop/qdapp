@@ -1,20 +1,21 @@
-import React, { Component } from 'react';
+import { React, Component, PureComponent, T } from './Component.js'
+import { orderStore } from './Orders/OrderStore.js'
 import { observer } from 'mobx-react/native'
 
-import { T } from './AppText.js'
 import * as _ from './Curry.js'
 
 @observer
-export class Price extends Component {
+export class Price extends PureComponent {
     /* properties:
         price: schema.Price
         style: text style
     */
     render = () => {
         const price = this.props.price
+        const priceText = orderStore.formatPrice(price.price, price.currency)
         var prefix = ""
         if (price.option == 'Relative') {
-            if (price.price == 0.0) {
+            if (price.price == 0) {
                 return <T />
             } else if (price.price < 0) {
                 prefix = "- "
@@ -24,7 +25,7 @@ export class Price extends Component {
         }
 
         return <T style={this.props.style}>
-            {prefix}{getCurrencySymbol(price.currency)}{price.price.toFixed(2)}
+            {prefix}{priceText}
         </T>
     }
 

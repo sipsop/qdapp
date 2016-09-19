@@ -164,7 +164,8 @@ export class SimpleMenuItem extends PureComponent {
                     orderItems.map((orderItem, rowNumber) => {
                         const selectedOptions = _.asData(orderItem.selectedOptions)
                         const opts = _.flatten(selectedOptions).join(' + ')
-                        const price = orderStore.getTotal(orderItem).toFixed(2)
+                        const price = orderStore.getTotal(orderItem)
+                        const priceText = orderStore.formatPrice(price)
                         return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
                             <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...itemTextStyle}}>
                                 {orderItem.amount}
@@ -173,7 +174,7 @@ export class SimpleMenuItem extends PureComponent {
                                 <T style={{flex: 1, ...itemTextStyle}}>{opts}</T>
                             </ScrollView>
                             <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...itemTextStyle}}>
-                                £{price}
+                                {priceText}
                             </T>
                         </View>
                     })

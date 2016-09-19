@@ -274,8 +274,8 @@ rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPn
 
 Relative = 1
 zero     = Price.pounds(0.0, Relative)
-fiftyP   = Price.pounds(0.5, Relative)
-onePound = Price.pounds(1.0, Relative)
+fiftyP   = Price.pounds(50, Relative)
+onePound = Price.pounds(100, Relative)
 
 beer_top_options = MenuItemOption(
     name="Options",
@@ -363,25 +363,25 @@ def generate_decreasing(lower_bounds, max_price):
 
 
 def generate_prices(lower, upper):
-    prices = [round(lower + 0.1 * i, 2) for i in range(int((upper - lower) * 10))]
+    prices = [lower + 10 * i for i in range(int((upper - lower) / 10))]
     return [Price.pounds(price) for price in prices]
 
 #= Menu =====================================================================#
 
 for item in items:
     if '#beer' in item['tags']:
-        price1, price2 = generate_decreasing([2.20, 1.70], 6.50)
+        price1, price2 = generate_decreasing([220, 170], 650)
         item['price']   = price1
         item['options'] = [ beer_option(price1, price2), beer_top_options ]
 
     elif '#wine' in item['tags']:
         bottle, large, medium, small = generate_decreasing(
-            [8.50, 4.20, 3.20, 2.70], 23.0)
+            [850, 420, 320, 270], 2300)
         item['price']   = medium
         item['options'] = [ wine_options(small, medium, large, bottle) ]
 
     elif '#spirit' in item['tags']:
-        double, single = generate_decreasing([4.20, 3.10], 9.10)
+        double, single = generate_decreasing([420, 310], 910)
         item['price'] = single
         item['options'] = [ spirit_options(single, double), spirit_top_options ]
 

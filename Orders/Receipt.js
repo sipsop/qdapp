@@ -253,10 +253,11 @@ class OrderTotal extends PureComponent {
         // if (orderResult.orderList.length === 1)
         //     return <View />
         const total = orderStore.orderListTotal(orderResult.orderList)
+        const totalText = orderStore.formatPrice(total)
         return <Header>
             <View style={{flexDirection: 'row'}}>
                 {headerText('Total:')}
-                {headerText('£' + total.toFixed(2), 25, 'right')}
+                {headerText(totalText, 25, 'right')}
             </View>
         </Header>
     }

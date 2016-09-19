@@ -112,6 +112,17 @@ class OrderStore {
         return 'Sterling'
     }
 
+    formatPrice = (price, currency) => {
+        currency = currency || this.currency
+        const priceText = (price / 100).toFixed(2)
+        switch (currency) {
+            case 'Sterling':
+                return '£' + priceText
+            default:
+                throw Error(`Currency ${currency} not supported yet`)
+        }
+    }
+
     /*********************************************************************/
 
     /* Compute the price for all the selected options */
@@ -160,7 +171,7 @@ class OrderStore {
         if (!this.haveOrders)
             return ""
         const currencySymbol = getCurrencySymbol(this.currency)
-        return `${currencySymbol}${total.toFixed(2)}`
+        return `${currencySymbol}${(total / 100).toFixed(2)}`
     }
 
     @computed get totalTextWithParens() : String {
