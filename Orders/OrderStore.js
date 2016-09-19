@@ -245,7 +245,7 @@ class OrderStore {
 
     /* Submit order to server */
     placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
-        return this.placeActiveOrderStub()
+        // return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */

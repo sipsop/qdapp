@@ -6,6 +6,7 @@ from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import yaml
 import time
+import datetime
 import inspect
 import string
 import random
@@ -476,7 +477,7 @@ class Query(graphene.ObjectType):
         barID       = String,
         userName    = String,
         currency    = String,
-        price       = Float,
+        price       = Int,
         orderList   = List(OrderItemInput),
         stripeToken = String,
         )
@@ -492,17 +493,48 @@ class Query(graphene.ObjectType):
 
     def resolve_placeOrder(self, args, *_):
         # TODO: Authentication
-        assert args['currency'] in ['Sterling', 'Euros', 'Dollars']
-        queueSize = 2
+
+        now         = datetime.datetime.utcnow()
+        barID       = args['barID']
+        userName    = args['userName']
+        currency    = args['currency']
+        price       = args['price']
+        orderList   = args['orderList']
+        receipt     = shortid()
+        totalAmount = sum(orderItem['amount'] for orderItem in orderList)
+
+        assert currency in ['Sterling', 'Euros', 'Dollars']
+        currency = getattr(model.Currency, currency)
+
+        # TODO: Payment with Stripe
+        # TODO: Verify barID and bar opening time
+        # TODO: Verify 'price'
+
+        model.submit_order(model.Order(
+            barID=barID,
+            utcstamp=now.timestamp(),
+            userName=userName,
+            totalAmount=totalAmount,
+            totalPrice=price,
+            currency=currency,
+            orderList=orderList,
+            receipt=receipt,
+            completed=False,
+            errorMessage=None,
+        ))
+
+        queueSize = model.get_bar_queue_size(barID)
+        estimatedTime = 60 + model.get_drinks_queue_size(barID) * 20
+
         return OrderResult(
             errorMessage=None,
-            date=Date(year=2016, day=16, month=9),
-            time=Time(hour=10, minute=5, second=30),
+            date=Date(year=now.year, day=now.day, month=now.month),
+            time=Time(hour=now.hour, minute=now.minute, second=now.second),
             queueSize=queueSize,
-            estimatedTime=queueSize * 90,
-            receipt=shortid(),
-            userName=args['userName'],
-            orderList=args['orderList'],
+            estimatedTime=estimatedTime,
+            receipt=receipt,
+            userName=userName,
+            orderList=orderList,
         )
 
     def resolve_recentOrders(self, args, *_):

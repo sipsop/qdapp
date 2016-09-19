@@ -22,11 +22,12 @@ MenuItems   = r.db('qdodger').table('MenuItems')
 # Types
 #===------------------------------------------------------------------===
 
-ID          = alias('ID', str)
-PlaceID     = ID        # google maps PlaceID
-BarID       = PlaceID   # uniquely identifies a bar, same as place id
+ID              = alias('ID', str)
+PlaceID         = ID        # google maps PlaceID
+BarID           = PlaceID   # uniquely identifies a bar, same as place id
 MenuItemDefID   = alias('MenuItemDefID', ID)
-MenuItemID  = alias('MenuItemID', ID)
+MenuItemID      = alias('MenuItemID', ID)
+OrderID         = ID
 
 TagName = alias('TagName', str)
 
@@ -85,6 +86,30 @@ MenuItem = typeddict(
     ], name='MenuItem'
 )
 
+#-----------------------------------------------------------------------#
+
+OrderItem = typeddict(
+    [ ('id',                ID)
+    , ('menuItemID',        MenuItemID)
+    , ('selectedOptions',   [[str]])
+    , ('amount',            int)
+    ], name='OrderItem')
+
+Order = typeddict(
+    [ ('id',                optional(OrderID))
+    , ('barID',             BarID)
+    , ('utcstamp',          float)
+    , ('userName',          str)
+    , ('totalAmount',       int) # total number of drinks
+    , ('totalPrice',        int) # total price
+    , ('currency',          Currency)
+    , ('orderList',         [OrderItem])
+    , ('receipt',           maybe_none(str))
+
+    , ('completed',         bool)
+    , ('errorMessage',      maybe_none(str))
+    ], name='HistoryItem')
+
 #===------------------------------------------------------------------===
 # Actions
 #===------------------------------------------------------------------===
@@ -99,3 +124,23 @@ def get_active_menu_items(barID):
     return get_item_defs()
     # TODO:
     # return run(MenuItems.filter({'barID': barID, 'isActive': True}))
+
+def submit_order(order : Order):
+    run(Orders.insert(Order(order)))
+
+def get_order_history(userName, n=10) -> [Order]:
+    return run(
+        Orders.filter({'userName': userName})
+              .orderBy(r.desc('utcstamp'))
+              .limit(n)
+    )
+
+def get_drinks_queue_size(barID) -> int:
+    return run(
+        Orders.filter({'completed': False})['totalAmount'].sum()
+    )
+
+def get_bar_queue_size(barID) -> int:
+    return run(
+        Orders.filter({'completed': False}).count()
+    )
