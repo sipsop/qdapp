@@ -26,6 +26,12 @@ const { log, assert } = _.utils('./Orders/History.js')
 const getHistoryQuery = () => {
     assert(loginStore.userID != null, 'loginStore.userID != null')
     return `
+        fragment PriceFragment on Price {
+            currency
+            option
+            price
+        }
+
         query history {
             recentOrders(userID: ${graphQLArg(loginStore.userID)}, n: 100) {
                 orderHistory {
@@ -44,6 +50,25 @@ const getHistoryQuery = () => {
                     queueSize
                     estimatedTime
                     receipt
+                    menuItems {
+                        id
+                        name
+                        desc
+                        images
+                        tags
+                        price {
+                            ...PriceFragment
+                        }
+                        options {
+                            name
+                            optionType
+                            optionList
+                            prices {
+                                ...PriceFragment
+                            }
+                            defaultOption
+                        }
+                    }
                     orderList {
                         id
                         menuItemID

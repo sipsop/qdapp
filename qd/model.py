@@ -141,3 +141,7 @@ def get_bar_queue_size(barID) -> int:
     return run(
         Orders.filter({'completed': False}).count()
     )
+
+def get_menu_items(menuItemIDs : [MenuItemID]) -> [MenuItem]:
+    table = MenuItemDefs # TODO: use MenuItems
+    return run(table.get_all(*menuItemIDs))

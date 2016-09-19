@@ -116,7 +116,6 @@ class Price(graphene.ObjectType):
             option=Absolute,
             price=price)
 
-
 class OptionType(graphene.Enum):
     Single     = Single
     AtMostOne  = AtMostOne
@@ -424,7 +423,7 @@ class OrderItem(graphene.ObjectType):
     id = ID
     menuItemID = MenuItemID
     # e.g. [['pint'], ['lime']]
-    selectedOptions = List(graphene.String())
+    selectedOptions = List(List(graphene.String()))
     amount = Int
 
 # For inputs you have to use 'InputObjectType' for some reason...
@@ -462,7 +461,19 @@ class OrderResult(graphene.ObjectType):
     estimatedTime   = Int
     receipt         = String
     userName        = String
+    menuItems       = List(MenuItem)
     orderList       = List(OrderItem)
+
+    def resolve_menuItems(self, args, *_):
+        menuItemIDs = set(orderItem.menuItemID for orderItem in self.orderList)
+        print("RESOLVING MENU ITEMS", self.orderList, menuItemIDs)
+        # menuItems = model.get_menu_items(list(menuItemIDs))
+        # return fmap(get_menu_item, menuItems)
+        return fmap(find_item, menuItemIDs)
+
+def find_item(menuItemID : model.MenuItemID):
+    [item] = [item for item in items if item['id'] == menuItemID]
+    return MenuItem(**item)
 
 class OrderHistory(graphene.ObjectType):
     orderHistory    = List(OrderResult)
@@ -555,6 +566,7 @@ def get_order_result(
         estimatedTime=0
         ) -> [OrderResult]:
     dt = order['utcstamp']
+
     return OrderResult(
         errorMessage    = order['errorMessage'],
         barID           = order['barID'],
@@ -569,6 +581,14 @@ def get_order_result(
 
 def get_order_item(order_item : model.OrderItem) -> OrderItem:
     return OrderItem(**order_item)
+
+def get_menu_item(menu_item : model.MenuItem) -> MenuItem:
+    menu_item = dict(
+        menu_item,
+        price   = get_price(menu_item['price']),
+        options = get_options(menu_item['options']),
+    )
+    return MenuItem(**menu_item)
 
 schema = graphene.Schema(query=Query, executor=GeventExecutor())
 
