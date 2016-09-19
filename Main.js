@@ -23,10 +23,7 @@ import { OrderPage } from './Orders/OrderPage.js'
 import { TabView } from './Tabs.js'
 import { store, loginStore } from './Store.js'
 import { cache } from './Cache.js'
-<<<<<<< HEAD
 import * as _ from './Curry.js'
-=======
->>>>>>> ios2
 import { PaymentModal } from './Payment/PaymentModal.js'
 import { ReceiptModal } from './Orders/Receipt.js'
 
@@ -36,19 +33,12 @@ const { log, assert } = _.utils('./Main.js')
 
     render = () => {
         return  <SideMenu content={<ControlPanel />}>
-<<<<<<< HEAD
             {/*<StatusBar hidden={true} />*/}
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                {/*<PaymentModal />
-                <ReceiptModal />*/}
-=======
-            <StatusBar hidden={true} />
             <View style={{flex: 1, flexDirection: 'row'}}>
                 {/*
                 <PaymentModal />
                 <ReceiptModal />
                 */}
->>>>>>> ios2
                 <TabView>
                     <View tabLabel='Discover' style={{flex: 1}}>
                         <DiscoverPage />
