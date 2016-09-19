@@ -249,11 +249,13 @@ class OrderStore {
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
-        const userName = loginStore.userName || 'Mark'
+        const userID   = loginStore.userID
+        const userName = loginStore.userName || userID
         const currency = 'Sterling'
 
-        assert(barID != null)
-        assert(userName != null)
+        assert(barID != null, 'barID != null')
+        assert(userID != null, 'userID != null')
+        assert(userName != null, 'userName != null')
 
         var stripeToken
         this.orderResultDownload.downloadStarted()
@@ -282,7 +284,8 @@ class OrderStore {
         const query = `
             query {
                 placeOrder(
-                        barID:       ${graphQLArg(barStore.barID)}
+                        barID:       ${graphQLArg(barStore.barID)},
+                        userID:      ${graphQLArg(userID)},
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
                         price:       ${graphQLArg(total)},
@@ -310,10 +313,10 @@ class OrderStore {
             orderResultDownload.update(value => {
                 const result = value.placeOrder
                 result.orderList = this.orderList
-                assert(result.userName != null)
-                assert(result.queueSize != null)
-                assert(result.estimatedTime != null)
-                assert(result.receipt != null)
+                assert(result.userName != null, 'result.userName != null')
+                assert(result.queueSize != null, 'result.queueSize != null')
+                assert(result.estimatedTime != null, 'result.estimatedTime != null')
+                assert(result.receipt != null, 'result.receipt != null')
                 return result
             })
         }

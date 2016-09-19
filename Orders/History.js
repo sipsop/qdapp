@@ -8,7 +8,8 @@ import { observer } from 'mobx-react/native'
 import { TextHeader } from '../Header.js'
 import { SimpleListView } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
-import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
+import { DownloadResult, DownloadResultView, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
+import { loginStore } from '../Login.js'
 import { orderStore } from './OrderStore.js'
 import { config } from '../Config.js'
 import { Second } from '../Time.js'
@@ -22,35 +23,38 @@ import type { CacheInfo } from '../Cache.js'
 
 const { log, assert } = _.utils('./Orders/History.js')
 
-const historyQuery = `
-    query history {
-        recentOrders(n: 100) {
-            orderHistory {
-                barID
-                date {
-                    year
-                    month
-                    day
-                }
-                time {
-                    hour
-                    minute
-                    second
-                }
-                userName
-                queueSize
-                estimatedTime
-                receipt
-                orderList {
-                    id
-                    menuItemID
-                    selectedOptions
-                    amount
+const getHistoryQuery = () => {
+    assert(loginStore.userID != null, 'loginStore.userID != null')
+    return `
+        query history {
+            recentOrders(userID: ${graphQLArg(loginStore.userID)}, n: 100) {
+                orderHistory {
+                    barID
+                    date {
+                        year
+                        month
+                        day
+                    }
+                    time {
+                        hour
+                        minute
+                        second
+                    }
+                    userName
+                    queueSize
+                    estimatedTime
+                    receipt
+                    orderList {
+                        id
+                        menuItemID
+                        selectedOptions
+                        amount
+                    }
                 }
             }
         }
-    }
-`
+    `
+}
 
 const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
 
@@ -118,7 +122,7 @@ class OrderHistoryStore {
     _fetchOrderHistory = async () => {
         this.orderHistoryDownload.downloadStarted()
         const download = await downloadManager.graphQL(
-            'qd:order:history', historyQuery, cacheInfo)
+            'qd:order:history', getHistoryQuery(), cacheInfo)
         _.runAndLogErrors(() => {
             this.orderHistoryDownload = download.update(data => data.recentOrders)
         })

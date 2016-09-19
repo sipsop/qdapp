@@ -42,7 +42,6 @@ class LoginStore {
         if (this.userToken) {
             return
         }
-        log("SHOWING LOCK.........")
         lock.show(lockOpts, (err, profile, userToken) => {
             if (err) {
                 log("login error", err)
@@ -54,7 +53,6 @@ class LoginStore {
     }
 
     @action logout = () => {
-        log("LOGGING OUT")
         this.setLoginInfo(null, null)
     }
 
@@ -65,6 +63,11 @@ class LoginStore {
 
     @computed get isLoggedIn() {
         return !!this.userToken
+    }
+
+    @computed get userID() {
+        log('profile', this.profile)
+        return this.profile ? this.profile.userId : null
     }
 
     @computed get userName() {

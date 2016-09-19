@@ -1,12 +1,6 @@
-import yaml
-import time
-import inspect
-import string
-import random
 import datetime
 import rethinkdb as r
-
-from curry.typing import alias, typeddict, URL, maybe_none, optional, enum
+from curry.typing import validate, alias, typeddict, URL, maybe_none, optional, enum
 
 #===------------------------------------------------------------------===
 # Tables
@@ -98,7 +92,8 @@ OrderItem = typeddict(
 Order = typeddict(
     [ ('id',                optional(OrderID))
     , ('barID',             BarID)
-    , ('utcstamp',          float)
+    , ('utcstamp',          datetime.datetime)
+    , ('userID',            str)
     , ('userName',          str)
     , ('totalAmount',       int) # total number of drinks
     , ('totalPrice',        int) # total price
@@ -126,12 +121,14 @@ def get_active_menu_items(barID):
     # return run(MenuItems.filter({'barID': barID, 'isActive': True}))
 
 def submit_order(order : Order):
-    run(Orders.insert(Order(order)))
+    validate(order, Order)
+    order = dict(order, utcstamp=r.epoch_time(order['utcstamp'].timestamp()))
+    run(Orders.insert(order))
 
-def get_order_history(userName, n=10) -> [Order]:
+def get_order_history(userID, n=10) -> [Order]:
     return run(
-        Orders.filter({'userName': userName})
-              .orderBy(r.desc('utcstamp'))
+        Orders.filter({'userID': userID})
+              .order_by(r.desc('utcstamp'))
               .limit(n)
     )
 

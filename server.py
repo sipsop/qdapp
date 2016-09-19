@@ -5,12 +5,13 @@
 from graphql.execution.executors.gevent import GeventExecutor #, run_in_greenlet
 
 import yaml
-import time
 import datetime
 import inspect
 import string
 import random
 import graphene
+
+from curry import fmap
 
 from qd import model
 
@@ -475,6 +476,7 @@ class Query(graphene.ObjectType):
 
     placeOrder = graphene.Field(OrderResult,
         barID       = String,
+        userID      = String,
         userName    = String,
         currency    = String,
         price       = Int,
@@ -482,7 +484,10 @@ class Query(graphene.ObjectType):
         stripeToken = String,
         )
 
-    recentOrders = graphene.Field(OrderHistory, n=NullInt)
+    recentOrders = graphene.Field(OrderHistory,
+        userID      = String,
+        n           = NullInt
+        )
 
     def resolve_menu(self, args, *_):
         placeID = args['placeID']
@@ -496,6 +501,7 @@ class Query(graphene.ObjectType):
 
         now         = datetime.datetime.utcnow()
         barID       = args['barID']
+        userID      = args['userID']
         userName    = args['userName']
         currency    = args['currency']
         price       = args['price']
@@ -510,9 +516,10 @@ class Query(graphene.ObjectType):
         # TODO: Verify barID and bar opening time
         # TODO: Verify 'price'
 
-        model.submit_order(model.Order(
+        order = model.Order(
             barID=barID,
-            utcstamp=now.timestamp(),
+            utcstamp=now,
+            userID=userID,
             userName=userName,
             totalAmount=totalAmount,
             totalPrice=price,
@@ -521,39 +528,47 @@ class Query(graphene.ObjectType):
             receipt=receipt,
             completed=False,
             errorMessage=None,
-        ))
+        )
+        model.submit_order(order)
 
         queueSize = model.get_bar_queue_size(barID)
         estimatedTime = 60 + model.get_drinks_queue_size(barID) * 20
 
-        return OrderResult(
-            errorMessage=None,
-            date=Date(year=now.year, day=now.day, month=now.month),
-            time=Time(hour=now.hour, minute=now.minute, second=now.second),
-            queueSize=queueSize,
-            estimatedTime=estimatedTime,
-            receipt=receipt,
-            userName=userName,
-            orderList=orderList,
-        )
+        return get_order_result(
+            order,
+            queueSize     = queueSize,
+            estimatedTime = estimatedTime
+            )
 
     def resolve_recentOrders(self, args, *_):
-        n = args['n']
-        orderHistory = [
-            OrderResult(
-                errorMessage=None,
-                barID='TODO',
-                date=Date(year=2016, day=16, month=9),
-                time=Time(hour=10, minute=5, second=30),
-                queueSize=0,
-                estimatedTime=0,
-                receipt=shortid(),
-                userName='Mark',
-                orderList=[],
-            ),
-        ]
-        return OrderHistory(orderHistory=orderHistory)
+        userID      = args['userID']
+        n           = int(args.get('n', 10))
+        # TODO: Authentication
 
+        orders = model.get_order_history(userID, n)
+        return OrderHistory(orderHistory=fmap(get_order_result, orders))
+
+
+def get_order_result(
+        order : model.Order,
+        queueSize=0,
+        estimatedTime=0
+        ) -> [OrderResult]:
+    dt = order['utcstamp']
+    return OrderResult(
+        errorMessage    = order['errorMessage'],
+        barID           = order['barID'],
+        date            = Date(year=dt.year, day=dt.day, month=dt.month),
+        time            = Time(hour=dt.hour, minute=dt.minute, second=dt.second),
+        queueSize       = queueSize,
+        estimatedTime   = estimatedTime,
+        receipt         = order['receipt'],
+        userName        = order['userName'],
+        orderList       = fmap(get_order_item, order['orderList']),
+    )
+
+def get_order_item(order_item : model.OrderItem) -> OrderItem:
+    return OrderItem(**order_item)
 
 schema = graphene.Schema(query=Query, executor=GeventExecutor())
 
