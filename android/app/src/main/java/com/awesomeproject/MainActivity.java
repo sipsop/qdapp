@@ -2,12 +2,10 @@ package com.awesomeproject;
 
 import com.facebook.react.ReactActivity;
 import com.airbnb.android.react.maps.MapsPackage;
-import com.airbnb.android.react.maps.MapsPackage;
 import com.auth0.lock.react.LockReactPackage;
 // import com.zyu.ReactNativeWheelPickerPackage;
 // import com.oblador.vectoricons.VectorIconsPackage;
 // import com.webschik.SpinnerPackage;
-import com.airbnb.android.react.maps.MapsPackage;
 // import com.webschik.reactnativedropdown.SpinnerPackage;
 
 public class MainActivity extends ReactActivity {
