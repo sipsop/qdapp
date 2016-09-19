@@ -33,7 +33,7 @@ const { log, assert } = _.utils('./Main.js')
 
     render = () => {
         return  <SideMenu content={<ControlPanel />}>
-            <StatusBar hidden={true} />
+            {/*<StatusBar hidden={true} />*/}
             <View style={{flex: 1, flexDirection: 'row'}}>
                 {/*<PaymentModal />
                 <ReceiptModal />*/}

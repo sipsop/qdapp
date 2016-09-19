@@ -37,7 +37,7 @@ export class DiscoverView extends Page {
     constructor(props) {
         super(props)
         this.ds = new ListView.DataSource({
-            rowHasChanged: (i, j) => i !== j,
+            rowHasChanged: (i, j) => true, // i !== j,
         })
     }
 

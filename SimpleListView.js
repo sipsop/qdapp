@@ -30,7 +30,7 @@ export class SimpleListView extends PureComponent {
     constructor(props) {
         super(props)
         this._dataSource = new ListView.DataSource({
-            rowHasChanged: (i, j) => i !== j,
+            rowHasChanged: (i, j) => true, //i !== j,
         })
     }
 
