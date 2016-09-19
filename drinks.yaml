@@ -578,8 +578,132 @@ drinks:
             #cleartoopaque 
             #hoppy
             
-        
+    ##belgianStyle:
+    
+    belgianPaleAle: 
+        name: Belgian Pale Ale
+        desc: Belgian Pale Ale is a mild and toasted malt flavour beer. 
+        abv: 4.8% to 5.5%
+        ibu: 20-30
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #belgianstyle
+            #malty
+            #hoppy  
+            #amber
+            #copper
+    
+    belgianDubbel: 
+        name: Belgian Dubbel
+        desc: Belgian Dubbel is a deeply malty rich beer with spicy or fruity notes. 
+        abv: 6% to 7.6% 
+        ibu: 15-25
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #brown
+            #very dark
+            #rich
+            #malty
+    
+    belgianTripel:
+        name: Belgian Tripel 
+        desc: It is a strong and light-bodied ale sometimes with complex spicy flavours. 
+        abv: 7.55 to 9.5% 
+        ibu: 20-40
+        image: 
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #highalcohol
+            #lightbodied
+            #clear
+            #pale
+            #lightamber 
+    
+    belgianQuadrupel: 
+        name: Belgian Quadrupel or Belgian Strong Dark 
+        desc: Belgian Quadrupel have high alcohol content and has flavours such as brown sugar, fruits or malty sweetness.  
+        abv: 7.2% to 11.2% 
+        ibu: 25-50 
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #amber
+            #darkbrown 
+            #slighthaze
+    
+    belgianStyleGoldenStrongAle:
+        name: Belgian Style Golden Strong Ale
+        desc: This beer is known for complext fruity flavours and soft body. 
+        abv: 7% to 11% 
+        ibu: 20-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #fruity 
+            #dryfinish 
+            #clear
+            #pale
+            #copper
+            #softbody
+    
+    belgianStyleSaison:
+        name: Belgian Style Saison or Farmhouse Ales
+        desc: A unique beer with earthy notes and a medium hop flavour. 
+        abv: 4.4% to 6.8% 
+        ibu: 20-38 
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #slighthaze
+            #pale
+            #lightbrown 
+            #lowhoppy 
+            #softbody
+            #unique 
+            #earthy
             
+    belgianStyleBlondeAle:
+        name: Belgian Style Blonde Ale 
+        desc: Belgian Style Blonde Ale is an easy drinking beer with low and pleasant hop bitterness. 
+        abv: 6.3% to 7.9%
+        ibu: 15-30 
+        image: 
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #pale
+            #lightamber
+            #cleartobrilliant
+            #easydrinking
+            #mediumsweet 
+            
+    ##wheatBeer    
+        
+    americanPaleWheat:
+        name: American Pale Wheat 
+        desc: 
 
     ### Wine
 
