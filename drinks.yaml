@@ -703,8 +703,111 @@ drinks:
         
     americanPaleWheat:
         name: American Pale Wheat 
-        desc: 
-
+        desc: American Pale Wheat is a full-bodied with bready and candy flavours beer. 
+        abv: 8.5% to 12.2% 
+        ibu: 45-85
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #slighthaze
+            #gold
+            #lightbrown
+            #lowhoppy
+            #bready
+            #candy
+    
+    americanWheat:
+        name: American Wheat
+        desc: American Wheat is a refreshing summer beer with pale to light amber colour. 
+        abv: 3.5% to 5.6%
+        ibu: 10-35
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #straw
+            #lightamber 
+            #brillianttoslighthaze
+            #refreshing
+            #hoppy
+    
+    belgianWitbier: 
+        name: Belgian Witbier 
+        desc: Belgian Witbier is a light fruity flavour dry beer. 
+        abv: 4.8% to 5.6% 
+        ibu: 10-17
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #straw
+            #pale
+            #dry
+    
+    berlinerWeisse:
+        name: Berliner Weisse 
+        desc: It is a tart beer and raspberry syrup or woodruff are sometimes added to dilute the sour taste. 
+        abv: 2.8% to 3.4%
+        ibu: 3-6
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #cleartohazy
+            #raspberry
+            #woodruff
+            #tart
+            #lowalcohol
+            #pale
+    
+    dunkelweizen: 
+        name: Dunkelweizen 
+        desc: It is a dark beer with sweet maltiness and chocolate. 
+        abv: 4.8% to 5.4%
+        ibu: 10-15
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #copperbrown
+            #bready
+    
+    hefeweizen: 
+        name: Hefeweizen 
+        desc: Hefeweizen is a crisp and carbonated style beer with a hint of clove, banana or apple. 
+        abv: 4.9% to 5.6% 
+        ibu: 10-15
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #straw
+            #amber
+            #banana
+            #clove
+            #apple
+            
+            
+        
+            
+            
+    
     ### Wine
 
     ### Red
