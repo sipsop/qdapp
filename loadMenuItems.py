@@ -3,10 +3,7 @@ import uuid
 from curry import fmap, chunking
 from curry.typing import alias, typeddict, URL
 
-import rethinkdb as r
-
-conn = r.connect()
-menuItems = r.db('qdodger').table('itemDefs')
+from qd import model
 
 fresh_id = uuid.uuid4
 
@@ -52,8 +49,8 @@ def load_items_from_file(contents, dry_run=False):
     results = [prepare_item(item_name, item)
                    for item_name, item in drink_list.items()]
     if not dry_run:
-        menuItems.delete().run(conn)
-        menuItems.insert(results).run(conn)
+        model.run(model.MenuItemDefs.delete())
+        model.run(model.MenuItemDefs.insert(results))
 
 if __name__ == '__main__':
     yaml_file = yaml.load(open('drinks.yaml'))

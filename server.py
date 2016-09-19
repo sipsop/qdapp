@@ -10,11 +10,10 @@ import inspect
 import string
 import random
 import graphene
-import rethinkdb as r
 
-conn = r.connect()
-items_table = r.db('qdodger').table('itemDefs')
-items = list(items_table.run(conn))
+from qd import model
+
+items = model.get_item_defs()
 
 GRAPHENE_TYPES = (
     graphene.ObjectType,
@@ -95,7 +94,7 @@ class Price(graphene.ObjectType):
     price = Float
 
     @classmethod
-    def pounds(cls, price, option=1):
+    def pounds(cls, price, option=Absolute):
         return Price(
             currency=Sterling,
             option=option,
@@ -274,7 +273,7 @@ rockBottom = "http://3.bp.blogspot.com/_R8IDaEfZhDs/SwPlVIClDwI/AAAAAAAAA9M/UrPn
 
 Relative = 1
 zero     = Price.pounds(0.0, Relative)
-fiftyP   = Price.pounds(50, Relative)
+fiftyP   = Price.pounds(50,  Relative)
 onePound = Price.pounds(100, Relative)
 
 beer_top_options = MenuItemOption(
