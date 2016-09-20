@@ -803,10 +803,72 @@ drinks:
             #clove
             #apple
             
-            
+    ##spontaneousFermenting: 
         
-            
-            
+        americanSour:
+            name: American Sour
+            desc: Ameican sour is a tart beer and made in variuos types of brewing vessels. 
+            abv: varies
+            ibu: varies
+            image:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #tart
+                #hoppy
+                
+        belgianFruitlambic:
+            name: Belgian Fruit Lambic 
+            desc: Belgian Fruit Lambic is an intense flavoured beer with sour brew with tart and various fruity flavours. 
+            abv: 5% to 8.9%
+            ibu: 15-21
+            images:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #fruity
+                #tart
+                #sour
+                #sweet 
+        
+        flandersRedAle:
+            name: Flanders Red Ale
+            desc: Flanders Red Ale is a good balance beer with malty, fruity flavours with a strong sour flavour.  
+            abv: 4.6% to 6.6% 
+            ibu: 10-25
+            images:
+            license: 
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #sour
+                #sweet 
+                #cherrylike
+                #malt
+                #cocoa
+                #oak
+                #wood
+                #brillianttoslighthaze
+                
+        belgianGueuze: 
+            name: Belgian Gueuze 
+            desc: It is a very strong sour beer which is usually made by blending and re-fermenting the old and new lambics.  
+            abv: 5% to 8%
+            ibu: 0-10
+            images:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #sour 
+                #mostlybrilliant
+                #refermented
     
     ### Wine
 
