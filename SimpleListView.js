@@ -60,6 +60,20 @@ export class Descriptor {
     }
 }
 
+export class SingletonDescriptor {
+    constructor(component) {
+        this.component = component
+    }
+
+    get numberOfRows() {
+        return 1
+    }
+
+    renderRow = (i) => {
+        return this.component
+    }
+}
+
 /* Cobine a list of Descriptors */
 export class CombinedDescriptor extends Descriptor {
     constructor(descriptors : Array<Descriptor>, renderHeader, renderFooter) {

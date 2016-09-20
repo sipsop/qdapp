@@ -11,10 +11,10 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
-import { SimpleListView, CombinedDescriptor } from '../SimpleListView.js'
+import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
-import { PaymentModal, CreditCardListDesciptor } from '../Payment/PaymentModal.js'
+import { PaymentModal, CreditCardListDesciptor, AddACardButton } from '../Payment/PaymentModal.js'
 import { TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { ReceiptModal } from './Receipt.js'
@@ -64,26 +64,34 @@ export class OrderPage extends Page {
     }
 
     renderOrderList = () => {
-        const descs = [
-            new CreditCardListDesciptor(),
-            new OrderListDescriptor({
-                renderHeader: () => <TextHeader label="Items" rowHeight={55} />,
-                orderStore: orderStore,
-                menuItems:  orderStore.menuItemsOnOrder,
-            }),
-        ]
-        const desc = new CombinedDescriptor(descs, renderHeader = this.renderBarPhoto)
+        const descriptor = new OrderListDescriptor({
+            renderHeader: () => <OrderPageHeader />,
+            orderStore: orderStore,
+            menuItems:  orderStore.menuItemsOnOrder,
+        })
         return <View style={{flex: 1}}>
-            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>
+            {/*<PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>*/}
             <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
-            <SimpleListView descriptor={desc} />
+            <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
         </View>
     }
 }
 
 @observer
-
+class OrderPageHeader extends PureComponent {
+    render = () => {
+        const bar = barStore.getBar()
+        return <View>
+            <LazyBarPhoto
+                bar={bar}
+                photo={bar.photos[0]}
+                imageHeight={150} />
+            <AddACardButton />
+            <TextHeader label="Items" rowHeight={55} />
+        </View>
+    }
+}
 
 @observer
 class OrderButton extends PureComponent {

@@ -94,7 +94,7 @@ export class CreditCardListDesciptor {
     renderRow = (i : Int) : Component => {
         if (i < paymentStore.cards.length)
             return this.renderCard(i)
-        return this.renderAddButton()
+        return <AddACardButton />
     }
 
     renderCard = (i : Int) => {
@@ -107,8 +107,11 @@ export class CreditCardListDesciptor {
             <CreditCard key={card.cardNumber} card={card} />
         </SelectorItem>
     }
+}
 
-    renderAddButton = () => {
+@observer
+export class AddACardButton extends PureComponent {
+    render = () => {
         const addCardStyle =
             paymentStore.cards.length === 0
                 ? { marginTop: 5 }
