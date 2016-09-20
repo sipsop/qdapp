@@ -25,13 +25,18 @@ const white = 'rgba(255, 255, 255, 1.0)'
 const { log, assert } = _.utils('./Bar/BarCard.js')
 
 @observer
-export class BarCard extends PureComponent {
+export class DiscoverBarCard extends PureComponent {
     /* properties:
-        bar: schema.Bar
+        borderRadius: Int
+        imageHeight: Int
+        bar: Bar
             bar info
     */
-
     modal = null
+
+    static defaultProps = {
+        borderRadius: 5,
+    }
 
     handleCardPress = () => {
         if (orderStore.orderList.length > 0 && this.props.bar.id !== barStore.barID)
@@ -46,9 +51,42 @@ export class BarCard extends PureComponent {
     }
 
     render = () => {
+        const currentBar = barStore.getBar()
+        const currentBarName = currentBar ? currentBar.name : ""
+
+        return <View style={
+                { flex: 0
+                , height: this.props.imageHeight
+                , margin: 10
+                , borderRadius: this.props.borderRadius
+                }
+            }>
+            <SmallOkCancelModal
+                ref={ref => this.modal = ref}
+                message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
+                onConfirm={this.setBar}
+                />
+            <BarCard {...this.props} />
+        </View>
+    }
+}
+
+@observer
+export class BarCard extends PureComponent {
+    /* properties:
+        borderRadius: Int
+        imageHeight: Int
+        bar: Bar
+            bar info
+    */
+
+    static defaultProps = {
+        borderRadius: 5,
+    }
+
+    render = () => {
         const bar = this.props.bar
-        const imageHeight = 200
-        const radius = 5
+        const imageHeight = this.props.imageHeight
 
         // log("barcard: ", bar, bar.id, bar.name, bar.desc)
         // return <T>card here... {bar.id} {bar.name}</T>
@@ -56,23 +94,14 @@ export class BarCard extends PureComponent {
         const imageStyle = {
             flex: 0,
             height: imageHeight,
-            borderRadius: radius,
-            // borderTopLeftRadius: radius,
-            // borderTopRightRadius: radius,
+            borderRadius: this.props.borderRadius,
         }
 
-        const { height, width } = Dimensions.get('window')
-
-        const currentBar = barStore.getBar()
-        const currentBarName = currentBar ? currentBar.name : ""
-
-        return <View style={{flex: 0, height: imageHeight, margin: 10, borderRadius: radius }}>
-            <SmallOkCancelModal
-                ref={ref => this.modal = ref}
-                message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
-                onConfirm={this.setBar}
-                />
-            <TouchableOpacity onPress={this.handleCardPress} style={{flex: 2, borderRadius: radius}}>
+        return <View style={{flex: 1}}>
+            <TouchableOpacity
+                    onPress={this.handleCardPress}
+                    style={{flex: 2, borderRadius: this.props.borderRadius}}
+                    >
                 <PhotoImage photo={bar.photos[0]} style={imageStyle}>
                     <View style={{flex: 1}}>
                         {/* Push footer to bottom */}
