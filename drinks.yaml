@@ -1669,43 +1669,34 @@ drinks:
             #no21
             #red 
 
-    smirnoff:
-        name: Smirnoff Recipe No. 
-        desc: triple distilled vodka 
-        abv:
+    smirnoffblue:
+        name: Smirnoff Blue 
+        desc: triple distilled vodka filtered ten times. 
+        abv: 40% to 50% 
         image:
         license: 
         tags: |
             #spirit 
             #vodka
+            #100proof 
+            #smirnoff
+            #blue 
+            #tripledistilled 
+            
    
    smirnoff:
-        name: Smirnoff Recepie No. 21
+        name: Smirnoff 
         desc: triple distilled vodka 
-        abv:
+        abv: 40%-50% 
         image:
         license: 
         tags: |
             #spirit 
-            #vodka
-            
-    smirnoff:
-        name: Smirnoff Recepie No. 21
-        desc: triple distilled vodka 
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit 
-            #vodka
+            #vodka 
    
-   
-   
-   
-   
-    grayGoose:
-        name: Gray Goose Vodka
-        desc:
+    greyGoose:
+        name: Grey Goose Vodka
+        desc: It is a smooth and pure vodka which is made by 100% french ingredients. 
         abv: 40%
         image:
         license:
@@ -1716,10 +1707,12 @@ drinks:
             #french
             #france
             #grain
+            #bacardi 
+            #smooth 
 
     russianStandard:
         name: Russian Standard Vodka
-        desc:
+        desc: This is a popular smooth, pure, neat vodka. 
         abv: 40% 
         image:
         license:
@@ -1729,6 +1722,10 @@ drinks:
             #russian
             #russia
             #grain
+            #smooth
+            #pure
+            #popular
+            
 
     absolutcitron:
         name: Absolut Citron
@@ -1916,11 +1913,116 @@ drinks:
             #ciroc
             #premium
             #grapes
-
+    
+    cirocsnapfrost:
+        name: Ciroc Snap Frost (blue) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #blue
+            #cirocsnapfrost
+    
+    cirocredberry:
+        name: Ciroc Red Berry (red) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #redberry 
+    
+    ciroccoconut:
+        name: Ciroc Coconut (silver) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #coconut       
+    
+    cirocpeach:
+        name: Ciroc Peach (orange)
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #peach 
+    
+    cirocamaretto:
+        name: Ciroc Amaretto (brown) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #amaretto 
+    
+    cirocpineapple:
+        name: Ciroc Pineapple (yellow) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #pineapple 
+    
+    cirocapple:
+        name: Ciroc Apple 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #apple 
+    
+    cirocmango:
+        name: Ciroc Mango 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #mango
+            
     threeOlives: 
         name: Three Olives 
-        desc:
-        abv:
+        desc: This is a british vodka since 1998 with two types of flavoured and unflavoured flavours. 
+        abv: 30% to 35% (flavoured) 
         image:
         license: 
         tags: |
