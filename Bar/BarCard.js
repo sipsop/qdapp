@@ -76,6 +76,11 @@ export class BarCard extends PureComponent {
     /* properties:
         borderRadius: Int
         imageHeight: Int
+        showTimeInfo: Bool
+        showBarName: Bool
+        showMapButton: Bool
+        footer: Component
+            footer to show in the bar card
         bar: Bar
             bar info
     */
@@ -113,7 +118,7 @@ export class BarCard extends PureComponent {
                                     , backgroundColor: 'rgba(0,0,0,0)'
                                     }
                                 }>
-                                <BarCardFooter bar={bar} />
+                                {this.props.footer || <BarCardFooter {...this.props} />}
                             </View>
                         </LinearGradient>
                     </View>
@@ -127,12 +132,16 @@ export class BarCard extends PureComponent {
 @observer export class BarCardFooter extends PureComponent {
     /* properties:
         bar: schema.Bar
-        showMapButton: bool
+        showTimeInfo: Bool
+        showBarName: Bool
+        showMapButton: Bool
         onCardPress:
             callback for when this card is pressed
     */
 
     static defaultProps = {
+        showTimeInfo: true,
+        showBarName: true,
         showMapButton: true,
     }
 
@@ -150,29 +159,26 @@ export class BarCard extends PureComponent {
 
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
             <View style={{flex : 1, marginLeft: 5}}>
-                <BarInfo bar={bar} />
+                {this.props.showTimeInfo && <TimeInfo bar={this.props.bar} />}
+                {this.props.showBarName && <BarName barName={this.props.bar.name} />}
             </View>
-            {this.props.showMapButton ? mapButton : undefined}
+            {this.props.showMapButton && mapButton}
         </View>
     }
 }
 
-@observer export class BarInfo extends PureComponent {
+@observer
+export class BarName extends PureComponent {
     /* properties:
-        bar: schema.Bar
+        barName: String
     */
     render = () => {
-        return <View style={{justifyContent: 'flex-end'}}>
-            <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <TimeInfo bar={this.props.bar} />
-            </View>
-            <T style={
+        return <T style={
                     { fontSize: 25
                     , color: config.theme.primary.medium
                     }}>
-                {this.props.bar.name}
-            </T>
-        </View>
+            {this.props.barName}
+        </T>
     }
 }
 
