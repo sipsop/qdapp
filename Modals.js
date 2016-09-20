@@ -181,7 +181,7 @@ export class OkCancelModal extends PureComponent {
         showCancelButton: bool
         okLabel: String
             label to show on the Ok button
-        cancelLabel
+        cancelLabel: String
         okDisabled: bool
         cancelDisabled: bool
     */

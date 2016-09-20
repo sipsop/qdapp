@@ -10,6 +10,7 @@ import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
 import { barStore, loginStore, orderStore } from '../Store.js'
 import { BarCard, BarName, timeTextStyle } from '../Bar/BarCard.js'
+import { Receipt } from './Receipt.js'
 import { config } from '../Config.js'
 import { Second } from '../Time.js'
 import * as _ from '../Curry.js'
@@ -156,6 +157,7 @@ class HistoryBarCard extends DownloadResultView {
         orderResult: OrderResult
     */
     @observable barDownload = emptyResult()
+    receiptModal = null
 
     errorMessage = "Error downloading bar info"
     refreshPage  = () => this.downloadBarInfo()
@@ -175,7 +177,7 @@ class HistoryBarCard extends DownloadResultView {
     }
 
     showReceiptModal = () => {
-        // TODO:
+        this.receiptModal.show()
     }
 
     componentDidMount = _.logErrors(async () => {
@@ -183,38 +185,58 @@ class HistoryBarCard extends DownloadResultView {
         this.barDownload = await barStore._getBarInfo(this.barID)
     })
 
-    renderInProcess = () => {
-        return this.renderBarCard("", "", '#000')
-        // return <View style={{...cardStyle, backgroundColor: '#000'}}>
-            // {this.renderBarCard("", "", '#000')}
-        // </View>
-        // return <View style={cardStyle}>
-        //     {DownloadResultView.renderProcess(this)}
-        // </View>
-    }
-
     renderFinished = (bar) => {
         log("rendering bar card number", this.props.rowNumber)
-        return this.renderBarCard(bar.name, bar.photos[0])
+        return this.renderBarCard(bar)
     }
 
-    renderBarCard = (barName, barPhoto, textColor='#fff') => {
+    renderBarCard = (bar) => {
         return <View style={cardStyle}>
+            <SimpleReceiptModal
+                ref={ref => this.receiptModal = ref}
+                bar={bar}
+                orderResult={this.props.orderResult}
+                />
             <BarCard
-                    barPhoto={barPhoto}
+                    barPhoto={bar.photos[0]}
                     imageHeight={200}
-                    footer={this.renderFooter(barName, textColor)}
+                    footer={this.renderFooter(bar.name)}
                     onPress={this.showReceiptModal}
                     />
         </View>
     }
 
-    renderFooter = (barName, textColor) => {
+    renderFooter = (barName, textColor = '#fff') => {
+        log("RENDERING FOOTER", barName)
         return <HistoryBarCardFooter
                     barName={barName}
                     orderResult={this.orderResult}
-                    textColor={textColor}
+                    textColor={textColor} />
+    }
+}
+
+@observer
+class SimpleReceiptModal extends PureComponent {
+    /* properties:
+        onClose: () => void
+        bar: Bar
+        orderResult: OrderResult
+    */
+
+    modal = null
+    show = () => this.modal.show()
+
+    render = () => {
+        return <SimpleModal
+                    ref={ref => this.modal = ref}
+                    onClose={this.props.onClose}
+                    >
+            <Receipt
+                    bar={this.props.bar}
+                    orderResult={this.props.orderResult}
+                    showEstimate={true}
                     />
+        </SimpleModal>
     }
 }
 
