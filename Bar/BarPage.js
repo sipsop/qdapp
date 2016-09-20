@@ -71,7 +71,9 @@ export class BarPage extends BarPageFetcher {
         })
     }
 
-    renderFinished = ([bar, menu]) => <BarView bar={bar} menu={menu} />
+    renderFinished = ([bar, menu]) => {
+        return <BarView bar={bar} menu={menu} />
+    }
 }
 
 class BarView extends Page {

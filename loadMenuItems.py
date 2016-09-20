@@ -33,8 +33,12 @@ def prepare_item(item_name, item):
         images = item.get('image') or item.get('images')
         images = fmap(str.strip, images.split())
 
-    if 'name' not in item or 'desc' not in item or 'tags' not in item:
-        raise ValueError("Invalid item with name " + item_name)
+    if 'name' not in item:
+        raise ValueError("'name' field is missing", item)
+    if 'desc' not in item:
+        raise ValueError("'desc' field is missing", item)
+    if 'tags' not in item:
+        raise ValueError("'tags' field is missing", item)
 
     return {
         'id':       item_name,
