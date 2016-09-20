@@ -126,7 +126,7 @@ class OrderHistoryDescriptor {
                     rowNumber={i}
                     orderResult={orderResult} />
     }
-    
+
     renderHeader = () => {
         return <View style={{flex: 0, height: 55, marginBottom: cardMargin}}>
             <TextHeader
@@ -232,7 +232,7 @@ class SimpleReceiptModal extends PureComponent {
             <Receipt
                     bar={this.props.bar}
                     orderResult={this.props.orderResult}
-                    showEstimate={true}
+                    showEstimate={false}
                     />
         </SimpleModal>
     }
