@@ -51,6 +51,7 @@ export class DiscoverBarCard extends PureComponent {
     render = () => {
         const currentBar = barStore.getBar()
         const currentBarName = currentBar ? currentBar.name : ""
+        const barPhoto = this.props.bar.photos[0]
 
         return <View style={
                 { flex: 0
@@ -64,7 +65,10 @@ export class DiscoverBarCard extends PureComponent {
                 message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
                 onConfirm={this.setBar}
                 />
-            <BarCard {...this.props} onPress={this.handleCardPress} />
+            <BarCard
+                {...this.props}
+                barPhoto={barPhoto}
+                onPress={this.handleCardPress} />
         </View>
     }
 }
@@ -79,8 +83,6 @@ export class BarCard extends PureComponent {
         showMapButton: Bool
         footer: Component
             footer to show in the bar card
-        bar: Bar
-            bar info
         onPress: () => void
     */
 
@@ -90,11 +92,7 @@ export class BarCard extends PureComponent {
     }
 
     render = () => {
-        const bar = this.props.bar
         const imageHeight = this.props.imageHeight
-
-        // log("barcard: ", bar, bar.id, bar.name, bar.desc)
-        // return <T>card here... {bar.id} {bar.name}</T>
 
         const imageStyle = {
             flex: 0,
@@ -107,11 +105,11 @@ export class BarCard extends PureComponent {
                     onPress={this.props.onPress}
                     style={{flex: 2, borderRadius: this.props.borderRadius}}
                     >
-                <PhotoImage photo={bar.photos[0]} style={imageStyle}>
+                <PhotoImage photo={this.props.barPhoto} style={imageStyle}>
                     <View style={{flex: 1}}>
                         {/* Push footer to bottom */}
-                        <View style={{flex: 1}} />
-                        <LinearGradient style={{flex: 1}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
+                        <View style={{flex: 3}} />
+                        <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
                             <View style={
                                     { flex: 1
                                     , justifyContent: 'flex-end'
@@ -175,7 +173,10 @@ export class BarName extends PureComponent {
     render = () => {
         return <T style={
                     { fontSize: 25
-                    , color: config.theme.primary.medium
+                    , color: config.theme.primary.light
+                    // , color: config.theme.primary.medium
+                    // , color: '#fff'
+                    // , color: '#000'
                     }}>
             {this.props.barName}
         </T>

@@ -1,5 +1,7 @@
 import { Second, Minute, Hour, Day, Month } from './Time.js'
 
+const pink200 = '#F48FB1'
+const pink300 = '#F06292'
 const pink400 = '#EC407A'
 const pink500 = '#E91E63'
 const pink700 = '#C2185B'
@@ -26,7 +28,7 @@ const grey = t => `rgba(0, 0, 0, ${t})`
 const menuItemBackgroundColor = grey(0.03)
 
 const pinkPalette = {
-    light:  pink400,
+    light:  pink300,
     medium: pink500,
     dark:   pink700,
 }

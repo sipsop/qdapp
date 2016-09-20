@@ -143,13 +143,16 @@ export class OrderHistory extends DownloadResultView {
 
     renderRow = (i) => {
         const orderResult = orderHistoryStore.orderHistory[i]
-        return <HistoryBarCard orderResult={orderResult} />
+        return <HistoryBarCard
+                    rowNumber={i}
+                    orderResult={orderResult} />
     }
 }
 
 @observer
 class HistoryBarCard extends DownloadResultView {
     /* properties:
+        rowNumber: Int
         orderResult: OrderResult
     */
     @observable barDownload = emptyResult()
@@ -181,26 +184,36 @@ class HistoryBarCard extends DownloadResultView {
     })
 
     renderInProcess = () => {
-        return <View style={cardStyle}>
-            {DownloadResultView.renderProcess(this)}
-        </View>
+        return this.renderBarCard("", "", '#000')
+        // return <View style={{...cardStyle, backgroundColor: '#000'}}>
+            // {this.renderBarCard("", "", '#000')}
+        // </View>
+        // return <View style={cardStyle}>
+        //     {DownloadResultView.renderProcess(this)}
+        // </View>
     }
 
     renderFinished = (bar) => {
+        log("rendering bar card number", this.props.rowNumber)
+        return this.renderBarCard(bar.name, bar.photos[0])
+    }
+
+    renderBarCard = (barName, barPhoto, textColor='#fff') => {
         return <View style={cardStyle}>
             <BarCard
-                bar={bar}
-                imageHeight={200}
-                footer={this.renderFooter(bar)}
-                onPress={this.showReceiptModal}
-                />
+                    barPhoto={barPhoto}
+                    imageHeight={200}
+                    footer={this.renderFooter(barName, textColor)}
+                    onPress={this.showReceiptModal}
+                    />
         </View>
     }
 
-    renderFooter = (bar) => {
+    renderFooter = (barName, textColor) => {
         return <HistoryBarCardFooter
-                    bar={bar}
+                    barName={barName}
                     orderResult={this.orderResult}
+                    textColor={textColor}
                     />
     }
 }
@@ -208,8 +221,9 @@ class HistoryBarCard extends DownloadResultView {
 @observer
 class HistoryBarCardFooter extends PureComponent {
     /* properties:
-        bar: Bar
+        barName: String
         orderResult: OrderResult
+        textColor: String
     */
 
     render = () => {
@@ -224,7 +238,7 @@ class HistoryBarCardFooter extends PureComponent {
             }>
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
-                    <Icon name="clock-o" size={15} color='#fff' />
+                    <Icon name="clock-o" size={15} color={this.props.textColor} />
                     <DateView
                         date={orderResult.date}
                         textStyle={{...timeTextStyle, marginLeft: 5}}
@@ -234,13 +248,13 @@ class HistoryBarCardFooter extends PureComponent {
                         textStyle={{...timeTextStyle, marginLeft: 5}}
                         />
                 </View>
-                <T style={{color: '#fff', textAlign: 'right'}}>#{orderResult.receipt}</T>
+                <T style={{color: this.props.textColor, textAlign: 'right'}}>#{orderResult.receipt}</T>
             </View>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <View style={{flex: 1}}>
-                    <BarName barName={this.props.bar.name} />
+                    <BarName barName={this.props.barName} />
                 </View>
-                <T style={{color: '#fff', textAlign: 'right', fontSize: 20}}>{totalText}</T>
+                <T style={{color: this.props.textColor, textAlign: 'right', fontSize: 20}}>{totalText}</T>
             </View>
         </View>
     }
@@ -260,7 +274,6 @@ class DateView extends PureComponent {
         </T>
     }
 }
-
 
 @observer
 class TimeView extends PureComponent {
