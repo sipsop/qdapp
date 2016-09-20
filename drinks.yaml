@@ -303,7 +303,7 @@ drinks:
 
     AmercanAmberAle:
         name: American Amber Ale
-        desc:
+        desc: It is a medium bodied malty beer with caramel flavour. 
         abv: 4.5% to 6.2%
         ibu: 25-40
         image: https://pixabay.com/en/beer-beer-mug-foam-the-thirst-1538754/
@@ -316,8 +316,560 @@ drinks:
             #caramel
             #amber
 
+    americanPaleAle:
+        name: American Pale Ale
+        desc: This style of pale ale is produced in America. 
+        abv: 4.5% to 6.2% 
+        ibu: 30-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #lightcoppercolour
+            #palegold
+            #lightamber
+    
+    blondeAle
+        name: Blonde Ale
+        desc: This ale is clear, crisp and low-medium bitterness with a nice balance of hops and malt. 
+        abv: 3.8% to 5.5% 
+        ibu: 15-28 
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #malty
+            #fruityaroma
+            #lightyellow
+            #deepgold
+            #clear
+            #crisp
+    
+    englishBitter: 
+        name: English Bitter
+        desc: This is a british term used for pale ale which is light to medium bodied beer. 
+        abv: 3% to 7%  
+        ibu: 20-35
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #fruity
+            #hoppy
+    
+    englishPaleAle:
+        name: English pale Ale
+        desc: English Pale Ale are known for their strong bitter flavour. 
+        abv: 4.5% to 5.5% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #hoppy
+            #malty
+            #earthy
+            #clear
+            
+    ##indiaPaleAle(IPA)        
+    
+    americanIPA: 
+        name: American IPA
+        desc: American IPA are known for it's stong bitterness, more hops with citrus/herbal flavour. 
+        abv: 5.55 to 7.5% 
+        ibu: 40-70
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #hoppy
+            #herbal
+            #citrus
+            #bitter
+        
+    imperial/DoubleIPA:
+        name: Imperial or Double IPA
+        desc: This beer is known for its strong flavour and high hop bitterness. 
+        abv: 7.5% to 10.5% 
+        ibu: 65-100
+        image:
+        license:
+        tags: | 
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #hoppy
+            #strong
+            #goldcolour
+            #lightbrown 
+            #cleartohazy
+            #malty
+    
+    englishIPA: 
+        name: English IPA
+        desc: This beer is similar to American IPA with lower/weaker alcohol and hoppy flavour. 
+        abv: 4.5 to 5.5% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #indiapaleale
+            #IPA
+            #goldcolour
+            #coppercolour
+            #clear
+    
+    ##porter
+        
+    americanImperialPorter: 
+        name: American Imperial Porter
+        desc: It is a full-bodied dark brown or black beer. 
+        abv: 7% to 12%
+        ibu: 35-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #porter 
+            #blackcolour
+            #opaque
+            #caramel
+            #cocoa
+    
+    englishBrownPorter:
+        name: English Brown Porter
+        desc: It is a sweet, medium bitter and soft beer.  
+        abv: 4.55 to 6% 
+        ibu: 20-30
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #porter
+            #browncolour
+            #opaque 
+            #nutty
+            #chocolate
+            #caramel
+            #toffee
+            
+    robustPorter:
+        name: Robust Porter
+        desc: Robust porter is a dark and full-bodied beer with a subtle caramel flavour.  
+        abv: 5% to 6.5% 
+        ibu: 25-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #porter
+            #hoppy
+            #bitter
+            #roastedmaltflavour
+            #caramel
+            #opaque
+            #verydarkcolour
+            #black
+    
+    ##stout
+    
+    americanStout: 
+        name: American Stout
+        desc: It is a bold and black beer which finishes with a note of dry-roasted bitterness.   
+        abv: 5% to 7%
+        ibu: 35-75
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout 
+            #chocolate
+            #coffee
+            #hoppy
+            #black
+    
+    americanImperialStout:
+        name: American Imperial Stout
+        desc: It is a medium bodied to fullbodied with rich malty flavour. 
+        abv: 7% to 12%
+        ibu: 50-80
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #maltyflavour
+            #blackcolour 
+            #hoppy
+            #opaque
+            #bitter
+            #chocolate
+            #cocoa 
 
-
+    oatmealStout:
+        name: Oatmeal Stout
+        desc: This is a smooth, rich with dark malt flavours beer. 
+        abv: 3.8% to 6% 
+        ibu: 20-40
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #darkbrown
+            #black
+            #opaque
+            #hoppy
+            #malty 
+            
+    milkStout:
+        name: Milk Stout
+        desc: It is a dark and delicious beer which contains lactose (milk sugar). 
+        abv: 3% to 6% 
+        ibu: 15-25
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #stout
+            #sweetcaramel
+            #chocolateflavour 
+            #blackcolour
+            #opaque
+            #sweet
+            #milk
+    
+    irishDryStout:
+        name: Irish Dry Stout 
+        desc: it is an Irish standard stout with a dryer taste such as Guinness. 
+        abv: 3.8% to 5% 
+        ibu: 30-40
+        image:
+        license:
+        tags: | 
+            #beer
+            #ale
+            #stout 
+            #black
+            #bitter
+            #cleartoopaque 
+            #hoppy
+            
+    ##belgianStyle:
+    
+    belgianPaleAle: 
+        name: Belgian Pale Ale
+        desc: Belgian Pale Ale is a mild and toasted malt flavour beer. 
+        abv: 4.8% to 5.5%
+        ibu: 20-30
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #paleale
+            #belgianstyle
+            #malty
+            #hoppy  
+            #amber
+            #copper
+    
+    belgianDubbel: 
+        name: Belgian Dubbel
+        desc: Belgian Dubbel is a deeply malty rich beer with spicy or fruity notes. 
+        abv: 6% to 7.6% 
+        ibu: 15-25
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #brown
+            #very dark
+            #rich
+            #malty
+    
+    belgianTripel:
+        name: Belgian Tripel 
+        desc: It is a strong and light-bodied ale sometimes with complex spicy flavours. 
+        abv: 7.55 to 9.5% 
+        ibu: 20-40
+        image: 
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #highalcohol
+            #lightbodied
+            #clear
+            #pale
+            #lightamber 
+    
+    belgianQuadrupel: 
+        name: Belgian Quadrupel or Belgian Strong Dark 
+        desc: Belgian Quadrupel have high alcohol content and has flavours such as brown sugar, fruits or malty sweetness.  
+        abv: 7.2% to 11.2% 
+        ibu: 25-50 
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #amber
+            #darkbrown 
+            #slighthaze
+    
+    belgianStyleGoldenStrongAle:
+        name: Belgian Style Golden Strong Ale
+        desc: This beer is known for complext fruity flavours and soft body. 
+        abv: 7% to 11% 
+        ibu: 20-50
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #fruity 
+            #dryfinish 
+            #clear
+            #pale
+            #copper
+            #softbody
+    
+    belgianStyleSaison:
+        name: Belgian Style Saison or Farmhouse Ales
+        desc: A unique beer with earthy notes and a medium hop flavour. 
+        abv: 4.4% to 6.8% 
+        ibu: 20-38 
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle
+            #slighthaze
+            #pale
+            #lightbrown 
+            #lowhoppy 
+            #softbody
+            #unique 
+            #earthy
+            
+    belgianStyleBlondeAle:
+        name: Belgian Style Blonde Ale 
+        desc: Belgian Style Blonde Ale is an easy drinking beer with low and pleasant hop bitterness. 
+        abv: 6.3% to 7.9%
+        ibu: 15-30 
+        image: 
+        license:
+        tags: |
+            #beer
+            #ale
+            #belgianstyle 
+            #pale
+            #lightamber
+            #cleartobrilliant
+            #easydrinking
+            #mediumsweet 
+            
+    ##wheatBeer    
+        
+    americanPaleWheat:
+        name: American Pale Wheat 
+        desc: American Pale Wheat is a full-bodied with bready and candy flavours beer. 
+        abv: 8.5% to 12.2% 
+        ibu: 45-85
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #slighthaze
+            #gold
+            #lightbrown
+            #lowhoppy
+            #bready
+            #candy
+    
+    americanWheat:
+        name: American Wheat
+        desc: American Wheat is a refreshing summer beer with pale to light amber colour. 
+        abv: 3.5% to 5.6%
+        ibu: 10-35
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #straw
+            #lightamber 
+            #brillianttoslighthaze
+            #refreshing
+            #hoppy
+    
+    belgianWitbier: 
+        name: Belgian Witbier 
+        desc: Belgian Witbier is a light fruity flavour dry beer. 
+        abv: 4.8% to 5.6% 
+        ibu: 10-17
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #straw
+            #pale
+            #dry
+    
+    berlinerWeisse:
+        name: Berliner Weisse 
+        desc: It is a tart beer and raspberry syrup or woodruff are sometimes added to dilute the sour taste. 
+        abv: 2.8% to 3.4%
+        ibu: 3-6
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #cleartohazy
+            #raspberry
+            #woodruff
+            #tart
+            #lowalcohol
+            #pale
+    
+    dunkelweizen: 
+        name: Dunkelweizen 
+        desc: It is a dark beer with sweet maltiness and chocolate. 
+        abv: 4.8% to 5.4%
+        ibu: 10-15
+        image:
+        license:
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #copperbrown
+            #bready
+    
+    hefeweizen: 
+        name: Hefeweizen 
+        desc: Hefeweizen is a crisp and carbonated style beer with a hint of clove, banana or apple. 
+        abv: 4.9% to 5.6% 
+        ibu: 10-15
+        image:
+        license: 
+        tags: |
+            #beer
+            #ale
+            #wheatbeer
+            #hazy
+            #straw
+            #amber
+            #banana
+            #clove
+            #apple
+            
+    ##spontaneousFermenting: 
+        
+        americanSour:
+            name: American Sour
+            desc: Ameican sour is a tart beer and made in variuos types of brewing vessels. 
+            abv: varies
+            ibu: varies
+            image:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #tart
+                #hoppy
+                
+        belgianFruitlambic:
+            name: Belgian Fruit Lambic 
+            desc: Belgian Fruit Lambic is an intense flavoured beer with sour brew with tart and various fruity flavours. 
+            abv: 5% to 8.9%
+            ibu: 15-21
+            images:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #fruity
+                #tart
+                #sour
+                #sweet 
+        
+        flandersRedAle:
+            name: Flanders Red Ale
+            desc: Flanders Red Ale is a good balance beer with malty, fruity flavours with a strong sour flavour.  
+            abv: 4.6% to 6.6% 
+            ibu: 10-25
+            images:
+            license: 
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #sour
+                #sweet 
+                #cherrylike
+                #malt
+                #cocoa
+                #oak
+                #wood
+                #brillianttoslighthaze
+                
+        belgianGueuze: 
+            name: Belgian Gueuze 
+            desc: It is a very strong sour beer which is usually made by blending and re-fermenting the old and new lambics.  
+            abv: 5% to 8%
+            ibu: 0-10
+            images:
+            license:
+            tags: |
+                #beer
+                #ale
+                #spontaneousfermenting 
+                #sour 
+                #mostlybrilliant
+                #refermented
+    
     ### Wine
 
     ### Red
@@ -1004,18 +1556,150 @@ drinks:
             #mcc
 
     ### Spirits
-    smirnoff:
-        name: Smirnoff
-        desc: |
-            jfkdk
-            fjdkfjdk
+    
+    ##gin 
+    
+    houseGin:
+        name: House Gin
+        desc: This is a pub's choice of gin. 
+        abv:
+        image:
+        license:
         tags: |
+            #gin
             #spirit
+            #lemonpeel
+            #almond
+            #lakevyrnwy 
+            #orris
+            #juniper
+            #liquorice
+            #berries
+            #angelica
+            #coriander
+            #cassia
+    
+    bombaySapphire:
+        name: Bombay Sapphire 
+        desc: This is a light and floral tasting gin. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #clear
+            #lemonpeel
+            #almond
+            #lakevyrnwy 
+            #orris
+            #juniper
+            #liquorice
+            #berries
+            #angelica
+            #coriander
+            #bacardi
+            #cassia
+            #cubeb
+            #lemongrass
+            #blackpeppercorn 
+    
+    gordon's:
+        name: Gordon's
+        desc: It is a speacial dry London Gin produced since 1769. 
+        abv: 37.2% to 47.3%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #juniper
+            #lemonzest
+            #earthyspice 
+            #licorice 
+            #corianderseeds
+            #angelicaroots 
+            #orrisroot 
+    
+    portebelloRoad: 
+        name: Portebello Road
+        desc: This is a traditional styled London gin with different herbs and spices. 
+        abv: 42%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #juniper
+            #orris
+            #lemonpeels
+            #orangepeels
+            #nutmeg
+            #cassiapark
+            
+    sloeGin: 
+        name: Sloe Gin
+        desc: Sloe Gin is a red liqueur. 
+        abv: 15%-30%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #red
+            #liqueur 
+            #fruity
+            #blackthron 
+            #sloeberries 
+    
+    ##vodka
+    
+    smirnoffrecipeno21:
+        name: Smirnoff Recipe No. 21
+        desc: triple distilled vodka 
+        abv: 37.5% 
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #smirnoff 
+            #charcoal
+            #tripledistilled 
+            #no21
+            #red 
 
+    smirnoffblue:
+        name: Smirnoff Blue 
+        desc: triple distilled vodka filtered ten times. 
+        abv: 40% to 50% 
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #100proof 
+            #smirnoff
+            #blue 
+            #tripledistilled 
+            
+   
+   smirnoff:
+        name: Smirnoff 
+        desc: triple distilled vodka 
+        abv: 40%-50% 
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka 
+   
     greyGoose:
         name: Grey Goose Vodka
+        desc: It is a smooth and pure vodka which is made by 100% french ingredients. 
         abv: 40%
-        desc:
+        image:
+        license:
         tags: |
             #spirit
             #vodka
@@ -1023,40 +1707,557 @@ drinks:
             #french
             #france
             #grain
+            #bacardi 
+            #smooth 
 
     russianStandard:
         name: Russian Standard Vodka
-        abv: 40%
-        desc:
+        desc: This is a popular smooth, pure, neat vodka. 
+        abv: 40% 
+        image:
+        license:
         tags: |
             #spirit
             #vodka
             #russian
             #russia
             #grain
+            #smooth
+            #pure
+            #popular
+            
 
-    absolut:
-        name: Absolut Vodka
+    absolutcitron:
+        name: Absolut Citron
+        desc: Twist of Lemon 
         abv: 40%
-        desc: A versatile and pure vodka, with a distinct character of grain, followed by a hint of dried fruit.
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #lemon
+            #lime 
+    
+    absolutberriacai:
+        name: Absolut Berri Acai
+        desc: With fresh fruits. 
+        abv: 40%
+        image:
+        license:
         tags: |
             #spirit
             #vodka
             #absolut
             #premium
             #grain
-
+            #berriaccai 
+            #berry 
+            #citron 
+    
+    absolut:
+        name: Absolut Vodka
+        desc: A versatile and pure vodka, with a distinct character of grain, followed by a hint of dried fruit.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+    
+    absolutmandrin:
+        name: Absolut Mandrin
+        desc: fruity, smooth and mellow flavoured vodka. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #mandrin
+            #orange 
+    
+    absolutmango:
+        name: Absolut Mango 
+        desc: Mango and topical fruity flavoured full-bodied vodka. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #mango
+   
+   absolutorientapple:
+        name: Absolut Orient Apple 
+        desc: Red apples with a hint of ginger. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #apple
+   
+    absolutraspberri:
+        name: Absolut Raspberri 
+        desc: Intense and Fruity 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #raspberri
+            #grain
+    
+    absolutpepper:
+        name: Absolut Pepper 
+        desc: hop and spicy vodka
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #chilli
+            #greenbell
+            #jalapeno
+            #pepper
+            #spicy 
+            #hot 
+    
+    absolutvanilia:
+        name: Absolut Vanilia
+        desc: A unique taste of vanilia, butterscotch and dark chocolates. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #vanilia
+            #butterscotch
+            #darkchocolate 
+    
+    absolutwildtea:
+        name: Absolut Wild Tea
+        desc: A floral smooth tea infused vodka. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #redapples
+            #blacktea
+            #elderflower
+            #citrus
+            #smooth
+            #floral 
+            #sweet
+            #dry 
+    
+    absolutpinky:
+        name: Absolut Pinky
+        desc: A hand blended floral vodka. 
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #absolut
+            #premium
+            #grain
+            #rosepetals
+            #violets
+            #herbs
+            #spices 
+            #floral 
+            
+            
     ciroc:
         name: Ciroc Vodka
-        abv: 40%
         desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
         tags: |
             #spirit
             #vodka
             #ciroc
             #premium
             #grapes
-
+    
+    cirocsnapfrost:
+        name: Ciroc Snap Frost (blue) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #blue
+            #cirocsnapfrost
+    
+    cirocredberry:
+        name: Ciroc Red Berry (red) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #redberry 
+    
+    ciroccoconut:
+        name: Ciroc Coconut (silver) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #coconut       
+    
+    cirocpeach:
+        name: Ciroc Peach (orange)
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #peach 
+    
+    cirocamaretto:
+        name: Ciroc Amaretto (brown) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #amaretto 
+    
+    cirocpineapple:
+        name: Ciroc Pineapple (yellow) 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #pineapple 
+    
+    cirocapple:
+        name: Ciroc Apple 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #apple 
+    
+    cirocmango:
+        name: Ciroc Mango 
+        desc: Ciroc is the only vodka made from grapes and distilled 5 times over, a premium smooth vodka.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #vodka
+            #ciroc
+            #premium
+            #mango
+            
+    threeOlives: 
+        name: Three Olives 
+        desc: This is a british vodka since 1998 with two types of flavoured and unflavoured flavours. 
+        abv: 30% to 35% (flavoured) 
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+    popov: 
+        name: Popov
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+   
+    ##flavouredVodka: 
+    
+    pb+J:
+        name: PB+J
+        desc: All-american combo revolution vodka. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+        
+        name: 30 Shots
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #verycherry
+            #lovecandy
+            #xxxchilli
+            #saltedcaramelpopocorn
+            #bigapple
+            #fruitsalad
+            #whitechocolate
+            #DR.P
+            #colacube
+            #meltedicecream
+            #creamsoda
+            #pancakesyrup
+            #watermelon 
+            #peanutbutterandjelly
+            #lemonandlime
+            #peach
+            #bubblegum 
+            #doughnut
+            #blackjack
+            #jellybaby
+            #bakewelltart
+            #sourberry
+            #peradrop
+            #mango&pineapple
+            #raspberry
+            #rhubarb&custard
+            #strawberry
+            #xxxdasbomb
+            #birthdaycake
+            #dandelion&burdock 
+    
+    stick1:    
+        name: Stick 1 Vodka (6 shots)
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #verycherry
+            #lovecandy
+            #xxxchilli
+            #saltedcaramelpopocorn
+            #bigapple
+            #fruitsalad
+            
+    stick2:
+        name: Stick 2 Vodka (6 shots)
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #whitechocolate
+            #DR.P
+            #colacube
+            #meltedicecream
+            #creamsoda
+            #pancakesyrup
+    
+    stick3: 
+        name: Stick 3 Vodka (6 shots)
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #watermelon 
+            #peanutbutterandjelly
+            #lemonandlime
+            #peach
+            #bubblegum 
+            #doughnut
+           
+    stick4:
+        name: Stick 4 Vodka (6 shots) 
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #blackjack
+            #jellybaby
+            #bakewelltart
+            #sourberry
+            #peradrop
+            #mango&pineapple
+    
+    stick5:
+        name: Stick 5 Vodka (6 shots) 
+        desc: Selection of revolution vodka flavours. 
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            #raspberry
+            #rhubarb&custard
+            #strawberry
+            #xxxdasbomb
+            #birthdaycake
+            #dandelion&burdock 
+       
+        name: Me
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka            
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+    
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka
+            
+    name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #vodka        
+            
     ### Cocktails
 
     # longIslandIceTea:

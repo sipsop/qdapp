@@ -9,9 +9,9 @@ tags:
             #water
 
         beerCategories: |
-            #stout
             #ale
             #lager
+            #cider
 
         beerOptions: |
             #tap
@@ -29,9 +29,7 @@ tags:
             #red
             #white
             #rose
-            #champagne
             #sparkling
-            #cava
 
         ### spirits
 
