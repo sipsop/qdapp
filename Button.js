@@ -117,6 +117,7 @@ export class Button extends Component {
         prominent: bool
         children: [Component]
         backgroundColor: str
+        borderColor: str
         disabled: bool
     */
 

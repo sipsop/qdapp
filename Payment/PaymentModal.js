@@ -54,6 +54,8 @@ export class PaymentModal extends PureComponent {
                     okModal={this.payNow}
                     okLabel={`Pay Now (${orderStore.totalText})`}
                     okDisabled={paymentStore.selectedCardNumber == null}
+                    okBackgroundColor='#000'
+                    okBorderColor='rgba(0, 0, 0, 0.8)'
                     >
                 <View style={{flex: 1}}>
                     <LazyBarPhoto
