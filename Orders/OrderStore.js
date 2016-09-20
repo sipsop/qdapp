@@ -47,6 +47,9 @@ export type OrderResult = {
     receipt:        String,
     userName:       String,
     orderList:      Array<OrderItem>,
+    totalAmount:    Int,
+    totalPrice:     Int,
+    currency:       Currency,
 }
 
 /*********************************************************************/

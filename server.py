@@ -463,6 +463,9 @@ class OrderResult(graphene.ObjectType):
     userName        = String
     menuItems       = List(MenuItem)
     orderList       = List(OrderItem)
+    totalAmount     = Int
+    totalPrice      = Int
+    currency        = graphene.Field(Currency)
 
     def resolve_menuItems(self, args, *_):
         menuItemIDs = set(orderItem.menuItemID for orderItem in self.orderList)
@@ -574,10 +577,22 @@ def get_order_result(
         time            = Time(hour=dt.hour, minute=dt.minute, second=dt.second),
         queueSize       = queueSize,
         estimatedTime   = estimatedTime,
+        totalAmount     = order['totalAmount'],
+        totalPrice      = order['totalPrice'],
+        currency        = get_currency(order['currency']),
         receipt         = order['receipt'],
         userName        = order['userName'],
         orderList       = fmap(get_order_item, order['orderList']),
     )
+
+_currencies = {
+    model.Currency.Sterling: Sterling,
+    model.Currency.Dollars:  Dollars,
+    model.Currency.Euros:    Euros,
+}
+
+def get_currency(currency : model.Currency) -> Currency:
+    return _currencies[currency]
 
 def get_order_item(order_item : model.OrderItem) -> OrderItem:
     return OrderItem(**order_item)

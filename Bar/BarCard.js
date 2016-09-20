@@ -20,8 +20,6 @@ import * as _ from '../Curry.js'
 import { barStore, getBarOpenTime } from './BarStore.js'
 import { config } from '../Config.js'
 
-const white = 'rgba(255, 255, 255, 1.0)'
-
 const { log, assert } = _.utils('./Bar/BarCard.js')
 
 @observer
@@ -87,6 +85,7 @@ export class BarCard extends PureComponent {
     */
 
     static defaultProps = {
+        imageHeight: 200,
         borderRadius: 5,
     }
 
@@ -202,7 +201,7 @@ export class PlaceInfo extends PureComponent {
                 <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
                 </View>
-                <T style={{color: white, fontSize: 14}}>
+                <T style={{color: '#fff', fontSize: 14}}>
                     MAP
                     {/*this.props.bar.address.city*/}
                 </T>
@@ -211,7 +210,7 @@ export class PlaceInfo extends PureComponent {
     }
 }
 
-const timeTextStyle = {fontSize: 11, color: white}
+export const timeTextStyle = {fontSize: 11, color: '#fff'}
 
 @observer
 export class TimeInfo extends PureComponent {
@@ -221,7 +220,7 @@ export class TimeInfo extends PureComponent {
     render = () => {
         const openingTime = getBarOpenTime(this.props.bar)
         return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-            <Icon name="clock-o" size={15} color={white} />
+            <Icon name="clock-o" size={15} color='#fff' />
             <View style={{marginLeft: 5, flexDirection: 'row'}}>
                 {
                     openingTime
