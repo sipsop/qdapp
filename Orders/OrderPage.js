@@ -88,7 +88,7 @@ class OrderPageHeader extends PureComponent {
                 photo={bar.photos[0]}
                 imageHeight={150} />
             <AddACardButton />
-            <TextHeader label="Items" rowHeight={55} />
+            <TextHeader label="Order" rowHeight={55} />
         </View>
     }
 }
