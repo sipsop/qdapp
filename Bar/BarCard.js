@@ -66,7 +66,7 @@ export class DiscoverBarCard extends PureComponent {
                 message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
                 onConfirm={this.setBar}
                 />
-            <BarCard {...this.props} />
+            <BarCard {...this.props} onPress={this.handleCardPress} />
         </View>
     }
 }
@@ -83,6 +83,7 @@ export class BarCard extends PureComponent {
             footer to show in the bar card
         bar: Bar
             bar info
+        onPress: () => void
     */
 
     static defaultProps = {
@@ -104,7 +105,7 @@ export class BarCard extends PureComponent {
 
         return <View style={{flex: 1}}>
             <TouchableOpacity
-                    onPress={this.handleCardPress}
+                    onPress={this.props.onPress}
                     style={{flex: 2, borderRadius: this.props.borderRadius}}
                     >
                 <PhotoImage photo={bar.photos[0]} style={imageStyle}>
