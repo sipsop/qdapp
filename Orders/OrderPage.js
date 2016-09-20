@@ -32,7 +32,9 @@ export class OrderPage extends Page {
     @observable ref2 = null
 
     handleOrderPress = () => {
-        orderStore.setPaymentModalVisibility(true)
+        // orderStore.setPaymentModalVisibility(true)
+        orderStore.setFreshOrderToken()
+        orderStore.placeActiveOrder()
     }
 
     renderView = () => {
@@ -92,11 +94,11 @@ class OrderButton extends PureComponent {
         if (!orderStore.haveOrders)
             return <View />
         return <LargeButton
-                    label={`Pay Now ${orderStore.totalTextWithParens}`}
+                    label={`Buy Now ${orderStore.totalTextWithParens}`}
                     style={largeButtonStyle}
                     onPress={this.props.onPress}
-                    backgroundColor='#000'
-                    borderColor='rgba(0, 0, 0, 0.8)'
+                    /* backgroundColor={config.theme.primary.light} */
+                    /* borderColor='rgba(0, 0, 0, 1.0)' */
                     />
     }
 }
