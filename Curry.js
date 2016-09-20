@@ -282,6 +282,16 @@ export function fold(f, z, xs) {
     return xs.reduce(f, z)
 }
 
+export const scan = (f, z, xs) => {
+    const results = []
+    xs.reduce((x, y) => {
+        const result = f(x, y)
+        results.push(result)
+        return result
+    })
+    return results
+}
+
 /* Intersperse a list of values with another value:
 
     >>> intersperse(5, [1, 2, 3])

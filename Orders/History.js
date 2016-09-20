@@ -114,32 +114,10 @@ export class OrderHistoryModal extends PureComponent {
     }
 }
 
-@observer
-export class OrderHistory extends DownloadResultView {
-    errorMessage = "Error downloading order history..."
-    getDownloadResult = () => orderHistoryStore.getOrderHistoryDownload()
-    refreshPage = () => orderHistoryStore.fetchOrderHistory()
-    renderNotStarted = () => <View />
+class OrderHistoryDescriptor {
 
-    @computed get nItems() {
+    @computed get numberOfRows() {
         return orderHistoryStore.orderHistory.length
-    }
-
-    renderFinished = (_) => {
-        return <SimpleListView
-                    N={this.nItems}
-                    initialListSize={4}
-                    renderRow={this.renderRow}
-                    renderHeader={this.renderHeader}
-                    enableEmptySections={true} />
-    }
-
-    renderHeader = () => {
-        return <View style={{flex: 0, height: 55, marginBottom: cardMargin}}>
-            <TextHeader
-                    label="Order History"
-                    rowHeight={55} />
-        </View>
     }
 
     renderRow = (i) => {
@@ -147,6 +125,26 @@ export class OrderHistory extends DownloadResultView {
         return <HistoryBarCard
                     rowNumber={i}
                     orderResult={orderResult} />
+    }
+    
+    renderHeader = () => {
+        return <View style={{flex: 0, height: 55, marginBottom: cardMargin}}>
+            <TextHeader
+                    label="Order History"
+                    rowHeight={55} />
+        </View>
+    }
+}
+
+@observer
+export class OrderHistory extends DownloadResultView {
+    errorMessage = "Error downloading order history..."
+    getDownloadResult = () => orderHistoryStore.getOrderHistoryDownload()
+    refreshPage = () => orderHistoryStore.fetchOrderHistory()
+    renderNotStarted = () => <View />
+
+    renderFinished = (_) => {
+        return <SimpleListView descriptor={new OrderHistoryDescriptor()} />
     }
 }
 

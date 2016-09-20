@@ -10,12 +10,15 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
+import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
+import { SimpleListView, CombinedDescriptor } from '../SimpleListView.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
-import { PaymentModal } from '../Payment/PaymentModal.js'
-import { OrderList } from './OrderList.js'
+import { PaymentModal, CreditCardListDesciptor } from '../Payment/PaymentModal.js'
+import { TextHeader } from '../Header.js'
+import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { ReceiptModal } from './Receipt.js'
-import { store, tabStore, orderStore } from '../Store.js'
+import { store, tabStore, barStore, orderStore } from '../Store.js'
 import { config } from '../Config.js'
 
 const largeButtonStyle = {
@@ -25,6 +28,8 @@ const largeButtonStyle = {
 
 @observer
 export class OrderPage extends Page {
+    @observable ref1 = null
+    @observable ref2 = null
 
     handleOrderPress = () => {
         orderStore.setPaymentModalVisibility(true)
@@ -36,18 +41,7 @@ export class OrderPage extends Page {
         return this.renderEmptyOrder()
     }
 
-    renderOrderList = () => {
-        return <View style={{flex: 1}}>
-            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>
-            <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
-            <OrderList
-                orderStore={orderStore}
-                menuItems={orderStore.menuItemsOnOrder}
-                />
-            <OrderButton onPress={this.handleOrderPress} />
-        </View>
-    }
-
+    /*** EMPTY ***/
     renderEmptyOrder = () => {
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
@@ -57,7 +51,37 @@ export class OrderPage extends Page {
                 />
         </View>
     }
+
+    /*** NONEMPTY ***/
+    renderBarPhoto = () => {
+        const bar = barStore.getBar()
+        return <LazyBarPhoto
+                    bar={bar}
+                    photo={bar.photos[0]}
+                    imageHeight={150} />
+    }
+
+    renderOrderList = () => {
+        const descs = [
+            new CreditCardListDesciptor(),
+            new OrderListDescriptor({
+                renderHeader: () => <TextHeader label="Items" rowHeight={55} />,
+                orderStore: orderStore,
+                menuItems:  orderStore.menuItemsOnOrder,
+            }),
+        ]
+        const desc = new CombinedDescriptor(descs, renderHeader = this.renderBarPhoto)
+        return <View style={{flex: 1}}>
+            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>
+            <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
+            <SimpleListView descriptor={desc} />
+            <OrderButton onPress={this.handleOrderPress} />
+        </View>
+    }
 }
+
+@observer
+
 
 @observer
 class OrderButton extends PureComponent {
@@ -68,9 +92,11 @@ class OrderButton extends PureComponent {
         if (!orderStore.haveOrders)
             return <View />
         return <LargeButton
-                    label={`Place Order  ${orderStore.totalTextWithParens}`}
+                    label={`Pay Now ${orderStore.totalTextWithParens}`}
                     style={largeButtonStyle}
                     onPress={this.props.onPress}
+                    backgroundColor='#000'
+                    borderColor='rgba(0, 0, 0, 0.8)'
                     />
     }
 }

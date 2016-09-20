@@ -23,6 +23,28 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 // assert(HeaderText != null)
 // assert(MenuItemImage != null)
 
+export class OrderListDescriptor {
+
+    constructor(props) {
+        this.props = props
+        this.renderHeader = props.renderHeader
+        this.renderFooter = props.renderFooter
+    }
+
+    get numberOfRows() {
+        return this.props.menuItems.length
+    }
+
+    renderRow = (i) => {
+        const menuItem = this.props.menuItems[i]
+        return <MenuItem
+                    key={menuItem.id}
+                    rowNumber={i}
+                    menuItem={menuItem}
+                    orderStore={this.props.orderStore} />
+    }
+}
+
 @observer
 export class OrderList extends PureComponent {
     /* properties:
@@ -33,33 +55,8 @@ export class OrderList extends PureComponent {
         renderHeader: ?() => Component
         renderFooter: ?() => Component
     */
-
-    get nItems() {
-        return this.props.menuItems.length
-    }
-
     render = () => {
-        return <SimpleListView
-                    N={this.nItems}
-                    initialListSize={4}
-                    /* pageSize={1} */
-                    /* scrollRenderAheadDistance={400} */
-                    removeClippedSubviews={true}
-                    renderRow={this.renderRow}
-                    renderHeader={this.props.renderHeader}
-                    renderFooter={this.props.renderFooter}
-                    enableEmptySections={true}
-                    />
-    }
-
-    renderRow = (i) => {
-        const menuItem = this.props.menuItems[i]
-        // log("RENDERING menu item...", i)
-        return <MenuItem
-                    key={menuItem.id}
-                    rowNumber={i}
-                    menuItem={menuItem}
-                    orderStore={this.props.orderStore} />
+        return <SimpleListView descriptor={new OrderListDescriptor(this.props)} />
     }
 }
 

@@ -7,6 +7,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
+import { SimpleListView } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
@@ -84,21 +85,10 @@ const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,
 })
 
-@observer
-export class CreditCardList extends PureComponent {
-    constructor(props) {
-        super(props)
-        this.dataSource = dataSource.cloneWithRows(_.range(paymentStore.cards.length + 1))
-    }
+export class CreditCardListDesciptor {
 
     @computed get numberOfRows() {
         return paymentStore.cards.length + 1
-    }
-
-    render = () => {
-        return <ListView
-                    dataSource={dataSource.cloneWithRows(_.range(this.numberOfRows))}
-                    renderRow={this.renderRow} />
     }
 
     renderRow = (i : Int) : Component => {
@@ -127,6 +117,13 @@ export class CreditCardList extends PureComponent {
         return <View style={addCardStyle}>
             <CardInput />
         </View>
+    }
+}
+
+@observer
+export class CreditCardList extends PureComponent {
+    render = () => {
+        return <SimpleListView descriptor={new CreditCardListDesciptor()} />
     }
 }
 
