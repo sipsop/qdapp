@@ -1558,6 +1558,110 @@ drinks:
     ### Spirits
     
     ##gin 
+    
+    houseGin:
+        name: House Gin
+        desc: This is a pub's choice of gin. 
+        abv:
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #lemonpeel
+            #almond
+            #lakevyrnwy 
+            #orris
+            #juniper
+            #liquorice
+            #berries
+            #angelica
+            #coriander
+            #cassia
+    
+    bombaySapphire:
+        name: Bombay Sapphire 
+        desc: This is a light and floral tasting gin. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #clear
+            #lemonpeel
+            #almond
+            #lakevyrnwy 
+            #orris
+            #juniper
+            #liquorice
+            #berries
+            #angelica
+            #coriander
+            #bacardi
+            #cassia
+            #cubeb
+            #lemongrass
+            #blackpeppercorn 
+    
+    gordon's:
+        name: Gordon's
+        desc: It is a speacial dry London Gin produced since 1769. 
+        abv: 37.2% to 47.3%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #juniper
+            #lemonzest
+            #earthyspice 
+            #licorice 
+            #corianderseeds
+            #angelicaroots 
+            #orrisroot 
+           
+            
+            
+    
+    portebelloRoad: 
+        name: Portebello Road
+        desc: This is a traditional styled London gin with different herbs and spices. 
+        abv: 42%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #juniper
+            #orris
+            #lemonpeels
+            #orangepeels
+            #nutmeg
+            #cassiapark
+            
+            
+    sloeGin: 
+        name: Sloe Gin
+        desc: Sloe Gin is a red liqueur. 
+        abv: 15%-30%
+        image:
+        license:
+        tags: |
+            #gin
+            #spirit
+            #red
+            #liqueur 
+            #fruity
+            #blackthron 
+            #sloeberries 
+            
+            
+    
+    
+   
+   
+   
     smirnoff:
         name: Smirnoff
         desc: |
