@@ -7,6 +7,8 @@ import {
     Switch,
     TextInput,
     T,
+    StyleSheet,
+    Picker,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -87,15 +89,50 @@ class OrderPageHeader extends PureComponent {
 class DeliveryMethod extends PureComponent {
     @observable value = false
 
+    styles = StyleSheet.create({
+        rowStyle: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 55,
+        },
+        optStyle: {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        pickerStyle: {
+            width: 150,
+        },
+    })
+
+    @observable pickupLocation = "1"
+
     render = () => {
         return <View>
             <TextHeader label="Delivery" rowHeight={55} />
-            <View style={{height: 55}}>
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
+            <View style={{height: 110}}>
+                <View style={this.styles.rowStyle}>
+                    <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
+                        Pickup:
+                    </T>
+                    <View style={this.styles.optStyle}>
+                        <Picker selectedValue={this.pickupLocation}
+                                onValueChange={location => this.pickupLocation = location}
+                                style={this.styles.pickerStyle}
+                                enabled={!this.value}
+                                >
+                            <Picker.Item label="Main Bar" value="1" />
+                            <Picker.Item label="First Floor" value="2" />
+                        </Picker>
+                    </View>
+                </View>
+
+                <View style={this.styles.rowStyle}>
                     <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
                         Table Delivery:
                     </T>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={this.styles.optStyle}>
                         <Switch
                             value={this.value}
                             onValueChange={value => this.value = value}
@@ -111,21 +148,6 @@ class DeliveryMethod extends PureComponent {
                         }
                     </View>
                 </View>
-                { /* this.value &&
-                    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
-                        <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
-                            Table Number:
-                        </T>
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            <TextInput
-                                keyboardType='phone-pad'
-                                style={{width: 100, textAlign: 'center'}}
-                                placeholder="table number"
-                                />
-                        </View>
-                    </View>
-                    */
-                }
             </View>
         </View>
     }
