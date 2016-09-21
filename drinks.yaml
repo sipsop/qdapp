@@ -2029,13 +2029,15 @@ drinks:
             #vodka
     popov:
         name: Popov
-        desc:
-        abv:
+        desc: It is known great for mixing, its low range pricing and being the most popular vodka drink in the United States. 
+        abv: 40% 
         image:
         license:
         tags: |
             #spirit
             #vodka
+            #premium
+            #smooth 
 
     ##flavouredVodka:
 
