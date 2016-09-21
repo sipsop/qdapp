@@ -1,11 +1,13 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
-    T, Mono, PureComponent, Slider
+    T, Mono, PureComponent, StyleSheet,
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Slider from 'react-native-slider'
 
+import { LargeButton } from '../Button.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { SimpleListView } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
@@ -28,6 +30,10 @@ const { log, assert } = _.utils('Payment/PaymentModal.js')
 export class PaymentModal extends PureComponent {
     /* properties:
     */
+
+    styles = StyleSheet.create({
+
+    })
 
     payNow = () => {
         orderStore.setFreshOrderToken()
@@ -63,26 +69,17 @@ export class PaymentModal extends PureComponent {
                     <LazyBarPhoto
                         bar={bar}
                         photo={bar.photos[0]}
-                        imageHeight={250}
+                        imageHeight={150}
                         showBackButton={true}
                         onBack={this.close}
                         />
-                    {/*
-                    <Header>
-                        <View style={{flexDirection: 'row'}}>
-                            <HeaderText style={{flex: 1, ...textStyle}}>Total:</HeaderText>
-                            <HeaderText style={{flex: 1, ...textStyle}}>{orderStore.totalText}</HeaderText>
-                        </View>
-                    </Header>
-                    */}
-                    {/*<CreditCardList />*/}
                     <SelectedCardInfo />
-                    <TextHeader label="Tip" rowHeight={55} />
+                    <TextHeader label="Add a Tip" rowHeight={55} />
+                    <TipComponent style={this.styles.tipSlider} />
                 </View>
         </OkCancelModal>
     }
 }
-
 
 const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,

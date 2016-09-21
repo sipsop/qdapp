@@ -29,7 +29,7 @@ import type { Int, String } from '../Types.js'
 
 export type OrderItem = {
     id:                 ID,
-    // barID:              BarID,
+    // barID:           BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<String>>,
     amount:             Int,
@@ -62,6 +62,10 @@ class OrderStore {
 
     // Update asynchronously
     @observable total : Float = 0.0
+
+    @observable tipFactor = 0.0
+    @observable tipAmount = 0.0
+    // Keep this so that we can update the % independently of the price in the UI
 
     @observable paymentModalVisible = false
     @observable activeOrderID : ?ID = null
@@ -166,7 +170,7 @@ class OrderStore {
 
     // Update the total asynchronously for UI responsiveness (see the autorun below)
     @computed get _total() : Float {
-        return this.orderListTotal(this.orderList)
+        return this.orderListTotal(this.orderList) + this.tipAmount
     }
 
     @computed get totalText() : String {
@@ -209,6 +213,18 @@ class OrderStore {
             if (orderState.orderResultDownload)
                 this.orderResultDownload.setState(orderState.orderResultDownload)
         }
+    }
+
+    /*********************************************************************/
+
+    @action setTipFactor = (factor) => {
+        this.tipFactor = factor
+        this.tipAmount = factor * this.total
+    }
+
+    @action setTipAmount = (amount) => {
+        this.tipFactor = amount / this.total
+        this.tipAmount = amount
     }
 
     /*********************************************************************/
