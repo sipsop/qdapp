@@ -75,11 +75,9 @@ export class PaymentModal extends PureComponent {
                         onBack={this.close}
                         />
                     <TipComponent style={this.styles.tipSlider} />
-                    <TextHeader label="Card" rowHeight={55} />
-                    <SelectedCardInfo />
-                    {/*
-                    <OrderTotal total={orderStore.totalPlusTip} />
-                    */}
+                    <TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />
+                    <SelectedCardInfo2 />
+                    {/*<OrderTotal total={orderStore.totalPlusTip} />*/}
                 </View>
         </OkCancelModal>
     }
@@ -88,30 +86,6 @@ export class PaymentModal extends PureComponent {
 const dataSource = new ListView.DataSource({
     rowHasChanged: (i, j) => i !== j,
 })
-
-export class CreditCardListDesciptor {
-
-    @computed get numberOfRows() {
-        return paymentStore.cards.length + 1
-    }
-
-    renderRow = (i : Int) : Component => {
-        if (i < paymentStore.cards.length)
-            return this.renderCard(i)
-        return <AddACardButton />
-    }
-
-    renderCard = (i : Int) => {
-        const card = paymentStore.cards[i]
-        return <SelectorItem
-                    isSelected={() => paymentStore.isSelected(i)}
-                    onPress={() => paymentStore.selectCardByOffset(i)}
-                    rowNumber={i}
-                    >
-            <CreditCard key={card.cardNumber} card={card} />
-        </SelectorItem>
-    }
-}
 
 @observer
 export class SelectedCardInfo extends PureComponent {
@@ -139,6 +113,45 @@ export class SelectedCardInfo extends PureComponent {
 }
 
 @observer
+export class SelectedCardInfo2 extends PureComponent {
+    paymentConfigModal = null
+
+    styles = StyleSheet.create({
+        view: {
+            flex: 0,
+            height: 120,
+            alignItems: 'center',
+        },
+        cardView: {
+            flex: 0,
+            marginTop: 10,
+            width: 250,
+            alignItems: 'center',
+        },
+    })
+
+    render = () => {
+        const haveCard = paymentStore.selectedCardNumber != null
+        if (!haveCard)
+            return <AddACardButton />
+        return <View style={this.styles.view}>
+            <PaymentConfigModal
+                ref={ref => this.paymentConfigModal = ref}
+                />
+            <TouchableOpacity onPress={() => this.paymentConfigModal.show()}>
+                <View style={this.styles.cardView}>
+                    <CreditCard
+                        small={true}
+                        card={paymentStore.getSelectedCard()}
+                        />
+                </View>
+            </TouchableOpacity>
+        </View>
+    }
+}
+
+
+@observer
 export class AddACardButton extends PureComponent {
     /* properties:
         label: String
@@ -157,6 +170,30 @@ export class AddACardButton extends PureComponent {
         return <View style={{...addCardStyle, ...this.props.style}}>
             <CardInput label={this.props.label} />
         </View>
+    }
+}
+
+export class CreditCardListDesciptor {
+
+    @computed get numberOfRows() {
+        return paymentStore.cards.length + 1
+    }
+
+    renderRow = (i : Int) : Component => {
+        if (i < paymentStore.cards.length)
+            return this.renderCard(i)
+        return <AddACardButton />
+    }
+
+    renderCard = (i : Int) => {
+        const card = paymentStore.cards[i]
+        return <SelectorItem
+                    isSelected={() => paymentStore.isSelected(i)}
+                    onPress={() => paymentStore.selectCardByOffset(i)}
+                    rowNumber={i}
+                    >
+            <CreditCard key={card.cardNumber} card={card} />
+        </SelectorItem>
     }
 }
 
@@ -210,9 +247,11 @@ export class CreditCard extends PureComponent {
                 */}
                 <View style={{flex: 3, flexDirection: 'row'}}>
                     <T style={{flex: 1, textAlign: 'right', ...textStyle}}>
-                        { this.props.small
+                        •••• •••• ••••
+                        { /*this.props.small
                             ? '••••'
                             : '•••• •••• ••••'
+                            */
                         }
                     </T>
                     <T style={{width: 70, ...textStyle, textAlign: 'center'}}>
