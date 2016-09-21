@@ -5,7 +5,6 @@ import {
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Slider from 'react-native-slider'
 
 import { LargeButton } from '../Button.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
@@ -21,6 +20,7 @@ import { CardInput, makeAddCardButton } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
 import { getCreditCardIcon } from './CreditCardInfo.js'
 import { PaymentConfigModal } from '../ControlPanel.js'
+import { TipComponent } from './Tips.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -74,7 +74,6 @@ export class PaymentModal extends PureComponent {
                         onBack={this.close}
                         />
                     <SelectedCardInfo />
-                    <TextHeader label="Add a Tip" rowHeight={55} />
                     <TipComponent style={this.styles.tipSlider} />
                 </View>
         </OkCancelModal>

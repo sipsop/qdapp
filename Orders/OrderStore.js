@@ -170,11 +170,15 @@ class OrderStore {
 
     // Update the total asynchronously for UI responsiveness (see the autorun below)
     @computed get _total() : Float {
-        return this.orderListTotal(this.orderList) + this.tipAmount
+        return this.orderListTotal(this.orderList)
+    }
+
+    @computed get totalPlusTip() : Float {
+        return this._total + this.tipAmount
     }
 
     @computed get totalText() : String {
-        const total = this.total
+        const total = this.total + this.tipAmount
         if (!this.haveOrders)
             return ""
         const currencySymbol = getCurrencySymbol(this.currency)
@@ -218,12 +222,14 @@ class OrderStore {
     /*********************************************************************/
 
     @action setTipFactor = (factor) => {
+        const total = this.total
         this.tipFactor = factor
-        this.tipAmount = factor * this.total
+        this.tipAmount = factor * total
     }
 
     @action setTipAmount = (amount) => {
-        this.tipFactor = amount / this.total
+        const total = this.total
+        this.tipFactor = amount / total
         this.tipAmount = amount
     }
 

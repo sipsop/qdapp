@@ -4,28 +4,17 @@ import {
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
-import Icon from 'react-native-vector-icons/FontAwesome'
 import Slider from 'react-native-slider'
 
+import { TextHeader } from '../Header.js'
 import { LargeButton } from '../Button.js'
-import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
-import { SimpleListView } from '../SimpleListView.js'
-import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
+import { orderStore } from '../Store.js'
 import { config } from '../Config.js'
-import { Selector, SelectorItem } from '../Selector.js'
-import { Header, HeaderText, TextHeader } from '../Header.js'
-import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
-
-import { CardInput, makeAddCardButton } from './CardInput.js'
-import { paymentStore } from './PaymentStore.js'
-import { getCreditCardIcon } from './CreditCardInfo.js'
-import { PaymentConfigModal } from '../ControlPanel.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Payment/PaymentModal.js')
-
+const { log, assert } = _.utils('Payment/Tips.js')
 
 
 class TipStore {
@@ -43,7 +32,7 @@ autorun(() => {
 })
 
 @observer
-class TipComponent extends PureComponent {
+export class TipComponent extends PureComponent {
     styles = {
         tipView: {
             alignItems: 'center',
@@ -77,13 +66,14 @@ class TipComponent extends PureComponent {
 
     render = () => {
         return <View>
+            <TextHeader label="Add a Tip" rowHeight={55} />
             <View style={this.styles.tipSliderView}>
                 <TipSlider
                     onValueChange={tipStore.setTipPercentage}
                     onSlidingComplete={this.handleTipChange}
                     style={this.styles.tipSlider} />
                 <T style={this.styles.percentageText}>
-                    {tipStore.tipPercentage}%
+                    {tipStore.tipPercentage.toFixed(1)}%
                 </T>
             </View>
             <View style={this.styles.tipRoundButtonView}>
@@ -102,7 +92,7 @@ class TipSlider extends PureComponent {
                     onValueChange={this.props.onValueChange}
                     onSlidingComplete={this.props.onSlidingComplete}
                     minimumValue={0}
-                    maximumValue={20}
+                    maximumValue={_.max(20, tipStore.tipPercentage)}
                     step={1}
                     thumbTouchSize={{width: 55, height: 55}}
                     minimumTrackTintColor={config.theme.primary.medium}
@@ -124,8 +114,10 @@ class TipRoundButton extends PureComponent {
     })
 
     @computed get roundedPrice() {
-        const n = roundingAmount(orderStore.total) * 100
-        return Math.ceil(orderStore.total / n) * n
+        const total = orderStore.totalPlusTip
+        const n = roundingAmount(total) * 100
+        const rounded = Math.ceil(total / n) * n
+        return rounded
     }
 
     @action acceptPrice = () => {
