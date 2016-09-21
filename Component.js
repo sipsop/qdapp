@@ -6,11 +6,13 @@ import {
     Text,
     View,
     ScrollView,
+    TextInput,
     ListView,
     Platform,
     Picker,
     TouchableOpacity,
     Modal,
+    Switch,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -93,6 +95,8 @@ export {
     Picker,
     TouchableOpacity,
     Modal,
+    Switch,
+    TextInput,
     /* Custom Components */
     PureComponent,
     T,

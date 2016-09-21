@@ -4,6 +4,8 @@ import {
     View,
     ScrollView,
     PureComponent,
+    Switch,
+    TextInput,
     T,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
@@ -55,14 +57,6 @@ export class OrderPage extends Page {
     }
 
     /*** NONEMPTY ***/
-    renderBarPhoto = () => {
-        const bar = barStore.getBar()
-        return <LazyBarPhoto
-                    bar={bar}
-                    photo={bar.photos[0]}
-                    imageHeight={150} />
-    }
-
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
             renderHeader: () => <OrderPageHeader />,
@@ -83,12 +77,46 @@ class OrderPageHeader extends PureComponent {
     render = () => {
         const bar = barStore.getBar()
         return <View>
-            <LazyBarPhoto
-                bar={bar}
-                photo={bar.photos[0]}
-                imageHeight={150} />
-            <SelectedCardInfo />
+            <DeliveryMethod />
             <TextHeader label="Order" rowHeight={55} />
+        </View>
+    }
+}
+
+@observer
+class DeliveryMethod extends PureComponent {
+    @observable value = false
+
+    render = () => {
+        const height = this.value ? 110 : 55
+        return <View>
+            <TextHeader label="Delivery" rowHeight={55} />
+            <View style={{height: height}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
+                    <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
+                        Table Delivery:
+                    </T>
+                    <View style={{flex: 1, alignItems: 'center'}}>
+                        <Switch
+                            value={this.value}
+                            onValueChange={value => this.value = value}
+                            />
+                    </View>
+                </View>
+                { this.value &&
+                    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
+                        <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
+                            Table Number:
+                        </T>
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                            <TextInput
+                                style={{width: 100, textAlign: 'center'}}
+                                placeholder="table number"
+                                />
+                        </View>
+                    </View>
+                }
+            </View>
         </View>
     }
 }
@@ -102,7 +130,7 @@ class OrderButton extends PureComponent {
         if (!orderStore.haveOrders)
             return <View />
         return <LargeButton
-                    label={`Buy Now ${orderStore.totalTextWithParens}`}
+                    label={`Checkout`}
                     style={largeButtonStyle}
                     onPress={this.props.onPress}
                     /* backgroundColor={config.theme.primary.light} */
