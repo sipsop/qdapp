@@ -1,6 +1,6 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
-    T, Mono, PureComponent
+    T, Mono, PureComponent, Slider
 } from '../Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -11,7 +11,7 @@ import { SimpleListView } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
-import { Header, HeaderText } from '../Header.js'
+import { Header, HeaderText, TextHeader } from '../Header.js'
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
 
@@ -54,7 +54,7 @@ export class PaymentModal extends PureComponent {
                     showCancelButton={false}
                     cancelModal={this.close}
                     okModal={this.payNow}
-                    okLabel={`Pay Now (${orderStore.totalText})`}
+                    okLabel={`Buy Now (${orderStore.totalText})`}
                     okDisabled={paymentStore.selectedCardNumber == null}
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
@@ -75,7 +75,9 @@ export class PaymentModal extends PureComponent {
                         </View>
                     </Header>
                     */}
-                    <CreditCardList />
+                    {/*<CreditCardList />*/}
+                    <SelectedCardInfo />
+                    <TextHeader label="Tip" rowHeight={55} />
                 </View>
         </OkCancelModal>
     }
@@ -119,14 +121,16 @@ export class SelectedCardInfo extends PureComponent {
         if (!haveCard)
             return <AddACardButton />
         return <View style={{flexDirection: 'row'}}>
-            <CreditCard
-                small={true}
-                card={paymentStore.getSelectedCard()}
-                />
-            <PaymentConfigModal
-                ref={ref => this.paymentConfigModal = ref}
-                />
             <View style={{flex: 1}}>
+                <CreditCard
+                    small={true}
+                    card={paymentStore.getSelectedCard()}
+                    />
+            </View>
+            <View style={{flex: 1}}>
+                <PaymentConfigModal
+                    ref={ref => this.paymentConfigModal = ref}
+                    />
                 {makeAddCardButton("Change", () => this.paymentConfigModal.show())}
             </View>
         </View>

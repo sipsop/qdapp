@@ -8,6 +8,7 @@ import {
     ScrollView,
     TextInput,
     ListView,
+    Slider,
     Platform,
     Picker,
     TouchableOpacity,
@@ -96,6 +97,7 @@ export {
     TouchableOpacity,
     Modal,
     Switch,
+    Slider,
     TextInput,
     /* Custom Components */
     PureComponent,

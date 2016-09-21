@@ -34,9 +34,9 @@ export class OrderPage extends Page {
     @observable ref2 = null
 
     handleOrderPress = () => {
-        // orderStore.setPaymentModalVisibility(true)
-        orderStore.setFreshOrderToken()
-        orderStore.placeActiveOrder()
+        orderStore.setPaymentModalVisibility(true)
+        // orderStore.setFreshOrderToken()
+        // orderStore.placeActiveOrder()
     }
 
     renderView = () => {
@@ -64,7 +64,7 @@ export class OrderPage extends Page {
             menuItems:  orderStore.menuItemsOnOrder,
         })
         return <View style={{flex: 1}}>
-            {/*<PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()}/>*/}
+            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()} />
             <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
@@ -88,33 +88,43 @@ class DeliveryMethod extends PureComponent {
     @observable value = false
 
     render = () => {
-        const height = this.value ? 110 : 55
         return <View>
             <TextHeader label="Delivery" rowHeight={55} />
-            <View style={{height: height}}>
+            <View style={{height: 55}}>
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
                     <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
                         Table Delivery:
                     </T>
-                    <View style={{flex: 1, alignItems: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                         <Switch
                             value={this.value}
                             onValueChange={value => this.value = value}
                             />
+                        { this.value &&
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                                <TextInput
+                                    keyboardType='phone-pad'
+                                    style={{width: 100, textAlign: 'center'}}
+                                    placeholder="table number"
+                                    />
+                            </View>
+                        }
                     </View>
                 </View>
-                { this.value &&
+                { /* this.value &&
                     <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 55}}>
                         <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
                             Table Number:
                         </T>
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TextInput
+                                keyboardType='phone-pad'
                                 style={{width: 100, textAlign: 'center'}}
                                 placeholder="table number"
                                 />
                         </View>
                     </View>
+                    */
                 }
             </View>
         </View>
