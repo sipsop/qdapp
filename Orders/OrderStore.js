@@ -67,7 +67,7 @@ class OrderStore {
     @observable tipAmount = 0.0
     // Keep this so that we can update the % independently of the price in the UI
 
-    @observable paymentModalVisible = false
+    @observable checkoutVisible = false
     @observable activeOrderID : ?ID = null
     @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
 
@@ -237,8 +237,8 @@ class OrderStore {
 
     getActiveOrderToken = () => this.activeOrderID
 
-    @action setPaymentModalVisibility = (visible : Bool) => {
-        this.paymentModalVisible = visible
+    @action setCheckoutVisibility = (visible : Bool) => {
+        this.checkoutVisible = visible
     }
 
     @action setOrderToken = (token) => {

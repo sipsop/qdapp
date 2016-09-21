@@ -24,7 +24,7 @@ import { TabView } from './Tabs.js'
 import { store, loginStore } from './Store.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
-import { PaymentModal } from './Payment/PaymentModal.js'
+import { Checkout } from './Payment/Checkout.js'
 import { ReceiptModal } from './Orders/Receipt.js'
 
 const { log, assert } = _.utils('./Main.js')
@@ -36,7 +36,7 @@ const { log, assert } = _.utils('./Main.js')
             {/*<StatusBar hidden={true} />*/}
             <View style={{flex: 1, flexDirection: 'row'}}>
                 {/*
-                <PaymentModal />
+                <Checkout />
                 <ReceiptModal />
                 */}
                 <TabView>

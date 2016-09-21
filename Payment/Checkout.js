@@ -25,10 +25,10 @@ import { TipComponent } from './Tips.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Payment/PaymentModal.js')
+const { log, assert } = _.utils('Payment/Checkout.js')
 
 @observer
-export class PaymentModal extends PureComponent {
+export class Checkout extends PureComponent {
     /* properties:
     */
 
@@ -43,11 +43,11 @@ export class PaymentModal extends PureComponent {
     }
 
     close = () => {
-        orderStore.setPaymentModalVisibility(false)
+        orderStore.setCheckoutVisibility(false)
     }
 
     render = () => {
-        if (!orderStore.paymentModalVisible)
+        if (!orderStore.checkoutVisible)
             return <View />
 
         const textStyle = {
@@ -56,7 +56,7 @@ export class PaymentModal extends PureComponent {
         const bar = barStore.getBar()
 
         return <OkCancelModal
-                    visible={orderStore.paymentModalVisible}
+                    visible={orderStore.checkoutVisible}
                     showOkButton={true}
                     showCancelButton={false}
                     cancelModal={this.close}

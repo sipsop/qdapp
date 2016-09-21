@@ -16,7 +16,7 @@ import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
-import { PaymentModal, SelectedCardInfo } from '../Payment/PaymentModal.js'
+import { Checkout, SelectedCardInfo } from '../Payment/Checkout.js'
 import { TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { ReceiptModal } from './Receipt.js'
@@ -34,7 +34,7 @@ export class OrderPage extends Page {
     @observable ref2 = null
 
     handleOrderPress = () => {
-        orderStore.setPaymentModalVisibility(true)
+        orderStore.setCheckoutVisibility(true)
         // orderStore.setFreshOrderToken()
         // orderStore.placeActiveOrder()
     }
@@ -64,7 +64,7 @@ export class OrderPage extends Page {
             menuItems:  orderStore.menuItemsOnOrder,
         })
         return <View style={{flex: 1}}>
-            <PaymentModal key={'paymentModal' + orderStore.getActiveOrderToken()} />
+            <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />
             <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
