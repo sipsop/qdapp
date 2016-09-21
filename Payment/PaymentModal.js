@@ -6,6 +6,7 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import { OrderTotal } from '../Orders/Receipt.js'
 import { LargeButton } from '../Button.js'
 import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { SimpleListView } from '../SimpleListView.js'
@@ -73,8 +74,12 @@ export class PaymentModal extends PureComponent {
                         showBackButton={true}
                         onBack={this.close}
                         />
-                    <SelectedCardInfo />
                     <TipComponent style={this.styles.tipSlider} />
+                    <TextHeader label="Card" rowHeight={55} />
+                    <SelectedCardInfo />
+                    {/*
+                    <OrderTotal total={orderStore.totalPlusTip} />
+                    */}
                 </View>
         </OkCancelModal>
     }

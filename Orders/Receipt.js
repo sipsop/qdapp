@@ -168,14 +168,16 @@ export class Receipt extends PureComponent {
                     </View>
                 </Header>
             }
-            {/*<OrderTotal orderResult={orderResult} />*/}
             <Info orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
             <SimpleOrderList
                 menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
                 orderList={orderResult.orderList}
                 />
-            <OrderTotal orderResult={orderResult} />
+            <OrderTotal
+                total={orderStore.orderListTotal(orderResult.orderList)}
+                /* TODO: Tips */
+                />
         </ScrollView>
     }
 }
@@ -245,16 +247,12 @@ class ReceiptHeader extends PureComponent {
 }
 
 @observer
-class OrderTotal extends PureComponent {
+export class OrderTotal extends PureComponent {
     /* properties:
-        orderResult: OrderResult
+        total: Float
     */
     render = () => {
-        const orderResult = this.props.orderResult
-        // if (orderResult.orderList.length === 1)
-        //     return <View />
-        const total = orderStore.orderListTotal(orderResult.orderList)
-        const totalText = orderStore.formatPrice(total)
+        const totalText = orderStore.formatPrice(this.props.total)
         return <Header>
             <View style={{flexDirection: 'row'}}>
                 {headerText('Total:')}

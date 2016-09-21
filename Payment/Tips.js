@@ -35,7 +35,7 @@ autorun(() => {
 export class TipComponent extends PureComponent {
     styles = {
         tipView: {
-            alignItems: 'center',
+            marginBottom: 10,
         },
         tipSliderView: {
             flexDirection: 'row',
@@ -65,7 +65,7 @@ export class TipComponent extends PureComponent {
     }
 
     render = () => {
-        return <View>
+        return <View style={this.styles.tipView}>
             <TextHeader label="Add a Tip" rowHeight={55} />
             <View style={this.styles.tipSliderView}>
                 <TipSlider
@@ -87,12 +87,12 @@ export class TipComponent extends PureComponent {
 class TipSlider extends PureComponent {
     render = () => {
         return <Slider
-                    value={tipStore.tipPercentage}
+                    value={_.min(20, tipStore.tipPercentage)}
                     style={this.props.style}
                     onValueChange={this.props.onValueChange}
                     onSlidingComplete={this.props.onSlidingComplete}
                     minimumValue={0}
-                    maximumValue={_.max(20, tipStore.tipPercentage)}
+                    maximumValue={20}
                     step={1}
                     thumbTouchSize={{width: 55, height: 55}}
                     minimumTrackTintColor={config.theme.primary.medium}
