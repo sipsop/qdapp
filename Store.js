@@ -112,4 +112,13 @@ export class Store {
 const popup = (title, message) => Alert.alert(title, message)
 
 export const store = new Store()
-export { favStore, tabStore, barStore, loginStore, mapStore, orderStore, tagStore }
+export {
+    favStore,
+    tabStore,
+    barStore,
+    loginStore,
+    mapStore,
+    orderStore,
+    tagStore,
+    paymentStore,
+}

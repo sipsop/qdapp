@@ -15,9 +15,10 @@ import { Header, HeaderText } from '../Header.js'
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
 
-import { CardInput } from './CardInput.js'
+import { CardInput, makeAddCardButton } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
 import { getCreditCardIcon } from './CreditCardInfo.js'
+import { PaymentConfigModal } from '../ControlPanel.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -110,15 +111,46 @@ export class CreditCardListDesciptor {
 }
 
 @observer
+export class SelectedCardInfo extends PureComponent {
+    paymentConfigModal = null
+
+    render = () => {
+        const haveCard = paymentStore.selectedCardNumber != null
+        if (!haveCard)
+            return <AddACardButton />
+        return <View style={{flexDirection: 'row'}}>
+            <CreditCard
+                small={true}
+                card={paymentStore.getSelectedCard()}
+                />
+            <PaymentConfigModal
+                ref={ref => this.paymentConfigModal = ref}
+                />
+            <View style={{flex: 1}}>
+                {makeAddCardButton("Change", () => this.paymentConfigModal.show())}
+            </View>
+        </View>
+    }
+}
+
+@observer
 export class AddACardButton extends PureComponent {
+    /* properties:
+        label: String
+        style: style object
+    */
+    static defaultProps = {
+        label: "Add a Card",
+    }
+
     render = () => {
         const addCardStyle =
             paymentStore.cards.length === 0
                 ? { marginTop: 5 }
                 : { }
 
-        return <View style={addCardStyle}>
-            <CardInput />
+        return <View style={{...addCardStyle, ...this.props.style}}>
+            <CardInput label={this.props.label} />
         </View>
     }
 }
@@ -133,13 +165,20 @@ export class CreditCardList extends PureComponent {
 @observer
 export class CreditCard extends PureComponent {
     /* properties:
+        small: Bool
+            whether to show the small version (no remove button etc)
         card: Card
     */
+
+    static defaultProps = {
+        small: false,
+    }
+
     render = () => {
         const card = this.props.card
         const textStyle = {fontSize: 20, color: '#000'}
         return <View style={{flex: 1, flexDirection: 'row'}}>
-            <RemoveCardButton card={this.props.card} />
+            {!this.props.small && <RemoveCardButton card={this.props.card} />}
             <View style={
                 { flex: 1
                 , flexDirection: 'row'
@@ -165,7 +204,12 @@ export class CreditCard extends PureComponent {
                 </View>
                 */}
                 <View style={{flex: 3, flexDirection: 'row'}}>
-                    <T style={{flex: 1, textAlign: 'right', ...textStyle}}>•••• •••• •••• </T>
+                    <T style={{flex: 1, textAlign: 'right', ...textStyle}}>
+                        { this.props.small
+                            ? '••••'
+                            : '•••• •••• ••••'
+                        }
+                    </T>
                     <T style={{width: 70, ...textStyle, textAlign: 'center'}}>
                         {' ' + card.cardNumber.slice(card.cardNumber.length - 4)}
                     </T>

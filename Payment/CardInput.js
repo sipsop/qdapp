@@ -22,13 +22,17 @@ const scanConfig = {
     hideCardIOLogo: true,
 }
 
-const largeButtonStyle = {
+const addCardButtonStyle = {
     height: 55,
     margin: 5,
 }
 
 @observer
 export class CardInput extends PureComponent {
+    /* properties:
+        label: String
+            label to render on the button
+    */
 
     componentWillMount = () => {
         if (Platform.OS === 'ios')
@@ -47,15 +51,18 @@ export class CardInput extends PureComponent {
     }
 
     render = () => {
-        return <LargeButton
-                    label="Add a Card"
-                    onPress={this.scanCard}
-                    style={largeButtonStyle}
-                    prominent={false}
-                    textColor={config.theme.addColor}
-                    borderColor={config.theme.addColor}
-                    />
+        return makeAddCardButton(this.props.label, this.scanCard)
     }
+}
+
+export const makeAddCardButton = (label : String, onPress : () => void) => {
+    return <LargeButton
+            label={label}
+            onPress={onPress}
+            style={addCardButtonStyle}
+            prominent={false}
+            textColor={config.theme.addColor}
+            borderColor={config.theme.addColor} />
 }
 
 @observer

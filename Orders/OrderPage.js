@@ -14,11 +14,11 @@ import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'
-import { PaymentModal, CreditCardListDesciptor, AddACardButton } from '../Payment/PaymentModal.js'
+import { PaymentModal, SelectedCardInfo } from '../Payment/PaymentModal.js'
 import { TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { ReceiptModal } from './Receipt.js'
-import { store, tabStore, barStore, orderStore } from '../Store.js'
+import { store, tabStore, barStore, orderStore, paymentStore } from '../Store.js'
 import { config } from '../Config.js'
 
 const largeButtonStyle = {
@@ -87,7 +87,7 @@ class OrderPageHeader extends PureComponent {
                 bar={bar}
                 photo={bar.photos[0]}
                 imageHeight={150} />
-            <AddACardButton />
+            <SelectedCardInfo />
             <TextHeader label="Order" rowHeight={55} />
         </View>
     }

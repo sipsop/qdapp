@@ -21,7 +21,6 @@ const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(25
 const { log, assert } = _.utils('./ControlPanel.js')
 assert(drawerStore != null, 'drawerStore is null')
 
-
 @observer
 export class ControlPanel extends PureComponent {
     render = () => {
@@ -37,7 +36,7 @@ export class ControlPanel extends PureComponent {
 
 @observer
 class PaymentConfig extends PureComponent {
-    paymentModal = null
+    paymentConfigModal = null
 
     render = () => {
         return <View>
@@ -46,12 +45,30 @@ class PaymentConfig extends PureComponent {
                 icon={icon("credit-card", "rgb(19, 58, 194)")}
                 onPress={() => {
                     drawerStore.disable()
-                    this.paymentModal.show()
+                    this.paymentConfigModal.show()
                 }}
                 />
+            <PaymentConfigModal
+                ref={ref => this.paymentConfigModal = ref}
+                onClose={drawerStore.enable}
+                />
+        </View>
+    }
+}
+
+@observer
+export class PaymentConfigModal extends PureComponent {
+    modal = null
+
+    show = () => {
+        this.modal.show()
+    }
+
+    render = () => {
+        return (
             <SimpleModal
-                    ref={ref => this.paymentModal = ref}
-                    onClose={drawerStore.enable}
+                    ref={ref => this.modal = ref}
+                    onClose={this.props.onClose}
                     >
                 <ScrollView>
                     <TextHeader
@@ -61,7 +78,7 @@ class PaymentConfig extends PureComponent {
                     <CreditCardList />
                 </ScrollView>
             </SimpleModal>
-        </View>
+        )
     }
 }
 
@@ -208,9 +225,7 @@ class LoginInfo extends PureComponent {
         return <SideMenuEntry
                     text="Sign In"
                     icon={icon("sign-in")}
-                    onPress={loginStore.login}
-                    />
-
+                    onPress={loginStore.login} />
     }
 }
 
