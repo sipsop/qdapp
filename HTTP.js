@@ -71,7 +71,7 @@ export class DownloadResult<T> {
         this.state   = downloadState.state
         this.message = downloadState.message
         this.value   = downloadState.value
-        if (downloadState.state === 'InProcess') {
+        if (downloadState.state === 'InProgress') {
             this.state = 'Error'
             this.message = 'Please try again'
         }
@@ -250,7 +250,9 @@ export class DownloadResultView<T> extends PureComponent {
 export const graphQLArg = (obj) => _graphQLArg(_.asData(obj))
 
 const _graphQLArg = (obj) => {
-    if (typeof(obj) === 'number') {
+    if (obj == null) {
+        return obj
+    } else if (typeof(obj) === 'number') {
         return JSON.stringify(obj)
     } else if (typeof(obj) === 'string') {
         return JSON.stringify(obj)

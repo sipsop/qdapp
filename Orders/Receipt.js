@@ -30,25 +30,45 @@ const { log, assert } = _.utils('Orders/Receipt.js')
 export class ReceiptModal extends PureComponent {
     @observable showConfirmText = false
 
+    confirmCloseModal = null
+
     @computed get visible() {
         return orderStore.getActiveOrderToken() != null
     }
 
+    @computed get downloadState() {
+        return orderStore.getOrderResultDownload().state
+    }
+
+    @computed get showCloseButton() {
+        return _.includes(['NotStarted', 'Error', 'Finished'], this.downloadState)
+    }
+
+
     handleClose = () => {
-        if (Platform.OS === 'android') {
-            this.confirmCloseModal.show()
-        } else {
-            if (this.showConfirmText)
-                this.close() // close double tapped
-            else
-                this.showConfirmText = true
+        if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
+            /* Error submitting, allow closing */
+            this.closeModal()
+        } else if (this.downloadState === 'Finished') {
+            if (Platform.OS === 'android') {
+                this.confirmCloseModal.show()
+            } else {
+                if (this.showConfirmText)
+                    this.close() // close double tapped
+                else
+                    this.showConfirmText = true
+            }
         }
     }
 
     @action close = () => {
         orderStore.clearOrderList()
-        orderStore.clearActiveOrderToken()
         tabStore.setCurrentTab(2)
+        this.closeModal()
+    }
+
+    @action closeModal = () => {
+        orderStore.clearActiveOrderToken()
     }
 
     render = () => {
@@ -57,17 +77,17 @@ export class ReceiptModal extends PureComponent {
         return <OkCancelModal
                     visible={this.visible}
                     showCancelButton={false}
-                    showOkButton={true}
+                    showOkButton={this.showCloseButton}
                     okLabel={"Close"}
                     okModal={this.handleClose}
                     cancelModal={this.handleClose}
                     >
             <SmallOkCancelModal
                 ref={ref => this.confirmCloseModal = ref}
-                message="Did you collect your drinks?"
+                message="Did receive your order?"
                 onConfirm={this.close}
-                okLabel="Yes"
-                cancelLabel="Not Yet"
+                okLabel="Yes I Did"
+                cancelLabel="Nope  "
                 />
             <PlaceOrderDownloadView />
             {
@@ -90,8 +110,6 @@ export class ReceiptModal extends PureComponent {
 
 @observer
 export class PlaceOrderDownloadView extends DownloadResultView {
-
-    confirmCloseModal = null
     inProgressMessage = "Processing order..."
     errorMessage      = "There was an error processing your order"
 
@@ -151,6 +169,11 @@ export class Receipt extends PureComponent {
         assert(orderResult.userName != null)
         assert(orderResult.orderList != null)
 
+        const deliveryInfo =
+            orderResult.delivery === 'Table'
+                ? orderResult.tableNumber
+                : orderResult.pickupLocation
+
         // this.updateEstimate()
 
         const timeEstimate = this.props.showEstimate &&
@@ -166,8 +189,14 @@ export class Receipt extends PureComponent {
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}
             <ReceiptHeader orderResult={orderResult} />
+            <Header primary={false} rowHeight={40}>
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    {headerText(orderResult.delivery + ':', 20)}
+                    {headerText(deliveryInfo, 20)}
+                </View>
+            </Header>
             { timeEstimate &&
-                <Header primary={false} rowHeight={40}>
+                <Header rowHeight={40}>
                     <View style={{flexDirection: 'row'}}>
                         {headerText('Estimated Time:', 20)}
                         {headerText(timeEstimate, 20)}
@@ -180,10 +209,12 @@ export class Receipt extends PureComponent {
                 menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
                 orderList={orderResult.orderList}
                 />
-            <OrderTotal
-                total={orderStore.orderListTotal(orderResult.orderList)}
-                /* TODO: Tips */
-                />
+            { (orderStore.getAmount(orderResult.orderList) > 1 || !timeEstimate) &&
+                <OrderTotal
+                    total={orderResult.totalPrice}
+                    tip={orderResult.tip}
+                    />
+            }
         </ScrollView>
     }
 }
@@ -218,7 +249,6 @@ class ReceiptHeader extends PureComponent {
 
     render = () => {
         const orderResult = this.props.orderResult
-
         return <Header>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
@@ -256,16 +286,28 @@ class ReceiptHeader extends PureComponent {
 export class OrderTotal extends PureComponent {
     /* properties:
         total: Float
+        tip:   Float
         style: style object
     */
     render = () => {
-        const totalText = orderStore.formatPrice(this.props.total)
-        return <Header>
-            <View style={{...this.props.style, flexDirection: 'row'}}>
-                {headerText('Total:')}
-                {headerText(totalText, 25, 'right')}
-            </View>
-        </Header>
+        const tipText   = orderStore.formatPrice(this.props.tip)
+        const totalText = orderStore.formatPrice(this.props.total + this.props.tip)
+        return <View>
+            { this.props.tip > 0.0 &&
+                <Header primary={false} rowHeight={40}>
+                    <View style={{...this.props.style, flexDirection: 'row'}}>
+                        {headerText('Tip:', 18)}
+                        {headerText(tipText, 18, 'right')}
+                    </View>
+                </Header>
+            }
+            <Header>
+                <View style={{...this.props.style, flexDirection: 'row'}}>
+                    {headerText('Total:')}
+                    {headerText(totalText, 25, 'right')}
+                </View>
+            </Header>
+        </View>
     }
 }
 

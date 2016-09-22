@@ -49,7 +49,12 @@ export type OrderResult = {
     orderList:      Array<OrderItem>,
     totalAmount:    Int,
     totalPrice:     Int,
+    tip:            Int,
     currency:       Currency,
+
+    delivery:       String,
+    tableNumber:    ?String,
+    pickupLocation: ?String,
 }
 
 /*********************************************************************/
@@ -63,8 +68,11 @@ class OrderStore {
     // Update asynchronously
     @observable total : Float = 0.0
 
-    @observable tipFactor = 0.0
-    @observable tipAmount = 0.0
+    @observable tipFactor      : Float = 0.0
+    @observable tipAmount      : Float = 0.0
+    @observable delivery       : String = 'Table'
+    @observable tableNumber    : ?String = null
+    @observable pickupLocation : String = null
     // Keep this so that we can update the % independently of the price in the UI
 
     @observable checkoutVisible = false
@@ -110,9 +118,18 @@ class OrderStore {
         this.orderList = orderList
     }
 
+    /* Clear the order list at the bar, e.g. after closing the receipt window */
     @action clearOrderList = () => {
         this.setOrderList([])
         this.clearOrderToken()
+    }
+
+    /* Clear all order-related data, e.g. when switching bars */
+    @action clearOrderData = () => {
+        this.clearOrderList()
+        this.delivery = 'Table'
+        this.tableNumber = null
+        this.pickupLocation = null
     }
 
     @computed get currency() {
@@ -156,6 +173,10 @@ class OrderStore {
         return menuItemOption.prices[i]
     }
 
+    getAmount = (orderList : Array<OrderItem>) => {
+        return _.sum(orderList.map(orderItem => orderItem.amount))
+    }
+
     getTotal = (orderItem : OrderItem) : Float => {
         return this.getSubTotal(orderItem) * orderItem.amount
     }
@@ -195,9 +216,14 @@ class OrderStore {
 
     getState = () : OrderState => {
         return {
-            orderList:  this.orderList,
-            orderToken: this.getActiveOrderToken(),
-            orderResultDownload: this.orderResultDownload.getState(),
+            orderList:              this.orderList,
+            orderToken:             this.getActiveOrderToken(),
+            orderResultDownload:    this.orderResultDownload.getState(),
+            delivery: {
+                delivery:           this.delivery,
+                tableNumber:        this.tableNumber,
+                pickupLocation:     this.pickupLocation,
+            }
         }
     }
 
@@ -206,6 +232,7 @@ class OrderStore {
             orderList: [],
             orderToken: null,
             orderResultDownload: emptyResult(),
+            delivery: null,
         }
     }
 
@@ -216,6 +243,11 @@ class OrderStore {
             this.setOrderToken(orderState.orderToken)
             if (orderState.orderResultDownload)
                 this.orderResultDownload.setState(orderState.orderResultDownload)
+        }
+        if (orderState.delivery) {
+            this.delivery = orderState.delivery.delivery
+            this.tableNumber = orderState.delivery.tableNumber
+            this.pickupLocation = orderState.delivery.pickupLocation
         }
     }
 
@@ -269,7 +301,7 @@ class OrderStore {
     }
 
     /* Submit order to server */
-    placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
+    _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
         // return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
@@ -305,6 +337,16 @@ class OrderStore {
             }
         })
 
+        const tableNumber =
+            this.delivery === 'Table'
+                ? this.tableNumber
+                : ""
+
+        const pickupLocation =
+            this.delivery === 'Pickup'
+                ? this.pickupLocation
+                : ""
+
         /* TODO: Utility to build queries correctly and safely */
         const query = `
             query {
@@ -314,8 +356,12 @@ class OrderStore {
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
                         price:       ${graphQLArg(total)},
+                        tip:         ${graphQLArg(this.tipAmount)},
                         orderList:   ${graphQLArg(orderList)},
-                        stripeToken: ${graphQLArg(stripeToken)}
+                        stripeToken: ${graphQLArg(stripeToken)},
+                        delivery:    ${graphQLArg(this.delivery)},
+                        tableNumber: ${graphQLArg(tableNumber)},
+                        pickupLocation: ${graphQLArg(pickupLocation)}
                         ) {
                     errorMessage
                     time {
@@ -327,6 +373,12 @@ class OrderStore {
                 	queueSize
                     estimatedTime
                     receipt
+                    totalPrice
+                    tip
+
+                    delivery
+                    tableNumber
+                    pickupLocation
                 }
             }
         `
@@ -346,6 +398,15 @@ class OrderStore {
             })
         }
         this.orderResultDownload = orderResultDownload
+    }
+
+
+    placeActiveOrder = _.logErrors(async () => {
+        try{
+            this._placeActiveOrder()
+        } catch (e) {
+            this.clearActiveOrderToken()
+        }
     })
 }
 
@@ -361,7 +422,7 @@ export const orderStore = new OrderStore()
 _.safeAutorun(() => {
     /* Clear the order list whenever the selected bar changes */
     barStore.barID
-    orderStore.clearOrderList()
+    orderStore.clearOrderData()
 })
 
 const periodicallyUpdateTotal = () => {

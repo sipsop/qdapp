@@ -77,7 +77,12 @@ const getHistoryQuery = () => {
                     }
                     totalAmount
                     totalPrice
+                    tip
                     currency
+
+                    delivery
+                    tableNumber
+                    pickupLocation
                 }
             }
         }
@@ -235,6 +240,7 @@ class SimpleReceiptModal extends PureComponent {
                     showEstimate={false}
                     showBackButton={true}
                     onClose={this.close}
+                    alwaysShowTotal={true}
                     />
         </SimpleModal>
     }
@@ -251,7 +257,7 @@ class HistoryBarCardFooter extends PureComponent {
     render = () => {
         const orderResult = this.props.orderResult
         // const total = orderStore.orderListTotal(orderResult.orderList)
-        const total = orderResult.totalPrice
+        const total = orderResult.totalPrice + orderResult.tip
         const totalText = orderStore.formatPrice(total, orderResult.currency)
         return <View style={
                 { marginLeft: 5

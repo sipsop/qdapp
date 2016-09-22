@@ -10,6 +10,7 @@ import inspect
 import string
 import random
 import graphene
+import traceback
 
 from curry import fmap
 
@@ -465,11 +466,15 @@ class OrderResult(graphene.ObjectType):
     orderList       = List(OrderItem)
     totalAmount     = Int
     totalPrice      = Int
+    tip             = Int
     currency        = graphene.Field(Currency)
+
+    delivery        = String
+    tableNumber     = graphene.String()
+    pickupLocation  = graphene.String()
 
     def resolve_menuItems(self, args, *_):
         menuItemIDs = set(orderItem.menuItemID for orderItem in self.orderList)
-        print("RESOLVING MENU ITEMS", self.orderList, menuItemIDs)
         # menuItems = model.get_menu_items(list(menuItemIDs))
         # return fmap(get_menu_item, menuItems)
         return fmap(find_item, menuItemIDs)
@@ -494,8 +499,12 @@ class Query(graphene.ObjectType):
         userName    = String,
         currency    = String,
         price       = Int,
+        tip         = Int,
         orderList   = List(OrderItemInput),
         stripeToken = String,
+        delivery    = String,
+        tableNumber = String,    # optional table number
+        pickupLocation = String, # optional label of pickup point
         )
 
     recentOrders = graphene.Field(OrderHistory,
@@ -511,48 +520,10 @@ class Query(graphene.ObjectType):
         return menuTags
 
     def resolve_placeOrder(self, args, *_):
-        # TODO: Authentication
-
-        now         = datetime.datetime.utcnow()
-        barID       = args['barID']
-        userID      = args['userID']
-        userName    = args['userName']
-        currency    = args['currency']
-        price       = args['price']
-        orderList   = args['orderList']
-        receipt     = shortid()
-        totalAmount = sum(orderItem['amount'] for orderItem in orderList)
-
-        assert currency in ['Sterling', 'Euros', 'Dollars']
-        currency = getattr(model.Currency, currency)
-
-        # TODO: Payment with Stripe
-        # TODO: Verify barID and bar opening time
-        # TODO: Verify 'price'
-
-        order = model.Order(
-            barID=barID,
-            utcstamp=now,
-            userID=userID,
-            userName=userName,
-            totalAmount=totalAmount,
-            totalPrice=price,
-            currency=currency,
-            orderList=orderList,
-            receipt=receipt,
-            completed=False,
-            errorMessage=None,
-        )
-        model.submit_order(order)
-
-        queueSize = model.get_bar_queue_size(barID)
-        estimatedTime = 60 + model.get_drinks_queue_size(barID) * 20
-
-        return get_order_result(
-            order,
-            queueSize     = queueSize,
-            estimatedTime = estimatedTime
-            )
+        try:
+            return _resolve_placeOrder(self, args, *_)
+        except:
+            traceback.print_exc()
 
     def resolve_recentOrders(self, args, *_):
         userID      = args['userID']
@@ -561,6 +532,73 @@ class Query(graphene.ObjectType):
 
         orders = model.get_order_history(userID, n)
         return OrderHistory(orderHistory=fmap(get_order_result, orders))
+
+
+def _resolve_placeOrder(self, args, *_):
+    # TODO: Authentication
+
+    print("PLACING ORDER!!!!")
+
+    now         = datetime.datetime.utcnow()
+    barID       = args['barID']
+    userID      = args['userID']
+    userName    = args['userName']
+    currency    = args['currency']
+    price       = args['price']
+    tip         = args['tip']
+    orderList   = args['orderList']
+    receipt     = shortid()
+    totalAmount = sum(orderItem['amount'] for orderItem in orderList)
+
+    delivery    = args['delivery']
+    tableNumber = args['tableNumber'] or None
+    pickupLocation = args['pickupLocation'] or None
+
+    if delivery not in ('Table', 'Pickup'):
+        raise ValueError("Invalid delivery specified: %r" % (delivery,))
+    if tableNumber is None and pickupLocation is None:
+        raise ValueError("Require eitehr table number or pickup location")
+    if currency not in ['Sterling', 'Euros', 'Dollars']:
+        raise ValueError("Unknown currency: %r" % (currency,))
+    if tip < 0:
+        raise ValueError("Tip must be positive, got %r" % (tip,))
+
+    currency = getattr(model.Currency, currency)
+
+    # TODO: Payment with Stripe
+    # TODO: Verify barID and bar opening time
+    # TODO: Verify 'price'
+    # TODO: Verify pickup location
+
+    order = model.Order(
+        barID=barID,
+        utcstamp=now,
+        userID=userID,
+        userName=userName,
+        totalAmount=totalAmount,
+        totalPrice=price,
+        tip=tip,
+        currency=currency,
+        orderList=orderList,
+        receipt=receipt,
+
+        delivery=getattr(model.DeliveryMethod, delivery),
+        tableNumber=tableNumber,
+        pickupLocation=pickupLocation,
+
+        completed=False,
+        errorMessage=None,
+    )
+    model.submit_order(order)
+
+    queueSize = model.get_bar_queue_size(barID)
+    estimatedTime = 60 + model.get_drinks_queue_size(barID) * 20
+
+    return get_order_result(
+        order,
+        queueSize     = queueSize,
+        estimatedTime = estimatedTime
+        )
 
 
 def get_order_result(
@@ -579,10 +617,15 @@ def get_order_result(
         estimatedTime   = estimatedTime,
         totalAmount     = order['totalAmount'],
         totalPrice      = order['totalPrice'],
+        tip             = order['tip'],
         currency        = get_currency(order['currency']),
         receipt         = order['receipt'],
         userName        = order['userName'],
         orderList       = fmap(get_order_item, order['orderList']),
+
+        delivery        = get_delivery(order['delivery']),
+        tableNumber     = order['tableNumber'],
+        pickupLocation  = order['pickupLocation'],
     )
 
 _currencies = {
@@ -590,6 +633,11 @@ _currencies = {
     model.Currency.Dollars:  Dollars,
     model.Currency.Euros:    Euros,
 }
+
+def get_delivery(delivery : model.DeliveryMethod) -> str:
+    if delivery == model.DeliveryMethod.Table:
+        return 'Table'
+    return 'Pickup'
 
 def get_currency(currency : model.Currency) -> Currency:
     return _currencies[currency]

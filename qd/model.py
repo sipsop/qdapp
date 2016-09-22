@@ -89,6 +89,11 @@ OrderItem = typeddict(
     , ('amount',            int)
     ], name='OrderItem')
 
+DeliveryMethod = enum('DeliveryMethod', [
+    'Table',
+    'Pickup',
+])
+
 Order = typeddict(
     [ ('id',                optional(OrderID))
     , ('barID',             BarID)
@@ -96,10 +101,15 @@ Order = typeddict(
     , ('userID',            str)
     , ('userName',          str)
     , ('totalAmount',       int) # total number of drinks
-    , ('totalPrice',        int) # total price
+    , ('totalPrice',        int) # total price (in cents)
+    , ('tip',               int) # total tip (in cents)
     , ('currency',          Currency)
     , ('orderList',         [OrderItem])
     , ('receipt',           maybe_none(str))
+
+    , ('delivery',          DeliveryMethod)
+    , ('tableNumber',       maybe_none(str))
+    , ('pickupLocation',    maybe_none(str))
 
     , ('completed',         bool)
     , ('errorMessage',      maybe_none(str))
