@@ -181,7 +181,8 @@ export class Receipt extends PureComponent {
                 orderList={orderResult.orderList}
                 />
             <OrderTotal
-                total={orderResult.totalPrice + orderResult.tip}
+                total={orderResult.totalPrice}
+                tip={orderResult.tip}
                 />
         </ScrollView>
     }
@@ -255,16 +256,28 @@ class ReceiptHeader extends PureComponent {
 export class OrderTotal extends PureComponent {
     /* properties:
         total: Float
+        tip:   Float
         style: style object
     */
     render = () => {
-        const totalText = orderStore.formatPrice(this.props.total)
-        return <Header>
-            <View style={{...this.props.style, flexDirection: 'row'}}>
-                {headerText('Total:')}
-                {headerText(totalText, 25, 'right')}
-            </View>
-        </Header>
+        const tipText   = orderStore.formatPrice(this.props.tip)
+        const totalText = orderStore.formatPrice(this.props.total + this.props.tip)
+        return <View>
+            { this.props.tip > 0.0 &&
+                <Header primary={false} rowHeight={40}>
+                    <View style={{...this.props.style, flexDirection: 'row'}}>
+                        {headerText('Tip:', 18)}
+                        {headerText(tipText, 18, 'right')}
+                    </View>
+                </Header>
+            }
+            <Header>
+                <View style={{...this.props.style, flexDirection: 'row'}}>
+                    {headerText('Total:')}
+                    {headerText(totalText, 25, 'right')}
+                </View>
+            </Header>
+        </View>
     }
 }
 

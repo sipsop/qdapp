@@ -74,12 +74,16 @@ export class Checkout extends PureComponent {
                         showBackButton={true}
                         onBack={this.close}
                         />
-                    <TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />
-                    <SelectedCardInfo2 />
+                    {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
+                    <SelectedCardInfo />
                     <TipComponent style={this.styles.tipSlider} />
                     <OrderTotal
                         style={{marginRight: 10}}
-                        total={orderStore.totalPlusTip} />
+                        total={orderStore.total + orderStore.tipAmount}
+                        /* Do not show tip amount here, it is too noisy */
+                        /* tip={orderStore.tipAmount} */
+                        tip={0.0}
+                        />
                     <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
                         <TipRoundButton />
                     </View>
@@ -96,41 +100,17 @@ const dataSource = new ListView.DataSource({
 export class SelectedCardInfo extends PureComponent {
     paymentConfigModal = null
 
-    render = () => {
-        const haveCard = paymentStore.selectedCardNumber != null
-        if (!haveCard)
-            return <AddACardButton />
-        return <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1}}>
-                <CreditCard
-                    small={true}
-                    card={paymentStore.getSelectedCard()}
-                    />
-            </View>
-            <View style={{flex: 1}}>
-                <PaymentConfigModal
-                    ref={ref => this.paymentConfigModal = ref}
-                    />
-                {makeAddCardButton("Change", () => this.paymentConfigModal.show())}
-            </View>
-        </View>
-    }
-}
-
-@observer
-export class SelectedCardInfo2 extends PureComponent {
-    paymentConfigModal = null
-
     styles = StyleSheet.create({
         view: {
-            flex: 0,
             height: 55,
             alignItems: 'center',
+            // borderBottomWidth: 2,
         },
         cardView: {
-            flex: 0,
+            // flex: 1,
+            width: 350,
             height: 55,
-            width: 250,
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
         },
@@ -139,13 +119,19 @@ export class SelectedCardInfo2 extends PureComponent {
     render = () => {
         const haveCard = paymentStore.selectedCardNumber != null
         if (!haveCard)
-            return <AddACardButton />
+            return <AddACardButton style={{marginTop: 0, borderBottomWidth: this.styles.view.borderBottomWidth}} />
+
         return <View style={this.styles.view}>
-            <PaymentConfigModal
-                ref={ref => this.paymentConfigModal = ref}
-                />
-            <TouchableOpacity onPress={() => this.paymentConfigModal.show()}>
+            <TouchableOpacity
+                    style={{flex: 1}}
+                    onPress={() => this.paymentConfigModal.show()}>
                 <View style={this.styles.cardView}>
+                    <PaymentConfigModal
+                        ref={ref => this.paymentConfigModal = ref}
+                        />
+                    <T style={{fontSize: 20, color: '#000'}}>
+                        Card:
+                    </T>
                     <CreditCard
                         small={true}
                         card={paymentStore.getSelectedCard()}
