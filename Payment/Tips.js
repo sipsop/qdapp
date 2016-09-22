@@ -116,9 +116,23 @@ export class TipRoundButton extends PureComponent {
     })
 
     @computed get roundedPrice() {
-        const total = orderStore.totalPlusTip
-        const n = roundingAmount(total) * 100
-        const rounded = Math.ceil(total / n) * n
+        const total = orderStore.total
+        const max = total + 0.2 * total
+
+        const totalPlusTip = orderStore.totalPlusTip
+        var r = roundingAmount(totalPlusTip)
+        var n = r * 100
+        var i = _.find(roundingAmounts, r)
+
+        var rounded
+        while (i >= 0) {
+            n = roundingAmounts[i] * 100
+            rounded = Math.ceil(totalPlusTip / n) * n
+            log("n", n, "totalPlusTip", totalPlusTip, "rounded", rounded)
+            if (rounded <= max)
+                break
+            i -= 1
+        }
         return rounded
     }
 
@@ -142,9 +156,22 @@ export class TipRoundButton extends PureComponent {
     }
 }
 
-const roundingAmount = (price) => {
+const roundingAmounts = [
+    0.5,
+    1,
+    2,
+    5,
+    10,
+    15,
+    20,
+    50,
+]
+
+const roundingAmount = (price, max) => {
     const n = price / 100
-    if (n < 10) {
+    if (n < 3) {
+        return 0.5
+    } else if (n < 10) {
         return 1
     } else if (n < 15) {
         return 2
