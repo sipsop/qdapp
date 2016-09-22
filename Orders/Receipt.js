@@ -30,25 +30,46 @@ const { log, assert } = _.utils('Orders/Receipt.js')
 export class ReceiptModal extends PureComponent {
     @observable showConfirmText = false
 
+    confirmCloseModal = null
+
     @computed get visible() {
         return orderStore.getActiveOrderToken() != null
     }
 
+    @computed get downloadState() {
+        return orderStore.getOrderResultDownload().state
+    }
+
+    @computed get showCloseButton() {
+        log("STATUSSSSS", this.downloadState)
+        return this.downloadState === 'Error' || this.downloadState === 'Finished'
+    }
+
+
     handleClose = () => {
-        if (Platform.OS === 'android') {
-            this.confirmCloseModal.show()
-        } else {
-            if (this.showConfirmText)
-                this.close() // close double tapped
-            else
-                this.showConfirmText = true
+        if (this.downloadState === 'Error') {
+            /* Error submitting, allow closing */
+            this.closeModal()
+        } else if (this.downloadState === 'Finished') {
+            if (Platform.OS === 'android') {
+                this.confirmCloseModal.show()
+            } else {
+                if (this.showConfirmText)
+                    this.close() // close double tapped
+                else
+                    this.showConfirmText = true
+            }
         }
     }
 
     @action close = () => {
         orderStore.clearOrderList()
-        orderStore.clearActiveOrderToken()
         tabStore.setCurrentTab(2)
+        this.closeModal()
+    }
+
+    @action closeModal = () => {
+        orderStore.clearActiveOrderToken()
     }
 
     render = () => {
@@ -57,17 +78,17 @@ export class ReceiptModal extends PureComponent {
         return <OkCancelModal
                     visible={this.visible}
                     showCancelButton={false}
-                    showOkButton={true}
+                    showOkButton={this.showCloseButton}
                     okLabel={"Close"}
                     okModal={this.handleClose}
                     cancelModal={this.handleClose}
                     >
             <SmallOkCancelModal
                 ref={ref => this.confirmCloseModal = ref}
-                message="Did you collect your drinks?"
+                message="Did receive your order?"
                 onConfirm={this.close}
-                okLabel="Yes"
-                cancelLabel="Not Yet"
+                okLabel="Yes I Did"
+                cancelLabel="Nope  "
                 />
             <PlaceOrderDownloadView />
             {
@@ -90,8 +111,6 @@ export class ReceiptModal extends PureComponent {
 
 @observer
 export class PlaceOrderDownloadView extends DownloadResultView {
-
-    confirmCloseModal = null
     inProgressMessage = "Processing order..."
     errorMessage      = "There was an error processing your order"
 
