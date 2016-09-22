@@ -2519,12 +2519,49 @@ drinks:
  
     ardbeg10YearOld:  
         name: Argbeg 10 Year Old
-        desc: 
+        desc: This is known in the world as the peatiest, smokey and single malt whiskey. 
         abv: 46%
         image:
         license: 
         tags: |
+            #spirit
             #whiskey 
+            #peatiest
+            #smokiest
+            #singlemalt
+            #naturalsweet
+    
+    bell8YearOld:
+        name: Bell's 8 Year Old
+        desc: This is UK's faviourite and the most popular blended whiskey. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #whiskey
+            #soft
+            #floralnote
+            #herbs
+            #mediumbody 
+            #hintofwood
+            #spice
+    
+    gentlemanJack:
+        name: Gentleman Jack 
+        desc: This is cleaner, refined, smooth and double charcoal mellowed whiskey. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #smooth
+            #doublecharcoalmellowed
+            #refined
+            #cleaner 
+            #smoothfinish 
+    
     
    
     ### Cocktails
