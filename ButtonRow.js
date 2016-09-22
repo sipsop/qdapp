@@ -65,7 +65,7 @@ export class ButtonGroup extends Component {
     render = () => {
         const labels = this.props.labels
         return (
-            <View style={{flex: 1, height: rowHeight, /* borderRightWidth: 0.5, borderColor: '#fff',*/ paddingLeft: 5, paddingRight: 5}}>
+            <View style={{flex: 1, height: rowHeight, paddingLeft: 5, paddingRight: 5}}>
                 <ScrollView
                         horizontal={true}
                         style={{height: rowHeight}}
@@ -99,6 +99,7 @@ export class SelectableButton extends Component {
             whether this button should be disabled
         onPress: callback
         renderLabel: str -> Component
+        style: style object
     */
     render = () => {
         var textDecoration = 'none'
@@ -165,6 +166,7 @@ export class SelectableButton extends Component {
                 // , marginTop: 5
                 // , marginBottom: 5
                 , borderRadius: 5
+                , ...this.props.style
                 }}>
             {button}
         </View>
