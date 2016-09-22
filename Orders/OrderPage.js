@@ -113,30 +113,30 @@ class DeliveryMethod extends PureComponent {
     })
 
     static defaultProps = {
-        pickupLocations: [],
+        pickupLocations: ['Main Bar', 'First Floor'],
     }
 
-    @observable delivery : String = 'Table' // 'Table' | 'Pickup'
-    @observable tableNumber : ?String = null
-    @observable pickupLocation : String = "1"
-
     @action tableDelivery = () => {
-        this.delivery = 'Table'
+        orderStore.delivery = 'Table'
     }
 
     @action pickup = () => {
-        this.delivery = 'Pickup'
+        orderStore.delivery = 'Pickup'
     }
 
     @action setTableNumber = (tableNumber : String) => {
-        this.tableNumber = tableNumber
+        orderStore.tableNumber = tableNumber
+    }
+
+    @action setPickupLocation = (location) => {
+        orderStore.pickupLocation = location
     }
 
     @action toggleButton = (delivery) => {
-        this.delivery = delivery
+        orderStore.delivery = delivery
     }
 
-    isActive = (label) => this.delivery === label
+    isActive = (label) => orderStore.delivery === label
 
     renderLabel = label => {
         if (label === 'Table')
@@ -145,7 +145,13 @@ class DeliveryMethod extends PureComponent {
     }
 
     render = () => {
-        const showSecondRow = this.delivery === 'Table' || this.props.pickupLocations.length > 1
+        const tableDelivery = orderStore.delivery === 'Table'
+        const pickup = orderStore.delivery === 'Pickup' && this.props.pickupLocations.length > 1
+        const showSecondRow = tableDelivery || pickup
+        const tableNumber = orderStore.tableNumber
+            ? "" + orderStore.tableNumber
+            : ""
+
         return <View>
             {/*
             <TextHeader label="Delivery" rowHeight={55} />
@@ -189,96 +195,26 @@ class DeliveryMethod extends PureComponent {
                     />
             </Header>
             <View style={this.styles.optStyle}>
-                { this.delivery === 'Table' &&
+                { tableDelivery &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
                             style={{width: 150, textAlign: 'center'}}
                             placeholder="table number"
-                            defaultValue={this.tableNumber != null ? "" + this.tableNumber : ""}
+                            defaultValue={tableNumber}
                             onEndEditing={event => this.setTableNumber(event.nativeEvent.text)}
                             />
                     </View>
                 }
-                { this.delivery === 'Pickup' &&
-                    <Picker selectedValue={this.pickupLocation}
-                            onValueChange={location => this.pickupLocation = location}
+                { pickup &&
+                    <Picker selectedValue={orderStore.pickupLocation}
+                            onValueChange={location => orderStore.pickupLocation = location}
                             style={this.styles.pickerStyle}
-                            enabled={!this.value}
                             >
-                        <Picker.Item label="Main Bar" value="1" />
-                        <Picker.Item label="First Floor" value="2" />
+                        <Picker.Item label="Main Bar" value="Main Bar" />
+                        <Picker.Item label="First Floor" value="First Floor" />
                     </Picker>
                 }
-            </View>
-        </View>
-    }
-}
-
-@observer
-class DeliveryMethod2 extends PureComponent {
-    @observable value = false
-
-    styles = StyleSheet.create({
-        rowStyle: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: 55,
-        },
-        optStyle: {
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-        },
-        pickerStyle: {
-            width: 150,
-        },
-    })
-
-    @observable pickupLocation = "1"
-
-    render = () => {
-        return <View>
-            <TextHeader label="Delivery" rowHeight={55} />
-            <View style={{height: 110}}>
-                <View style={this.styles.rowStyle}>
-                    <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
-                        Pickup:
-                    </T>
-                    <View style={this.styles.optStyle}>
-                        <Picker selectedValue={this.pickupLocation}
-                                onValueChange={location => this.pickupLocation = location}
-                                style={this.styles.pickerStyle}
-                                enabled={!this.value}
-                                >
-                            <Picker.Item label="Pickup: Main Bar" value="1" />
-                            <Picker.Item label="Pickup: First Floor" value="2" />
-                            <Picker.Item label="Table Service" value="2" />
-                        </Picker>
-                    </View>
-                </View>
-
-                <View style={this.styles.rowStyle}>
-                    <T style={{fontSize: 20, color: '#000', flex: 1, textAlign: 'center'}}>
-                        Table Delivery:
-                    </T>
-                    <View style={this.styles.optStyle}>
-                        <Switch
-                            value={this.value}
-                            onValueChange={value => this.value = value}
-                            />
-                        { this.value &&
-                            <View style={{flex: 1, alignItems: 'center'}}>
-                                <TextInput
-                                    keyboardType='phone-pad'
-                                    style={{width: 100, textAlign: 'center'}}
-                                    placeholder="table number"
-                                    />
-                            </View>
-                        }
-                    </View>
-                </View>
             </View>
         </View>
     }

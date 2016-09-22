@@ -63,8 +63,11 @@ class OrderStore {
     // Update asynchronously
     @observable total : Float = 0.0
 
-    @observable tipFactor = 0.0
-    @observable tipAmount = 0.0
+    @observable tipFactor      : Float = 0.0
+    @observable tipAmount      : Float = 0.0
+    @observable delivery       : String = 'Table'
+    @observable tableNumber    : ?String = null
+    @observable pickupLocation : String = null
     // Keep this so that we can update the % independently of the price in the UI
 
     @observable checkoutVisible = false
@@ -110,9 +113,18 @@ class OrderStore {
         this.orderList = orderList
     }
 
+    /* Clear the order list at the bar, e.g. after closing the receipt window */
     @action clearOrderList = () => {
         this.setOrderList([])
         this.clearOrderToken()
+    }
+
+    /* Clear all order-related data, e.g. when switching bars */
+    @action clearOrderData = () => {
+        this.clearOrderList()
+        this.delivery = 'Table'
+        this.tableNumber = null
+        this.pickupLocation = null
     }
 
     @computed get currency() {
@@ -195,9 +207,14 @@ class OrderStore {
 
     getState = () : OrderState => {
         return {
-            orderList:  this.orderList,
-            orderToken: this.getActiveOrderToken(),
-            orderResultDownload: this.orderResultDownload.getState(),
+            orderList:              this.orderList,
+            orderToken:             this.getActiveOrderToken(),
+            orderResultDownload:    this.orderResultDownload.getState(),
+            delivery: {
+                delivery:           this.delivery,
+                tableNumber:        this.tableNumber,
+                pickupLocation:     this.pickupLocation,
+            }
         }
     }
 
@@ -206,6 +223,7 @@ class OrderStore {
             orderList: [],
             orderToken: null,
             orderResultDownload: emptyResult(),
+            delivery: null,
         }
     }
 
@@ -216,6 +234,11 @@ class OrderStore {
             this.setOrderToken(orderState.orderToken)
             if (orderState.orderResultDownload)
                 this.orderResultDownload.setState(orderState.orderResultDownload)
+        }
+        if (orderState.delivery) {
+            this.delivery = orderState.delivery.delivery
+            this.tableNumber = orderState.delivery.tableNumber
+            this.pickupLocation = orderState.delivery.pickupLocation
         }
     }
 
@@ -361,7 +384,7 @@ export const orderStore = new OrderStore()
 _.safeAutorun(() => {
     /* Clear the order list whenever the selected bar changes */
     barStore.barID
-    orderStore.clearOrderList()
+    orderStore.clearOrderData()
 })
 
 const periodicallyUpdateTotal = () => {
