@@ -2170,15 +2170,97 @@ drinks:
             #birthdaycake
             #dandelion&burdock
 
-    # name:
-    #     desc:
-    #     abv:
-    #     image:
-    #     license:
-    #     tags: |
-    #         #spirit
-    #         #vodka
-
+    ##rum
+    
+    appleton12YearsOldExtraRum: 
+        name: Appleton 12 Years Old Extra Rum  
+        desc: It is a brilliant rum with scents of walnut, nutmeg, orange peel and vanilla. 
+        abv: 43%
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum
+            #bronzecolour
+            #walnutscents
+            #nutmegscents
+            #orangepeel
+            #vanilla
+            #bittersweet
+            #luscious 
+   
+    bacardiSuperior:
+        name: Bacardi Superior 
+        desc: This light-bodied rum is produced by Bacardi Company and is used in many cocktails. 
+        abv: 37.5% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #white
+            #oakbarrels
+            #versatlie 
+            #smooth
+            #tropicalfruitaroma
+            #almondscents 
+        
+    bacardiOro:
+        name: Bacardi Oro
+        desc: This rum is soft and rich in taste with a long finish.  
+        abv: 37.5% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #amber
+            #hintofplums 
+            #hintofapricot 
+            #hintofnutmeg
+            #hintofvanilla 
+            #soft
+            #rich
+            #very full
+            
+     bacardiOro:
+        name: Bacardi Oro or Gold 
+        desc: This rum is soft and rich in taste with a long finish.  
+        abv: 37.5% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #amber
+            #hintofplums 
+            #hintofapricot 
+            #hintofnutmeg
+            #hintofvanilla 
+            #soft
+            #rich
+            #very full        
+       
+    bacardi8: 
+        name: Bacardi 8
+        desc: This is premium dark rum rum is produced by Bacardi Company. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            
+   ##whiskey 
+    
+        name: 
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #whiskey 
+    
+   
     ### Cocktails
 
     # longIslandIceTea:
