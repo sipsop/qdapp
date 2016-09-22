@@ -53,8 +53,8 @@ export type OrderResult = {
     currency:       Currency,
 
     delivery:       String,
-    tableNumber:    ?Int,
-    pickup:         ?String,
+    tableNumber:    ?String,
+    pickupLocation: ?String,
 }
 
 /*********************************************************************/
@@ -171,6 +171,10 @@ class OrderStore {
     getOptionPrice = (menuItemOption : MenuItemOption, option : String) : Price => {
         const i = _.find(menuItemOption.optionList, option)
         return menuItemOption.prices[i]
+    }
+
+    getAmount = (orderList : Array<OrderItem>) => {
+        return _.sum(orderList.map(orderItem => orderItem.amount))
     }
 
     getTotal = (orderItem : OrderItem) : Float => {
@@ -333,6 +337,16 @@ class OrderStore {
             }
         })
 
+        const tableNumber =
+            this.delivery === 'Table'
+                ? this.tableNumber
+                : ""
+
+        const pickupLocation =
+            this.delivery === 'Pickup'
+                ? this.pickupLocation
+                : ""
+
         /* TODO: Utility to build queries correctly and safely */
         const query = `
             query {
@@ -344,7 +358,10 @@ class OrderStore {
                         price:       ${graphQLArg(total)},
                         tip:         ${graphQLArg(this.tipAmount)},
                         orderList:   ${graphQLArg(orderList)},
-                        stripeToken: ${graphQLArg(stripeToken)}
+                        stripeToken: ${graphQLArg(stripeToken)},
+                        delivery:    ${graphQLArg(this.delivery)},
+                        tableNumber: ${graphQLArg(tableNumber)},
+                        pickupLocation: ${graphQLArg(pickupLocation)}
                         ) {
                     errorMessage
                     time {
@@ -361,7 +378,7 @@ class OrderStore {
 
                     delivery
                     tableNumber
-                    pickup
+                    pickupLocation
                 }
             }
         `

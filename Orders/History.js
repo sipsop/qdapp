@@ -82,7 +82,7 @@ const getHistoryQuery = () => {
 
                     delivery
                     tableNumber
-                    pickup
+                    pickupLocation
                 }
             }
         }
@@ -240,6 +240,7 @@ class SimpleReceiptModal extends PureComponent {
                     showEstimate={false}
                     showBackButton={true}
                     onClose={this.close}
+                    alwaysShowTotal={true}
                     />
         </SimpleModal>
     }

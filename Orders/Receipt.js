@@ -169,6 +169,11 @@ export class Receipt extends PureComponent {
         assert(orderResult.userName != null)
         assert(orderResult.orderList != null)
 
+        const deliveryInfo =
+            orderResult.delivery === 'Table'
+                ? orderResult.tableNumber
+                : orderResult.pickupLocation
+
         // this.updateEstimate()
 
         const timeEstimate = this.props.showEstimate &&
@@ -184,8 +189,14 @@ export class Receipt extends PureComponent {
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}
             <ReceiptHeader orderResult={orderResult} />
+            <Header primary={false} rowHeight={40}>
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    {headerText(orderResult.delivery + ':', 20)}
+                    {headerText(deliveryInfo, 20)}
+                </View>
+            </Header>
             { timeEstimate &&
-                <Header primary={false} rowHeight={40}>
+                <Header rowHeight={40}>
                     <View style={{flexDirection: 'row'}}>
                         {headerText('Estimated Time:', 20)}
                         {headerText(timeEstimate, 20)}
@@ -198,10 +209,12 @@ export class Receipt extends PureComponent {
                 menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
                 orderList={orderResult.orderList}
                 />
-            <OrderTotal
-                total={orderResult.totalPrice}
-                tip={orderResult.tip}
-                />
+            { (orderStore.getAmount(orderResult.orderList) > 1 || !timeEstimate) &&
+                <OrderTotal
+                    total={orderResult.totalPrice}
+                    tip={orderResult.tip}
+                    />
+            }
         </ScrollView>
     }
 }
@@ -236,11 +249,6 @@ class ReceiptHeader extends PureComponent {
 
     render = () => {
         const orderResult = this.props.orderResult
-        const deliveryInfo =
-            orderResult.delivery === 'Table'
-                ? orderResult.tableNumber
-                : orderResult.pickup
-
         return <Header>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
@@ -251,12 +259,6 @@ class ReceiptHeader extends PureComponent {
                         {headerText('#' + orderResult.receipt)}
                     </View>
                 </TouchableOpacity>
-                <Header primary={false} rowHeight={40}>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        {headerText(orderResult.delivery + ':', 18)}
-                        {headerText(deliveryInfo, 18, 'right')}
-                    </View>
-                </Header>
                 <Message
                         ref={ref => this.receiptModal = ref}
                         >

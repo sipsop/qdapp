@@ -108,8 +108,8 @@ Order = typeddict(
     , ('receipt',           maybe_none(str))
 
     , ('delivery',          DeliveryMethod)
-    , ('tableNumber',       maybe_none(int))
-    , ('pickup',            maybe_none(str))
+    , ('tableNumber',       maybe_none(str))
+    , ('pickupLocation',    maybe_none(str))
 
     , ('completed',         bool)
     , ('errorMessage',      maybe_none(str))
