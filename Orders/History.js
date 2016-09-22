@@ -205,7 +205,6 @@ class HistoryBarCard extends DownloadResultView {
     }
 
     renderFooter = (barName, textColor = '#fff') => {
-        log("RENDERING FOOTER", barName)
         return <HistoryBarCardFooter
                     barName={barName}
                     orderResult={this.orderResult}
@@ -223,6 +222,7 @@ class SimpleReceiptModal extends PureComponent {
 
     modal = null
     show = () => this.modal.show()
+    close = () => this.modal.close()
 
     render = () => {
         return <SimpleModal
@@ -233,6 +233,8 @@ class SimpleReceiptModal extends PureComponent {
                     bar={this.props.bar}
                     orderResult={this.props.orderResult}
                     showEstimate={false}
+                    showBackButton={true}
+                    onClose={this.close}
                     />
         </SimpleModal>
     }
@@ -329,7 +331,7 @@ class OrderHistoryStore {
     _fetchOrderHistory = async () => {
         this.orderHistoryDownload.downloadStarted()
         const download = await downloadManager.graphQL(
-            'qd:order:history', getHistoryQuery(), cacheInfo)
+            'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
         _.runAndLogErrors(() => {
             this.orderHistoryDownload = download.update(data => data.recentOrders)
         })

@@ -111,8 +111,7 @@ export class PlaceOrderDownloadView extends DownloadResultView {
         return <Receipt
                     bar={barStore.getBar()}
                     orderResult={orderResult}
-                    showEstimate={true}
-                    />
+                    showEstimate={true} />
     }
 }
 
@@ -135,7 +134,12 @@ export class Receipt extends PureComponent {
         visible: bool
         onClose: () => void
         showEstimate: bool
+        showBackButton: bool
     */
+
+    static defaultProps = {
+        showBackButton: false,
+    }
 
     render = () => {
         const bar = this.props.bar
@@ -157,6 +161,8 @@ export class Receipt extends PureComponent {
                 bar={bar}
                 photo={bar.photos[0]}
                 imageHeight={150}
+                showBackButton={this.props.showBackButton}
+                onBack={this.props.onClose}
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}
             <ReceiptHeader orderResult={orderResult} />
