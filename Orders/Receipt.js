@@ -181,8 +181,7 @@ export class Receipt extends PureComponent {
                 orderList={orderResult.orderList}
                 />
             <OrderTotal
-                total={orderStore.orderListTotal(orderResult.orderList)}
-                /* TODO: Tips */
+                total={orderResult.totalPrice + orderResult.tip}
                 />
         </ScrollView>
     }

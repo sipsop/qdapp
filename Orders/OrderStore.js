@@ -49,6 +49,7 @@ export type OrderResult = {
     orderList:      Array<OrderItem>,
     totalAmount:    Int,
     totalPrice:     Int,
+    tip:            Int,
     currency:       Currency,
 }
 
@@ -337,6 +338,7 @@ class OrderStore {
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
                         price:       ${graphQLArg(total)},
+                        tip:         ${graphQLArg(this.tipAmount)},
                         orderList:   ${graphQLArg(orderList)},
                         stripeToken: ${graphQLArg(stripeToken)}
                         ) {
@@ -350,6 +352,8 @@ class OrderStore {
                 	queueSize
                     estimatedTime
                     receipt
+                    totalPrice
+                    tip
                 }
             }
         `

@@ -96,7 +96,8 @@ Order = typeddict(
     , ('userID',            str)
     , ('userName',          str)
     , ('totalAmount',       int) # total number of drinks
-    , ('totalPrice',        int) # total price
+    , ('totalPrice',        int) # total price (in cents)
+    , ('tip',               int) # total tip (in cents)
     , ('currency',          Currency)
     , ('orderList',         [OrderItem])
     , ('receipt',           maybe_none(str))

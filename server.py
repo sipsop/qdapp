@@ -465,6 +465,7 @@ class OrderResult(graphene.ObjectType):
     orderList       = List(OrderItem)
     totalAmount     = Int
     totalPrice      = Int
+    tip             = Int
     currency        = graphene.Field(Currency)
 
     def resolve_menuItems(self, args, *_):
@@ -494,6 +495,7 @@ class Query(graphene.ObjectType):
         userName    = String,
         currency    = String,
         price       = Int,
+        tip         = Int,
         orderList   = List(OrderItemInput),
         stripeToken = String,
         )
@@ -519,11 +521,16 @@ class Query(graphene.ObjectType):
         userName    = args['userName']
         currency    = args['currency']
         price       = args['price']
+        tip         = args['tip']
         orderList   = args['orderList']
         receipt     = shortid()
         totalAmount = sum(orderItem['amount'] for orderItem in orderList)
 
-        assert currency in ['Sterling', 'Euros', 'Dollars']
+        if currency not in ['Sterling', 'Euros', 'Dollars']:
+            raise ValueError("Unknown currency: %r" % (currency,))
+        if tip < 0:
+            raise ValueError("Tip must be positive, got %r" % (tip,))
+
         currency = getattr(model.Currency, currency)
 
         # TODO: Payment with Stripe
@@ -537,6 +544,7 @@ class Query(graphene.ObjectType):
             userName=userName,
             totalAmount=totalAmount,
             totalPrice=price,
+            tip=tip,
             currency=currency,
             orderList=orderList,
             receipt=receipt,
@@ -579,6 +587,7 @@ def get_order_result(
         estimatedTime   = estimatedTime,
         totalAmount     = order['totalAmount'],
         totalPrice      = order['totalPrice'],
+        tip             = order['tip'],
         currency        = get_currency(order['currency']),
         receipt         = order['receipt'],
         userName        = order['userName'],
