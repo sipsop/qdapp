@@ -46,16 +46,18 @@ export class TextHeader extends PureComponent {
     /* properties:
         label: String
         rowHeight: Int
+        primary: bool
     */
 
     static defaultProps = {
-        fontSize: 25,
+        fontSize:  25,
         rowHeight: 55,
+        primary:   true,
     }
+
     render = () => {
-        const backgroundColor = config.theme.primary.medium
         return (
-            <Header rowHeight={this.props.rowHeight}>
+            <Header {...this.props}>
                 <HeaderText fontSize={this.props.fontSize}>
                     {this.props.label}
                 </HeaderText>

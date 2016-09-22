@@ -107,7 +107,7 @@ export class SelectableButton extends Component {
         var fontWeight = 'normal'
         if (this.props.active) {
             opacity = 1.0
-            textDecoration = 'underline'
+            // textDecoration = 'underline'
             fontWeight = '900'
         } else if (this.props.disabled) {
             opacity = 0.70

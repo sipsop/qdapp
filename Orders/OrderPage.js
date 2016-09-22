@@ -81,7 +81,7 @@ class OrderPageHeader extends PureComponent {
         const bar = barStore.getBar()
         return <View>
             <DeliveryMethod />
-            <TextHeader label="Order" rowHeight={55} />
+            <TextHeader label="Order" rowHeight={55} primary={false} />
         </View>
     }
 }
@@ -176,7 +176,7 @@ class DeliveryMethod extends PureComponent {
                         borderColor='#000' />
                 </View>
                 */}
-            <Header style={{flexDirection: 'row'}}>
+            <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}>
                 <SelectableButton
                     label='Table'
                     renderLabel={this.renderLabel}
