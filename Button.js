@@ -51,11 +51,12 @@ export class LargeButton extends PureComponent {
         prominent: true,
         borderRadius: 10,
         disabled: false,
+        fontSize: 25,
     }
 
     render = () => {
         return <TextButton
-                    fontSize={25}
+                    fontSize={this.props.fontSize}
                     borderWidth={1.5}
                     {...this.props}
                     />

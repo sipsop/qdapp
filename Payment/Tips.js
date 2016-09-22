@@ -52,11 +52,12 @@ export class TipComponent extends PureComponent {
             fontSize: 20,
             color: '#000',
             textAlign: 'right',
-            marginRight: 10,
+            marginRight: 5,
         },
 
         tipRoundButtonView: {
-            alignItems: 'center',
+            alignItems: 'flex-end',
+            marginRight: 5,
         },
     }
 
@@ -76,9 +77,11 @@ export class TipComponent extends PureComponent {
                     {tipStore.tipPercentage.toFixed(1)}%
                 </T>
             </View>
+            {/*
             <View style={this.styles.tipRoundButtonView}>
                 <TipRoundButton />
             </View>
+            */}
         </View>
     }
 }
@@ -94,7 +97,7 @@ class TipSlider extends PureComponent {
                     minimumValue={0}
                     maximumValue={20}
                     step={1}
-                    thumbTouchSize={{width: 55, height: 55}}
+                    thumbTouchSize={{width: 80, height: 80}}
                     minimumTrackTintColor={config.theme.primary.medium}
                     maximumTrackTintColor='#rgba(0, 0, 0, 0.6)'
                     thumbTintColor={config.theme.primary.dark} />
@@ -102,14 +105,13 @@ class TipSlider extends PureComponent {
 }
 
 @observer
-class TipRoundButton extends PureComponent {
+export class TipRoundButton extends PureComponent {
     /* properties:
         updatePercentage: Float => void
     */
     styles = StyleSheet.create({
         buttonStyle: {
-            height: 55,
-            width: 300,
+            height: 40,
         },
     })
 
@@ -125,12 +127,17 @@ class TipRoundButton extends PureComponent {
     }
 
     render = () => {
+        if (this.roundedPrice === orderStore.totalPlusTip)
+            return <View />
+        if (this.roundedPrice > orderStore.total + orderStore.total * 0.2)
+            return <View />
         return <LargeButton
                     label={`Make it ${orderStore.formatPrice(this.roundedPrice)}`}
                     onPress={this.acceptPrice}
                     style={this.styles.buttonStyle}
                     prominent={false}
                     textColor='#000'
+                    fontSize={15}
                     borderColor='#000' />
     }
 }

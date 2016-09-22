@@ -250,11 +250,12 @@ class ReceiptHeader extends PureComponent {
 export class OrderTotal extends PureComponent {
     /* properties:
         total: Float
+        style: style object
     */
     render = () => {
         const totalText = orderStore.formatPrice(this.props.total)
         return <Header>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{...this.props.style, flexDirection: 'row'}}>
                 {headerText('Total:')}
                 {headerText(totalText, 25, 'right')}
             </View>

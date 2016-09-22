@@ -21,7 +21,7 @@ import { CardInput, makeAddCardButton } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
 import { getCreditCardIcon } from './CreditCardInfo.js'
 import { PaymentConfigModal } from '../ControlPanel.js'
-import { TipComponent } from './Tips.js'
+import { TipComponent, TipRoundButton } from './Tips.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -61,7 +61,7 @@ export class Checkout extends PureComponent {
                     showCancelButton={false}
                     cancelModal={this.close}
                     okModal={this.payNow}
-                    okLabel={`Buy Now (${orderStore.totalText})`}
+                    okLabel={`Buy Now`}
                     okDisabled={paymentStore.selectedCardNumber == null}
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
@@ -74,10 +74,15 @@ export class Checkout extends PureComponent {
                         showBackButton={true}
                         onBack={this.close}
                         />
-                    <TipComponent style={this.styles.tipSlider} />
                     <TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />
                     <SelectedCardInfo2 />
-                    {/*<OrderTotal total={orderStore.totalPlusTip} />*/}
+                    <TipComponent style={this.styles.tipSlider} />
+                    <OrderTotal
+                        style={{marginRight: 10}}
+                        total={orderStore.totalPlusTip} />
+                    <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
+                        <TipRoundButton />
+                    </View>
                 </View>
         </OkCancelModal>
     }
@@ -119,13 +124,14 @@ export class SelectedCardInfo2 extends PureComponent {
     styles = StyleSheet.create({
         view: {
             flex: 0,
-            height: 120,
+            height: 55,
             alignItems: 'center',
         },
         cardView: {
             flex: 0,
-            marginTop: 10,
+            height: 55,
             width: 250,
+            justifyContent: 'center',
             alignItems: 'center',
         },
     })
