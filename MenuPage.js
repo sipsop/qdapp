@@ -66,7 +66,7 @@ export class MenuView extends Page {
                 <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={tagStore.getActiveMenuItems()}
+                    menuItems={tagStore.activeMenuItems}
                     renderHeader={() => <TagView />}
                     />
             </View>

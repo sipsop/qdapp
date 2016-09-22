@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
-import { observable, computed, transaction, action } from 'mobx'
+import { observable, computed, transaction, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
@@ -81,6 +81,7 @@ export class TagStore {
     @observable tagDownloadResult = null
     /* [TagID] */
     @observable tagSelection      = null
+    @observable asyncTagSelection = null /* synced asynchronously with 'tagSelection' */
 
     constructor() {
         this.tagDownloadResult   = emptyResult()
@@ -147,7 +148,7 @@ export class TagStore {
         return new Map(tagExcludes)
     }
 
-    getActiveMenuItems = () => {
+    @computed get activeMenuItems() {
         return filterMenuItems(barStore.allMenuItems, this.tagSelection)
     }
 
@@ -356,12 +357,6 @@ export class TagRow extends Component {
         return _.includes(tagStore.tagSelection, tagID)
     }
 
-    isEnabled = (tagID) => {
-        // TODO: Check whether the button would have a "useful" effect
-        // (i.e. produce a distinct, non-empty list)
-        return true
-    }
-
     clearRow = () => {
         const tagIDs = this.props.rowOfTags
         tagStore.popTags(tagIDs)
@@ -379,10 +374,16 @@ export class TagRow extends Component {
                 renderLabel={tagStore.getTagName}
                 toggleButton={this.toggleButton}
                 isActive={this.isActive}
-                isDisabled={tagID => !this.isEnabled(tagID)}
+                isDisabled={this.isActive} /* disable toggle */
                 />
         </ButtonRow>
     }
 }
 
 export const tagStore = new TagStore()
+
+
+autorun(() => {
+    tagStore.tagSelection
+    setTimeout(() => tagStore.asyncTagSelection = tagStore.tagSelection, 0)
+})
