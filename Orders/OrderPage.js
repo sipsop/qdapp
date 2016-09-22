@@ -199,7 +199,7 @@ class DeliveryMethod extends PureComponent {
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
-                            style={{width: 150, textAlign: 'center'}}
+                            style={{marginTop: -10, width: 150, textAlign: 'center'}}
                             placeholder="table number"
                             defaultValue={tableNumber}
                             onEndEditing={event => this.setTableNumber(event.nativeEvent.text)}
