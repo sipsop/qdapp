@@ -268,6 +268,25 @@ const _graphQLArg = (obj) => {
     }
 }
 
+
+const getTimeoutInfo = (timeoutDesc) => {
+    if (timeoutDesc === 'short')
+        return {
+            refreshTimeout: 3000,
+            expiryTimeout:  8000,
+        }
+    if (timeoutDesc === 'normal')
+        return {
+            refreshTimeout: 9000,
+            expiryTimeout:  18000,
+        }
+    if (timeoutDesc === 'long')
+        return {
+            refreshTimeout: 12000,
+            expiryTimeout:  25000,
+        }
+}
+
 class DownloadManager {
 
     graphQLMutate = async (query) => {
@@ -282,6 +301,7 @@ class DownloadManager {
             query : string,
             /* Callback that decides whether the download is still relevant */
             cacheInfo    : CacheInfo,
+            timeoutDesc = 'normal',
             ) => { //: Promise<DownloadResult<T>> => {
         const httpOptions = {
             method: 'POST',
@@ -291,7 +311,8 @@ class DownloadManager {
             },
             body: query,
         }
-        const result = await this.fetchJSON(key, HOST + '/graphql', httpOptions, cacheInfo)
+        const result = await this.fetchJSON(
+            key, HOST + '/graphql', httpOptions, cacheInfo, timeoutDesc)
         const value = result.value
         if (value && value.errors && value.errors.length > 0) {
             /* GraphQL error */
@@ -311,24 +332,21 @@ class DownloadManager {
             /* HTTP options to pass to fetch() */
             httpOptions : HTTPOptions,
             cacheInfo : CacheInfo,
+            timeoutDesc = 'normal',
         ) : Promise<DownloadResult<T>> => {
         assert(url)
         /* Try a fresh download... */
-        return await fetchJSONWithTimeouts(key, url, httpOptions, 12000, 20000, cacheInfo)
+        const timeoutInfo = getTimeoutInfo(timeoutDesc)
+        return await fetchJSONWithTimeouts(
+            key, url, httpOptions,
+            timeoutInfo.refreshTimeout,
+            timeoutInfo.expiryTimeout,
+            cacheInfo)
     }
 
 }
 
 export const downloadManager = new DownloadManager()
-
-const fetchJSON = async /*<T>*/(
-        key : string,
-        url : URL,
-        httpOptions : HTTPOptions,
-        cacheInfo   : CacheInfo,
-        ) : Promise<DownloadResult<T>> => {
-    return await fetchJSONWithTimeouts(key, url, httpOptions, 5000, 12000, cacheInfo)
-}
 
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError
