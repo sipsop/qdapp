@@ -468,6 +468,10 @@ class OrderResult(graphene.ObjectType):
     tip             = Int
     currency        = graphene.Field(Currency)
 
+    delivery        = String
+    tableNumber     = graphene.Int()
+    pickup          = graphene.String()
+
     def resolve_menuItems(self, args, *_):
         menuItemIDs = set(orderItem.menuItemID for orderItem in self.orderList)
         print("RESOLVING MENU ITEMS", self.orderList, menuItemIDs)
@@ -496,6 +500,9 @@ class Query(graphene.ObjectType):
         currency    = String,
         price       = Int,
         tip         = Int,
+        delivery    = String,
+        tableNumber = graphene.Int(),    # optional table number
+        pickup      = graphene.String(), # optional label of pickup point
         orderList   = List(OrderItemInput),
         stripeToken = String,
         )
@@ -526,6 +533,12 @@ class Query(graphene.ObjectType):
         receipt     = shortid()
         totalAmount = sum(orderItem['amount'] for orderItem in orderList)
 
+        delivery    = args['delivery']
+        tableNumber = args['tableNumber']
+        pickup      = args['pickup']
+
+        if delivery not in ('Table', 'Pickup'):
+            raise ValueError("Invalid delivery specified: %r" % (delivery,))
         if currency not in ['Sterling', 'Euros', 'Dollars']:
             raise ValueError("Unknown currency: %r" % (currency,))
         if tip < 0:
@@ -536,6 +549,7 @@ class Query(graphene.ObjectType):
         # TODO: Payment with Stripe
         # TODO: Verify barID and bar opening time
         # TODO: Verify 'price'
+        # TODO: Verify pickup location
 
         order = model.Order(
             barID=barID,
@@ -548,6 +562,11 @@ class Query(graphene.ObjectType):
             currency=currency,
             orderList=orderList,
             receipt=receipt,
+
+            delivery=delivery,
+            tableNumber=tableNumber,
+            pickup=pickup,
+
             completed=False,
             errorMessage=None,
         )
@@ -592,6 +611,10 @@ def get_order_result(
         receipt         = order['receipt'],
         userName        = order['userName'],
         orderList       = fmap(get_order_item, order['orderList']),
+
+        delivery        = order['delivery'],
+        tableNumber     = order['tableNumber'],
+        pickup          = order['pickup'],
     )
 
 _currencies = {

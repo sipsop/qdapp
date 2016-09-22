@@ -41,13 +41,12 @@ export class ReceiptModal extends PureComponent {
     }
 
     @computed get showCloseButton() {
-        log("STATUSSSSS", this.downloadState)
-        return this.downloadState === 'Error' || this.downloadState === 'Finished'
+        return _.includes(['NotStarted', 'Error', 'Finished'], this.downloadState)
     }
 
 
     handleClose = () => {
-        if (this.downloadState === 'Error') {
+        if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
             /* Error submitting, allow closing */
             this.closeModal()
         } else if (this.downloadState === 'Finished') {
@@ -237,6 +236,10 @@ class ReceiptHeader extends PureComponent {
 
     render = () => {
         const orderResult = this.props.orderResult
+        const deliveryInfo =
+            orderResult.delivery === 'Table'
+                ? orderResult.tableNumber
+                : orderResult.pickup
 
         return <Header>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -248,6 +251,12 @@ class ReceiptHeader extends PureComponent {
                         {headerText('#' + orderResult.receipt)}
                     </View>
                 </TouchableOpacity>
+                <Header primary={false} rowHeight={40}>
+                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                        {headerText(orderResult.delivery + ':', 18)}
+                        {headerText(deliveryInfo, 18, 'right')}
+                    </View>
+                </Header>
                 <Message
                         ref={ref => this.receiptModal = ref}
                         >

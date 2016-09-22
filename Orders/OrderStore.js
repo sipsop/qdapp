@@ -51,6 +51,10 @@ export type OrderResult = {
     totalPrice:     Int,
     tip:            Int,
     currency:       Currency,
+
+    delivery:       String,
+    tableNumber:    ?Int,
+    pickup:         ?String,
 }
 
 /*********************************************************************/
@@ -293,7 +297,7 @@ class OrderStore {
     }
 
     /* Submit order to server */
-    placeActiveOrder = _.logErrors(async () : Promise<DownloadResult<OrderResult>> => {
+    _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
         // return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
@@ -354,6 +358,10 @@ class OrderStore {
                     receipt
                     totalPrice
                     tip
+
+                    delivery
+                    tableNumber
+                    pickup
                 }
             }
         `
@@ -373,6 +381,15 @@ class OrderStore {
             })
         }
         this.orderResultDownload = orderResultDownload
+    }
+
+
+    placeActiveOrder = _.logErrors(async () => {
+        try{
+            this._placeActiveOrder()
+        } catch (e) {
+            this.clearActiveOrderToken()
+        }
     })
 }
 

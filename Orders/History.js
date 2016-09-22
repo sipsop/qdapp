@@ -79,6 +79,10 @@ const getHistoryQuery = () => {
                     totalPrice
                     tip
                     currency
+
+                    delivery
+                    tableNumber
+                    pickup
                 }
             }
         }
