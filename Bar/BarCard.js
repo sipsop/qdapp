@@ -56,7 +56,9 @@ export class DiscoverBarCard extends PureComponent {
         return <View style={
                 { flex: 0
                 , height: this.props.imageHeight
-                , margin: 10
+                , marginTop: 5
+                , marginLeft: 5
+                , marginRight: 5
                 , borderRadius: this.props.borderRadius
                 }
             }>

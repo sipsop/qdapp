@@ -57,11 +57,13 @@ export class DiscoverView extends Page {
     }
 
     renderView = () => {
-        return <ListView
-                    ref={this.saveScrollView}
-                    dataSource={this.dataSource}
-                    renderRow={this.renderRow}
-                    />
+        return <View style={{flex: 1, marginBottom: 5}}>
+            <ListView
+                ref={this.saveScrollView}
+                dataSource={this.dataSource}
+                renderRow={this.renderRow}
+                />
+        </View>
     }
 
     renderRow = (value) => {
