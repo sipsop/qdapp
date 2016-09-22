@@ -271,13 +271,20 @@ class PickerButton extends PureComponent {
         rowNumber: int
     */
     render = () => {
+        const primary = this.props.rowNumber % 2 === 0
+        const color =
+            primary
+                ? config.theme.primary.medium
+                : config.theme.primary.dark
         return <TextButton
                     label={this.renderLabels()}
                     fontSize={16}
                     onPress={this.props.showModal}
                     style={{flex: 1}}
-                    primary={this.props.rowNumber % 2 === 0}
+                    prominent={false}
                     alignLeft={true}
+                    borderColor={color}
+                    textColor='#000'
                     />
     }
 
