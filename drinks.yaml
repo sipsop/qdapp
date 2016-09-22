@@ -2243,12 +2243,277 @@ drinks:
        
     bacardi8: 
         name: Bacardi 8
-        desc: This is premium dark rum rum is produced by Bacardi Company. 
+        desc: This is premium dark rum and is produced by Bacardi Company. 
         abv: 40% 
         image:
         license:
         tags: |
             #spirit
+            #rum
+            #dark
+            #malt
+            #sippingrum
+            #heavykick
+            #smokey 
+            #warm
+            #herbs
+            #spicynotes 
+    
+    bacardiOakheart: 
+        name: Bacardi Oakheart 
+        desc: Bacardi Oakheart is a spiced based rum with notes of sugar, honey and burnt vanilla custard and cinnamon finish. 
+        abv: 35% -37.5% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum 
+            #bourboncasks
+            #vanilla
+            #cinnamon
+            #brownsugar
+            #burntvanillacustard
+            #honey
+            #herbsandspices
+            #smooth 
+    
+    captainMorganSpiced: 
+        name: Captain Morgan Spiced 
+        desc: Captain Morgan Spiced is known for rich spices and natural flavours with clove and caramel notes. 
+        abv: 35% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum 
+            #caramel
+            #clove
+            #vanilla
+            #spice
+            #oak
+            #smooth
+            #2011
+    
+    captainMorganDarkRum:
+        name: Captain Morgan Dark Rum 
+        desc: Captain Morgan Dark Rum is known for its very dark and strong flavours. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum
+            #smokycast
+            #strong
+            #dark
+            #rich
+            #smooth 
+            #veryspicy
+            #toffee
+            #vanilla
+            #roundedoakennose 
+    
+    Gosling'sBlackSealRum: 
+        name: Gosling's Black Seal Rum 
+        desc: Gosling's Black Seal Rum is very rich and flavourfull dark rum. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum
+            #smooth
+            #rich
+            #dark
+            #bermuda
+            #1806
+            #black
+            #butterscotch
+            #vanilla
+            #caramel 
+    
+    havanaClub15YearOld: 
+        name: Havana Club 15 Year Old 
+        desc: This is smooth, fruty and refreshing popular rum with tannin and fruits.  
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum 
+            #banana
+            #fig 
+            #oak
+            #plum 
+            #dark 
+            #amber
+            #vibrant 
+            #tannin 
+    
+    havanaClub3YearOld: 
+        name: Havana Club 3 Year Old 
+        desc: This a light and popular Cuban rum which is predominantly used in coktails such as mojito.  
+        abv: 40% 
+        image:
+        license: 
+        tags: |
+            #spirit 
+            #rum  
+            #sweet
+            #woodysmell
+            #caramel
+            #vanilla 
+            #light
+            #3
+            #mixer
+    
+    havanaClub7YearOld: 
+        name: Havana Club 7 Year Old 
+        desc: It is a full-bodied, fruity, spicy and vanilla flavoured rum. 
+        abv:
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum    
+            #delicatetaste
+            #7
+            #choclate
+            #cocoa
+            #sugar
+            #vanilla
+            #spices
+            #honey 
+    
+    krakenBlackSpicedRum: 
+        name: Kraken Black Spiced Rum 
+        desc: Kraken Black Spiced Rum is a famous, rich and smooth Caribbean rum. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #spice 
+            #strong
+            #rich
+            #black
+            #smooth 
+            #sweet
+            #molasses 
+            #cinnamon
+            #ginger
+            #clove 
+            
+    lambNavyRum:
+        name: Lamb's Navy Rum 
+        desc: This rum is known for its rich flavour, sweet caramel and dried fruity notes. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum
+            #tannin 
+            #smooth 
+    
+    matusalemClasico10Year:
+        name: Matusalem Clasico 10 year
+        desc: It is a ten years old classic golden rum. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum
+            #smooth
+            #dominicanrepublic
+    
+    matusalemPlatinoWhite:
+        name: Matusalem Platino White  
+        desc: This is a smooth, pleasant and delightful white rum. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum 
+            #white
+    
+    mountGayEclipse: 
+        name: Mount Gay Eclipse 
+        desc: This is a distinctive floral and fruity notes of apricot and banana golden rum. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #smokey 
+            #warm
+            #mediumbody
+            #brightfinish 
+    
+    mountGayExtraOldRum: 
+        name: Mount Gay Extra Old Rum 
+        desc: This is a fully flavoured light-bodied and the oldest rum in the world. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum 
+            #spicyapricot
+            #banana
+            #cinnamon
+            #ginger 
+    
+    myersRum:
+        name: Myers's Rum 
+        desc: This is smooth spicy sweet taste Jamaican rum  with a smokey tobacco nose. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #rum
+            #spirit
+            #smokeytobacconose
+            #smooth
+            #spicy
+            #sweet
+            #reddishorange 
+            
+    sailorJerry: 
+        name: Sailor Jerry 
+        desc: Sailor Jerry is a Caribbean bold and smooth rum with natural spices.
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #rum
+            #bold
+            #smooth
+            #butterytoffee
+            #cinnamon
+            #vanilla
+            #nutmeg 
+    
+    wrayAndNephewOverproof:
+        name: Wray & Nephew Overproof 
+        desc: This is white, crystal clear, top selling and high strength rum.   
+        abv: 63% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum
+            #white
+            #topselling
+            #awardwinning 
+            #highalcoholcontent 
+            #spice
+            #finishislong 
             
    ##whiskey/bourbon 
  
