@@ -38,17 +38,22 @@ class LoginStore {
         }
     }
 
-    login = () => {
+    login = (callbackSuccess, callbackError) => {
         if (this.userToken) {
+            callbackSuccess()
             return
         }
         lock.show(lockOpts, (err, profile, userToken) => {
             if (err) {
                 log("login error", err)
+                if (callbackError)
+                    callbackError()
                 return
             }
             // Authentication worked!
             this.setLoginInfo(profile, userToken)
+            if (callbackSuccess)
+                callbackSuccess()
         })
     }
 
