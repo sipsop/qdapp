@@ -300,6 +300,13 @@ class OrderStore {
         })
     }
 
+    haveDeliveryMethod = () => {
+        if (this.delivery === 'Table')
+            return !!this.tableNumber
+        else
+            return !!this.pickupLocation
+    }
+
     /* Submit order to server */
     _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
         // return this.placeActiveOrderStub()
