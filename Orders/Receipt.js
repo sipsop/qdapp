@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../HTTP.js'
-import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
+import { LazyBarPhoto } from '../Bar/BarCard.js'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
@@ -288,7 +288,14 @@ export class OrderTotal extends PureComponent {
         total: Float
         tip:   Float
         style: style object
+        primary: bool
+            whether to use the primary or secondary theme color
     */
+
+    static defaultProps = {
+        primary: true,
+    }
+
     render = () => {
         const tipText   = orderStore.formatPrice(this.props.tip)
         const totalText = orderStore.formatPrice(this.props.total + this.props.tip)
@@ -301,7 +308,7 @@ export class OrderTotal extends PureComponent {
                     </View>
                 </Header>
             }
-            <Header>
+            <Header primary={this.props.primary}>
                 <View style={{...this.props.style, flexDirection: 'row'}}>
                     {headerText('Total:')}
                     {headerText(totalText, 25, 'right')}

@@ -1,6 +1,6 @@
 // @flow
 
-import { React, Component, PureComponent, Image, View, TouchableOpacity } from '../Component.js'
+import { React, Component, PureComponent, Img, View, TouchableOpacity } from '../Component.js'
 import { buildURL } from '../URLs.js'
 import { APIKey } from './MapStore.js'
 
@@ -31,12 +31,12 @@ export class PhotoImage extends PureComponent {
     */
 
     render = () => {
-        return <Image
+        return <Img
                     style={this.props.style}
-                    source={{uri: this.props.photo.url}}
+                    url={this.props.photo && this.props.photo.url}
                     /* TODO: html_attributions */
                     >
             {this.props.children}
-        </Image>
+        </Img>
     }
 }

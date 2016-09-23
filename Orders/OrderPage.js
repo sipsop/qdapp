@@ -14,7 +14,6 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
-import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
 import { MenuItem, createMenuItem } from '../MenuPage.js'
 import { LargeButton } from '../Button.js'

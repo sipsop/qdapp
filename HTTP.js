@@ -17,6 +17,7 @@ import { PureComponent } from './Component.js'
 import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
+import { HOST } from './Host.js'
 import * as _ from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
@@ -28,12 +29,6 @@ const { log, assert } = _.utils('./HTTP.js')
 export type HTTPOptions = RequestOptions
 
 /*********************************************************************/
-export var HOST : String
-HOST = 'http://192.168.0.6:5000'
-// HOST = 'http://192.168.0.28:5000'
-// HOST = 'http://172.24.176.169:5000'
-// HOST = 'http://localhost:5000/graphql'
-// HOST = 'http://10.147.18.19:5000'
 
 export class NetworkError {
     message : string

@@ -1,12 +1,14 @@
 // TODO: Enable flow type checking
 
-import React, { Component } from 'react'
 import {
-    Image,
+    React,
+    Component,
     View,
-    ScrollView,
     TouchableOpacity,
-} from 'react-native'
+    PureComponent,
+    Img,
+    T,
+} from './Component.js'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -16,14 +18,11 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { HOST } from './HTTP.js'
 import { Page } from './Page.js'
 import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { createOrderItem, orderStore } from './Orders/OrderStore.js'
 import { OrderList } from './Orders/OrderList.js'
 import { BarPageFetcher } from './Bar/BarPage.js'
-import { PureComponent } from './Component.js'
-import { T } from './AppText.js'
 import { Price, sumPrices } from './Price.js'
 import { SizeTracker } from './SizeTracker.js'
 import { PickerCollection, PickerItem } from './Pickers.js'
@@ -147,15 +146,6 @@ export class MenuItem extends PureComponent {
     }
 }
 
-const getImageURL = (menuItem : MenuItem) => {
-    if (!menuItem.images || menuItem.images.length === 0)
-        return undefined
-    const url = menuItem.images[0]
-    if (url.startsWith('/static'))
-        return HOST + url
-    return url
-}
-
 export class MenuItemImage extends PureComponent {
     /* properties:
         menuItem: MenuItem
@@ -165,8 +155,8 @@ export class MenuItemImage extends PureComponent {
     render = () => {
         const style = this.props.style || styles.image
         const menuItem = this.props.menuItem
-        const image = getImageURL(menuItem)
-        return <Image source={{uri: image}} style={style} />
+        const url = getMenuItemImage(menuItem)
+        return <Img url={url} style={style} />
     }
 }
 
@@ -393,6 +383,10 @@ const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
 
+const getMenuItemImage = (menuItem : menuItem) : URL => {
+    return menuItem.images && menuItem.images.length && menuItem.images[0]
+}
+
 @observer
 export class OrderSelection extends PureComponent {
     /* properties:
@@ -499,15 +493,16 @@ export class OrderSelection extends PureComponent {
     }
 
     renderHeader = () => {
-        const url = getImageURL(this.props.menuItem)
+        const menuItem = this.props.menuItem
+        const url = getMenuItemImage(menuItem)
         // return <View style={{height: 200, backgroundColor: '#000'}} />
         if (!url)
             return <View />
 
         return <LazyComponent style={{height: 200}}>
-            <Image
+            <Img
                 key={url}
-                source={{uri: url}}
+                url={url}
                 style={{height: 200}}
                 />
         </LazyComponent>

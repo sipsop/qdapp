@@ -281,10 +281,11 @@ class PickerButton extends PureComponent {
                     fontSize={16}
                     onPress={this.props.showModal}
                     style={{flex: 1}}
-                    prominent={false}
                     alignLeft={true}
                     borderColor={color}
-                    textColor='#000'
+                    /* textColor='#000' */
+                    primary={primary}
+                    /* prominent={false} */
                     />
     }
 

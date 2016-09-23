@@ -24,6 +24,7 @@ import * as _ from './Curry.js'
 
 const fontFamily = Platform.OS === 'android' ? 'Roboto' : 'Arial'
 
+import { HOST } from './Host.js'
 const { log, assert } = _.utils('./Component.js')
 
 class PureComponent extends Component {
@@ -79,6 +80,30 @@ class Mono extends PureComponent {
     }
 }
 
+
+const getImageURL = (url : URL) => {
+    if (!url)
+        return null
+    if (url.startsWith('/static'))
+        return HOST + url
+    return url
+}
+
+class Img extends PureComponent {
+    /* properties:
+        url: URL
+        children: [Component]
+
+        other props: passed to Image
+    */
+    render = () => {
+        const url = getImageURL(this.props.url)
+        return <Image source={{uri: url}} {...this.props}>
+            {this.props.children}
+        </Image>
+    }
+}
+
 export {
     /* React */
     React,
@@ -107,4 +132,5 @@ export {
     Icon,
     EvilIcon,
     MaterialIcon,
+    Img,
 }

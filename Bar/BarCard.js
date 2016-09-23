@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
 import {
-    Image,
+    React,
+    Component,
     View,
     TouchableOpacity,
-} from 'react-native'
-import Dimensions from 'Dimensions';
+    MaterialIcon,
+    PureComponent,
+    Dimensions,
+} from '../Component.js'
 import { action, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
-
+import { LazyComponent } from '../LazyComponent.js'
 import { SmallOkCancelModal } from '../Modals.js'
-import { PureComponent } from '../Component.js'
 import { T } from '../AppText.js'
 import { PhotoImage } from '../Maps/Photos.js'
 import { store, tabStore, mapStore, orderStore } from '../Store.js'
@@ -51,7 +52,8 @@ export class DiscoverBarCard extends PureComponent {
     render = () => {
         const currentBar = barStore.getBar()
         const currentBarName = currentBar ? currentBar.name : ""
-        const barPhoto = this.props.bar.photos[0]
+        const photos = this.props.bar.photos
+        const useGenericPicture = !photos || !photos.length
 
         return <View style={
                 { flex: 0
@@ -69,7 +71,7 @@ export class DiscoverBarCard extends PureComponent {
                 />
             <BarCard
                 {...this.props}
-                barPhoto={barPhoto}
+                photo={photos && photos[0]}
                 onPress={this.handleCardPress} />
         </View>
     }
@@ -78,6 +80,7 @@ export class DiscoverBarCard extends PureComponent {
 @observer
 export class BarCard extends PureComponent {
     /* properties:
+        bar: Bar
         borderRadius: Int
         imageHeight: Int
         showTimeInfo: Bool
@@ -94,42 +97,121 @@ export class BarCard extends PureComponent {
     }
 
     render = () => {
-        const imageHeight = this.props.imageHeight
-
-        const imageStyle = {
-            flex: 0,
-            height: imageHeight,
-            borderRadius: this.props.borderRadius,
-        }
-
         return <View style={{flex: 1}}>
             <TouchableOpacity
                     onPress={this.props.onPress}
                     style={{flex: 2, borderRadius: this.props.borderRadius}}
                     >
-                <PhotoImage photo={this.props.barPhoto} style={imageStyle}>
-                    <View style={{flex: 1}}>
-                        {/* Push footer to bottom */}
-                        <View style={{flex: 3}} />
-                        <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                            <View style={
-                                    { flex: 1
-                                    , justifyContent: 'flex-end'
-                                    , backgroundColor: 'rgba(0,0,0,0)'
-                                    }
-                                }>
-                                {this.props.footer || <BarCardFooter {...this.props} />}
-                            </View>
-                        </LinearGradient>
-                    </View>
-                </PhotoImage>
+                <BarPhoto {...this.props} />
             </TouchableOpacity>
         </View>
     }
 
 }
 
-@observer export class BarCardFooter extends PureComponent {
+@observer
+export class LazyBarPhoto extends PureComponent {
+    static defaultProps = {
+        showMapButton: false,
+    }
+
+    render = () => {
+        return <LazyComponent
+                    timeout={this.props.timeout || 0}
+                    style={{height: this.props.imageHeight}}
+                    >
+            <BarPhoto {...this.props} />
+        </LazyComponent>
+    }
+}
+
+@observer
+export class BarPhoto extends PureComponent {
+    /* properties:
+        photo: Photo
+        bar: Bar
+        imageHeight: Int
+        showBackButton: Bool
+        onBack: () => void
+    */
+    render = () => {
+        var photo = this.props.photo
+        const pictureIsGeneric = !photo
+        if (!photo) {
+            photo = {
+                url: '/static/GenericBarPicture.jpg',
+                htmlAttrib: [],
+            }
+        }
+
+        return <PhotoImage
+                    key={photo.url}
+                    photo={photo}
+                    style={{flex: 0, height: this.props.imageHeight}}
+                    >
+            {
+                this.props.showBackButton
+                    ? <TouchableOpacity onPress={this.props.onBack}>
+                        <View style={
+                                { width: 55
+                                , height: 55
+                                , justifyContent: 'center'
+                                , alignItems: 'center'
+                                , backgroundColor: 'rgba(0,0,0,0)'
+                                }
+                            }>
+                            <MaterialIcon name="arrow-back" size={30} color='#fff' />
+                        </View>
+                      </TouchableOpacity>
+                    : <View style={{flex: 1}} />
+            }
+            <BarCardHeader
+                pictureIsGeneric={pictureIsGeneric}
+                style={{flex: 3}} />
+            <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
+                <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
+                    <BarCardFooter {...this.props} />
+                </View>
+            </LinearGradient>
+        </PhotoImage>
+    }
+}
+
+@observer
+export class BarCardHeader extends PureComponent {
+    /* properties:
+        style: style object
+        pictureIsGeneric: Bool
+    */
+    render = () => {
+        if (this.props.pictureIsGeneric)
+            return this.renderGenericPictureHeader()
+        return <View style={this.props.style} />
+    }
+
+    renderGenericPictureHeader = () => {
+        return <LinearGradient
+                    style={this.props.style}
+                    colors={['rgba(0, 0, 0, 1.0)', 'rgba(0, 0, 0, 0.0)']}
+                    >
+            <View style={
+                    { flex: 1
+                    , flexDirection: 'row'
+                    , justifyContent: 'flex-end'
+                    , marginRight: 5
+                    , backgroundColor: 'rgba(0,0,0,0)' /* iOS */
+                    }
+                }>
+                <T style={{fontSize: 15, color: '#fff'}}>
+                    (No picture available)
+                </T>
+            </View>
+        </LinearGradient>
+    }
+}
+
+@observer
+export class BarCardFooter extends PureComponent {
     /* properties:
         bar: schema.Bar
         showTimeInfo: Bool
@@ -159,8 +241,8 @@ export class BarCard extends PureComponent {
 
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
             <View style={{flex : 1, marginLeft: 5}}>
-                {this.props.showTimeInfo && <TimeInfo bar={this.props.bar} />}
-                {this.props.showBarName && <BarName barName={this.props.bar.name} />}
+                {this.props.showTimeInfo && <TimeInfo bar={bar} />}
+                {this.props.showBarName && <BarName barName={bar.name} />}
             </View>
             {this.props.showMapButton && mapButton}
         </View>

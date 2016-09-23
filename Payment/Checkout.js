@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { OrderTotal } from '../Orders/Receipt.js'
 import { LargeButton } from '../Button.js'
-import { LazyBarHeader, LazyBarPhoto } from '../Bar/BarPage.js'
+import { LazyBarPhoto } from '../Bar/BarCard.js'
 import { SimpleListView } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
@@ -80,6 +80,7 @@ export class Checkout extends PureComponent {
                     <OrderTotal
                         style={{marginRight: 10}}
                         total={orderStore.total + orderStore.tipAmount}
+                        primary={false}
                         /* Do not show tip amount here, it is too noisy */
                         /* tip={orderStore.tipAmount} */
                         tip={0.0}

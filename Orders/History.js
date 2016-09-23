@@ -201,11 +201,12 @@ class HistoryBarCard extends DownloadResultView {
                 orderResult={this.props.orderResult}
                 />
             <BarCard
-                    barPhoto={bar.photos[0]}
-                    imageHeight={200}
-                    footer={this.renderFooter(bar.name)}
-                    onPress={this.showReceiptModal}
-                    />
+                bar={bar}
+                photo={bar.photos && bar.photos[0]}
+                imageHeight={200}
+                footer={this.renderFooter(bar.name)}
+                onPress={this.showReceiptModal}
+                />
         </View>
     }
 
