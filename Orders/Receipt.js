@@ -185,7 +185,7 @@ export class Receipt extends PureComponent {
             <LazyBarPhoto
                 bar={bar}
                 photo={bar.photos[0]}
-                imageHeight={150}
+                imageHeight={140}
                 showBackButton={this.props.showBackButton}
                 onBack={this.props.onClose}
                 />
@@ -211,12 +211,11 @@ export class Receipt extends PureComponent {
                 menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
                 orderList={orderResult.orderList}
                 />
-            { (orderStore.getAmount(orderResult.orderList) > 1 || !timeEstimate) &&
-                <OrderTotal
-                    total={orderResult.totalPrice}
-                    tip={orderResult.tip}
-                    />
-            }
+            <OrderTotal
+                total={orderResult.totalPrice}
+                tip={orderResult.tip}
+                showTipOnly={timeEstimate && orderStore.getAmount(orderResult.orderList) === 1}
+                />
         </ScrollView>
     }
 }
@@ -232,7 +231,7 @@ class Info extends PureComponent {
                     , color: '#000'
                     , textAlign: 'center'
                     , marginTop: 10
-                    , marginBottom: 10
+                    , marginBottom: 5
                     }
                 }>
             Your order has been placed!{'\n'}
@@ -292,10 +291,12 @@ export class OrderTotal extends PureComponent {
         style: style object
         primary: bool
             whether to use the primary or secondary theme color
+        showTipOnly: Bool
     */
 
     static defaultProps = {
         primary: true,
+        showTipOnly: false,
     }
 
     render = () => {
@@ -303,19 +304,21 @@ export class OrderTotal extends PureComponent {
         const totalText = orderStore.formatPrice(this.props.total + this.props.tip)
         return <View>
             { this.props.tip > 0.0 &&
-                <Header primary={false} rowHeight={40}>
+                <Header primary={false} rowHeight={30}>
                     <View style={{...this.props.style, flexDirection: 'row'}}>
                         {headerText('Tip:', 18)}
                         {headerText(tipText, 18, 'right')}
                     </View>
                 </Header>
             }
-            <Header primary={this.props.primary}>
-                <View style={{...this.props.style, flexDirection: 'row'}}>
-                    {headerText('Total:')}
-                    {headerText(totalText, 25, 'right')}
-                </View>
-            </Header>
+            { !this.props.showTipOnly &&
+                <Header primary={this.props.primary}>
+                    <View style={{...this.props.style, flexDirection: 'row'}}>
+                        {headerText('Total:')}
+                        {headerText(totalText, 25, 'right')}
+                    </View>
+                </Header>
+            }
         </View>
     }
 }
