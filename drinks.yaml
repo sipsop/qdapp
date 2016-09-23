@@ -2793,7 +2793,98 @@ drinks:
             #explosionofcaramel 
             #hintofhoney
             #hintoforange
-   
+    
+    ##tequila 
+    
+    patronSilver: 
+        name: Patron Silver
+        desc: This is light, fresh and smooth ultra premium tequila which is produced in the traditional handmade way. 
+        abv: 40% 
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+            #light
+            #smooth
+            #fresh
+            #ultrapremium
+            #traditionalhandmade
+            #crystalclear
+            #young
+            #joven
+            #smooth
+            #oakyflavour
+        
+    patronXoCafe:
+        name: Patron Xo Cafe
+        desc: This tequila is known for its unique rich flavour of roasted coffee with  notes of chocolate and vanilla. 
+        abv: 35%
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+            #sweet
+            #darkrichbrown
+            #freshcoffee
+            #hintofchocolate 
+            #hintofvanilla 
+            
+    olmeca        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila     
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+        
+        name:
+        desc:
+        abv:
+        image:
+        license: 
+        tags: |
+            #spirit
+            #tequila 
+    
     ### Cocktails
 
     # longIslandIceTea:
