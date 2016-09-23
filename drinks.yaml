@@ -2561,8 +2561,238 @@ drinks:
             #refined
             #cleaner 
             #smoothfinish 
+            
+    glenfiddich:
+        name: Glenfiddich
+        desc: Glenfiddich is the world's most awarded single malt Scotch whiskey. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #mostawarded 
+            #singlemalt 
+            #herbs
+            #greenapples 
+            #sweet 
     
+    glenlivet12YearOldMalt: 
+        name: Glenlivet 12 Year Old Malt 
+        desc: Glenlivet 12 Year Old Malt is known for one of the most famous malts around the world. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #smooth 
+            #sweet 
+            #floralnotes 
+            #cleansoft 
+            #smooth
+            #longfinish 
     
+    glenmorangieOriginal:
+        name: Glenmorangie original 
+        desc: This is delicious complex single malt elegant Highland Scotch whiskey. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #singlemalt
+            #citrusaroma
+            #vanilla
+            #longfinish 
+            #orange
+            #peach 
+    
+    jameson:
+        name: Jameson
+        desc: This is triple distilled Irish whiskey with incredible smooth finish.  
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #whiskey 
+            #sherryundertones
+            #woody
+            #smoothfinish 
+    
+    JAndB:
+        name: J & B
+        desc: This is light bodied fresh whiskey.  
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #lightbodied
+            #idealformixing
+            #nuttyonnose 
+   
+   jackDaniels:
+        name: Jack Daniel's
+        desc: Jack Daniel's is the top selling American 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #topselling
+    
+    jackDanielTennesseHoney:
+        name: Jack Daniel's Tennesse Honey 
+        desc: It is tasty popular Jack Daniel's honey and whiskey liqueur. 
+        abv: 35% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #honey
+            #herbal
+            #floral 
+    
+    laphroaig10YearOld:
+        name: Laphroaig 10 Year Old
+        desc: Laphroaig 10 Year Old is a full-bodied smoky classic single malt whiskey. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey 
+            #smokey
+            #sweet
+            #hintofsalt
+            #seaweedy
+            #peaty 
+            #longwarmfinish 
+    
+    macallanGold:
+        name: Macallan Gold
+        desc: Macallan Gold is a light and easy to drink whiskey and is also known for creating perfect whiskey cocktails. 
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #vanilla
+            #citrusflavour
+            #singlemalt
+            #sherryoakcask
+            #hintofginger
+            #hintofcinnamon 
+   
+    makersMark:
+        name: Maker's Mark
+        desc: Maker's Mark is a rich flavourfull handmade whiskey from Loretto, Kentucky and is growing quite popular in the UK. 
+        abv: 45% 
+        image:
+        license:
+        tags: |
+            #spirit 
+            #whiskey
+            #bourbon 
+            #palestrawcolour
+            #caramel
+            #oak
+            #sweet
+            #vanilla
+            #cinnamon 
+    
+    monkeyShouldermalt:
+        name: Monkey Shoulder Malt 
+        desc: Monkey Shoulder Malt is an easy-drinking, smooth, rich and triple malt Scotch whiskey. 
+        abv:
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #triplemalt
+            #easytodrink
+            #vanilla
+            #spicyhints 
+            #smooth
+            #rich 
+            #zestyorange
+            #honey
+            #spicedoak 
+   
+   southernComfort:
+        name: Southern Comfort 
+        desc: Southern Comfort is uinquely smooth and quite popular American liqueur. 
+        abv: 35% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #bourbon
+            #spice
+            #peach
+            
+    woodfordReserve:
+        name: Woodford Reserve Double Oaked 
+        desc: this is a full-bodied flavourfull bourbon with long and creamy finish. 
+        abv: 43.5% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #bourbon 
+            #longfinish
+            #richnotesofdarkfruit
+            #caramel
+            #honey
+            #vanilla 
+            #spices 
+    
+    rittenhouseRye:
+        name: Rittenhouse Rye 
+        desc: Rittenhouse Rye is a classic crispy rye whiskey with woody aromas.  
+        abv: 40% 
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #woodyaroma
+            #lanolin
+            #buttercream
+            #toasty
+            #fruity
+            #honeyed 
+            #finishmaplelike 
+            #ryflavour 
+            #crisp
+            
+    
+    wildTurkey:
+        name: Wild Turkey 
+        desc: Wild Turkey is a premium American bourbon produced in Lawrenceburg, Kentucky. 
+        abv: 40.5%
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey  
+            #bourbon 
+            #rye
+            #charredcask 
+            #explosionofvanilla
+            #explosionofcaramel 
+            #hintofhoney
+            #hintoforange
    
     ### Cocktails
 
