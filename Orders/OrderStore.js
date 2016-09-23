@@ -69,7 +69,7 @@ class OrderStore {
     @observable total : Float = 0.0
 
     @observable tipFactor      : Float = 0.0
-    @observable tipAmount      : Float = 0.0
+    @observable tipAmount      : Int = 0
     @observable delivery       : String = 'Table'
     @observable tableNumber    : ?String = null
     @observable pickupLocation : String = null
@@ -256,13 +256,13 @@ class OrderStore {
     @action setTipFactor = (factor) => {
         const total = this.total
         this.tipFactor = factor
-        this.tipAmount = factor * total
+        this.tipAmount = Math.ceil(factor * total)
     }
 
     @action setTipAmount = (amount) => {
         const total = this.total
         this.tipFactor = amount / total
-        this.tipAmount = amount
+        this.tipAmount = Math.ceil(amount)
     }
 
     /*********************************************************************/

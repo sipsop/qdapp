@@ -13,7 +13,10 @@ export class LazyComponent extends PureComponent {
         style: style object
         timeout: Int
     */
-    // @observable loaded = false
+    // This doens't work:
+    //    @observable loaded = false
+
+    mounted = true
 
     constructor(props) {
         super(props)
@@ -26,7 +29,14 @@ export class LazyComponent extends PureComponent {
     }
 
     componentWillMount = () => {
-        setTimeout(() => this.setState({loaded: true}), this.props.timeout)
+        setTimeout(() => {
+            if (this.mounted)
+                this.setState({loaded: true})
+        }, this.props.timeout)
+    }
+
+    componentWillUnmount() {
+        this.mounted = false
     }
 
     render = () => {
