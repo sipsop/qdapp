@@ -12,6 +12,8 @@ import random
 import graphene
 import traceback
 
+import auth
+
 from curry import fmap
 
 from qd import model
@@ -496,6 +498,7 @@ class Query(graphene.ObjectType):
     placeOrder = graphene.Field(OrderResult,
         barID       = String,
         userID      = String,
+        token       = String,
         userName    = String,
         currency    = String,
         price       = Int,
@@ -535,13 +538,12 @@ class Query(graphene.ObjectType):
 
 
 def _resolve_placeOrder(self, args, *_):
-    # TODO: Authentication
-
     print("PLACING ORDER!!!!")
 
     now         = datetime.datetime.utcnow()
     barID       = args['barID']
     userID      = args['userID']
+    token       = args['token']
     userName    = args['userName']
     currency    = args['currency']
     price       = args['price']
@@ -564,6 +566,8 @@ def _resolve_placeOrder(self, args, *_):
         raise ValueError("Tip must be positive, got %r" % (tip,))
 
     currency = getattr(model.Currency, currency)
+
+    auth.validate_token(userID, token)
 
     # TODO: Payment with Stripe
     # TODO: Verify barID and bar opening time

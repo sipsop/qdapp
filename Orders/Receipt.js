@@ -13,7 +13,7 @@ import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore } from '../Store.js'
+import { store, tabStore, loginStore } from '../Store.js'
 
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
@@ -118,7 +118,9 @@ export class PlaceOrderDownloadView extends DownloadResultView {
     }
 
     refreshPage = () => {
-        orderStore.placeActiveOrder()
+        loginStore.login(() => {
+            orderStore.placeActiveOrder()
+        })
     }
 
     renderNotStarted = () => {

@@ -360,6 +360,7 @@ class OrderStore {
                 placeOrder(
                         barID:       ${graphQLArg(barStore.barID)},
                         userID:      ${graphQLArg(userID)},
+                        token:       ${graphQLArg(loginStore.getAuthToken())},
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
                         price:       ${graphQLArg(total)},
@@ -393,9 +394,12 @@ class OrderStore {
         const orderResultDownload = await downloadManager.graphQLMutate(query)
         log('Order placed:', orderResultDownload)
 
+
+        if (orderResultDownload.value)
+            orderResultDownload.update(value => value.placeOrder)
+
         if (orderResultDownload.value) {
-            orderResultDownload.update(value => {
-                const result = value.placeOrder
+            orderResultDownload.update(result => {
                 result.orderList = this.orderList
                 assert(result.userName != null, 'result.userName != null')
                 assert(result.queueSize != null, 'result.queueSize != null')
@@ -403,6 +407,8 @@ class OrderStore {
                 assert(result.receipt != null, 'result.receipt != null')
                 return result
             })
+        } else {
+            orderResultDownload.downloadError('Error contacting server...')
         }
         this.orderResultDownload = orderResultDownload
     }
