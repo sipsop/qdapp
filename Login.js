@@ -1,6 +1,7 @@
 import Auth0Lock from 'react-native-lock'
 import { observable, action, computed } from 'mobx'
-import { getTime, Hour } from './Time.js'
+import { getTime, Hour, Minute } from './Time.js'
+import { config } from './Config.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('Login.js')
@@ -35,52 +36,66 @@ type TokenInfo = {
     accessToken:    String,
 }
 
-const idTokenExpiryTime = Hour
-
 class LoginStore {
     @observable profile = null
     @observable tokenInfo : TokenInfo = null
     @observable loginError = null
-    expiry = null
+
+    refreshAfter = null
+    expiresAfter = null
 
     getState = () => {
         return {
             profile: this.profile,
             tokenInfo: this.tokenInfo,
-            expiry: this.expiry,
+            refreshAfter: this.refreshAfter,
+            expiresAfter: this.expiresAfter,
         }
     }
 
     @action setState = (state) => {
-        this.setLoginInfo(state.profile, state.tokenInfo, state.expiry)
+        log("login state", state.refreshAfter, state.expiresAfter)
+        this.profile = state.profile
+        this.tokenInfo = state.tokenInfo
+        this.refreshAfter = state.refreshAfter
+        this.expiresAfter = state.expiresAfter
     }
 
     login = (callbackSuccess, callbackError) => {
-        const loggedIn = this.isLoggedIn
-        if (loggedIn && this.idTokenValid()) {
-            // All done
-            callbackSuccess()
-        } else if (loggedIn) {
+        if (this.shouldRefreshToken()) {
             // Refresh idToken
             this.refreshToken(callbackSuccess, callbackError)
+        } else if (this.isLoggedIn) {
+            // All done
+            callbackSuccess()
         } else {
             // Log in first
-            this.loginNow()
+            this.loginNow(callbackSuccess, callbackError)
         }
     }
 
     refreshToken = async (callbackSuccess, callbackError) => {
         var result
+        log("Starting auth token refresh...")
         try {
+            /* Try to refresh idToken */
             result = await lock.authenticationAPI()
                                .refreshToken(this.tokenInfo.refreshToken)
             assert(result.idToken != null)
         } catch (error) {
-            this.loginNow(callbackSuccess, callbackError)
+            /* There was some error, e.g. due to network.
+               If the idToken hasn't expired, continue.
+               Otherwise, prompt a login.
+            */
+            if (this.isTokenExpired())
+                this.loginNow(callbackSuccess, callbackError)
+            else
+                callbackSuccess()
+            return
         }
         log("Refresh token", result)
         // result.expiresIn
-        this.updateTokenInfo(result.idToken, getTime() + idTokenExpiryTime)
+        this.setIdToken(result.idToken)
         callbackSuccess()
     }
 
@@ -92,41 +107,47 @@ class LoginStore {
                 return
             }
             // Authentication worked!
-            const expiry = getTime() + idTokenExpiryTime
-            this.setLoginInfo(profile, tokenInfo, expiry)
+            this.setLoginInfo(profile, tokenInfo)
             if (callbackSuccess)
                 callbackSuccess()
         })
     }
 
-    getAuthToken = () => this.tokenInfo.idToken
+    getAuthToken = () => this.tokenInfo && this.tokenInfo.idToken
+
+    shouldRefreshToken = () => {
+        return !this.getAuthToken() || !this.refreshAfter || getTime() > this.refreshAfter
+    }
+
+    isTokenExpired = () => {
+        return !this.getAuthToken() || !this.expiresAfter || getTime() >= this.expiresAfter
+    }
 
     @action logout = () => {
-        this.setLoginInfo(null, null)
+        this.profile = null
+        this.tokenInfo = null
+        this.refreshAfter = null
+        this.expiresAfter = null
     }
 
-    @action setLoginInfo = (profile, tokenInfo, expiry) => {
-        log("Setting login info", profile, 'tokenInfo', tokenInfo, "expiry", expiry)
+    @action setLoginInfo = (profile, tokenInfo) => {
         this.profile = profile
         this.tokenInfo = tokenInfo
-        this.expiry = expiry
+        this.refreshTimeStamps()
     }
 
-    @action updateTokenInfo = (idToken, expiry) => {
-        log("UPdating token info", idToken, "expiry", expiry)
+    @action setIdToken = (idToken) => {
         this.tokenInfo.idToken = idToken
-        this.expiry = expiry
+        this.refreshTimeStamps()
+    }
+
+    @action refreshTimeStamps = () => {
+        this.refreshAfter = getTime() + config.auth.refreshAfter
+        this.expiresAfter = getTime() + config.auth.expiresAfter
     }
 
     @computed get isLoggedIn() {
-        return this.profile && this.tokenInfo
-    }
-
-    idTokenValid = () => {
-        return this.tokenInfo &&
-               this.tokenInfo.idToken &&
-               this.expiry &&
-               this.expiry < getTime()
+        return this.profile && this.getAuthToken()
     }
 
     @computed get userID() {
