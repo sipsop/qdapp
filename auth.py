@@ -7,11 +7,16 @@ client_id = 'phA8QFWKknNtcDwVefccBf82sIp4bw6c'
 
 secret = base64.b64decode(client_secret.replace("_","/").replace("-","+"))
 
-def validate_token(user_id, token):
+def validate_token(token):
+    """
+    Validate the authorization token ('idToken') issued by Auth0.
+
+    Returns the userID of the user.
+    """
     try:
         payload = jwt.decode(token, secret, audience=client_id)
     except (jwt.ExpiredSignature, jwt.InvalidAudienceError, jwt.DecodeError):
-        raise ValueError("Invalid credentials, please try again")
+        raise ValueError("Credentials invalid or expired, please try again")
 
     # Example response:
     #    { 'iat': 1474629433
@@ -23,4 +28,6 @@ def validate_token(user_id, token):
     #    }
 
     if time.time() > payload['exp']:
-        raise ValueError("Invalid credentials, please try again")
+        raise ValueError("Credentials expired, please try again")
+
+    return payload['sub']

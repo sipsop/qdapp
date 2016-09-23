@@ -497,7 +497,6 @@ class Query(graphene.ObjectType):
 
     placeOrder = graphene.Field(OrderResult,
         barID       = String,
-        userID      = String,
         token       = String,
         userName    = String,
         currency    = String,
@@ -511,7 +510,7 @@ class Query(graphene.ObjectType):
         )
 
     recentOrders = graphene.Field(OrderHistory,
-        userID      = String,
+        token       = String,
         n           = NullInt
         )
 
@@ -529,20 +528,17 @@ class Query(graphene.ObjectType):
             traceback.print_exc()
 
     def resolve_recentOrders(self, args, *_):
-        userID      = args['userID']
-        n           = int(args.get('n', 10))
-        # TODO: Authentication
-
+        userID = auth.validate_token(args['token'])
+        n      = int(args.get('n', 10))
         orders = model.get_order_history(userID, n)
         return OrderHistory(orderHistory=fmap(get_order_result, orders))
 
 
 def _resolve_placeOrder(self, args, *_):
-    print("PLACING ORDER!!!!")
+    print("PLACING ORDER!")
 
     now         = datetime.datetime.utcnow()
     barID       = args['barID']
-    userID      = args['userID']
     token       = args['token']
     userName    = args['userName']
     currency    = args['currency']
@@ -556,6 +552,7 @@ def _resolve_placeOrder(self, args, *_):
     tableNumber = args['tableNumber'] or None
     pickupLocation = args['pickupLocation'] or None
 
+    userID = auth.validate_token(token)
     if delivery not in ('Table', 'Pickup'):
         raise ValueError("Invalid delivery specified: %r" % (delivery,))
     if tableNumber is None and pickupLocation is None:
@@ -566,8 +563,6 @@ def _resolve_placeOrder(self, args, *_):
         raise ValueError("Tip must be positive, got %r" % (tip,))
 
     currency = getattr(model.Currency, currency)
-
-    auth.validate_token(userID, token)
 
     # TODO: Payment with Stripe
     # TODO: Verify barID and bar opening time

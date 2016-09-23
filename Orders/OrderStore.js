@@ -313,12 +313,10 @@ class OrderStore {
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
-        const userID   = loginStore.userID
-        const userName = loginStore.userName || userID
+        const userName = loginStore.userName
         const currency = 'Sterling'
 
         assert(barID != null, 'barID != null')
-        assert(userID != null, 'userID != null')
         assert(userName != null, 'userName != null')
 
         var stripeToken
@@ -359,7 +357,6 @@ class OrderStore {
             query {
                 placeOrder(
                         barID:       ${graphQLArg(barStore.barID)},
-                        userID:      ${graphQLArg(userID)},
                         token:       ${graphQLArg(loginStore.getAuthToken())},
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
