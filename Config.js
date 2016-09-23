@@ -69,6 +69,12 @@ export const config = {
         refreshAfter: Day,
         expiresAfter: Month,
     },
+    auth: {
+        /* Auth token refresh params */
+        /* TODO: UPDATE THESE FOR PRODUCTION */
+        refreshAfter: 30 * Minute, //30 * Second,  // this should be ~1H
+        expiresAfter: 1 *  Hour,   // this should be ~8H
+    },
     /* TODO: DISABLE THESE FOR PRODUCTION */
     // refreshAfterDelta: Minute * 1,
     // expiresAfterDelta: Minute * 5,

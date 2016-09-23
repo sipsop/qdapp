@@ -69,7 +69,7 @@ class OrderStore {
     @observable total : Float = 0.0
 
     @observable tipFactor      : Float = 0.0
-    @observable tipAmount      : Float = 0.0
+    @observable tipAmount      : Int = 0
     @observable delivery       : String = 'Table'
     @observable tableNumber    : ?String = null
     @observable pickupLocation : String = null
@@ -256,13 +256,13 @@ class OrderStore {
     @action setTipFactor = (factor) => {
         const total = this.total
         this.tipFactor = factor
-        this.tipAmount = factor * total
+        this.tipAmount = Math.ceil(factor * total)
     }
 
     @action setTipAmount = (amount) => {
         const total = this.total
         this.tipFactor = amount / total
-        this.tipAmount = amount
+        this.tipAmount = Math.ceil(amount)
     }
 
     /*********************************************************************/
@@ -300,18 +300,23 @@ class OrderStore {
         })
     }
 
+    haveDeliveryMethod = () => {
+        if (this.delivery === 'Table')
+            return !!this.tableNumber
+        else
+            return !!this.pickupLocation
+    }
+
     /* Submit order to server */
     _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
         // return this.placeActiveOrderStub()
 
         const barID    = barStore.barID
         /* TODO: force lorgin at payment screen... */
-        const userID   = loginStore.userID
-        const userName = loginStore.userName || userID
+        const userName = loginStore.userName
         const currency = 'Sterling'
 
         assert(barID != null, 'barID != null')
-        assert(userID != null, 'userID != null')
         assert(userName != null, 'userName != null')
 
         var stripeToken
@@ -352,7 +357,7 @@ class OrderStore {
             query {
                 placeOrder(
                         barID:       ${graphQLArg(barStore.barID)},
-                        userID:      ${graphQLArg(userID)},
+                        token:       ${graphQLArg(loginStore.getAuthToken())},
                         userName:    ${graphQLArg(userName)},
                         currency:    ${graphQLArg(currency)},
                         price:       ${graphQLArg(total)},
@@ -386,9 +391,12 @@ class OrderStore {
         const orderResultDownload = await downloadManager.graphQLMutate(query)
         log('Order placed:', orderResultDownload)
 
+
+        if (orderResultDownload.value)
+            orderResultDownload.update(value => value.placeOrder)
+
         if (orderResultDownload.value) {
-            orderResultDownload.update(value => {
-                const result = value.placeOrder
+            orderResultDownload.update(result => {
                 result.orderList = this.orderList
                 assert(result.userName != null, 'result.userName != null')
                 assert(result.queueSize != null, 'result.queueSize != null')
@@ -396,6 +404,8 @@ class OrderStore {
                 assert(result.receipt != null, 'result.receipt != null')
                 return result
             })
+        } else {
+            orderResultDownload.downloadError('Error contacting server...')
         }
         this.orderResultDownload = orderResultDownload
     }

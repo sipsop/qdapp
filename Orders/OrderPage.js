@@ -21,6 +21,7 @@ import { SelectableButton } from '../ButtonRow.js'
 import { Checkout, SelectedCardInfo } from '../Payment/Checkout.js'
 import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
+import { Message } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
 import { store, tabStore, barStore, orderStore, paymentStore } from '../Store.js'
 import { config } from '../Config.js'
@@ -32,9 +33,6 @@ const largeButtonStyle = {
 
 @observer
 export class OrderPage extends Page {
-    @observable ref1 = null
-    @observable ref2 = null
-
     handleOrderPress = () => {
         orderStore.setCheckoutVisibility(true)
         // orderStore.setFreshOrderToken()
@@ -201,7 +199,8 @@ class DeliveryMethod extends PureComponent {
                             style={{marginTop: -10, width: 250, textAlign: 'center'}}
                             placeholder="table number"
                             defaultValue={tableNumber}
-                            onEndEditing={event => this.setTableNumber(event.nativeEvent.text)}
+                            onChangeText={this.setTableNumber}
+                            /* onEndEditing={event => this.setTableNumber(event.nativeEvent.text)} */
                             />
                     </View>
                 }
@@ -224,15 +223,30 @@ class OrderButton extends PureComponent {
     /* properties:
         onPress: () => void
     */
+    modal = null
+
+    handlePress = () => {
+        if (orderStore.haveDeliveryMethod())
+            this.props.onPress()
+        else
+            this.modal.show()
+    }
+
     render = () => {
         if (!orderStore.haveOrders)
             return <View />
-        return <LargeButton
+        return <View>
+            <Message
+                ref={ref => this.modal = ref}
+                message="Please enter a table number or pickup location"
+                />
+            <LargeButton
                     label={`Checkout`}
                     style={largeButtonStyle}
-                    onPress={this.props.onPress}
+                    onPress={this.handlePress}
                     /* backgroundColor={config.theme.primary.light} */
                     /* borderColor='rgba(0, 0, 0, 1.0)' */
                     />
+        </View>
     }
 }

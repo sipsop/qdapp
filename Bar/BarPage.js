@@ -90,6 +90,13 @@ class BarView extends Page {
         const bar = this.props.bar
         const menu = this.props.menu
 
+        const iconStyle = {
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 60,
+            height: 60,
+        }
+
         return (
             <ScrollView>
                 <LazyBarHeader
@@ -101,36 +108,35 @@ class BarView extends Page {
                         merge(styles.bottomBorder,
                             { flex: 1
                             , flexDirection: 'row'
+                            , justifyContent: 'space-around'
                             , paddingTop: 5
                             , paddingBottom: 5
+                            , paddingLeft: 20
+                            , paddingRight: 20
                             }
                         )
                     }>
                     <TouchableOpacity
-                            style={{flex: 1}}
-                            onPress={this.handleShowOpeningTimes}
-                            >
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            {/*<Icon name="clock-o" size={40} color="rgb(1, 68, 139)" />*/}
-                            <Icon
-                                name="clock-o"
-                                size={40}
-                                color={config.theme.secondary.medium}
-                                />
-                            <T style={{color: '#000000'}}>TIMES</T>
-                        </View>
+                        style={iconStyle}
+                        onPress={this.handleShowOpeningTimes}
+                        >
+                        {/*<Icon name="clock-o" size={40} color="rgb(1, 68, 139)" />*/}
+                        <Icon
+                            name="clock-o"
+                            size={40}
+                            color={config.theme.secondary.medium}
+                            />
+                        <T style={{color: '#000000'}}>TIMES</T>
                     </TouchableOpacity>
-                    <FavBarContainer barID={bar.id} iconSize={40} style={{flex: 1, alignItems: 'center'}}>
+                    <FavBarContainer barID={bar.id} iconSize={40} style={iconStyle}>
                         <T style={{color: '#000000'}}>SAVE</T>
                     </FavBarContainer>
                     <TouchableOpacity
-                            style={{flex: 1}}
+                            style={iconStyle}
                             onPress={this.handleFocusBarOnMap}
                             >
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            <Icon name="map-marker" size={40} color="rgb(181, 42, 11)" />
-                            <T style={{color: '#000000'}}>MAP</T>
-                        </View>
+                        <Icon name="map-marker" size={40} color="rgb(181, 42, 11)" />
+                        <T style={{color: '#000000'}}>MAP</T>
                     </TouchableOpacity>
                 </View>
                 {/*

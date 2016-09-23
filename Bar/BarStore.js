@@ -1,7 +1,7 @@
 import { observable, transaction, computed, action, asMap } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
-import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
 import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
@@ -89,7 +89,7 @@ class BarStore {
             }
 
             query {
-                menu(placeID : "${placeID}") {
+                menu(placeID : ${graphQLArg(placeID)}) {
                     beer {
                         ...SubMenuFragment
                     }

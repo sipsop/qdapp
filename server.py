@@ -12,6 +12,8 @@ import random
 import graphene
 import traceback
 
+import auth
+
 from curry import fmap
 
 from qd import model
@@ -495,7 +497,7 @@ class Query(graphene.ObjectType):
 
     placeOrder = graphene.Field(OrderResult,
         barID       = String,
-        userID      = String,
+        token       = String,
         userName    = String,
         currency    = String,
         price       = Int,
@@ -508,7 +510,7 @@ class Query(graphene.ObjectType):
         )
 
     recentOrders = graphene.Field(OrderHistory,
-        userID      = String,
+        token       = String,
         n           = NullInt
         )
 
@@ -526,22 +528,18 @@ class Query(graphene.ObjectType):
             traceback.print_exc()
 
     def resolve_recentOrders(self, args, *_):
-        userID      = args['userID']
-        n           = int(args.get('n', 10))
-        # TODO: Authentication
-
+        userID = auth.validate_token(args['token'])
+        n      = int(args.get('n', 10))
         orders = model.get_order_history(userID, n)
         return OrderHistory(orderHistory=fmap(get_order_result, orders))
 
 
 def _resolve_placeOrder(self, args, *_):
-    # TODO: Authentication
-
-    print("PLACING ORDER!!!!")
+    print("PLACING ORDER!")
 
     now         = datetime.datetime.utcnow()
     barID       = args['barID']
-    userID      = args['userID']
+    token       = args['token']
     userName    = args['userName']
     currency    = args['currency']
     price       = args['price']
@@ -554,6 +552,7 @@ def _resolve_placeOrder(self, args, *_):
     tableNumber = args['tableNumber'] or None
     pickupLocation = args['pickupLocation'] or None
 
+    userID = auth.validate_token(token)
     if delivery not in ('Table', 'Pickup'):
         raise ValueError("Invalid delivery specified: %r" % (delivery,))
     if tableNumber is None and pickupLocation is None:

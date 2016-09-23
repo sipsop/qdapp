@@ -93,8 +93,15 @@ class OrderHistory extends PureComponent {
                 icon={icon("glass", config.theme.primary.dark)}
                     onPress={() => {
                     drawerStore.disable()
-                    this.orderHistoryModal.show()
-                    orderHistoryStore.fetchOrderHistory()
+                    loginStore.login(
+                        () => {
+                            this.orderHistoryModal.show()
+                            orderHistoryStore.fetchOrderHistory()
+                        },
+                        () => {
+                            drawerStore.enable()
+                        },
+                    )
                 }}
                 />
             <OrderHistoryModal

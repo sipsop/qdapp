@@ -14,7 +14,7 @@ import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Header, HeaderText, TextHeader } from '../Header.js'
-import { barStore, orderStore } from '../Store.js'
+import { barStore, orderStore, loginStore } from '../Store.js'
 import * as _ from '../Curry.js'
 
 import { CardInput, makeAddCardButton } from './CardInput.js'
@@ -37,9 +37,11 @@ export class Checkout extends PureComponent {
     })
 
     payNow = () => {
-        orderStore.setFreshOrderToken()
-        orderStore.placeActiveOrder()
-        this.close()
+        loginStore.login(() => {
+            orderStore.setFreshOrderToken()
+            orderStore.placeActiveOrder()
+            this.close()
+        })
     }
 
     close = () => {

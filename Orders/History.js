@@ -33,7 +33,7 @@ const getHistoryQuery = () => {
         }
 
         query history {
-            recentOrders(userID: ${graphQLArg(loginStore.userID)}, n: 100) {
+            recentOrders(token: ${graphQLArg(loginStore.getAuthToken())}, n: 100) {
                 orderHistory {
                     barID
                     date {
