@@ -210,7 +210,8 @@ export class TagStore {
     }
 
     getTagName = (tagID) => {
-        return this.tagNames.get(tagID).slice(1)
+        const tagName = this.tagNames.get(tagID)
+        return tagName && tagName.slice(1)
     }
 
     tagIsDefined = (tagID : TagID) : Bool => {

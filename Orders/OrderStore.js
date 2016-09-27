@@ -122,6 +122,11 @@ class OrderStore {
     @action clearOrderList = () => {
         this.setOrderList([])
         this.clearOrderToken()
+        this.resetTip()
+    }
+
+    @action resetTip = () => {
+        this.setTipFactor(this.tipFactor)
     }
 
     /* Clear all order-related data, e.g. when switching bars */
@@ -398,6 +403,9 @@ class OrderStore {
         if (orderResultDownload.value) {
             orderResultDownload.update(result => {
                 result.orderList = this.orderList
+                result.totalPrice = this.total
+                result.tip = this.tipAmount
+    
                 assert(result.userName != null, 'result.userName != null')
                 assert(result.queueSize != null, 'result.queueSize != null')
                 assert(result.estimatedTime != null, 'result.estimatedTime != null')
