@@ -170,7 +170,12 @@ export class BarPhoto extends PureComponent {
                 style={{flex: 3}} />
             <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
                 <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
-                    <BarCardFooter {...this.props} />
+                    <BarCardFooter
+                        bar={this.props.bar}
+                        showTimeInfo={this.props.showTimeInfo}
+                        showBarName={this.props.showBarName}
+                        showMapButton={this.props.showMapButton}
+                        />
                 </View>
             </LinearGradient>
         </PhotoImage>
@@ -217,8 +222,6 @@ export class BarCardFooter extends PureComponent {
         showTimeInfo: Bool
         showBarName: Bool
         showMapButton: Bool
-        onCardPress:
-            callback for when this card is pressed
     */
 
     static defaultProps = {

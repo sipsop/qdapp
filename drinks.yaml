@@ -2029,15 +2029,15 @@ drinks:
             #vodka
     popov:
         name: Popov
-        desc: It is known great for mixing, its low range pricing and being the most popular vodka drink in the United States. 
-        abv: 40% 
+        desc: It is known great for mixing, its low range pricing and being the most popular vodka drink in the United States.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
             #vodka
             #premium
-            #smooth 
+            #smooth
 
     ##flavouredVodka:
 
@@ -2171,10 +2171,10 @@ drinks:
             #dandelion&burdock
 
     ##rum
-    
-    appleton12YearsOldExtraRum: 
-        name: Appleton 12 Years Old Extra Rum  
-        desc: It is a brilliant rum with scents of walnut, nutmeg, orange peel and vanilla. 
+
+    appleton12YearsOldExtraRum:
+        name: Appleton 12 Years Old Extra Rum
+        desc: It is a brilliant rum with scents of walnut, nutmeg, orange peel and vanilla.
         abv: 43%
         image:
         license:
@@ -2187,64 +2187,64 @@ drinks:
             #orangepeel
             #vanilla
             #bittersweet
-            #luscious 
-   
+            #luscious
+
     bacardiSuperior:
-        name: Bacardi Superior 
-        desc: This light-bodied rum is produced by Bacardi Company and is used in many cocktails. 
-        abv: 37.5% 
+        name: Bacardi Superior
+        desc: This light-bodied rum is produced by Bacardi Company and is used in many cocktails.
+        abv: 37.5%
         image:
         license:
         tags: |
             #spirit
-            #rum 
+            #rum
             #white
             #oakbarrels
-            #versatlie 
+            #versatlie
             #smooth
             #tropicalfruitaroma
-            #almondscents 
-        
+            #almondscents
+
     bacardiOro:
         name: Bacardi Oro
-        desc: This rum is soft and rich in taste with a long finish.  
-        abv: 37.5% 
+        desc: This rum is soft and rich in taste with a long finish.
+        abv: 37.5%
         image:
         license:
         tags: |
             #spirit
-            #rum 
+            #rum
             #amber
-            #hintofplums 
-            #hintofapricot 
+            #hintofplums
+            #hintofapricot
             #hintofnutmeg
-            #hintofvanilla 
+            #hintofvanilla
             #soft
             #rich
             #very full
-            
-     bacardiOro:
-        name: Bacardi Oro or Gold 
-        desc: This rum is soft and rich in taste with a long finish.  
-        abv: 37.5% 
+
+    bacardiOroGold:
+        name: Bacardi Oro or Gold
+        desc: This rum is soft and rich in taste with a long finish.
+        abv: 37.5%
         image:
         license:
         tags: |
             #spirit
-            #rum 
+            #rum
             #amber
-            #hintofplums 
-            #hintofapricot 
+            #hintofplums
+            #hintofapricot
             #hintofnutmeg
-            #hintofvanilla 
+            #hintofvanilla
             #soft
             #rich
-            #very full        
-       
-    bacardi8: 
+            #very full
+
+    bacardi8:
         name: Bacardi 8
-        desc: This is premium dark rum and is produced by Bacardi Company. 
-        abv: 40% 
+        desc: This is premium dark rum and is produced by Bacardi Company.
+        abv: 40%
         image:
         license:
         tags: |
@@ -2254,20 +2254,20 @@ drinks:
             #malt
             #sippingrum
             #heavykick
-            #smokey 
+            #smokey
             #warm
             #herbs
-            #spicynotes 
-    
-    bacardiOakheart: 
-        name: Bacardi Oakheart 
-        desc: Bacardi Oakheart is a spiced based rum with notes of sugar, honey and burnt vanilla custard and cinnamon finish. 
-        abv: 35% -37.5% 
+            #spicynotes
+
+    bacardiOakheart:
+        name: Bacardi Oakheart
+        desc: Bacardi Oakheart is a spiced based rum with notes of sugar, honey and burnt vanilla custard and cinnamon finish.
+        abv: 35% -37.5%
         image:
         license:
         tags: |
-            #spirit 
-            #rum 
+            #spirit
+            #rum
             #bourboncasks
             #vanilla
             #cinnamon
@@ -2275,17 +2275,17 @@ drinks:
             #burntvanillacustard
             #honey
             #herbsandspices
-            #smooth 
-    
-    captainMorganSpiced: 
-        name: Captain Morgan Spiced 
-        desc: Captain Morgan Spiced is known for rich spices and natural flavours with clove and caramel notes. 
-        abv: 35% 
+            #smooth
+
+    captainMorganSpiced:
+        name: Captain Morgan Spiced
+        desc: Captain Morgan Spiced is known for rich spices and natural flavours with clove and caramel notes.
+        abv: 35%
         image:
         license:
         tags: |
-            #spirit 
-            #rum 
+            #spirit
+            #rum
             #caramel
             #clove
             #vanilla
@@ -2293,11 +2293,11 @@ drinks:
             #oak
             #smooth
             #2011
-    
+
     captainMorganDarkRum:
-        name: Captain Morgan Dark Rum 
-        desc: Captain Morgan Dark Rum is known for its very dark and strong flavours. 
-        abv: 40% 
+        name: Captain Morgan Dark Rum
+        desc: Captain Morgan Dark Rum is known for its very dark and strong flavours.
+        abv: 40%
         image:
         license:
         tags: |
@@ -2307,20 +2307,20 @@ drinks:
             #strong
             #dark
             #rich
-            #smooth 
+            #smooth
             #veryspicy
             #toffee
             #vanilla
-            #roundedoakennose 
-    
-    Gosling'sBlackSealRum: 
-        name: Gosling's Black Seal Rum 
-        desc: Gosling's Black Seal Rum is very rich and flavourfull dark rum. 
-        abv: 40% 
+            #roundedoakennose
+
+    Gosling'sBlackSealRum:
+        name: Gosling's Black Seal Rum
+        desc: Gosling's Black Seal Rum is very rich and flavourfull dark rum.
+        abv: 40%
         image:
         license:
         tags: |
-            #spirit 
+            #spirit
             #rum
             #smooth
             #rich
@@ -2330,52 +2330,52 @@ drinks:
             #black
             #butterscotch
             #vanilla
-            #caramel 
-    
-    havanaClub15YearOld: 
-        name: Havana Club 15 Year Old 
-        desc: This is smooth, fruty and refreshing popular rum with tannin and fruits.  
-        abv: 40% 
+            #caramel
+
+    havanaClub15YearOld:
+        name: Havana Club 15 Year Old
+        desc: This is smooth, fruty and refreshing popular rum with tannin and fruits.
+        abv: 40%
         image:
         license:
         tags: |
-            #spirit 
-            #rum 
+            #spirit
+            #rum
             #banana
-            #fig 
+            #fig
             #oak
-            #plum 
-            #dark 
+            #plum
+            #dark
             #amber
-            #vibrant 
-            #tannin 
-    
-    havanaClub3YearOld: 
-        name: Havana Club 3 Year Old 
-        desc: This a light and popular Cuban rum which is predominantly used in coktails such as mojito.  
-        abv: 40% 
+            #vibrant
+            #tannin
+
+    havanaClub3YearOld:
+        name: Havana Club 3 Year Old
+        desc: This a light and popular Cuban rum which is predominantly used in coktails such as mojito.
+        abv: 40%
         image:
-        license: 
+        license:
         tags: |
-            #spirit 
-            #rum  
+            #spirit
+            #rum
             #sweet
             #woodysmell
             #caramel
-            #vanilla 
+            #vanilla
             #light
             #3
             #mixer
-    
-    havanaClub7YearOld: 
-        name: Havana Club 7 Year Old 
-        desc: It is a full-bodied, fruity, spicy and vanilla flavoured rum. 
+
+    havanaClub7YearOld:
+        name: Havana Club 7 Year Old
+        desc: It is a full-bodied, fruity, spicy and vanilla flavoured rum.
         abv:
         image:
         license:
         tags: |
-            #spirit 
-            #rum    
+            #spirit
+            #rum
             #delicatetaste
             #7
             #choclate
@@ -2383,95 +2383,95 @@ drinks:
             #sugar
             #vanilla
             #spices
-            #honey 
-    
-    krakenBlackSpicedRum: 
-        name: Kraken Black Spiced Rum 
-        desc: Kraken Black Spiced Rum is a famous, rich and smooth Caribbean rum. 
-        abv: 40% 
+            #honey
+
+    krakenBlackSpicedRum:
+        name: Kraken Black Spiced Rum
+        desc: Kraken Black Spiced Rum is a famous, rich and smooth Caribbean rum.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #rum 
-            #spice 
+            #rum
+            #spice
             #strong
             #rich
             #black
-            #smooth 
+            #smooth
             #sweet
-            #molasses 
+            #molasses
             #cinnamon
             #ginger
-            #clove 
-            
+            #clove
+
     lambNavyRum:
-        name: Lamb's Navy Rum 
-        desc: This rum is known for its rich flavour, sweet caramel and dried fruity notes. 
-        abv: 40% 
+        name: Lamb's Navy Rum
+        desc: This rum is known for its rich flavour, sweet caramel and dried fruity notes.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
             #rum
-            #tannin 
-            #smooth 
-    
+            #tannin
+            #smooth
+
     matusalemClasico10Year:
         name: Matusalem Clasico 10 year
-        desc: It is a ten years old classic golden rum. 
-        abv: 40% 
+        desc: It is a ten years old classic golden rum.
+        abv: 40%
         image:
         license:
         tags: |
-            #spirit 
+            #spirit
             #rum
             #smooth
             #dominicanrepublic
-    
+
     matusalemPlatinoWhite:
-        name: Matusalem Platino White  
-        desc: This is a smooth, pleasant and delightful white rum. 
-        abv: 40% 
-        image:
-        license:
-        tags: |
-            #spirit 
-            #rum 
-            #white
-    
-    mountGayEclipse: 
-        name: Mount Gay Eclipse 
-        desc: This is a distinctive floral and fruity notes of apricot and banana golden rum. 
-        abv: 40% 
+        name: Matusalem Platino White
+        desc: This is a smooth, pleasant and delightful white rum.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #rum 
-            #smokey 
+            #rum
+            #white
+
+    mountGayEclipse:
+        name: Mount Gay Eclipse
+        desc: This is a distinctive floral and fruity notes of apricot and banana golden rum.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #rum
+            #smokey
             #warm
             #mediumbody
-            #brightfinish 
-    
-    mountGayExtraOldRum: 
-        name: Mount Gay Extra Old Rum 
-        desc: This is a fully flavoured light-bodied and the oldest rum in the world. 
-        abv: 40% 
+            #brightfinish
+
+    mountGayExtraOldRum:
+        name: Mount Gay Extra Old Rum
+        desc: This is a fully flavoured light-bodied and the oldest rum in the world.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #rum 
+            #rum
             #spicyapricot
             #banana
             #cinnamon
-            #ginger 
-    
+            #ginger
+
     myersRum:
-        name: Myers's Rum 
-        desc: This is smooth spicy sweet taste Jamaican rum  with a smokey tobacco nose. 
-        abv: 40% 
+        name: Myers's Rum
+        desc: This is smooth spicy sweet taste Jamaican rum  with a smokey tobacco nose.
+        abv: 40%
         image:
         license:
         tags: |
@@ -2481,28 +2481,28 @@ drinks:
             #smooth
             #spicy
             #sweet
-            #reddishorange 
-            
-    sailorJerry: 
-        name: Sailor Jerry 
+            #reddishorange
+
+    sailorJerry:
+        name: Sailor Jerry
         desc: Sailor Jerry is a Caribbean bold and smooth rum with natural spices.
-        abv: 40% 
+        abv: 40%
         image:
         license:
         tags: |
-            #spirit 
+            #spirit
             #rum
             #bold
             #smooth
             #butterytoffee
             #cinnamon
             #vanilla
-            #nutmeg 
-    
+            #nutmeg
+
     wrayAndNephewOverproof:
-        name: Wray & Nephew Overproof 
-        desc: This is white, crystal clear, top selling and high strength rum.   
-        abv: 63% 
+        name: Wray & Nephew Overproof
+        desc: This is white, crystal clear, top selling and high strength rum.
+        abv: 63%
         image:
         license:
         tags: |
@@ -2510,175 +2510,175 @@ drinks:
             #rum
             #white
             #topselling
-            #awardwinning 
-            #highalcoholcontent 
+            #awardwinning
+            #highalcoholcontent
             #spice
-            #finishislong 
-            
-   ##whiskey/bourbon 
- 
-    ardbeg10YearOld:  
+            #finishislong
+
+   ##whiskey/bourbon
+
+    ardbeg10YearOld:
         name: Argbeg 10 Year Old
-        desc: This is known in the world as the peatiest, smokey and single malt whiskey. 
+        desc: This is known in the world as the peatiest, smokey and single malt whiskey.
         abv: 46%
         image:
-        license: 
+        license:
         tags: |
             #spirit
-            #whiskey 
+            #whiskey
             #peatiest
             #smokiest
             #singlemalt
             #naturalsweet
-    
+
     bell8YearOld:
         name: Bell's 8 Year Old
-        desc: This is UK's faviourite and the most popular blended whiskey. 
-        abv: 40% 
+        desc: This is UK's faviourite and the most popular blended whiskey.
+        abv: 40%
         image:
         license:
         tags: |
-            #spirit 
+            #spirit
             #whiskey
             #soft
             #floralnote
             #herbs
-            #mediumbody 
+            #mediumbody
             #hintofwood
             #spice
-    
+
     gentlemanJack:
-        name: Gentleman Jack 
-        desc: This is cleaner, refined, smooth and double charcoal mellowed whiskey. 
-        abv: 40% 
-        image:
-        license:
-        tags: |
-            #spirit
-            #whiskey 
-            #smooth
-            #doublecharcoalmellowed
-            #refined
-            #cleaner 
-            #smoothfinish 
-            
-    glenfiddich:
-        name: Glenfiddich
-        desc: Glenfiddich is the world's most awarded single malt Scotch whiskey. 
-        abv: 40% 
+        name: Gentleman Jack
+        desc: This is cleaner, refined, smooth and double charcoal mellowed whiskey.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
             #whiskey
-            #mostawarded 
-            #singlemalt 
-            #herbs
-            #greenapples 
-            #sweet 
-    
-    glenlivet12YearOldMalt: 
-        name: Glenlivet 12 Year Old Malt 
-        desc: Glenlivet 12 Year Old Malt is known for one of the most famous malts around the world. 
-        abv: 40% 
-        image:
-        license:
-        tags: |
-            #spirit
-            #whiskey 
-            #smooth 
-            #sweet 
-            #floralnotes 
-            #cleansoft 
             #smooth
-            #longfinish 
-    
-    glenmorangieOriginal:
-        name: Glenmorangie original 
-        desc: This is delicious complex single malt elegant Highland Scotch whiskey. 
-        abv: 40% 
+            #doublecharcoalmellowed
+            #refined
+            #cleaner
+            #smoothfinish
+
+    glenfiddich:
+        name: Glenfiddich
+        desc: Glenfiddich is the world's most awarded single malt Scotch whiskey.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #whiskey 
+            #whiskey
+            #mostawarded
+            #singlemalt
+            #herbs
+            #greenapples
+            #sweet
+
+    glenlivet12YearOldMalt:
+        name: Glenlivet 12 Year Old Malt
+        desc: Glenlivet 12 Year Old Malt is known for one of the most famous malts around the world.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
+            #smooth
+            #sweet
+            #floralnotes
+            #cleansoft
+            #smooth
+            #longfinish
+
+    glenmorangieOriginal:
+        name: Glenmorangie original
+        desc: This is delicious complex single malt elegant Highland Scotch whiskey.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
             #singlemalt
             #citrusaroma
             #vanilla
-            #longfinish 
+            #longfinish
             #orange
-            #peach 
-    
+            #peach
+
     jameson:
         name: Jameson
-        desc: This is triple distilled Irish whiskey with incredible smooth finish.  
-        abv: 40% 
-        image:
-        license:
-        tags: |
-            #spirit 
-            #whiskey 
-            #sherryundertones
-            #woody
-            #smoothfinish 
-    
-    JAndB:
-        name: J & B
-        desc: This is light bodied fresh whiskey.  
-        abv: 40% 
+        desc: This is triple distilled Irish whiskey with incredible smooth finish.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #whiskey 
+            #whiskey
+            #sherryundertones
+            #woody
+            #smoothfinish
+
+    JAndB:
+        name: J & B
+        desc: This is light bodied fresh whiskey.
+        abv: 40%
+        image:
+        license:
+        tags: |
+            #spirit
+            #whiskey
             #lightbodied
             #idealformixing
-            #nuttyonnose 
-   
-   jackDaniels:
+            #nuttyonnose
+
+    jackDaniels:
         name: Jack Daniel's
-        desc: Jack Daniel's is the top selling American 
-        abv: 40% 
+        desc: Jack Daniel's is the top selling American
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
             #whiskey
             #topselling
-    
+
     jackDanielTennesseHoney:
-        name: Jack Daniel's Tennesse Honey 
-        desc: It is tasty popular Jack Daniel's honey and whiskey liqueur. 
-        abv: 35% 
+        name: Jack Daniel's Tennesse Honey
+        desc: It is tasty popular Jack Daniel's honey and whiskey liqueur.
+        abv: 35%
         image:
         license:
         tags: |
             #spirit
-            #whiskey 
+            #whiskey
             #honey
             #herbal
-            #floral 
-    
+            #floral
+
     laphroaig10YearOld:
         name: Laphroaig 10 Year Old
-        desc: Laphroaig 10 Year Old is a full-bodied smoky classic single malt whiskey. 
-        abv: 40% 
+        desc: Laphroaig 10 Year Old is a full-bodied smoky classic single malt whiskey.
+        abv: 40%
         image:
         license:
         tags: |
             #spirit
-            #whiskey 
+            #whiskey
             #smokey
             #sweet
             #hintofsalt
             #seaweedy
-            #peaty 
-            #longwarmfinish 
-    
+            #peaty
+            #longwarmfinish
+
     macallanGold:
         name: Macallan Gold
-        desc: Macallan Gold is a light and easy to drink whiskey and is also known for creating perfect whiskey cocktails. 
-        abv: 40% 
+        desc: Macallan Gold is a light and easy to drink whiskey and is also known for creating perfect whiskey cocktails.
+        abv: 40%
         image:
         license:
         tags: |
@@ -2689,28 +2689,28 @@ drinks:
             #singlemalt
             #sherryoakcask
             #hintofginger
-            #hintofcinnamon 
-   
+            #hintofcinnamon
+
     makersMark:
         name: Maker's Mark
-        desc: Maker's Mark is a rich flavourfull handmade whiskey from Loretto, Kentucky and is growing quite popular in the UK. 
-        abv: 45% 
+        desc: Maker's Mark is a rich flavourfull handmade whiskey from Loretto, Kentucky and is growing quite popular in the UK.
+        abv: 45%
         image:
         license:
         tags: |
-            #spirit 
+            #spirit
             #whiskey
-            #bourbon 
+            #bourbon
             #palestrawcolour
             #caramel
             #oak
             #sweet
             #vanilla
-            #cinnamon 
-    
+            #cinnamon
+
     monkeyShouldermalt:
-        name: Monkey Shoulder Malt 
-        desc: Monkey Shoulder Malt is an easy-drinking, smooth, rich and triple malt Scotch whiskey. 
+        name: Monkey Shoulder Malt
+        desc: Monkey Shoulder Malt is an easy-drinking, smooth, rich and triple malt Scotch whiskey.
         abv:
         image:
         license:
@@ -2720,17 +2720,17 @@ drinks:
             #triplemalt
             #easytodrink
             #vanilla
-            #spicyhints 
+            #spicyhints
             #smooth
-            #rich 
+            #rich
             #zestyorange
             #honey
-            #spicedoak 
-   
-   southernComfort:
-        name: Southern Comfort 
-        desc: Southern Comfort is uinquely smooth and quite popular American liqueur. 
-        abv: 35% 
+            #spicedoak
+
+    southernComfort:
+        name: Southern Comfort
+        desc: Southern Comfort is uinquely smooth and quite popular American liqueur.
+        abv: 35%
         image:
         license:
         tags: |
@@ -2739,28 +2739,28 @@ drinks:
             #bourbon
             #spice
             #peach
-            
+
     woodfordReserve:
-        name: Woodford Reserve Double Oaked 
-        desc: this is a full-bodied flavourfull bourbon with long and creamy finish. 
-        abv: 43.5% 
+        name: Woodford Reserve Double Oaked
+        desc: this is a full-bodied flavourfull bourbon with long and creamy finish.
+        abv: 43.5%
         image:
         license:
         tags: |
             #spirit
             #whiskey
-            #bourbon 
+            #bourbon
             #longfinish
             #richnotesofdarkfruit
             #caramel
             #honey
-            #vanilla 
-            #spices 
-    
+            #vanilla
+            #spices
+
     rittenhouseRye:
-        name: Rittenhouse Rye 
-        desc: Rittenhouse Rye is a classic crispy rye whiskey with woody aromas.  
-        abv: 40% 
+        name: Rittenhouse Rye
+        desc: Rittenhouse Rye is a classic crispy rye whiskey with woody aromas.
+        abv: 40%
         image:
         license:
         tags: |
@@ -2771,26 +2771,26 @@ drinks:
             #buttercream
             #toasty
             #fruity
-            #honeyed 
-            #finishmaplelike 
-            #ryflavour 
+            #honeyed
+            #finishmaplelike
+            #ryflavour
             #crisp
-            
-    
+
+
     wildTurkey:
-        name: Wild Turkey 
-        desc: Wild Turkey is a premium American bourbon produced in Lawrenceburg, Kentucky. 
+        name: Wild Turkey
+        desc: Wild Turkey is a premium American bourbon produced in Lawrenceburg, Kentucky.
         abv: 40.5%
         image:
         license:
         tags: |
             #spirit
-            #whiskey  
-            #bourbon 
+            #whiskey
+            #bourbon
             #rye
-            #charredcask 
+            #charredcask
             #explosionofvanilla
-            #explosionofcaramel 
+            #explosionofcaramel
             #hintofhoney
             #hintoforange
     
@@ -2815,7 +2815,7 @@ drinks:
             #joven
             #smooth
             #oakyflavour
-        
+
     patronXoCafe:
         name: Patron Xo Cafe
         desc: This tequila is known for its unique rich flavour of roasted coffee with  notes of chocolate and vanilla. 
@@ -2831,60 +2831,6 @@ drinks:
             #hintofchocolate 
             #hintofvanilla 
             
-    olmeca        
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila     
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila 
-        
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila 
-        
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila 
-        
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila 
-        
-        name:
-        desc:
-        abv:
-        image:
-        license: 
-        tags: |
-            #spirit
-            #tequila 
-    
     ### Cocktails
 
     # longIslandIceTea:

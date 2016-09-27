@@ -1,4 +1,4 @@
-import { Second, Minute, Hour, Day, Month } from './Time.js'
+import { Second, Minute, Hour, Day, Week, Month } from './Time.js'
 
 const pink200 = '#F48FB1'
 const pink300 = '#F06292'
@@ -61,12 +61,13 @@ export const config = {
     },
     nearbyCacheInfo: {
         noCache:      false,
-        refreshAfter: 20 * Minute,
+        // refreshAfter: 20 * Minute,
+        refreshAfter: 3 * Day,
         expiresAfter: 5 * Day,
     },
     defaultCacheInfo: {
         noCache:     false,
-        refreshAfter: Day,
+        refreshAfter: Week,
         expiresAfter: Month,
     },
     auth: {
