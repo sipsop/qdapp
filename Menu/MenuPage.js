@@ -50,7 +50,7 @@ export class MenuView extends Page {
             <View style={{flex: 1, marginTop: 5}}>
                 <MenuList />
             </View>
-            <OrderButton />
+            <ReviewButton />
         </View>
     }
 }
@@ -81,14 +81,17 @@ class MenuList extends PureComponent {
 }
 
 @observer
-class OrderButton extends PureComponent {
+class ReviewButton extends PureComponent {
     render = () => {
         if (orderStore.menuItemsOnOrder.length === 0) {
             return <View />
         }
         return <LargeButton
                     label={`Review`}
-                    onPress={() => tabStore.setCurrentTab(3)}
+                    onPress={() => {
+                        log("SETTING TAB # 3")
+                        tabStore.setCurrentTab(3)
+                    }}
                     style={{margin: 5, height: rowHeight}}
                     /*
                     prominent={false}

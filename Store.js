@@ -38,7 +38,6 @@ export class Store {
         } catch (e) {
             _.logError(e)
         }
-        log("SETTING INITIALIZED=true")
         this.initialized = true
         await mapStore.initialize()
     }
@@ -49,11 +48,9 @@ export class Store {
             // log("Restoring state...", savedState)
             await this.setState(savedState)
         }
-        log("DONE LOADING STATE...")
     }
 
     setState = action(async (state) => {
-        log("CALLING STORE.SETSTATE")
         if (state.payState)
             paymentStore.setState(state.payState)
         if (state.barState)
@@ -68,7 +65,6 @@ export class Store {
             mapStore.setState(state.mapState)
         if (state.tagState)
             tagStore.setState(state.tagState)
-        log("DONE WITH SETSTATE in STORE.JS")
     })
 
     getState = () => {
@@ -98,7 +94,6 @@ export class Store {
 
     saveToLocalStorage = async (state) => {
         if (!_.deepEqual(state, this.previousState)) {
-            log("Saving state now...")
             this.previousState = state
             await cache.set('qd:state', state)
         }

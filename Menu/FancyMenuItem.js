@@ -80,7 +80,7 @@ export class FancyMenuItem extends PureComponent {
                         style={this.styles.menuItemCard}
                         >
                     <MenuItemCard
-                        imageHeight={200}
+                        imageHeight={175}
                         menuItem={this.props.menuItem}
                         showTitle={this.props.showTitle}
                         showPrice={this.props.showPrice}

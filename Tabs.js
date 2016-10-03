@@ -16,7 +16,6 @@ const { log, assert } = _.utils('./Tabs.js')
 @observer
 export class TabView extends PureComponent {
     render = () => {
-        log('INITIAL PAGE', tabStore.initialPage)
         return <ScrollableTabView
                     ref={tabStore.setTabView}
                     initialPage={tabStore.initialPage}
@@ -131,6 +130,7 @@ export const tabStore = new TabStore()
 
 _.safeAutorun(() => {
     /* Set the currentPage whenever the TabView is ready */
-    if (tabStore.tabView)
+    if (tabStore.tabView) {
         tabStore.tabView.goToPage(tabStore.currentPage)
+    }
 })

@@ -35,7 +35,7 @@ export class MenuItemCard extends PureComponent {
             flex: 1,
         },
         footer: {
-            height: 80,
+            height: 60,
         },
         footerContent: {
             flex: 1,
@@ -114,10 +114,10 @@ class MenuItemFooter extends PureComponent {
 
     textStyles = {
         titleText: {
-            fontSize: 20,
+            fontSize: 25,
             fontWeight: 'bold',
             color: '#fff',
-            textDecorationLine: 'underline',
+            // textDecorationLine: 'underline',
             marginRight: 5,
         },
         priceText: {
