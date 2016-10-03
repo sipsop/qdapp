@@ -305,7 +305,7 @@ class OrderStore {
         })
     }
 
-    haveDeliveryMethod = () => {
+    @computed get haveDeliveryMethod() {
         if (this.delivery === 'Table')
             return !!this.tableNumber
         else

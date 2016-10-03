@@ -21,7 +21,7 @@ import { SelectableButton } from '../ButtonRow.js'
 import { Checkout, SelectedCardInfo } from '../Payment/Checkout.js'
 import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
-import { Message } from '../Modals.js'
+import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
 import { store, tabStore, barStore, orderStore, paymentStore } from '../Store.js'
 import { config } from '../Config.js'
@@ -60,6 +60,7 @@ export class OrderPage extends Page {
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
             renderHeader:   () => <OrderPageHeader />,
+            // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
             menuItems:      orderStore.menuItemsOnOrder,
             visible:        (i) => true,
@@ -78,10 +79,18 @@ export class OrderPage extends Page {
 
 @observer
 class OrderPageHeader extends PureComponent {
+    styles = StyleSheet.create({
+        deliveryMethod: {
+            marginTop: 2,
+            borderTopWidth: 2,
+            borderBottomWidth: 2,
+            borderColor: '#000',
+        }
+    })
     render = () => {
         const bar = barStore.getBar()
         return <View>
-            <DeliveryMethod />
+            <DeliveryMethod primary={true} style={this.styles.deliveryMethod} />
             <TextHeader label="Order" rowHeight={55} primary={false} />
         </View>
     }
@@ -89,6 +98,10 @@ class OrderPageHeader extends PureComponent {
 
 @observer
 class DeliveryMethod extends PureComponent {
+    /* properties:
+        primary: Bool
+        style: style obj
+    */
     @observable value = false
 
     styles = StyleSheet.create({
@@ -153,7 +166,7 @@ class DeliveryMethod extends PureComponent {
             ? "" + orderStore.tableNumber
             : ""
 
-        return <View>
+        return <View style={this.props.style}>
             {/*
             <TextHeader label="Delivery" rowHeight={55} />
             <View>
@@ -177,7 +190,8 @@ class DeliveryMethod extends PureComponent {
                         borderColor='#000' />
                 </View>
                 */}
-            <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}>
+            <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
+                    primary={this.props.primary}>
                 <SelectableButton
                     label='Table'
                     renderLabel={this.renderLabel}
@@ -227,10 +241,11 @@ class OrderButton extends PureComponent {
     /* properties:
         onPress: () => void
     */
+
     modal = null
 
     handlePress = () => {
-        if (orderStore.haveDeliveryMethod())
+        if (orderStore.haveDeliveryMethod)
             this.props.onPress()
         else
             this.modal.show()
@@ -240,9 +255,9 @@ class OrderButton extends PureComponent {
         if (!orderStore.haveOrders)
             return <View />
         return <View>
-            <Message
+            <AskDeliveryModal
                 ref={ref => this.modal = ref}
-                message="Please enter a table number or pickup location"
+                onConfirm={this.props.onPress}
                 />
             <LargeButton
                     label={`Checkout`}
@@ -252,5 +267,34 @@ class OrderButton extends PureComponent {
                     /* borderColor='rgba(0, 0, 0, 1.0)' */
                     />
         </View>
+    }
+}
+
+@observer
+class AskDeliveryModal extends PureComponent {
+    /* properties:
+        onConfirm: () => void
+    */
+
+    modal = null
+
+    show = () => this.modal.show()
+    close = () => this.modal.close()
+
+    render = () => {
+        {/*
+        <Message
+            ref={ref => this.modal = ref}
+            message="Please enter a table number or pickup location"
+            />
+        */}
+        return <SmallOkCancelModal
+                    ref={ref => this.modal = ref}
+                    showOkButton={orderStore.haveDeliveryMethod}
+                    okLabel={`Checkout`}
+                    onConfirm={this.props.onConfirm}
+                    >
+            <DeliveryMethod />
+        </SmallOkCancelModal>
     }
 }

@@ -74,6 +74,9 @@ export class DiscoverView extends Page {
     }
 
     renderBarCard = (bar) => {
-        return <DiscoverBarCard key={bar.id} bar={bar} imageHeight={200} />
+        return <DiscoverBarCard
+                    key={bar.id}
+                    bar={bar}
+                    imageHeight={190} />
     }
 }

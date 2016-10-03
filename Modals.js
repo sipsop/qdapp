@@ -41,9 +41,9 @@ export class SmallOkCancelModal extends PureComponent {
     @observable visible = false
 
     static defaultProps = {
-        showOkButton: true,
-        showCancelButton: true,
-        closeOnTouch: false,
+        showOkButton:       true,
+        showCancelButton:   true,
+        closeOnTouch:       false,
     }
 
     @action show = () => {
