@@ -36,6 +36,8 @@ import type { OrderItem } from './Orders/OrderStore.js'
 
 const { log, assert } = _.utils('./Menu/MenuPage.js')
 
+const rowHeight = 55
+
 @observer
 export class MenuPage extends BarPageFetcher {
     renderFinished = (bar) => <MenuView />
