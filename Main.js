@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
 import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  ListView,
-  TouchableOpacity,
-  StatusBar,
+    AppRegistry,
+    Image,
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    ListView,
+    TouchableOpacity,
+    StatusBar,
 } from 'react-native'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 import { observer } from 'mobx-react/native'
 
-import { handleBackButton } from './Backbutton.js'
+import { handleBackButton } from './AndroidBackButton.js'
 import { SideMenu, MenuIcon } from './SideMenu.js'
 import { ControlPanel } from './ControlPanel.js'
 import { DiscoverPage } from './DiscoverPage.js'
@@ -26,10 +27,21 @@ import { cache } from './Cache.js'
 import * as _ from './Curry.js'
 import { Checkout } from './Payment/Checkout.js'
 import { ReceiptModal } from './Orders/Receipt.js'
+import { Loader } from './Page.js'
 
 const { log, assert } = _.utils('./Main.js')
 
-@observer export class Main extends Component {
+@observer
+class App extends Component {
+    render = () => {
+        if (!store.initialized)
+            return <Loader />
+        return <Main />
+    }
+}
+
+@observer
+class Main extends Component {
 
     render = () => {
         return  <SideMenu content={<ControlPanel />}>
@@ -77,5 +89,9 @@ require('promise/setimmediate/rejection-tracking').enable({
     }
 })
 
-handleBackButton()
-store.initialize()
+export const main = async () => {
+    handleBackButton()
+    await store.initialize()
+}
+
+AppRegistry.registerComponent('AwesomeProject', () => App);

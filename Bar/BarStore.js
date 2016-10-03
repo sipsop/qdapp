@@ -33,10 +33,6 @@ class BarStore {
 
     /*************************** State ***********************************/
 
-    initialize = async () => {
-
-    }
-
     getState = () => {
         return { barID: this.barID }
     }

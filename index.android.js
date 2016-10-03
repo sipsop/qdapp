@@ -26,21 +26,14 @@ import * as _ from './Curry.js'
 
 // import PickerAndroid from 'react-native-picker-android';
 // import MapView from 'react-native-maps'
-import { Main } from './Main.js'
+import { main } from './Main.js'
 import { store } from './Store.js'
 // import rootNode from './RelayTest.js'
 import { MapView } from './Maps/MapView.js'
 
 const { log, assert } = _.utils('index.android.js')
 
-
-class App extends Component {
-    render = () => {
-        return <Main />
-    }
-}
-
-AppRegistry.registerComponent('AwesomeProject', () => App);
+main()
 
 // Testing
 

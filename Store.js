@@ -18,6 +18,8 @@ const log = _.logger('Store.js')
 
 export class Store {
 
+    @observable initialized = false
+
     constructor() {
         this.discoverScrollView = null
         this.previousState = null
@@ -30,13 +32,16 @@ export class Store {
             this.discoverScrollView.scrollTo({x: 0, y: 0})
     }
 
-    initialize = _.logErrors(async () => {
-        await Promise.all(
-            this.loadFromLocalStorage(),
-            barStore.initialize(),
-            mapStore.initialize(),
-        )
-    })
+    initialize = async () => {
+        try {
+            await this.loadFromLocalStorage()
+        } catch (e) {
+            _.logError(e)
+        }
+        log("SETTING INITIALIZED=true")
+        this.initialized = true
+        await mapStore.initialize()
+    }
 
     loadFromLocalStorage = async () => {
         const savedState = await cache.get('qd:state', () => null)
@@ -44,9 +49,11 @@ export class Store {
             // log("Restoring state...", savedState)
             await this.setState(savedState)
         }
+        log("DONE LOADING STATE...")
     }
 
     setState = action(async (state) => {
+        log("CALLING STORE.SETSTATE")
         if (state.payState)
             paymentStore.setState(state.payState)
         if (state.barState)
@@ -61,6 +68,7 @@ export class Store {
             mapStore.setState(state.mapState)
         if (state.tagState)
             tagStore.setState(state.tagState)
+        log("DONE WITH SETSTATE in STORE.JS")
     })
 
     getState = () => {

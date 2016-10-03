@@ -7,15 +7,19 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { PureComponent } from './Component.js'
-import { safeAutorun } from './Curry.js'
+import * as _ from './Curry.js'
 import { config } from './Config.js'
 import { drawerStore } from './SideMenu.js'
+
+const { log, assert } = _.utils('./Tabs.js')
 
 @observer
 export class TabView extends PureComponent {
     render = () => {
+        log('INITIAL PAGE', tabStore.initialPage)
         return <ScrollableTabView
                     ref={tabStore.setTabView}
+                    initialPage={tabStore.initialPage}
                     renderTabBar={() => <TabBarWithMenu />}
                     style={{flex: 1}}
                     scrollWithoutAnimation={true}
@@ -73,6 +77,7 @@ class TabStore {
 
     constructor() {
         this.history = []
+        this.initialPage = 0
     }
 
     @action setTabView = (tabView) => {
@@ -104,6 +109,8 @@ class TabStore {
         if (!currentPage)
             return
 
+        log("SETTING TABSTORE STATE", currentPage)
+        this.initialPage = currentPage
         if (currentPage === 1) {
             /* NOTE: there is a bug where the Swiper in combination with
                      the scrollable tab view on the BarPage, where
@@ -122,7 +129,7 @@ class TabStore {
 
 export const tabStore = new TabStore()
 
-safeAutorun(() => {
+_.safeAutorun(() => {
     /* Set the currentPage whenever the TabView is ready */
     if (tabStore.tabView)
         tabStore.tabView.goToPage(tabStore.currentPage)
