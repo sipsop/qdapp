@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
+import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { handleBackButton } from './AndroidBackButton.js'
@@ -22,7 +23,7 @@ import { BarPage } from './Bar/BarPage.js'
 import { MenuPage } from './Menu/MenuPage.js'
 import { OrderPage } from './Orders/OrderPage.js'
 import { TabView } from './Tabs.js'
-import { store, loginStore } from './Store.js'
+import { store, barStore, tabStore } from './Store.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
 import { Checkout } from './Payment/Checkout.js'
@@ -33,9 +34,15 @@ const { log, assert } = _.utils('./Main.js')
 
 @observer
 class App extends Component {
+    @computed get barSelected() {
+        return !!barStore.barID || tabStore.currentPage !== 0
+    }
+
     render = () => {
         if (!store.initialized)
             return <Loader />
+        if (!this.barSelected)
+            return <DiscoverPage />
         return <Main />
     }
 }
@@ -74,8 +81,6 @@ class Main extends Component {
 }
 
 log("----------------------------------------------------------------")
-
-// loginStore.login()
 
 // Promise.onPossiblyUnhandledRejection(function(error){
 //     throw error
