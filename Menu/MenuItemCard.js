@@ -27,15 +27,15 @@ export class MenuItemCard extends PureComponent {
     /* properties:
         imageHeight: Int
         onBack: ?() => void
-        show{Title,Price,Heart}: Bool
+        show{Title,Price,Heart,Tags}: Bool
     */
 
     styles = StyleSheet.create({
         header: {
-            flex: 3,
+            flex: 1,
         },
         footer: {
-            flex: 1,
+            height: 80,
         },
         footerContent: {
             flex: 1,
@@ -65,6 +65,7 @@ export class MenuItemCard extends PureComponent {
                     <MenuItemFooter
                         menuItem={menuItem}
                         showTitle={this.props.showTitle}
+                        showTags={this.props.showTags}
                         showPrice={this.props.showPrice}
                         showHeart={this.props.showHeart}
                         />
@@ -79,6 +80,7 @@ class MenuItemFooter extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
         showTitle: Bool
+        showTags:  Bool
         showHeart: Bool
         showPrice: Bool
     */
@@ -91,12 +93,14 @@ class MenuItemFooter extends PureComponent {
             margin: 5,
         },
         titleAndPrice: {
+            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignItems: 'flex-end',
         },
-        emptyTitle: {
+        title: {
             flex: 1,
+            justifyContent: 'flex-end',
         },
         favIcon: {
             // flex: 0,
@@ -110,7 +114,6 @@ class MenuItemFooter extends PureComponent {
 
     textStyles = {
         titleText: {
-            flex: 1,
             fontSize: 20,
             fontWeight: 'bold',
             color: '#fff',
@@ -126,9 +129,10 @@ class MenuItemFooter extends PureComponent {
             fontSize: 14,
             color: 'rgba(0, 0, 0, 0.8)',
         },
-        keywordText: {
-            fontSize: 12,
-            color: 'rgba(0, 0, 0, 0.50)',
+        tagText: {
+            fontSize: 16,
+            color: '#fff',
+            justifyContent: 'center',
         },
     }
 
@@ -136,16 +140,29 @@ class MenuItemFooter extends PureComponent {
         const menuItem = this.props.menuItem
         return <View style={this.styles.content}>
             <View style={this.styles.titleAndPrice}>
-                {
-                    this.props.showTitle
-                        ? <T lineBreakMode='tail'
-                             numberOfLines={1}
-                             style={this.textStyles.titleText}
-                             >
-                            {menuItem.name}
-                          </T>
-                        : <View style={this.styles.emptyTitle} />
-                }
+                <View style={this.styles.title}>
+                    {
+                        this.props.showTags &&
+                            <T style={this.textStyles.tagText}>
+                                {
+                                    menuItem.tags
+                                        .filter(tagStore.tagIsDefined)
+                                        .map(tagStore.getTagName)
+                                        .map(tagName => '#' + tagName)
+                                        .join(' ')
+                                }
+                            </T>
+                    }
+                    {
+                        this.props.showTitle &&
+                            <T lineBreakMode='tail'
+                                 numberOfLines={1}
+                                 style={this.textStyles.titleText}
+                                 >
+                                {menuItem.name}
+                            </T>
+                    }
+                </View>
                 {
                     this.props.showPrice &&
                         <Price price={menuItem.price} style={this.textStyles.priceText} />
@@ -163,7 +180,7 @@ class MenuItemFooter extends PureComponent {
             {/*
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
-                    <T style={this.textStyles.keywordText}>
+                    <T style={this.textStyles.tagText}>
                         {
                             menuItem.tags
                                 .filter(tagStore.tagIsDefined)

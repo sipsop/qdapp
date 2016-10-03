@@ -270,8 +270,9 @@ export class OrderSelection extends PureComponent {
                 key={url}
                 menuItem={menuItem}
                 /* onBack={this.handleClose} */
-                showTitle={true}
+                showTitle={false}
                 showHeart={true}
+                showTags={true}
                 imageHeight={200}
                 />
             {/*
