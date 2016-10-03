@@ -6,6 +6,7 @@ import {
     MaterialIcon,
     PureComponent,
     Dimensions,
+    T,
 } from '../Component.js'
 import { action, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -14,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { LazyComponent } from '../LazyComponent.js'
 import { SmallOkCancelModal } from '../Modals.js'
-import { T } from '../AppText.js'
+import { BackButton } from '../BackButton.js'
 import { PhotoImage } from '../Maps/Photos.js'
 import { store, tabStore, mapStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
@@ -149,7 +150,12 @@ export class BarPhoto extends PureComponent {
                     photo={photo}
                     style={{flex: 0, height: this.props.imageHeight}}
                     >
+            <BackButton
+                onBack={this.props.onBack}
+                enabled={this.props.showBackButton}
+                />
             {
+                /*
                 this.props.showBackButton
                     ? <TouchableOpacity onPress={this.props.onBack}>
                         <View style={
@@ -164,6 +170,7 @@ export class BarPhoto extends PureComponent {
                         </View>
                       </TouchableOpacity>
                     : <View style={{flex: 1}} />
+                */
             }
             <BarCardHeader
                 pictureIsGeneric={pictureIsGeneric}
