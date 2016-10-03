@@ -9,13 +9,13 @@ import {
     Img,
     StyleSheet,
     T,
+    Icon,
+    EvilIcon,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import Icon from 'react-native-vector-icons/FontAwesome'
-import EvilIcon from 'react-native-vector-icons/EvilIcons'
-
+import { MenuItemCard } from './MenuItemCard.js'
 import { LazyComponent, lazyWrap } from '../LazyComponent.js'
 import { Price, sumPrices } from '../Price.js'
 import { PickerCollection, PickerItem } from '../Pickers.js'
@@ -245,12 +245,10 @@ export class OrderSelection extends PureComponent {
     }
 
     @action handleFirstAccept = () => {
-        // this.orderItem.showModal = false
         this.handleClose()
     }
 
     @action handleFirstCancel = () => {
-        // this.orderItem.showModal = false
         this.props.orderStore.removeOrderItem(this.orderItem)
         this.handleClose()
     }
@@ -268,11 +266,21 @@ export class OrderSelection extends PureComponent {
             return <View />
 
         return <LazyComponent style={{height: 200}}>
+            <MenuItemCard
+                key={url}
+                menuItem={menuItem}
+                /* onBack={this.handleClose} */
+                showTitle={true}
+                showHeart={true}
+                imageHeight={200}
+                />
+            {/*
             <Img
                 key={url}
                 url={url}
                 style={{height: 200}}
                 />
+            */}
         </LazyComponent>
     }
 

@@ -13,6 +13,7 @@ import { barStore, orderStore } from '../Store.js'
 import { SimpleListView } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem, MenuItemImage } from '../Menu/DetailedMenuItem.js'
+import { FancyMenuItem } from '../Menu/FancyMenuItem.js'
 import { Header, HeaderText } from '../Header.js'
 import * as _ from '../Curry.js'
 import { config } from '../Config.js'
@@ -31,8 +32,8 @@ export class OrderListDescriptor {
             store for the orders
         renderHeader: ?() => Component
         renderFooter: ?() => Component
-        visible: (i) => Bool
-            whether this menu item is visible
+        // visible: (i) => Bool
+        //     whether this menu item is visible
     */
 
     constructor(props) {
@@ -46,16 +47,16 @@ export class OrderListDescriptor {
     }
 
     renderRow = (i) => {
-        // if (!this.props.visible(i))
-        //     return <View />
-
         const menuItem = this.props.menuItems[i]
-        return <MenuItem
+        return <FancyMenuItem
                     key={menuItem.id}
                     rowNumber={i}
                     menuItem={menuItem}
                     orderStore={this.props.orderStore}
-                    visible={() => this.props.visible(i)} />
+                    /* visible={() => this.props.visible(i)} */
+                    showTitle={this.props.showTitle}
+                    showPrice={this.props.showPrice}
+                    showHeart={this.props.showHeart} />
     }
 }
 
@@ -70,6 +71,9 @@ export class OrderList extends PureComponent {
         renderFooter: ?() => Component
         visible: (i) => Bool
             whether this menu item is visible
+        showTitle: Bool
+        showPrice: Bool
+        showheart: Bool
     */
     render = () => {
         return <SimpleListView descriptor={new OrderListDescriptor(this.props)} />

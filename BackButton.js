@@ -20,7 +20,7 @@ export class BackButton extends PureComponent {
     */
     render = () => {
         if (!this.props.enabled)
-            <View />
+            return <View />
 
         return <TouchableOpacity onPress={this.props.onBack}>
             <View style={

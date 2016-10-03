@@ -63,6 +63,9 @@ export class OrderPage extends Page {
             orderStore:     orderStore,
             menuItems:      orderStore.menuItemsOnOrder,
             visible:        (i) => true,
+            showTitle:      true,
+            showPrice:      false,
+            showHeart:      true,
         })
         return <View style={{flex: 1}}>
             <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />

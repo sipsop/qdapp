@@ -63,6 +63,7 @@ export class Heart extends PureComponent {
         style: style object
         iconSize: int
         isSelected: () => Bool
+        color: String
     */
 
     @computed get selected() {
@@ -76,7 +77,7 @@ export class Heart extends PureComponent {
                 <Icon
                     name={iconName}
                     size={this.props.iconSize}
-                    color={config.theme.primary.medium}
+                    color={this.props.color || config.theme.primary.medium}
                     />
                 {this.props.children}
             </View>

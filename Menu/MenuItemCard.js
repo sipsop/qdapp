@@ -1,0 +1,183 @@
+import {
+    React,
+    Component,
+    View,
+    TouchableOpacity,
+    PureComponent,
+    Img,
+    StyleSheet,
+    T,
+} from '../Component.js'
+import shortid from 'shortid'
+import { observable, computed, transaction, autorun, action } from 'mobx'
+import { observer } from 'mobx-react/native'
+import LinearGradient from 'react-native-linear-gradient'
+
+import { MenuItemImage, getMenuItemImage } from './MenuItemImage.js'
+import { BackButton } from '../BackButton.js'
+import { Price } from '../Price.js'
+import { FavItemContainer } from '../Fav.js'
+import * as _ from '../Curry.js'
+import { tagStore } from '../Store.js'
+
+const { log, assert } = _.utils('./Menu/DetailedMenuItem.js')
+
+@observer
+export class MenuItemCard extends PureComponent {
+    /* properties:
+        imageHeight: Int
+        onBack: ?() => void
+        show{Title,Price,Heart}: Bool
+    */
+
+    styles = StyleSheet.create({
+        header: {
+            flex: 3,
+        },
+        footer: {
+            flex: 1,
+        },
+        footerContent: {
+            flex: 1,
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+            backgroundColor: 'rgba(0,0,0,0)',
+        },
+    })
+
+    render = () => {
+        const menuItem = this.props.menuItem
+        return <Img
+                    style={{flex: 0, height: this.props.imageHeight}}
+                    url={getMenuItemImage(menuItem)}
+                    >
+            <View style={this.styles.header}>
+                <BackButton
+                    enabled={!!this.props.onBack}
+                    onBack={this.props.onBack}
+                    />
+            </View>
+            <LinearGradient
+                    style={this.styles.footer}
+                    colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}
+                    >
+                <View style={this.styles.footerContent}>
+                    <MenuItemFooter
+                        menuItem={menuItem}
+                        showTitle={this.props.showTitle}
+                        showPrice={this.props.showPrice}
+                        showHeart={this.props.showHeart}
+                        />
+                </View>
+            </LinearGradient>
+        </Img>
+    }
+}
+
+@observer
+class MenuItemFooter extends PureComponent {
+    /* properties:
+        menuItem: schema.MenuItem
+        showTitle: Bool
+        showHeart: Bool
+        showPrice: Bool
+    */
+
+    styles = StyleSheet.create({
+        content: {
+            flex: 0,
+            justifyContent: 'space-around',
+            alignItems: 'flex-start',
+            margin: 5,
+        },
+        titleAndPrice: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'flex-end',
+        },
+        emptyTitle: {
+            flex: 1,
+        },
+        favIcon: {
+            // flex: 0,
+            // width: 50,
+            // height: 50,
+            // marginTop: 10,
+            // marginBottom: 10,
+            // alignItems: 'center',
+        },
+    })
+
+    textStyles = {
+        titleText: {
+            flex: 1,
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#fff',
+            textDecorationLine: 'underline',
+            marginRight: 5,
+        },
+        priceText: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#fff',
+        },
+        infoText: {
+            fontSize: 14,
+            color: 'rgba(0, 0, 0, 0.8)',
+        },
+        keywordText: {
+            fontSize: 12,
+            color: 'rgba(0, 0, 0, 0.50)',
+        },
+    }
+
+    render = () => {
+        const menuItem = this.props.menuItem
+        return <View style={this.styles.content}>
+            <View style={this.styles.titleAndPrice}>
+                {
+                    this.props.showTitle
+                        ? <T lineBreakMode='tail'
+                             numberOfLines={1}
+                             style={this.textStyles.titleText}
+                             >
+                            {menuItem.name}
+                          </T>
+                        : <View style={this.styles.emptyTitle} />
+                }
+                {
+                    this.props.showPrice &&
+                        <Price price={menuItem.price} style={this.textStyles.priceText} />
+                }
+                {
+                    this.props.showHeart &&
+                        <FavItemContainer
+                            menuItemID={menuItem.id}
+                            style={this.styles.favIcon}
+                            iconSize={45}
+                            color='#fff'
+                            />
+                }
+            </View>
+            {/*
+            <View style={{flex: 1, flexDirection: 'row'}}>
+                <View style={{flex: 1}}>
+                    <T style={this.textStyles.keywordText}>
+                        {
+                            menuItem.tags
+                                .filter(tagStore.tagIsDefined)
+                                .map(tagStore.getTagName)
+                                .join(' ')
+                        }
+                    </T>
+                    <T style={this.textStyles.infoText} numberOfLines={3}>
+                        {menuItem.desc}
+                    </T>
+                </View>
+                <FavItemContainer menuItemID={this.props.menuItem.id} style={this.styles.favIcon} iconSize={45} />
+            </View>
+            */}
+        </View>
+    }
+}
