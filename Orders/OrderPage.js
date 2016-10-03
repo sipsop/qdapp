@@ -59,9 +59,10 @@ export class OrderPage extends Page {
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            renderHeader: () => <OrderPageHeader />,
-            orderStore: orderStore,
-            menuItems:  orderStore.menuItemsOnOrder,
+            renderHeader:   () => <OrderPageHeader />,
+            orderStore:     orderStore,
+            menuItems:      orderStore.menuItemsOnOrder,
+            visible:        (i) => true,
         })
         return <View style={{flex: 1}}>
             <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />

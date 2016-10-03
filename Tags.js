@@ -159,6 +159,10 @@ export class TagStore {
             (tagID) => _.includes(excludes, tagID))
     }
 
+    matchMenuItem = (menuItem) => {
+        return matchMenuItem(menuItem, this.tagSelection)
+    }
+
     /* Push a new tag when selected by the user */
     pushTag = (tagID) => {
         if (_.includes(this.tagSelection, tagID)) {
@@ -260,10 +264,12 @@ export class TagStore {
 const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
 
 const filterMenuItems = (menuItems, tagSelection) => {
-    return menuItems.filter(
-        menuItem => _.all(
-            tagSelection.map(tagID => hasTag(menuItem, tagID))
-        )
+    return menuItems.filter(menuItem => matchMenuItem(menuItem, tagSelection))
+}
+
+const matchMenuItem = (menuItem, tagSelection) => {
+    return _.all(
+        tagSelection.map(tagID => hasTag(menuItem, tagID))
     )
 }
 

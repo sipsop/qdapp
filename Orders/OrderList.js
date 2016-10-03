@@ -24,6 +24,16 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 // assert(MenuItemImage != null)
 
 export class OrderListDescriptor {
+    /* properties:
+        menuItems: [MenuItem]
+            menu items to show
+        orderStore: OrderStore
+            store for the orders
+        renderHeader: ?() => Component
+        renderFooter: ?() => Component
+        visible: (i) => Bool
+            whether this menu item is visible
+    */
 
     constructor(props) {
         this.props = props
@@ -36,12 +46,16 @@ export class OrderListDescriptor {
     }
 
     renderRow = (i) => {
+        // if (!this.props.visible(i))
+        //     return <View />
+
         const menuItem = this.props.menuItems[i]
         return <MenuItem
                     key={menuItem.id}
                     rowNumber={i}
                     menuItem={menuItem}
-                    orderStore={this.props.orderStore} />
+                    orderStore={this.props.orderStore}
+                    visible={() => this.props.visible(i)} />
     }
 }
 
@@ -54,6 +68,8 @@ export class OrderList extends PureComponent {
             store for the orders
         renderHeader: ?() => Component
         renderFooter: ?() => Component
+        visible: (i) => Bool
+            whether this menu item is visible
     */
     render = () => {
         return <SimpleListView descriptor={new OrderListDescriptor(this.props)} />

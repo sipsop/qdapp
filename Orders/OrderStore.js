@@ -405,7 +405,7 @@ class OrderStore {
                 result.orderList = this.orderList
                 result.totalPrice = this.total
                 result.tip = this.tipAmount
-    
+
                 assert(result.userName != null, 'result.userName != null')
                 assert(result.queueSize != null, 'result.queueSize != null')
                 assert(result.estimatedTime != null, 'result.estimatedTime != null')

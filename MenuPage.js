@@ -30,8 +30,7 @@ import { LargeButton } from './Button.js'
 import { TagView } from './Tags.js'
 import { FavItemContainer } from './Fav.js'
 import * as _ from './Curry.js'
-import { store, tabStore } from './Store.js'
-import { tagStore } from './Tags.js'
+import { store, tabStore, barStore, tagStore } from './Store.js'
 import { size } from './Size.js'
 import { config } from './Config.js'
 
@@ -54,23 +53,35 @@ export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
             <View style={{flex: 1, marginTop: 5}}>
-                {/*
-                    NOTE: Pass a key to OrderList to ensure it does not
-                          reuse state. This has the effect of "reloading"
-                          the entire listview. Otherwise, if the user has
-                          scrolled down say 100 items, then switching from
-                          e.g. wine to beer will render 100 beer items, even
-                          though only a few are visible.
-                */}
-                <OrderList
-                    key={tagStore.tagSelection.join(';')}
-                    orderStore={orderStore}
-                    menuItems={tagStore.activeMenuItems}
-                    renderHeader={() => <TagView />}
-                    />
+                <MenuList />
             </View>
             <OrderButton />
         </View>
+    }
+}
+
+@observer
+class MenuList extends PureComponent {
+    render = () => {
+        {/*
+            NOTE: Pass a key to OrderList to ensure it does not
+                  reuse state. This has the effect of "reloading"
+                  the entire listview. Otherwise, if the user has
+                  scrolled down say 100 items, then switching from
+                  e.g. wine to beer will render 100 beer items, even
+                  though only a few are visible.
+        */}
+        return <OrderList
+                    key={tagStore.tagSelection.join(';')}
+                    orderStore={orderStore}
+                    menuItems={tagStore.activeMenuItems}
+                    /* menuItems={barStore.allMenuItems} */
+                    renderHeader={() => <TagView />}
+                    visible={this.menuItemVisible} />
+    }
+
+    menuItemVisible = (i) => {
+        return tagStore.matchMenuItem(barStore.allMenuItems[i])
     }
 }
 
@@ -99,6 +110,7 @@ export class MenuItem extends PureComponent {
         rowNumber: Int
         menuItem: MenuItem
         orderStore: OrderStore
+        visible: () => Bool
     */
 
     @observable showModalFor : ?OrderItem = null
@@ -117,7 +129,14 @@ export class MenuItem extends PureComponent {
         return this.props.orderStore.getOrderList(this.props.menuItem.id).length > 0
     }
 
+    @computed get visible() : Bool {
+        return this.props.visible()
+    }
+
     render = () => {
+        // if (!this.visible)
+        //     return <View />
+
         const menuItem = this.props.menuItem
         const isEven = this.props.rowNumber % 2 === 0
         const backgroundColor = isEven
