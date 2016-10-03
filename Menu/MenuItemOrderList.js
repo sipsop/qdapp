@@ -7,181 +7,31 @@ import {
     TouchableOpacity,
     PureComponent,
     Img,
+    StyleSheet,
     T,
-} from './Component.js'
-import shortid from 'shortid'
+} from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-
-// import Modal from 'react-native-modalbox'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { Page } from './Page.js'
-import { LazyComponent, lazyWrap } from './LazyComponent.js'
-import { createOrderItem, orderStore } from './Orders/OrderStore.js'
-import { OrderList } from './Orders/OrderList.js'
-import { BarPageFetcher } from './Bar/BarPage.js'
-import { Price, sumPrices } from './Price.js'
-import { SizeTracker } from './SizeTracker.js'
-import { PickerCollection, PickerItem } from './Pickers.js'
-import { LargeButton } from './Button.js'
-import { TagView } from './Tags.js'
-import { FavItemContainer } from './Fav.js'
-import * as _ from './Curry.js'
-import { store, tabStore, barStore, tagStore } from './Store.js'
-import { size } from './Size.js'
-import { config } from './Config.js'
+import { LazyComponent, lazyWrap } from '../LazyComponent.js'
+import { Price, sumPrices } from '../Price.js'
+import { PickerCollection, PickerItem } from '../Pickers.js'
+import { store, orderStore } from '../Store.js'
+import { getMenuItemImage } from './MenuItemImage.js'
+import * as _ from '../Curry.js'
+import { config } from '../Config.js'
 
-/*********************************************************************/
-
-import type { Int, String } from '../Types.js'
-import type { OrderItem } from './Orders/OrderStore.js'
-
-/*********************************************************************/
-
-const { log, assert } = _.utils('MenuPage.js')
+const { log, assert } = _.utils('./Menu/MenuItemOrderList.js')
 
 @observer
-export class MenuPage extends BarPageFetcher {
-    renderFinished = (bar) => <MenuView />
-}
-
-@observer
-export class MenuView extends Page {
-    renderView = () => {
-        return <View style={{flex: 1}}>
-            <View style={{flex: 1, marginTop: 5}}>
-                <MenuList />
-            </View>
-            <OrderButton />
-        </View>
-    }
-}
-
-@observer
-class MenuList extends PureComponent {
-    render = () => {
-        {/*
-            NOTE: Pass a key to OrderList to ensure it does not
-                  reuse state. This has the effect of "reloading"
-                  the entire listview. Otherwise, if the user has
-                  scrolled down say 100 items, then switching from
-                  e.g. wine to beer will render 100 beer items, even
-                  though only a few are visible.
-        */}
-        return <OrderList
-                    key={tagStore.tagSelection.join(';')}
-                    orderStore={orderStore}
-                    menuItems={tagStore.activeMenuItems}
-                    /* menuItems={barStore.allMenuItems} */
-                    renderHeader={() => <TagView />}
-                    visible={this.menuItemVisible} />
-    }
-
-    menuItemVisible = (i) => {
-        return tagStore.matchMenuItem(barStore.allMenuItems[i])
-    }
-}
-
-@observer
-class OrderButton extends PureComponent {
-    render = () => {
-        if (orderStore.menuItemsOnOrder.length === 0) {
-            return <View />
-        }
-        return <LargeButton
-                    label={`Review`}
-                    onPress={() => tabStore.setCurrentTab(3)}
-                    style={{margin: 5, height: rowHeight}}
-                    /*
-                    prominent={false}
-                    backgroundColor={config.theme.secondary.dark}
-                    borderColor={config.theme.secondary.medium}
-                    */
-                    />
-    }
-}
-
-@observer
-export class MenuItem extends PureComponent {
+export class MenuItemOrderList extends PureComponent {
     /* properties:
-        rowNumber: Int
-        menuItem: MenuItem
-        orderStore: OrderStore
-        visible: () => Bool
-    */
 
-    @observable showModalFor : ?OrderItem = null
+    Render the order selection, e.g. "1x pint + shandy"
 
-    @action showModal = () => {
-        const orderItem = createOrderItem(this.props.menuItem)
-        this.props.orderStore.addOrderItem(orderItem)
-        this.showModalFor = orderItem
-    }
-
-    @action modalClosed = () => {
-        this.showModalFor = null
-    }
-
-    @computed get haveOrderItems() : Array<OrderItem> {
-        return this.props.orderStore.getOrderList(this.props.menuItem.id).length > 0
-    }
-
-    @computed get visible() : Bool {
-        return this.props.visible()
-    }
-
-    render = () => {
-        // if (!this.visible)
-        //     return <View />
-
-        const menuItem = this.props.menuItem
-        const isEven = this.props.rowNumber % 2 === 0
-        const backgroundColor = isEven
-            ? '#fff'
-            : config.theme.menuItemBackgroundColor
-        const marginBottom = this.haveOrderItems ? 10 : 0
-        return <View style={{/*marginBottom: marginBottom*/}}>
-            <View style={{backgroundColor: backgroundColor}}>
-                <TouchableOpacity onPress={this.showModal}>
-                    <View style={styles.primaryMenuItemView}>
-                        <MenuItemImage menuItem={menuItem} />
-                        <View style={viewStyles.content}>
-                            <MenuItemHeader menuItem={menuItem} />
-                        </View>
-                    </View>
-                </TouchableOpacity>
-                <MenuItemOrderList
-                    menuItem={menuItem}
-                    showModalFor={this.showModalFor}
-                    onModalClose={this.modalClosed}
-                    orderStore={this.props.orderStore}
-                    />
-            </View>
-            <View style={{backgroundColor: '#fff', height: marginBottom}} />
-        </View>
-    }
-}
-
-export class MenuItemImage extends PureComponent {
-    /* properties:
-        menuItem: MenuItem
-        style: style object
-    */
-
-    render = () => {
-        const style = this.props.style || styles.image
-        const menuItem = this.props.menuItem
-        const url = getMenuItemImage(menuItem)
-        return <Img url={url} style={style} />
-    }
-}
-
-@observer
-class MenuItemOrderList extends PureComponent {
-    /* properties:
         menuItem: MenuItem
         showModalFor: ?OrderItem
             order item that we should show a modal for (just once)
@@ -235,8 +85,7 @@ class MenuItemOrderList extends PureComponent {
                     orderStore={this.props.orderStore}
                     orderItem={orderItem}
                     showModal={showModal}
-                    onModalClose={this.props.onModalClose}
-                    />
+                    onModalClose={this.props.onModalClose} />
     }
 }
 
@@ -282,81 +131,8 @@ class PriceEntry extends PureComponent {
     }
 }
 
-@observer
-class MenuItemHeader extends PureComponent {
-    /* properties:
-        menuItem: schema.MenuItem
-    */
-    render = () => {
-        const menuItem = this.props.menuItem
-        return <View style={viewStyles.header}>
-            <View style={viewStyles.titleAndPrice}>
-                <T
-                    lineBreakMode='tail'
-                    numberOfLines={1}
-                    style={styles.titleText}
-                    >
-                    {menuItem.name}
-                </T>
-                <Price price={menuItem.price} style={styles.priceText} />
-            </View>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
-                    <T style={styles.keywordText}>
-                        {
-                            menuItem.tags
-                                .filter(tagStore.tagIsDefined)
-                                .map(tagStore.getTagName)
-                                .join(' ')
-                        }
-                    </T>
-                    <T style={styles.infoText} numberOfLines={3}>
-                        {menuItem.desc}
-                    </T>
-                </View>
-                <FavItemContainer menuItemID={this.props.menuItem.id} style={viewStyles.favIcon} iconSize={45} />
-            </View>
-        </View>
-    }
-}
-
-
-const viewStyles = {
-    content: {
-        flex:           1,
-        flexWrap: 'wrap',
-        // marginTop:      5,
-        marginLeft:     5,
-        marginRight:    5,
-    },
-    header: {
-        flex: 0,
-        justifyContent: 'space-around',
-        alignItems: 'flex-start'
-    },
-    titleAndPrice: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    favIcon: {
-        flex: 0,
-        width: 50,
-        height: 50,
-        marginTop: 10,
-        marginBottom: 10,
-        alignItems: 'center',
-    },
-}
 
 const styles = {
-    primaryMenuItemView: {
-        flex:           0,
-        flexDirection:  'row',
-        justifyContent: 'flex-start',
-        // alignItems:     'flex-start',
-        alignItems:     'flex-start',
-        // minHeight:      120,
-    },
     image: {
         /*
         flex: 1,
@@ -370,30 +146,6 @@ const styles = {
         margin: 5,
         borderRadius: 10,
     },
-    titleScrollView: {
-        marginRight: 10,
-    },
-    titleText: {
-        flex: 1,
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#000',
-        textDecorationLine: 'underline',
-        marginRight: 5,
-    },
-    priceText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#000'
-    },
-    infoText: {
-        fontSize: 14,
-        color: 'rgba(0, 0, 0, 0.8)'
-    },
-    keywordText: {
-        fontSize: 12,
-        color: 'rgba(0, 0, 0, 0.50)',
-    },
 }
 
 const N = 50
@@ -401,10 +153,6 @@ const rowHeight = 55
 const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
-
-const getMenuItemImage = (menuItem : menuItem) : URL => {
-    return menuItem.images && menuItem.images.length && menuItem.images[0]
-}
 
 @observer
 export class OrderSelection extends PureComponent {
@@ -511,6 +259,7 @@ export class OrderSelection extends PureComponent {
         return this.props.showModal
     }
 
+    /* Render menu image */
     renderHeader = () => {
         const menuItem = this.props.menuItem
         const url = getMenuItemImage(menuItem)

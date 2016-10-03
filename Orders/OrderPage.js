@@ -15,7 +15,7 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
-import { MenuItem, createMenuItem } from '../MenuPage.js'
+import { MenuItem, createMenuItem } from '../Menu/MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { SelectableButton } from '../ButtonRow.js'
 import { Checkout, SelectedCardInfo } from '../Payment/Checkout.js'
