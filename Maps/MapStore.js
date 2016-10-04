@@ -67,11 +67,46 @@ export const getBarCoords = (bar : Bar) => {
     }
 }
 
-export const distance = (c1 : Coords, c2 : Coords) : Float => {
-    const a = c1.latitude - c2.latitude
-    const b = c2.longitude - c2.longitude
-    return Math.sqrt(a*a + b*b)
+
+/****************************************************************************
+
+    Distance Calulations
+
+        http://www.movable-type.co.uk/scripts/latlong.html
+
+****************************************************************************/
+
+/** Extend Number object with method to convert numeric degrees to radians */
+if (Number.prototype.toRadians === undefined) {
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; };
 }
+
+/** Extend Number object with method to convert radians to numeric (signed) degrees */
+if (Number.prototype.toDegrees === undefined) {
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; };
+}
+
+export const distance = (c1 : Coords, c2 : Coords) : Float => {
+    var R = 6371e3 // metres
+    var φ1 = c1.latitude.toRadians()
+    var φ2 = c2.latitude.toRadians()
+    var Δφ = (c2.latitude - c1.latitude).toRadians()
+    var Δλ = (c2.longitude - c1.longitude).toRadians()
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2)
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+
+    var d = R * c
+    return d
+}
+
+// export const distance = (c1 : Coords, c2 : Coords) : Float => {
+//     const a = c1.latitude - c2.latitude
+//     const b = c2.longitude - c2.longitude
+//     return Math.sqrt(a*a + b*b)
+// }
 
 class MapStore {
     @observable currentLocation : Coords = initialLocation
@@ -238,6 +273,13 @@ class MapStore {
 
     @computed get nearbyBarList() : Array<Bar> {
         return this.sortResults(this.barList)
+    }
+
+    distanceFromUser = (bar : Bar) : Float => {
+        const coords = getBarCoords(bar)
+        if (!this.currentLocation)
+            return -1
+        return distance(coords, this.currentLocation)
     }
 
     sortResults = (bars : Array<Bar>) : Array<Bar> => {

@@ -73,7 +73,8 @@ export class DiscoverBarCard extends PureComponent {
             <BarCard
                 {...this.props}
                 photo={photos && photos.length && photos[0]}
-                onPress={this.handleCardPress} />
+                onPress={this.handleCardPress}
+                showDistance={true} />
         </View>
     }
 }
@@ -84,6 +85,7 @@ export class BarCard extends PureComponent {
         bar: Bar
         borderRadius: Int
         imageHeight: Int
+        showDistance: Bool
         showTimeInfo: Bool
         showBarName: Bool
         showMapButton: Bool
@@ -134,6 +136,10 @@ export class BarPhoto extends PureComponent {
         imageHeight: Int
         showBackButton: Bool
         onBack: () => void
+        showDistance: Bool
+        showTimeInfo: Bool
+        showBarName: Bool
+        showMapButton: Bool
     */
     render = () => {
         var photo = this.props.photo
@@ -179,6 +185,7 @@ export class BarPhoto extends PureComponent {
                 <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
                     <BarCardFooter
                         bar={this.props.bar}
+                        showDistance={this.props.showDistance}
                         showTimeInfo={this.props.showTimeInfo}
                         showBarName={this.props.showBarName}
                         showMapButton={this.props.showMapButton}
@@ -226,12 +233,14 @@ export class BarCardHeader extends PureComponent {
 export class BarCardFooter extends PureComponent {
     /* properties:
         bar: schema.Bar
+        showDistance: Bool
         showTimeInfo: Bool
         showBarName: Bool
         showMapButton: Bool
     */
 
     static defaultProps = {
+        showDistance: false,
         showTimeInfo: true,
         showBarName: true,
         showMapButton: true,
@@ -251,7 +260,10 @@ export class BarCardFooter extends PureComponent {
 
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
             <View style={{flex : 1, marginLeft: 5}}>
-                {this.props.showTimeInfo && <TimeInfo bar={bar} />}
+                <View style={{flexDirection: 'row'}}>
+                    {this.props.showTimeInfo && <TimeInfo bar={bar} />}
+                    {this.props.showDistance && <Distance bar={bar} />}
+                </View>
                 {this.props.showBarName && <BarName barName={bar.name} />}
             </View>
             {this.props.showMapButton && mapButton}
@@ -314,7 +326,7 @@ export class TimeInfo extends PureComponent {
     */
     render = () => {
         const openingTime = getBarOpenTime(this.props.bar)
-        return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+        return <View style={{flexDirection: 'row', alignItems: 'flex-end',  marginRight: 10}}>
             <Icon name="clock-o" size={15} color='#fff' />
             <View style={{marginLeft: 5, flexDirection: 'row'}}>
                 {
@@ -347,6 +359,31 @@ export class TimeInfo extends PureComponent {
 
         return <T style={timeTextStyle}>{text}</T>
     }
+}
+
+@observer
+class Distance extends PureComponent {
+    /* properties:
+        bar: Bar
+    */
+    render = () => {
+        const distance = mapStore.distanceFromUser(this.props.bar)
+        return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+            <Icon name="location-arrow" size={15} color='#fff' />
+            <View style={{marginLeft: 5, flexDirection: 'row'}}>
+                <T style={timeTextStyle}>{formatDistance(distance)}</T>
+            </View>
+        </View>
+    }
+}
+
+const formatDistance = (dist) => {
+    if (dist < 0)
+        return 'unknown'
+    if (dist < 1000)
+        return `${dist.toFixed(0)} meters`
+    const km = dist / 1000
+    return `${km.toFixed(1)}km`
 }
 
 @observer
