@@ -233,9 +233,9 @@ export function partition(f, xs) {
     return [left, right]
 }
 
-export function includes(xs, x) {
+export function includes(xs, x, equals = (x, y) => x === y) {
     for (var i = 0; i < xs.length; i++) {
-        if (xs[i] === x) {
+        if (equals(xs[i], x)) {
             return true
         }
     }
@@ -253,7 +253,7 @@ export function take(n, xs) {
 export function unique(xs) {
     var result = []
     for (var i = 0; i < xs.length; i++) {
-        if (!includes(result, xs[i])) { // quadratic...
+        if (!includes(result, xs[i], deepEqual)) { // quadratic...
             result.push(xs[i])
         }
     }

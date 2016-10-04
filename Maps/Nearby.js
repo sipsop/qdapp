@@ -42,23 +42,30 @@ const searchNearby = async (
         radius       : Int,
         locationType : string,
         includeOpenNowOnly = true,
-        next_page_token = undefined,
+        pagetoken    = undefined,
         ) : Promise<DownloadResult<SearchResponse>> => {
 
-    const params = {
-        key:        apiKey,
-        // rankby: 'distance',
-        radius:     radius,
-        location:   `${coords.latitude},${coords.longitude}`,
-        type:       locationType,
+    var params
+    if (pagetoken) {
+        params = {
+            key:        apiKey,
+            pagetoken:  pagetoken,
+        }
+    } else {
+        params = {
+            key:        apiKey,
+            // rankby: 'distance',
+            radius:     radius,
+            location:   `${coords.latitude},${coords.longitude}`,
+            type:       locationType,
+        }
+        if (includeOpenNowOnly)
+            params.opennow = true
     }
-    if (includeOpenNowOnly)
-        params.opennow = true
-    if (next_page_token)
-        params.pagetoken = next_page_token
+
 
     const url = buildURL(BaseURL, params)
-    const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},nextPageToken=${next_page_token}`
+    const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
     const options = { method: 'GET' }
     const jsonDownloadResult = await downloadManager.fetchJSON(key, url, options, config.nearbyCacheInfo)
     if (!jsonDownloadResult.value)
@@ -78,13 +85,14 @@ export const searchNearbyFirstPage = async (
         radius       : Int,
         locationType : string,
         includeOpenNowOnly = true,
-        next_page_token = undefined,
+        pagetoken    = undefined,
         ) => {
     const jsonDownloadResult = await searchNearby(
-        apiKey, coords, radius, locationType, includeOpenNowOnly, next_page_token)
+        apiKey, coords, radius, locationType, includeOpenNowOnly, pagetoken)
     return jsonDownloadResult.update(parseResponse)
 }
 
+/* Note: This will not work, as you "need to wait a bit" between successive requests */
 export const searchNearbyAllPages = async (
         apiKey       : Key,
         coords       : Coords,
@@ -95,7 +103,8 @@ export const searchNearbyAllPages = async (
 
     var htmlAttrib = []
     var results = []
-    var next_page_token = undefined
+    var pagetoken = undefined
+
     for (var i = 0; i < 3; i++) {
         const jsonDownloadResult = await searchNearby(
             apiKey,
@@ -103,7 +112,7 @@ export const searchNearbyAllPages = async (
             radius,
             locationType,
             includeOpenNowOnly,
-            next_page_token,
+            pagetoken,
         )
         if (!jsonDownloadResult.value)
             return jsonDownloadResult
@@ -113,9 +122,12 @@ export const searchNearbyAllPages = async (
             htmlAttrib = [...htmlAttrib, ...doc.html_attribution]
         if (doc.results)
             results = [...results, ...doc.results]
-        if (!doc.next_page_token)
+
+        pagetoken = doc.next_page_token
+        if (!pagetoken)
             break
-        next_page_token = doc.next_page_token
+
+        // log("GOT NEXT PAGE TOKEN =", pagetoken)
     }
 
     return emptyResult().downloadFinished({

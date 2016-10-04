@@ -246,11 +246,12 @@ class MapStore {
     }
 
     searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
-        return await searchNearbyAllPages( // searchNearbyFirstPage(
+        return await searchNearbyFirstPage( // searchNearbyFirstPage(
             APIKey,
             initialLocation,    // this.currentLocation,
             this.searchRadius,
             barType,
+            true,
         )
     }
 
