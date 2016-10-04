@@ -380,8 +380,10 @@ class Distance extends PureComponent {
 const formatDistance = (dist) => {
     if (dist < 0)
         return 'unknown'
-    if (dist < 1000)
-        return `${dist.toFixed(0)} meters`
+    if (dist < 1000) {
+        const meters = Math.round(dist / 100) * 100
+        return `${meters.toFixed(0)} meters`
+    }
     const km = dist / 1000
     return `${km.toFixed(1)}km`
 }
