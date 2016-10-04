@@ -124,7 +124,7 @@ class BarView extends Page {
                     backgroundSpeed={60}
                     contentBackgroundColor='#fff'
                     parallaxHeaderHeight={250}
-                    renderBackground={() => this.renderBarHeader(250)}
+                    renderForeground={() => this.renderBarHeader(250)}
                     renderStickyHeader={this.renderStickyHeader}
                     stickyHeaderHeight={50}
                     >
