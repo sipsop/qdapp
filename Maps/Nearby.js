@@ -67,6 +67,7 @@ const searchNearby = async (
     const url = buildURL(BaseURL, params)
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
     const options = { method: 'GET' }
+    // log("FETCHING ", url)
     const jsonDownloadResult = await downloadManager.fetchJSON(key, url, options, config.nearbyCacheInfo)
     if (!jsonDownloadResult.value)
         return jsonDownloadResult
@@ -128,6 +129,7 @@ export const searchNearbyAllPages = async (
             break
 
         // log("GOT NEXT PAGE TOKEN =", pagetoken)
+        await _.sleep(15000)
     }
 
     return emptyResult().downloadFinished({

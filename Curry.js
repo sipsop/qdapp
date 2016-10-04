@@ -430,3 +430,7 @@ export const timeout = async (timeout, promise) => {
     }
     return result
 }
+
+export const sleep = (time) => {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
