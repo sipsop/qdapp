@@ -42,7 +42,7 @@ class BarStore {
     }
 
     @action setState = async ({barID}) => {
-        await this._setBarID(barID)
+        await this._setBarID(barID, focusOnMap = false)
     }
 
     /*************************** Getters *********************************/
@@ -115,7 +115,7 @@ class BarStore {
         return await mapStore.getPlaceInfo(placeID)
     }
 
-    _setBarID = async (barID) => {
+    _setBarID = async (barID, focusOnMap = true) => {
         const bar = this.getBar()
         if (bar && bar.id === barID && this.menu)
             return /* All done */
@@ -148,7 +148,7 @@ class BarStore {
             transaction(() => {
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
-                if (this.getBar() != null) {
+                if (focusOnMap && this.getBar() != null) {
                     setTimeout(() => {
                         mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
                     }, 1000)

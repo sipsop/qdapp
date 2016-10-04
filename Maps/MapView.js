@@ -73,7 +73,7 @@ export class MapView extends DownloadResultView {
                     onPress={this.handleMapPress}
                     >
                     {
-                        mapStore.allMarkers.map(bar =>
+                        mapStore.barList.map(bar =>
                             <MapMarker key={bar.id} bar={bar} />
                         )
                     }

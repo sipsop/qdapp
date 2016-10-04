@@ -159,9 +159,9 @@ class MapStore {
     }
 
     @action setState = (mapState) => {
-        this.currentMarker = mapState.currentMarker
-        this.currentLocation = mapState.currentLocation
+        this.currentMarker      = mapState.currentMarker
         this.lastSelectedMarker = mapState.currentMarker
+        this.currentLocation    = mapState.currentLocation
         this.followUserLocation = mapState.followUserLocation || !mapState.currentMarker
     }
 
@@ -214,8 +214,10 @@ class MapStore {
     /* Determine what to focus on: a bar or the current location */
     @computed get focusPoint() {
         if (this.lastSelectedMarker && !this.followUserLocation) {
+            // log("BAR FOCUS POINT", this.lastSelectedMarker.name)
             return getBarCoords(this.lastSelectedMarker)
         }
+        // log("CURRENT LOCATION FOCUS POINT")
         return this.currentLocation
     }
 
@@ -254,15 +256,9 @@ class MapStore {
         return this.searchResponse
     }
 
-    updateNearbyBars = action(async () : void => {
+    updateNearbyBars = async () : void => {
         this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby('bar')
-    })
-
-    @computed get allMarkers() : Array<Bar> {
-        if (this.searchResponse.value == null)
-            return []
-        return this.searchResponse.value.results
     }
 
     @computed get barList() : Array<Bar> {
@@ -354,7 +350,6 @@ _.safeAutorun(() => {
     mapStore.currentMarker
     setTimeout(() => {
         if (mapStore.currentMarker) {
-            log("UPDATing lAST SELECTED MARKER!")
             mapStore.lastSelectedMarker = mapStore.currentMarker
         }
     }, 100)
