@@ -7,6 +7,7 @@ import Swiper from 'react-native-swiper'
 import { observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
+import ParallaxScrollView from 'react-native-parallax-scroll-view'
 
 import { BarMenu } from './BarMenu.js'
 import { BarPhoto, BarCardFooter } from './BarCard.js'
@@ -86,6 +87,26 @@ class BarView extends Page {
         mapStore.focusBar(this.props.bar)
     }
 
+    renderBarHeader = (height : Int) => {
+        return <LazyBarHeader
+                    bar={this.props.bar}
+                    imageHeight={height}
+                    showBackButton={false} />
+    }
+
+    renderStickyHeader = (height : Int) => {
+        return <View style={
+                {backgroundColor: '#000', height: height, marginTop: 5}}>
+            <BarCardFooter
+                bar={this.props.bar}
+                showDistance={false}
+                showTimeInfo={true}
+                showBarName={true}
+                showMapButton={true}
+                />
+        </View>
+    }
+
     renderView = () => {
         const bar = this.props.bar
         const menu = this.props.menu
@@ -98,12 +119,15 @@ class BarView extends Page {
         }
 
         return (
-            <ScrollView>
-                <LazyBarHeader
-                    bar={this.props.bar}
-                    imageHeight={250}
-                    showBackButton={false}
-                    />
+            <ParallaxScrollView
+                    /* backgroundColor="black" */
+                    backgroundSpeed={60}
+                    contentBackgroundColor='#fff'
+                    parallaxHeaderHeight={250}
+                    renderBackground={() => this.renderBarHeader(250)}
+                    renderStickyHeader={this.renderStickyHeader}
+                    stickyHeaderHeight={50}
+                    >
                 <View style={
                         merge(styles.bottomBorder,
                             { flex: 1
@@ -181,7 +205,7 @@ class BarView extends Page {
                         />
                     {/* TODO: display additional attribution stuff here */}
                 </View>
-            </ScrollView>
+            </ParallaxScrollView>
         )
     }
 }
@@ -202,6 +226,7 @@ export class BarHeader extends PureComponent {
         showBackButton: Bool
         onBack: () => void
     */
+
     render = () => {
         const bar = this.props.bar
 
@@ -228,6 +253,7 @@ export class BarHeader extends PureComponent {
                             photo={photo}
                             timeout={i === 0 ? 0 : 1000}
                             imageHeight={imageHeight}
+                            showMapButton={false}
                             {...this.props}
                             />
                     )
