@@ -257,6 +257,7 @@ export function unique(xs) {
             result.push(xs[i])
         }
     }
+    return result
 }
 
 export const and = (x, y) => x && y
@@ -376,8 +377,11 @@ export const throttler = (period, f) => {
     const o = {
         lastTime: 0,
         run: (...args) => {
-            if (getTime() > o.lastTime + period)
+            const time = getTime()
+            if (time > o.lastTime + period) {
                 f(...args)
+                o.lastTime = time
+            }
         }
     }
     return o

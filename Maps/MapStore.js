@@ -4,7 +4,7 @@ import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
 import { store } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
-import { searchNearby } from './Nearby.js'
+import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
 import { Second } from '../Time.js'
 import * as _ from '../Curry.js'
@@ -246,7 +246,7 @@ class MapStore {
     }
 
     searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
-        return await searchNearby(
+        return await searchNearbyAllPages( // searchNearbyFirstPage(
             APIKey,
             initialLocation,    // this.currentLocation,
             this.searchRadius,
@@ -285,11 +285,11 @@ class MapStore {
     @computed get nearbyBarList() : Array<Bar> {
         if (this.allowBarListReordering) {
             const entireBatch = [...this.initialBatch, ...this.remainingBatch]
-            return this.sortResults(entireBatch)
+            return _.unique(this.sortResults(entireBatch))
         } else {
             const initialBatch = this.sortResults(this.initialBatch)
             const remainingBatch = this.sortResults(this.remainingBatch)
-            return [...initialBatch, ...remainingBatch]
+            return _.unique([...initialBatch, ...remainingBatch])
         }
     }
 
@@ -300,7 +300,7 @@ class MapStore {
     markers on the map!
     */
     @computed get allMarkers() : Array<Bar> {
-        return [...this.initialBatch, ...this.remainingBatch]
+        return _.unique([...this.initialBatch, ...this.remainingBatch])
     }
 
     distanceFromUser = (bar : Bar) : Float => {
