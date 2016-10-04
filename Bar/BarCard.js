@@ -6,9 +6,10 @@ import {
     MaterialIcon,
     PureComponent,
     Dimensions,
+    StyleSheet,
     T,
 } from '../Component.js'
-import { action, transaction } from 'mobx'
+import { action, transaction, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
@@ -38,6 +39,17 @@ export class DiscoverBarCard extends PureComponent {
         borderRadius: 5,
     }
 
+    styles = StyleSheet.create({
+        view: {
+            flex: 0,
+            height: this.props.imageHeight,
+            marginTop: 5,
+            marginLeft: 5,
+            marginRight: 5,
+            borderRadius: this.props.borderRadius,
+        },
+    })
+
     handleCardPress = () => {
         if (orderStore.orderList.length > 0 && this.props.bar.id !== barStore.barID)
             this.modal.show()
@@ -51,31 +63,35 @@ export class DiscoverBarCard extends PureComponent {
     }
 
     render = () => {
-        const currentBar = barStore.getBar()
-        const currentBarName = currentBar ? currentBar.name : ""
         const photos = this.props.bar.photos
         const useGenericPicture = !photos || !photos.length
 
-        return <View style={
-                { flex: 0
-                , height: this.props.imageHeight
-                , marginTop: 5
-                , marginLeft: 5
-                , marginRight: 5
-                , borderRadius: this.props.borderRadius
-                }
-            }>
-            <SmallOkCancelModal
-                ref={ref => this.modal = ref}
-                message={`Do you want to erase your order (${orderStore.totalText}) at ${currentBarName}?`}
-                onConfirm={this.setBar}
-                />
+        log("RENDERING BAR CARD", this.props.bar.name)
+
+        return <View style={this.styles.view}>
+            <ConfirmChangeBarModal />
             <BarCard
                 {...this.props}
                 photo={photos && photos.length && photos[0]}
                 onPress={this.handleCardPress}
                 showDistance={true} />
         </View>
+    }
+}
+
+@observer
+class ConfirmChangeBarModal extends PureComponent {
+    @computed get currentBarName() {
+        const currentBar = barStore.getBar()
+        return currentBar ? currentBar.name : ""
+    }
+
+    render = () => {
+        return <SmallOkCancelModal
+                    ref={ref => this.modal = ref}
+                    message={`Do you want to erase your order (${orderStore.totalText}) at ${this.currentBarName}?`}
+                    onConfirm={this.setBar}
+                    />
     }
 }
 
@@ -366,12 +382,20 @@ class Distance extends PureComponent {
     /* properties:
         bar: Bar
     */
+
+    @computed get distance() {
+        return mapStore.distanceFromUser(this.props.bar)
+    }
+
+    @computed get distanceString() {
+        return formatDistance(this.distance)
+    }
+
     render = () => {
-        const distance = mapStore.distanceFromUser(this.props.bar)
         return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
             <Icon name="location-arrow" size={15} color='#fff' />
             <View style={{marginLeft: 5, flexDirection: 'row'}}>
-                <T style={timeTextStyle}>{formatDistance(distance)}</T>
+                <T style={timeTextStyle}>{this.distanceString}</T>
             </View>
         </View>
     }

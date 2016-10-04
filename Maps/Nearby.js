@@ -129,7 +129,7 @@ export const searchNearbyAllPages = async (
             break
 
         // log("GOT NEXT PAGE TOKEN =", pagetoken)
-        await _.sleep(15000)
+        // await _.sleep(15000)
     }
 
     return emptyResult().downloadFinished({

@@ -39,6 +39,7 @@ class App extends Component {
     }
 
     render = () => {
+        log("RENDERING APP:", store.initialized, this.barSelected)
         if (!store.initialized)
             return <Loader />
         if (!this.barSelected)

@@ -13,6 +13,7 @@ import { Page } from './Page.js'
 import { MapView } from './Maps/MapView.js'
 import { DiscoverBarCard } from './Bar/BarCard.js'
 import { DownloadResultView } from './HTTP.js'
+import { Descriptor, SimpleListView } from './SimpleListView.js'
 import { T } from './AppText.js'
 import { store, barStore, mapStore } from './Store.js'
 import { config } from './Config.js'
@@ -32,51 +33,47 @@ export class DiscoverPage extends DownloadResultView {
     }
 }
 
-@observer
-export class DiscoverView extends Page {
-    constructor(props) {
-        super(props)
-        this.ds = new ListView.DataSource({
-            rowHasChanged: (i, j) => true, // i !== j,
-        })
+class DiscoverViewDescriptor extends Descriptor {
+    get numberOfRows() {
+        return mapStore.nearbyBarList.length
     }
 
-    saveScrollView = (scrollview) => {
-        store.discoverScrollView = scrollview
-    }
+    renderHeader = () => <MapView key='mapview' />
 
-    @computed get rows() {
-        const mapValue = [-1, null]
-        const barList = mapStore.nearbyBarList.map((bar, i) => [i, bar])
-        barList.unshift(mapValue)
-        return barList
-    }
-
-    @computed get dataSource() {
-        return this.ds.cloneWithRows(this.rows)
-    }
-
-    renderView = () => {
-        return <View style={{flex: 1, marginBottom: 5}}>
-            <ListView
-                ref={this.saveScrollView}
-                dataSource={this.dataSource}
-                renderRow={this.renderRow}
-                />
-        </View>
-    }
-
-    renderRow = (value) => {
-        const [i, bar] = value
-        if (i === -1)
-            return <MapView key='mapview' />
-        return this.renderBarCard(bar)
-    }
-
-    renderBarCard = (bar) => {
+    renderRow = (i) => {
+        const bar = mapStore.nearbyBarList[i]
         return <DiscoverBarCard
                     key={bar.id}
                     bar={bar}
                     imageHeight={190} />
+    }
+}
+
+const discoverViewDescriptor = new DiscoverViewDescriptor()
+
+@observer
+// export class DiscoverView extends Page {
+export class DiscoverView extends PureComponent {
+    saveScrollView = (scrollview) => {
+        store.discoverScrollView = scrollview
+    }
+
+    @computed get key() {
+        const key = mapStore.getCurrentMarker() && mapStore.getCurrentMarker().id
+        return key || 'barCardList'
+    }
+
+    // renderView = () => {
+    render = () => {
+        log("RENDERING DISCOVER PAGE")
+        return <View style={{flex: 1, marginBottom: 5}}>
+            <SimpleListView
+                /* key={this.key} */
+                getRef={this.saveScrollView}
+                descriptor={discoverViewDescriptor}
+                initialListSize={2}
+                pageSize={2}
+                />
+        </View>
     }
 }

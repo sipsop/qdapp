@@ -186,11 +186,11 @@ class MapStore {
 
     trackLocation = () => {
         /* Use the old location until we get an update */
-        if (this.currentLocation) {
-            this.updateLocation({
-                coords: this.currentLocation,
-            })
-        }
+        // if (this.currentLocation) {
+        //     this.updateLocation({
+        //         coords: this.currentLocation,
+        //     })
+        // }
 
         /* Improve with a fresh rough estimate */
         // navigator.geolocation.getCurrentPosition(
@@ -200,9 +200,9 @@ class MapStore {
 
         /* Keep tracking with higher accuracy */
         this.watchID = navigator.geolocation.watchPosition(
-            _.throttler(this.updateLocation, 5*Second).run,
+            this.updateLocation,
             (error) => _.logError(error.message),
-            {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
+            // {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
         )
     }
 
@@ -246,7 +246,7 @@ class MapStore {
     }
 
     searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
-        return await searchNearbyAllPages( // searchNearbyFirstPage(
+        return await searchNearbyFirstPage( // searchNearbyFirstPage(
             APIKey,
             initialLocation,    // this.currentLocation,
             this.searchRadius,
@@ -259,8 +259,8 @@ class MapStore {
         return this.searchResponse
     }
 
-    updateNearbyBars = async () : void => {
-        this.searchResponse.downloadStarted()
+    @action updateNearbyBars = async () : void => {
+        // this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby('bar')
     }
 

@@ -17,13 +17,17 @@ const { log, assert } = _.utils('./SimpleListView.js')
 export class SimpleListView extends PureComponent {
     /* properties:
         descriptor: Descriptor
+        getRef: (listview : Component) => void
+            pass as <ListView ref={getRef} ... />
         other props: passed to ListView, e.g.
             renderHeader: ?() => Component
             renderFooter: ?() => Component
-            initialPageSize: Int
+            initialListSize: Int
             pageSize: Int
             etc
     */
+
+    listView = null
 
     constructor(props) {
         super(props)
@@ -40,6 +44,7 @@ export class SimpleListView extends PureComponent {
 
     render = () => {
         return <ListView
+                    ref={this.props.getRef}
                     dataSource={this.dataSource}
                     removeClippedSubviews={true}
                     enableEmptySections={true}
