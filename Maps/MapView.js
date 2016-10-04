@@ -33,7 +33,7 @@ export class MapView extends DownloadResultView {
     errorMessage = "Error downloading map"
 
     @action handleRegionChange = (region) => {
-        mapStore.region = region
+        mapStore.userChangedRegion(region)
     }
 
     @action handleMapPress = (value) => {

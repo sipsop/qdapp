@@ -9,6 +9,8 @@ import type { Int, Float, URL, HTML } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'
 import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
 
+const { log, assert } = _.utils('./Maps/PlaceInfo.js')
+
 /************************* Network ***********************************/
 
 const BaseURL = "https://maps.googleapis.com/maps/api/place/details/json"
@@ -25,7 +27,8 @@ export const getPlaceInfo = async (apiKey : Key, placeID : String)
         key, url, {method: 'GET'})
     if (jsonDownloadResult.value && jsonDownloadResult.value.status !== 'OK')
         throw Error(jsonDownloadResult.value.status)
-    return jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
+    const result = jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
+    return result
 }
 
 /************************* Response Parsing **************************/

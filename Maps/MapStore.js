@@ -4,15 +4,14 @@ import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
 import { store } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
-import { logErrors, logger } from '../Curry.js'
 import { searchNearby } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
-import { merge } from '../Curry.js'
+import * as _ from '../Curry.js'
 
 import type { Bar } from '../Bar/Bar.js'
 import type { SearchResponse } from './Nearby.js'
 
-const log = logger("Maps/MapStore.js")
+const { log, assert } = _.utils("Maps/MapStore.js")
 
 /*********************************************************************/
 
@@ -39,7 +38,6 @@ export type Region = {
 type NativeMapView  = {
     animateToRegion: (region : Region, time : number) => void,
 }
-
 
 /*********************************************************************/
 
@@ -86,28 +84,40 @@ class MapStore {
     @observable searchRadius : number = 5000 // 5 kilometer search radius
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
+    @observable followUserLocation : Bool = false
 
     mapView : ?NativeMapView
 
     constructor() {
         this.mapView = null
+        this.watchID = null
     }
 
     initialize = async () => {
+        _.safeAutorun(() => {
+            if (mapStore.followUserLocation) {
+                mapStore.trackLocation()
+            } else if (mapStore.watchID != null) {
+                log("STOPPING LOCATION TRACKING")
+                navigator.geolocation.clearWatch(this.watchID)
+            }
+        })
         await this.updateNearbyBars()
     }
 
     getState = () => {
         return {
-            currentMarker:   this.currentMarker,
-            currentLocation: this.currentLocation,
+            currentMarker:      this.currentMarker,
+            currentLocation:    this.currentLocation,
+            followUserLocation: this.followUserLocation,
         }
     }
 
     emptyState = () => {
         return {
-            currentMarker:   null,
-            currentLocation: this.currentLocation,
+            currentMarker:      null,
+            currentLocation:    this.currentLocation,
+            followUserLocation: true,
         }
     }
 
@@ -115,11 +125,65 @@ class MapStore {
         this.currentMarker = mapState.currentMarker
         this.currentLocation = mapState.currentLocation
         this.lastSelectedMarker = mapState.currentMarker
+        this.followUserLocation = mapState.followUserLocation || !mapState.currentMarker
     }
 
+    @action follow = (followUserLocation) => {
+        this.followUserLocation = followUserLocation
+    }
+
+    @action updateLocation = (position) => {
+        log("UPDATING CURREnT LOCATION...", position)
+        const location = {
+            latitude:   position.coords.latitude,
+            longitude:  position.coords.longitude,
+        }
+        const region = {
+            ...location,
+            ...normalDelta,
+        }
+        this.currentLocation = location
+        this.region = region
+    }
+
+    trackLocation = () => {
+        // navigator.geolocation.getCurrentPosition(
+        //     this.updateLocation,
+        //     (error) => {
+        //         // alert(error.message)
+        //         _.logError(error.message)
+        //     },
+        //     // {enableHighAccuracy: true, maximumAge: 1000},
+        // )
+
+        /* Use the old location until we get an update */
+        if (this.currentLocation) {
+            this.updateLocation({
+                coords: this.currentLocation,
+            })
+        }
+        this.watchID = navigator.geolocation.watchPosition(
+            this.updateLocation,
+            (error) => {
+                // alert(error.message)
+                // console.error(error)
+                _.logError(error.message)
+            },
+            // {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        )
+    }
+
+    /* User changed region, stop following user location */
+    @action userChangedRegion = (region) => {
+        this.follow(false)
+        this.region = region
+    }
+
+    /* Determine what to focus on: a bar or the current location */
     @computed get focusPoint() {
-        if (this.lastSelectedMarker)
+        if (this.lastSelectedMarker && !this.followUserLocation) {
             return getBarCoords(this.lastSelectedMarker)
+        }
         return this.currentLocation
     }
 
@@ -127,24 +191,13 @@ class MapStore {
         return this.currentMarker
     }
 
+    /* Select or de-select a marker */
     @action setCurrentMarker = (bar : Bar) => {
         this.currentMarker = bar
-        if (bar != null) {
-            /* Set a timeout for updating the lastSelectedMarker, as
-                updating this will re-render the bar list which may
-                take some time, causing the UI to hang. Instead switch
-                to the map with callout first, and show an updated bar
-                list later.
-            */
-            setTimeout(() => this.lastSelectedMarker = bar, 100)
-            // this.lastSelectedMarker = bar
-        }
     }
 
     /* Focus the given bar on the map */
     @action focusBar = (bar : Bar, switchToDiscoverPage = true) => {
-        // return
-        // log("FOCUSSING BAR", bar.name)
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
@@ -153,6 +206,7 @@ class MapStore {
                 store.switchToDiscoverPage(true)
         }
         this.setCurrentMarker(bar)
+        this.follow(false)
     }
 
     searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
@@ -250,3 +304,19 @@ class MapStore {
 }
 
 export const mapStore = new MapStore()
+
+_.safeAutorun(() => {
+    /* Set a timeout for updating the lastSelectedMarker, as
+        updating this will re-render the bar list which may
+        take some time, causing the UI to hang. Instead switch
+        to the map with callout first, and show an updated bar
+        list later.
+    */
+    mapStore.currentMarker
+    setTimeout(() => {
+        if (mapStore.currentMarker) {
+            log("UPDATing lAST SELECTED MARKER!")
+            mapStore.lastSelectedMarker = mapStore.currentMarker
+        }
+    }, 100)
+})
