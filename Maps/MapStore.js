@@ -121,6 +121,7 @@ class MapStore {
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
     @observable followUserLocation : Bool = false
+    @observable allowBarListReordering : Bool = false
 
     mapView : ?NativeMapView
 
@@ -227,6 +228,7 @@ class MapStore {
 
     /* Select or de-select a marker */
     @action setCurrentMarker = (bar : Bar) => {
+        this.allowBarListReordering = true
         this.currentMarker = bar
     }
 
@@ -261,14 +263,44 @@ class MapStore {
         this.searchResponse = await this.searchNearby('bar')
     }
 
-    @computed get barList() : Array<Bar> {
+    /* Initial batch of downloaded bars */
+    @computed get initialBatch() : Array<Bar> {
         if (this.searchResponse.value == null)
             return []
         return this.searchResponse.value.results
     }
 
+    /* Remaining batch of downloaded bars */
+    @computed get remainingBatch() : Array<Bar> {
+        return []
+    }
+
+    /* Compute the list of nearby bars.
+
+    We retrieve bar info from google maps in batches, and we do not want the
+    bar list to be reordered as the user has scrolled midway in. So we only
+    only allow re-ordering when we were re-ordering anyway (i.e. when the
+    user has selected a new bar).
+    */
     @computed get nearbyBarList() : Array<Bar> {
-        return this.sortResults(this.barList)
+        if (this.allowBarListReordering) {
+            const entireBatch = [...this.initialBatch, ...this.remainingBatch]
+            return this.sortResults(entireBatch)
+        } else {
+            const initialBatch = this.sortResults(this.initialBatch)
+            const remainingBatch = this.sortResults(this.remainingBatch)
+            return [...initialBatch, ...remainingBatch]
+        }
+    }
+
+    /* All markers to be shown on the map.
+
+    We do not reuse nearbyBarList here, as the bar list is re-arranged when
+    selecting markers or moving location, which does not require updating the
+    markers on the map!
+    */
+    @computed get allMarkers() : Array<Bar> {
+        return [...this.initialBatch, ...this.remainingBatch]
     }
 
     distanceFromUser = (bar : Bar) : Float => {
