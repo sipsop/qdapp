@@ -72,7 +72,7 @@ export class DiscoverBarCard extends PureComponent {
                 />
             <BarCard
                 {...this.props}
-                photo={photos && photos[0]}
+                photo={photos && photos.length && photos[0]}
                 onPress={this.handleCardPress} />
         </View>
     }
