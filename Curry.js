@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { autorun } from 'mobx'
+import { getTime } from './Time.js'
 
 export const DEV = true
 
@@ -369,6 +370,18 @@ export const sum = xs => fold((x, y) => x + y, 0, xs)
 export const product = xs => fold((x, y) => x * y, 1, xs)
 
 /*********************** Async Stuff ******************************/
+
+/* Throttle how often `f` may be called */
+export const throttler = (period, f) => {
+    const o = {
+        lastTime: 0,
+        run: (...args) => {
+            if (getTime() > o.lastTime + period)
+                f(...args)
+        }
+    }
+    return o
+}
 
 export class TimeoutError {
     message : string

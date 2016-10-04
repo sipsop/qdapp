@@ -6,6 +6,7 @@ import { store } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 import { searchNearby } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
+import { Second } from '../Time.js'
 import * as _ from '../Curry.js'
 
 import type { Bar } from '../Bar/Bar.js'
@@ -96,9 +97,10 @@ class MapStore {
     initialize = async () => {
         _.safeAutorun(() => {
             if (mapStore.followUserLocation) {
+                log("START LOCATION TRACKING")
                 mapStore.trackLocation()
             } else if (mapStore.watchID != null) {
-                log("STOPPING LOCATION TRACKING")
+                log("STOP LOCATION TRACKING")
                 navigator.geolocation.clearWatch(this.watchID)
             }
         })
@@ -147,29 +149,24 @@ class MapStore {
     }
 
     trackLocation = () => {
-        // navigator.geolocation.getCurrentPosition(
-        //     this.updateLocation,
-        //     (error) => {
-        //         // alert(error.message)
-        //         _.logError(error.message)
-        //     },
-        //     // {enableHighAccuracy: true, maximumAge: 1000},
-        // )
-
         /* Use the old location until we get an update */
         if (this.currentLocation) {
             this.updateLocation({
                 coords: this.currentLocation,
             })
         }
+
+        /* Improve with a fresh rough estimate */
+        // navigator.geolocation.getCurrentPosition(
+        //     this.updateLocation,
+        //     (error) => _.logError(error.message),
+        // )
+
+        /* Keep tracking with higher accuracy */
         this.watchID = navigator.geolocation.watchPosition(
-            this.updateLocation,
-            (error) => {
-                // alert(error.message)
-                // console.error(error)
-                _.logError(error.message)
-            },
-            // {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+            _.throttler(this.updateLocation, 5*Second).run,
+            (error) => _.logError(error.message),
+            {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
         )
     }
 
