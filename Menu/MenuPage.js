@@ -66,10 +66,13 @@ class MenuList extends PureComponent {
                   e.g. wine to beer will render 100 beer items, even
                   though only a few are visible.
         */}
+        const menuItems = tagStore.activeMenuItems //.filter(
+            // menuItem => menuItem.images && menuItem.images.length > 0
+        // )
         return <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={tagStore.activeMenuItems}
+                    menuItems={menuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => <TagView />}
                     visible={this.menuItemVisible} />
@@ -89,7 +92,6 @@ class ReviewButton extends PureComponent {
         return <LargeButton
                     label={`Review`}
                     onPress={() => {
-                        log("SETTING TAB # 3")
                         tabStore.setCurrentTab(3)
                     }}
                     style={{margin: 5, height: rowHeight}}

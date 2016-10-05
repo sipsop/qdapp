@@ -29,7 +29,10 @@ export class MenuItemImage extends PureComponent {
 }
 
 export const getMenuItemImage = (menuItem : menuItem) : URL => {
-    return menuItem.images && menuItem.images.length && menuItem.images[0]
+    const image = menuItem.images && menuItem.images.length && menuItem.images[0]
+    if (image && image.indexOf('pixabay') >= 0)
+        return undefined
+    return image
 }
 
 
