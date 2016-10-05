@@ -55,8 +55,8 @@ const focusDelta : Delta = {
 }
 
 const normalDelta : Delta = {
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
+    latitudeDelta: 0.04,
+    longitudeDelta: 0.04,
 }
 
 
@@ -128,18 +128,20 @@ class MapStore {
     constructor() {
         this.mapView = null
         this.watchID = null
+        this.animateToUserLocation = false
     }
 
     initialize = async () => {
-        _.safeAutorun(() => {
-            if (mapStore.followUserLocation) {
-                log("START LOCATION TRACKING")
-                mapStore.trackLocation()
-            } else if (mapStore.watchID != null) {
-                log("STOP LOCATION TRACKING")
-                navigator.geolocation.clearWatch(this.watchID)
-            }
-        })
+        mapStore.trackLocation()
+        // _.safeAutorun(() => {
+        //     if (mapStore.followUserLocation) {
+        //         log("START LOCATION TRACKING")
+        //         mapStore.trackLocation()
+        //     } else if (mapStore.watchID != null) {
+        //         log("STOP LOCATION TRACKING")
+        //         navigator.geolocation.clearWatch(this.watchID)
+        //     }
+        // })
         await this.updateNearbyBars()
     }
 
@@ -148,6 +150,7 @@ class MapStore {
             currentMarker:      this.currentMarker,
             currentLocation:    this.currentLocation,
             followUserLocation: this.followUserLocation,
+            region:             this.region,
         }
     }
 
@@ -156,6 +159,7 @@ class MapStore {
             currentMarker:      null,
             currentLocation:    this.currentLocation,
             followUserLocation: true,
+            region:             this.region,
         }
     }
 
@@ -164,7 +168,12 @@ class MapStore {
         this.lastSelectedMarker = mapState.currentMarker
         this.currentLocation    = mapState.currentLocation
         this.followUserLocation = mapState.followUserLocation || !mapState.currentMarker
-        this.focusBar(this.currentMarker, false)
+        // this.region             = mapState.region
+        if (this.currentMarker) {
+            this.focusBar(this.currentMarker, false)
+        } else {
+            this.animateToUserLocation = true
+        }
     }
 
     @action follow = (followUserLocation) => {
@@ -172,7 +181,7 @@ class MapStore {
     }
 
     @action updateLocation = (position) => {
-        log("UPDATING CURREnT LOCATION...", position)
+        // log("UPDATING CURREnT LOCATION...", position)
         const location = {
             latitude:   position.coords.latitude,
             longitude:  position.coords.longitude,
@@ -182,7 +191,10 @@ class MapStore {
             ...normalDelta,
         }
         this.currentLocation = location
-        this.region = region
+        if (this.animateToUserLocation) {
+            this.region = region
+            this.animateToUserLocation = false
+        }
     }
 
     trackLocation = () => {
@@ -194,17 +206,20 @@ class MapStore {
         // }
 
         /* Improve with a fresh rough estimate */
-        // navigator.geolocation.getCurrentPosition(
-        //     this.updateLocation,
-        //     (error) => _.logError(error.message),
-        // )
-
-        /* Keep tracking with higher accuracy */
-        this.watchID = navigator.geolocation.watchPosition(
+        navigator.geolocation.getCurrentPosition(
             this.updateLocation,
             (error) => _.logError(error.message),
-            // {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
         )
+
+        // update every 10s
+        setTimeout(this.trackLocation, 10000)
+
+        // /* Keep tracking with higher accuracy */
+        // this.watchID = navigator.geolocation.watchPosition(
+        //     this.updateLocation,
+        //     (error) => _.logError(error.message),
+        //     // {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
+        // )
     }
 
     /* User changed region, stop following user location */
@@ -215,7 +230,7 @@ class MapStore {
 
     /* Determine what to focus on: a bar or the current location */
     @computed get focusPoint() {
-        if (this.lastSelectedMarker && !this.followUserLocation) {
+        if (this.currentMarker) {
             // log("BAR FOCUS POINT", this.lastSelectedMarker.name)
             return getBarCoords(this.lastSelectedMarker)
         }
