@@ -68,7 +68,7 @@ export class DiscoverView extends Page {
 
     renderView = () => {
     // render = () => {
-        return <View style={{flex: 1, marginBottom: 5}}>
+        return <View style={{flex: 1 /*, marginBottom: 5 */}}>
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
                     primary={this.props.primary}>
                 <SelectableButton
@@ -107,12 +107,14 @@ class MapPage extends PureComponent {
         return <View style={{flex: 1}}>
             <MapView key='mapView' />
             { bar &&
-                <DiscoverBarCard
-                    key={bar.id}
-                    bar={bar}
-                    imageHeight={190}
-                    showMapButton={false}
-                    />
+                <View style={{left: 0, bottom: 0, position: 'absolute', height: 160, width: 200}}>
+                    <DiscoverBarCard
+                        key={bar.id}
+                        bar={bar}
+                        imageHeight={150}
+                        showMapButton={false}
+                        />
+                </View>
             }
         </View>
     }

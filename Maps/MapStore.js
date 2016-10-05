@@ -2,7 +2,7 @@
 
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
-import { store } from '../Store.js'
+import { store, barStore } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
@@ -160,10 +160,11 @@ class MapStore {
     }
 
     @action setState = (mapState) => {
-        this.currentMarker      = mapState.currentMarker
+        this.currentMarker      = /* barStore.getBar() || */ mapState.currentMarker
         this.lastSelectedMarker = mapState.currentMarker
         this.currentLocation    = mapState.currentLocation
         this.followUserLocation = mapState.followUserLocation || !mapState.currentMarker
+        this.focusBar(this.currentMarker, false)
     }
 
     @action follow = (followUserLocation) => {
