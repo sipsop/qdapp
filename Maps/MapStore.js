@@ -238,9 +238,9 @@ class MapStore {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
-            if (switchToDiscoverPage)
-                store.switchToDiscoverPage(true)
         }
+        if (switchToDiscoverPage)
+            store.switchToDiscoverPage(true)
         this.setCurrentMarker(bar)
         this.follow(false)
     }

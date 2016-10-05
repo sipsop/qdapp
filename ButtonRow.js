@@ -9,9 +9,12 @@ import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
+import * as _ from './Curry.js'
 
 import { T } from './AppText.js'
 import { config } from './Config.js'
+
+const { log, assert } = _.utils('./ButtonRow.js')
 
 const rowHeight     = 55
 const buttonHeight  = 45
@@ -56,8 +59,8 @@ export class ButtonGroup extends Component {
     /* properties:
         labels: [str]
         showBar: bool
-        toggleButton(label) -> void
-        renderLabel: str -> Component
+        toggleButton(label) => void
+        renderLabel: ?(str) => Component)
         isActive(label) -> bool
             callback that returns whether the button is selected
         isDisabled(label) -> bool
@@ -101,6 +104,11 @@ export class SelectableButton extends Component {
         renderLabel: str -> Component
         style: style object
     */
+
+    static defaultProps = {
+        renderLabel: _.identity,
+    }
+
     render = () => {
         var textDecoration = 'none'
         var opacity = 0.85

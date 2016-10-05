@@ -60,7 +60,7 @@ export class MapView extends DownloadResultView {
         // return <View style={{flex: 0, height: 300}} />
 
         return (
-            <View style={{flex: 0, height: 275}}>
+            <View style={{flex: 1, /* height: 275*/}}>
                 <NativeMapView
                     ref={mapView => {mapStore.mapView = mapView}}
                     style={style}

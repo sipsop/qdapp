@@ -77,7 +77,10 @@ export class OrderList extends PureComponent {
         showheart: Bool
     */
     render = () => {
-        return <SimpleListView descriptor={new OrderListDescriptor(this.props)} />
+        return <SimpleListView
+                    descriptor={new OrderListDescriptor(this.props)}
+                    initialListSize={2}
+                    pageSize={1} />
     }
 }
 

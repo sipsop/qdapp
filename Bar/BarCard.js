@@ -313,7 +313,7 @@ export class PlaceInfo extends PureComponent {
 
     handlePress = () => {
         tabStore.setCurrentTab(0)
-        mapStore.focusBar(this.props.bar)
+        mapStore.focusBar(this.props.bar, true)
         // mapStore.currentMarker = this.props.bar
         // TODO: Scroll to top
     }

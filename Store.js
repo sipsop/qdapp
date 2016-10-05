@@ -19,17 +19,24 @@ const log = _.logger('Store.js')
 export class Store {
 
     @observable initialized = false
+    @observable mapVisible = true
 
     constructor() {
-        this.discoverScrollView = null
+        // this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
 
-    switchToDiscoverPage = (scrollToTop) => {
+    @action switchToDiscoverPage = (scrollToTop) => {
+        log("SWITCHING TO DISCOVER PAGE")
         tabStore.setCurrentTab(0)
-        if (scrollToTop && this.discoverScrollView)
-            this.discoverScrollView.scrollTo({x: 0, y: 0})
+        this.mapVisible = true
+        // if (scrollToTop && this.discoverScrollView)
+        //     this.discoverScrollView.scrollTo({x: 0, y: 0})
+    }
+
+    @action setMapVisible = (visible) => {
+        this.mapVisible = visible
     }
 
     initialize = async () => {
