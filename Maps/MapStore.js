@@ -210,7 +210,7 @@ class MapStore {
        This should be 'false' whenever the user hits the 'more' button at
        the bottom of the bar list page.
     */
-    @action allowBarListReordering = (allow = true) => {
+    @action allowBarListReordering = (allow) => {
         this.canReorderBarList = allow
     }
 
@@ -221,10 +221,9 @@ class MapStore {
     loadMoreData = async (barType = 'bar') => {
         transaction(() => {
             this.moreButtonEnabled = false
-            log("SETTING MORE BUTTON LOADING = TRUE")
             this.moreButtonLoading = true
         })
-        this._loadMoreData(barType)
+        await this._loadMoreData(barType)
         this.enableMoreButton()
         this.moreButtonLoading = false
     }
@@ -243,7 +242,7 @@ class MapStore {
     }
 
     /* Decide whether the "load more data" button should be enabled */
-    enableMoreButton = (after = 15000) => {
+    enableMoreButton = (after = 12000) => {
         setTimeout(() => {
             this.moreButtonEnabled = true
         }, after)

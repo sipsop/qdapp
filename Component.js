@@ -55,6 +55,7 @@ class T extends PureComponent {
             style={style}
             numberOfLines={this.props.numberOfLines}
             ellipsizeMode={this.props.ellipsizeMode}
+            lineBreakMode={this.props.ellipsizeMode}
             >
             {this.props.children}
         </Text>

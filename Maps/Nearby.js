@@ -47,7 +47,6 @@ const searchNearby = async (
 
     var params
     if (pagetoken) {
-        log("USING PAGE TOKEN!!!!", pagetoken)
         params = {
             key:        apiKey,
             pagetoken:  pagetoken,

@@ -90,9 +90,9 @@ export class TextButton extends Component {
 
     render = () => {
         const textColor = this.props.textColor || (this.props.prominent ? '#fff' : '#000')
-        var text = <T ellipsizeMode='tail'
+        var text = <T   ellipsizeMode='tail'
                         numberOfLines={1}
-                        style={{fontSize: this.props.fontSize, color: textColor}}
+                        style={{fontSize: this.props.fontSize, color: textColor, textAlign: 'left'}}
                         >
                         {this.props.label}
                     </T>

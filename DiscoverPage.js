@@ -45,7 +45,7 @@ class DiscoverViewDescriptor extends Descriptor {
 
     // renderHeader = () => <MapView key='mapview' />
     renderFooter = () => {
-        return <MoreButton />
+        return <MoreButton canReorderBarList={false} />
     }
 
     handleBack = () => {
@@ -76,9 +76,6 @@ export class DiscoverView extends Page {
         return key || 'barCardList'
     }
 
-    showMap = () => store.setMapVisible(true)
-    showNearby = () => store.setMapVisible(false)
-
     renderView = () => {
         return <View style={{flex: 1}}>
             { /*<MapNearbyToggle />*/}
@@ -89,43 +86,20 @@ export class DiscoverView extends Page {
 }
 
 @observer
-class MapNearbyToggle extends PureComponent {
-
-    render = () => {
-        return <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
-                       primary={this.props.primary}>
-            { !store.mapVisible && <MapButton />}
-            { store.mapVisible && <NearbyButton />}
-        </Header>
-    }
-}
-
-@observer
-class MapButton extends PureComponent {
-
-    showMap = () => store.setMapVisible(true)
-
-    render = () => {
-        return <SelectableButton
-                    label='Map'
-                    onPress={this.showMap}
-                    active={store.mapVisible}
-                    disabled={store.mapVisible} /* disable active buttons */
-                    style={{flex: 1}} />
-    }
-}
-
-@observer
 class NearbyButton extends PureComponent {
 
     styles = StyleSheet.create({
-        buttonStyle: {
+        buttonContainerStyle: {
             position: 'absolute',
+            flexWrap: 'wrap',
             top: 0,
             left: 0,
             height: 40,
-            margin: 5,
-            maxWidth: 300,
+            margin: 10,
+            maxWidth: 200,
+        },
+        buttonStyle: {
+            height: 40,
         },
     })
 
@@ -138,14 +112,17 @@ class NearbyButton extends PureComponent {
 
     @action showNearby = () => {
         store.setMapVisible(false)
+        mapStore.allowBarListReordering(true)
     }
 
     render = () => {
-        return <LargeButton
-                    label={this.nearbyLabel}
-                    style={this.styles.buttonStyle}
-                    fontSize={16}
-                    onPress={this.showNearby} />
+        return <View style={this.styles.buttonContainerStyle}>
+            <LargeButton
+                label={this.nearbyLabel}
+                style={this.styles.buttonStyle}
+                fontSize={16}
+                onPress={this.showNearby} />
+        </View>
     }
 
     render2 = () => {
@@ -161,7 +138,7 @@ class NearbyButton extends PureComponent {
 @observer
 // class MapPage extends Page {
 class MapPage extends PureComponent {
-    styles = StyleSheet.create({
+    styles = {
         view: {
             flex: 1,
         },
@@ -172,7 +149,20 @@ class MapPage extends PureComponent {
             height: 160,
             width: 200,
         },
-    })
+        moreButtonContainer: {
+            top: 0,
+            right: 65,
+            position: 'absolute',
+            height: 40,
+            width:  80,
+            margin: 5,
+        },
+        moreButton: {
+            height: 40,
+            width:  60,
+            marginLeft: 20,
+        },
+    }
 
     // renderView = () => {
     render = () => {
@@ -180,6 +170,14 @@ class MapPage extends PureComponent {
         return <View style={this.styles.view}>
             <MapView key='mapView' />
             <NearbyButton />
+            <View style={this.styles.moreButtonContainer}>
+                <MoreButton
+                    style={this.styles.moreButton}
+                    fontSize={16}
+                    canReorderBarList={true}
+                    horizontal={true}
+                    />
+            </View>
             { bar &&
                 <View style={this.styles.barCard}>
                     <DiscoverBarCard
@@ -225,20 +223,11 @@ class BarListPage extends Page {
     }
 
     @action showMap = () => {
-        mapStore.allowBarListReordering(true)
         store.setMapVisible(true)
     }
 
     renderView = () => {
         return  <View style={this.styles.view}>
-            {/*
-            <LargeButton
-                label="Map"
-                style={this.styles.buttonStyle}
-                fontSize={16}
-                onPress={this.showMap} />
-            */}
-            {
             <BackButton
                 onBack={this.showMap}
                 enabled={true}
@@ -247,7 +236,6 @@ class BarListPage extends Page {
                 /* color='#000' */
                 iconSize={35}
                 />
-            }
             <SimpleListView
                 descriptor={discoverViewDescriptor}
                 initialListSize={2}
@@ -262,13 +250,20 @@ class MoreButton extends PureComponent {
     /* properties:
         style: style object
         canReorderBarList: Bool
+        fontSize: Int
+        horizontal:
+            whether to render the loader above or next to the button
     */
 
     static defaultProps = {
         canReorderBarList: false,
+        horizontal: false,
     }
 
     styles = {
+        horizontal: {
+            flexDirection: 'row',
+        },
         button: {
             height: 55,
             marginLeft: 5,
@@ -286,16 +281,15 @@ class MoreButton extends PureComponent {
         if (!mapStore.canLoadMoreData)
             return <View />
 
-        log("MORE BUTTON IS LOADING......................", mapStore.moreButtonLoading)
-
-        return <View>
+        return <View style={this.props.horizontal && this.styles.horizontal}>
             {
                 mapStore.moreButtonLoading &&
-                    <Loader style={{margin: 5}} />
+                    <Loader />
             }
             <LargeButton
                 label="More"
                 style={{...this.styles.button, ...this.props.style}}
+                fontSize={this.props.fontSize}
                 onPress={this.loadMoreData}
                 disabled={!mapStore.moreButtonEnabled} />
         </View>
