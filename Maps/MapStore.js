@@ -119,9 +119,13 @@ class MapStore {
     @observable currentLocation : Coords = initialLocation
     @observable searchRadius : number = 5000 // 5 kilometer search radius
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
+    @observable searchResponse1 : DownloadResult<SearchResponse> = emptyResult()
+    @observable searchResponse2 : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
     @observable followUserLocation : Bool = false
-    @observable allowBarListReordering : Bool = false
+    @observable canReorderBarList : Bool = false
+    @observable moreButtonLoading : Bool = false
+    @observable moreButtonEnabled : Bool = false
 
     mapView : ?NativeMapView
 
@@ -197,6 +201,54 @@ class MapStore {
         }
     }
 
+    /* Decide whether we allow the different page results downloaded from
+       google maps to be mixed.
+
+       This should be set to 'true' whenever we load more data from the
+       map view, or when we switch to the bar list from the map page.
+
+       This should be 'false' whenever the user hits the 'more' button at
+       the bottom of the bar list page.
+    */
+    @action allowBarListReordering = (allow = true) => {
+        this.canReorderBarList = allow
+    }
+
+    /* Load more bar info from google maps.
+
+       This should be called only iff canLoadMoreData istrue
+    */
+    loadMoreData = async (barType = 'bar') => {
+        transaction(() => {
+            this.moreButtonEnabled = false
+            log("SETTING MORE BUTTON LOADING = TRUE")
+            this.moreButtonLoading = true
+        })
+        this._loadMoreData(barType)
+        this.enableMoreButton()
+        this.moreButtonLoading = false
+    }
+
+    @action _loadMoreData = async (barType = 'bar') => {
+        if (getNextPageToken(this.searchResponse1)) {
+            this.searchResponse2 = await this.searchNearby(barType, getNextPageToken(this.searchResponse1))
+        } else if (getNextPageToken(this.searchResponse)) {
+            this.searchResponse1 = await this.searchNearby(barType, getNextPageToken(this.searchResponse))
+        }
+    }
+
+    /* Decide whether the user can press the 'load more data' button */
+    @computed get canLoadMoreData() {
+        return this.searchResponse2.state !== 'Finished'
+    }
+
+    /* Decide whether the "load more data" button should be enabled */
+    enableMoreButton = (after = 15000) => {
+        setTimeout(() => {
+            this.moreButtonEnabled = true
+        }, after)
+    }
+
     trackLocation = () => {
         /* Use the old location until we get an update */
         // if (this.currentLocation) {
@@ -244,7 +296,6 @@ class MapStore {
 
     /* Select or de-select a marker */
     @action setCurrentMarker = (bar : Bar) => {
-        this.allowBarListReordering = true
         this.currentMarker = bar
     }
 
@@ -261,13 +312,15 @@ class MapStore {
         this.follow(false)
     }
 
-    searchNearby = async (barType = 'bar') : Promise<DownloadResult<SearchResponse>> => {
+    searchNearby = async (barType = 'bar', pagetoken = undefined) : Promise<DownloadResult<SearchResponse>> => {
+        log("SEARCHING NEARBY", pagetoken)
         return await searchNearbyFirstPage( // searchNearbyFirstPage(
             APIKey,
             initialLocation,    // this.currentLocation,
             this.searchRadius,
             barType,
             true,
+            pagetoken,
         )
     }
 
@@ -278,18 +331,22 @@ class MapStore {
     @action updateNearbyBars = async () : void => {
         // this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby('bar')
+        this.enableMoreButton()
     }
 
     /* Initial batch of downloaded bars */
-    @computed get initialBatch() : Array<Bar> {
-        if (this.searchResponse.value == null)
-            return []
-        return this.searchResponse.value.results
+    @computed get batch0() : Array<Bar> {
+        return getSearchResults(this.searchResponse)
     }
 
-    /* Remaining batch of downloaded bars */
-    @computed get remainingBatch() : Array<Bar> {
-        return []
+    /* Second batch of downloaded bars */
+    @computed get batch1() : Array<Bar> {
+        return getSearchResults(this.searchResponse1)
+    }
+
+    /* Final batch of downloaded bars */
+    @computed get batch2() : Array<Bar> {
+        return getSearchResults(this.searchResponse2)
     }
 
     /* Compute the list of nearby bars.
@@ -300,13 +357,14 @@ class MapStore {
     user has selected a new bar).
     */
     @computed get nearbyBarList() : Array<Bar> {
-        if (this.allowBarListReordering) {
-            const entireBatch = [...this.initialBatch, ...this.remainingBatch]
-            return _.unique(this.sortResults(entireBatch))
+        if (this.canReorderBarList) {
+            const entireBatch = [...this.batch0, ...this.batch1, ...this.batch2]
+            return this.sortResults(entireBatch)
         } else {
-            const initialBatch = this.sortResults(this.initialBatch)
-            const remainingBatch = this.sortResults(this.remainingBatch)
-            return _.unique([...initialBatch, ...remainingBatch])
+            const batch0 = this.sortResults(this.batch0)
+            const batch1 = this.sortResults(this.batch1)
+            const batch2 = this.sortResults(this.batch2)
+            return [...batch0, ...batch1, ...batch2]
         }
     }
 
@@ -317,7 +375,7 @@ class MapStore {
     markers on the map!
     */
     @computed get allMarkers() : Array<Bar> {
-        return _.unique([...this.initialBatch, ...this.remainingBatch])
+        return [...this.batch0, ...this.batch1, ...this.batch2]
     }
 
     distanceFromUser = (bar : Bar) : Float => {
@@ -403,3 +461,19 @@ _.safeAutorun(() => {
         }
     }, 100)
 })
+
+
+const isFinished = (downloadResult) => {
+    return downloadResult.state === 'Finished'
+}
+
+const getNextPageToken = (downloadResult) => {
+    return downloadResult.value && downloadResult.value.nextPageToken
+}
+
+
+const getSearchResults = (searchResponse) => {
+    if (searchResponse.value == null)
+        return []
+    return searchResponse.value.results
+}

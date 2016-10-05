@@ -7,10 +7,10 @@ import {
     PureComponent,
     StyleSheet,
 } from './Component.js'
-import { computed, observable } from 'mobx'
+import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from './Page.js'
+import { Page, Loader } from './Page.js'
 import { LargeButton } from './Button.js'
 import { BackButton } from './BackButton.js'
 import { MapView } from './Maps/MapView.js'
@@ -44,6 +44,9 @@ class DiscoverViewDescriptor extends Descriptor {
     }
 
     // renderHeader = () => <MapView key='mapview' />
+    renderFooter = () => {
+        return <MoreButton />
+    }
 
     handleBack = () => {
         store.setMapVisible(true)
@@ -133,7 +136,9 @@ class NearbyButton extends PureComponent {
         return `Bars near ${currentMarker.name}`
     }
 
-    showNearby = () => store.setMapVisible(false)
+    @action showNearby = () => {
+        store.setMapVisible(false)
+    }
 
     render = () => {
         return <LargeButton
@@ -195,6 +200,7 @@ class BarListPage extends Page {
     styles = {
         view: {
             flex: 1,
+            paddingBottom: 5,
         },
         outerButtonStyle: {
             position: 'absolute',
@@ -218,7 +224,8 @@ class BarListPage extends Page {
 
     }
 
-    showMap = () => {
+    @action showMap = () => {
+        mapStore.allowBarListReordering(true)
         store.setMapVisible(true)
     }
 
@@ -246,6 +253,51 @@ class BarListPage extends Page {
                 initialListSize={2}
                 pageSize={1}
                 />
+        </View>
+    }
+}
+
+@observer
+class MoreButton extends PureComponent {
+    /* properties:
+        style: style object
+        canReorderBarList: Bool
+    */
+
+    static defaultProps = {
+        canReorderBarList: false,
+    }
+
+    styles = {
+        button: {
+            height: 55,
+            marginLeft: 5,
+            marginRight: 5,
+            marginTop: 5,
+        },
+    }
+
+    @action loadMoreData = () => {
+        mapStore.allowBarListReordering(this.props.canReorderBarList)
+        mapStore.loadMoreData()
+    }
+
+    render = () => {
+        if (!mapStore.canLoadMoreData)
+            return <View />
+
+        log("MORE BUTTON IS LOADING......................", mapStore.moreButtonLoading)
+
+        return <View>
+            {
+                mapStore.moreButtonLoading &&
+                    <Loader style={{margin: 5}} />
+            }
+            <LargeButton
+                label="More"
+                style={{...this.styles.button, ...this.props.style}}
+                onPress={this.loadMoreData}
+                disabled={!mapStore.moreButtonEnabled} />
         </View>
     }
 }

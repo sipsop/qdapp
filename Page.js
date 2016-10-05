@@ -43,8 +43,19 @@ export class Page extends PureComponent {
 }
 
 export class Loader extends PureComponent {
+    /* properties:
+        style: style object
+    */
+    styles = {
+        view: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+    }
+
     render = () => {
-        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        return <View style={{...this.styles.view, ...this.props.style}}>
             <ActivityIndicator
                 animating={true}
                 color={config.theme.primary.dark}

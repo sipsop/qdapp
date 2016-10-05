@@ -15,9 +15,9 @@ const { log, assert } = _.utils('./Maps/Nearby.js')
 /*********************************************************************/
 
 export type SearchResponse = {
-    htmlAttrib: Array<string>,
-    nextToken:  string,
-    results:    Array<Bar>,
+    htmlAttrib:     Array<string>,
+    nextPageToken:  String,
+    results:        Array<Bar>,
 }
 
 // export type MarkerInfo = {
@@ -31,9 +31,9 @@ export type SearchResponse = {
 const BaseURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
 const noResults = {
-    htmlAttrib: [],
-    nextToken:  null,
-    results:    [],
+    htmlAttrib:     [],
+    nextPageToken:  null,
+    results:        [],
 }
 
 const searchNearby = async (
@@ -47,6 +47,7 @@ const searchNearby = async (
 
     var params
     if (pagetoken) {
+        log("USING PAGE TOKEN!!!!", pagetoken)
         params = {
             key:        apiKey,
             pagetoken:  pagetoken,
@@ -62,7 +63,6 @@ const searchNearby = async (
         if (includeOpenNowOnly)
             params.opennow = true
     }
-
 
     const url = buildURL(BaseURL, params)
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
@@ -153,8 +153,8 @@ export const fetchMore = async (
 /* See https://developers.google.com/places/web-service/search for the response structure */
 const parseResponse = (doc) : SearchResponse => {
     return {
-        'htmlAttrib':   doc.html_attribution,
-        'nextToken':    doc.next_page_token,
-        'results':      doc.results.map(parseBar),
+        'htmlAttrib':       doc.html_attribution,
+        'nextPageToken':    doc.next_page_token,
+        'results':          doc.results.map(parseBar),
     }
 }
