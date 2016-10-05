@@ -283,20 +283,19 @@ class MoreButton extends PureComponent {
     }
 
     render = () => {
-        if (!mapStore.canLoadMoreData)
-            return <View />
-
         return <View style={this.props.horizontal && this.styles.horizontal}>
             {
                 mapStore.moreButtonLoading &&
                     <Loader />
             }
-            <LargeButton
-                label="More"
-                style={{...this.styles.button, ...this.props.style}}
-                fontSize={this.props.fontSize}
-                onPress={this.loadMoreData}
-                disabled={!mapStore.moreButtonEnabled} />
+            { mapStore.canLoadMoreData &&
+                <LargeButton
+                    label="More"
+                    style={{...this.styles.button, ...this.props.style}}
+                    fontSize={this.props.fontSize}
+                    onPress={this.loadMoreData}
+                    disabled={!mapStore.moreButtonEnabled} />
+            }
         </View>
     }
 }
