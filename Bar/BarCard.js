@@ -32,6 +32,8 @@ export class DiscoverBarCard extends PureComponent {
         imageHeight: Int
         bar: Bar
             bar info
+        onBack: ?() => void
+        showBackButton: Bool
     */
     modal = null
 
@@ -108,6 +110,8 @@ export class BarCard extends PureComponent {
         footer: Component
             footer to show in the bar card
         onPress: () => void
+        onBack: ?() => void
+        showBackButton: Bool
     */
 
     static defaultProps = {

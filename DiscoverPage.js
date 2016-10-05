@@ -11,6 +11,8 @@ import { computed, observable } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
+import { LargeButton } from './Button.js'
+import { BackButton } from './BackButton.js'
 import { MapView } from './Maps/MapView.js'
 import { DiscoverBarCard } from './Bar/BarCard.js'
 import { DownloadResultView } from './HTTP.js'
@@ -43,11 +45,19 @@ class DiscoverViewDescriptor extends Descriptor {
 
     // renderHeader = () => <MapView key='mapview' />
 
+    handleBack = () => {
+        store.setMapVisible(true)
+    }
+
     renderRow = (i) => {
         const bar = mapStore.nearbyBarList[i]
         return <DiscoverBarCard
                     key={bar.id}
                     bar={bar}
+                    /*
+                    onBack={this.handleBack}
+                    showBackButton={i === 0}
+                    */
                     imageHeight={190} />
     }
 }
@@ -67,28 +77,79 @@ export class DiscoverView extends Page {
     showNearby = () => store.setMapVisible(false)
 
     renderView = () => {
-    // render = () => {
-        return <View style={{flex: 1 /*, marginBottom: 5 */}}>
-            <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
-                    primary={this.props.primary}>
-                <SelectableButton
+        return <View style={{flex: 1}}>
+            { /*<MapNearbyToggle />*/}
+            {store.mapVisible && <MapPage />}
+            {!store.mapVisible && <BarListPage />}
+        </View>
+    }
+}
+
+@observer
+class MapNearbyToggle extends PureComponent {
+
+    render = () => {
+        return <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
+                       primary={this.props.primary}>
+            { !store.mapVisible && <MapButton />}
+            { store.mapVisible && <NearbyButton />}
+        </Header>
+    }
+}
+
+@observer
+class MapButton extends PureComponent {
+
+    showMap = () => store.setMapVisible(true)
+
+    render = () => {
+        return <SelectableButton
                     label='Map'
                     onPress={this.showMap}
                     active={store.mapVisible}
                     disabled={store.mapVisible} /* disable active buttons */
-                    style={{flex: 1}}
-                    />
-                <SelectableButton
-                    label='Nearby'
+                    style={{flex: 1}} />
+    }
+}
+
+@observer
+class NearbyButton extends PureComponent {
+
+    styles = StyleSheet.create({
+        buttonStyle: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: 40,
+            margin: 5,
+            maxWidth: 300,
+        },
+    })
+
+    @computed get nearbyLabel() {
+        const currentMarker = mapStore.getCurrentMarker()
+        if (!currentMarker)
+            return 'Bars near Me'
+        return `Bars near ${currentMarker.name}`
+    }
+
+    showNearby = () => store.setMapVisible(false)
+
+    render = () => {
+        return <LargeButton
+                    label={this.nearbyLabel}
+                    style={this.styles.buttonStyle}
+                    fontSize={16}
+                    onPress={this.showNearby} />
+    }
+
+    render2 = () => {
+        return  <SelectableButton
+                    label={this.nearbyLabel}
                     onPress={this.showNearby}
                     active={!store.mapVisible}
                     disabled={!store.mapVisible} /* disable active buttons */
-                    style={{flex: 1}}
-                    />
-            </Header>
-            {store.mapVisible && <MapPage />}
-            {!store.mapVisible && <BarListPage />}
-        </View>
+                    style={{flex: 1}} />
     }
 }
 
@@ -99,15 +160,23 @@ class MapPage extends PureComponent {
         view: {
             flex: 1,
         },
+        barCard: {
+            left: 0,
+            bottom: 0,
+            position: 'absolute',
+            height: 160,
+            width: 200,
+        },
     })
 
     // renderView = () => {
     render = () => {
         const bar = mapStore.getCurrentMarker()
-        return <View style={{flex: 1}}>
+        return <View style={this.styles.view}>
             <MapView key='mapView' />
+            <NearbyButton />
             { bar &&
-                <View style={{left: 0, bottom: 0, position: 'absolute', height: 160, width: 200}}>
+                <View style={this.styles.barCard}>
                     <DiscoverBarCard
                         key={bar.id}
                         bar={bar}
@@ -122,11 +191,61 @@ class MapPage extends PureComponent {
 
 @observer
 class BarListPage extends Page {
+
+    styles = {
+        view: {
+            flex: 1,
+        },
+        outerButtonStyle: {
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            width: 60,
+            height: 60,
+            zIndex: 10,
+        },
+        innerButtonStyle: {
+            // position: 'absolute',
+            // top: 0,
+            // left: 0,
+            // width: 60,
+            // height: 60,
+            // margin: 5,
+            zIndex: 10,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            borderRadius: 30,
+        },
+
+    }
+
+    showMap = () => {
+        store.setMapVisible(true)
+    }
+
     renderView = () => {
-        return  <SimpleListView
-                    descriptor={discoverViewDescriptor}
-                    initialListSize={2}
-                    pageSize={1}
-                    />
+        return  <View style={this.styles.view}>
+            {/*
+            <LargeButton
+                label="Map"
+                style={this.styles.buttonStyle}
+                fontSize={16}
+                onPress={this.showMap} />
+            */}
+            {
+            <BackButton
+                onBack={this.showMap}
+                enabled={true}
+                style={this.styles.outerButtonStyle}
+                buttonStyle={this.styles.innerButtonStyle}
+                /* color='#000' */
+                iconSize={35}
+                />
+            }
+            <SimpleListView
+                descriptor={discoverViewDescriptor}
+                initialListSize={2}
+                pageSize={1}
+                />
+        </View>
     }
 }
