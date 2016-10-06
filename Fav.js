@@ -17,14 +17,14 @@ class FavStore {
     @observable favBars = []
 
     toggleFavItem = (menuItemID) => {
-        loginStore.login(() => {
-            toggle(this.favItems, menuItemID)
-        })
+        // loginStore.login(() => {
+        toggle(this.favItems, menuItemID)
+        // })
     }
     toggleFavBar = (barID) => {
-        loginStore.login(() => {
-            toggle(this.favBars, barID)
-        })
+        // loginStore.login(() => {
+        toggle(this.favBars, barID)
+        // })
     }
 
     isFavItem = (menuItemID) => _.includes(this.favItems, menuItemID)

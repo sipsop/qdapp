@@ -71,18 +71,30 @@ export class DiscoverBarCard extends PureComponent {
         log("RENDERING BAR CARD", this.props.bar.name)
 
         return <View style={this.styles.view}>
-            <ConfirmChangeBarModal />
+            <ConfirmChangeBarModal
+                ref={ref => this.modal = ref}
+                onConfirm={this.setBar}
+                />
             <BarCard
                 {...this.props}
                 photo={photos && photos.length && photos[0]}
                 onPress={this.handleCardPress}
-                showDistance={true} />
+                showDistance={true}
+                />
         </View>
     }
 }
 
 @observer
 class ConfirmChangeBarModal extends PureComponent {
+    /* properties:
+        onCOnfirm: () => void
+    */
+    modal = null
+
+    show = () => this.modal.show()
+    close = () => this.modal.close()
+
     @computed get currentBarName() {
         const currentBar = barStore.getBar()
         return currentBar ? currentBar.name : ""
@@ -92,7 +104,7 @@ class ConfirmChangeBarModal extends PureComponent {
         return <SmallOkCancelModal
                     ref={ref => this.modal = ref}
                     message={`Do you want to erase your order (${orderStore.totalText}) at ${this.currentBarName}?`}
-                    onConfirm={this.setBar}
+                    onConfirm={this.props.onConfirm}
                     />
     }
 }
