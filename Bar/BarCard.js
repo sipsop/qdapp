@@ -420,6 +420,8 @@ export class OpeningTimeView extends PureComponent {
     render = () => {
         const textStyle = this.props.textStyle
         const openingTime = this.props.openingTime
+        if (!openingTime)
+            return <T style={textStyle}>Unknown</T>
         return <View style={this.styles.row}>
             <Time style={textStyle} time={openingTime.open} />
             <T style={textStyle}> - </T>
