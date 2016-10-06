@@ -8,6 +8,11 @@ class History {
         this.history.push({tag: tag, value: value})
     }
 
+    pop = () => {
+        if (this.history.length)
+            this.history.pop()
+    }
+
     registerHandler = (tag, handler) => {
         this.handlers[tag] = handler
     }

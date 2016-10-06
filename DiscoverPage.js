@@ -20,7 +20,7 @@ import { Header, TextHeader } from './Header.js'
 import { SelectableButton } from './ButtonRow.js'
 import { Descriptor, SimpleListView } from './SimpleListView.js'
 import { T } from './AppText.js'
-import { store, barStore, mapStore } from './Store.js'
+import { store, barStore, mapStore, historyStore } from './Store.js'
 import { config } from './Config.js'
 import * as _ from './Curry.js'
 
@@ -118,6 +118,7 @@ class NearbyButton extends PureComponent {
     @action showNearby = () => {
         store.setMapVisible(false)
         mapStore.allowBarListReordering(true)
+        historyStore.push('nearby')
     }
 
     render = () => {
@@ -228,7 +229,8 @@ class BarListPage extends Page {
     }
 
     @action showMap = () => {
-        store.setMapVisible(true)
+        historyStore.pop()
+        showMap()
     }
 
     renderView = () => {
@@ -249,6 +251,11 @@ class BarListPage extends Page {
         </View>
     }
 }
+
+const showMap = () => {
+    store.setMapVisible(true)
+}
+
 
 @observer
 class MoreButton extends PureComponent {
@@ -299,3 +306,5 @@ class MoreButton extends PureComponent {
         </View>
     }
 }
+
+historyStore.registerHandler('nearby', (_) => showMap())
