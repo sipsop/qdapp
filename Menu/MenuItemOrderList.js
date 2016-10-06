@@ -42,24 +42,32 @@ export class MenuItemOrderList extends PureComponent {
         return this.props.orderStore.getOrderList(this.props.menuItem.id)
     }
 
+    styles = StyleSheet.create({
+        view: {
+            borderWidth: 0.5,
+            borderLeftWidth: 0.5,
+            borderRightWidth: 0.5,
+            borderBottomWidth: 0.5,
+            borderColor: '#000',
+            // borderRadius: 10,
+            marginLeft: 5,
+            marginRight: 5,
+        },
+        row: {
+            flexDirection: 'row',
+        },
+        orderItem: {
+            flex: 1,
+        },
+    })
+
     render = () => {
-        const rowStyle =
-            { flex: 1
-            , justifyContent: 'center'
-            , alignItems: 'center'
-            , height: rowHeight
-            }
+        if (!this.orderItems.length)
+            return <View />
 
-        const buttonStyle =
-            { borderRadius: 5
-            , borderWidth: 1
-            , marginLeft: 5
-            , marginRight: 5
-            }
-
-        return <View>
-            <View style={{flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
+        return <View style={this.styles.view}>
+            <View style={this.styles.row}>
+                <View style={this.styles.orderItem}>
                     {
                         this.orderItems.map(this.renderOrderItem)
                     }

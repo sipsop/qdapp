@@ -58,8 +58,8 @@ export class FancyMenuItem extends PureComponent {
         */
         const scrollPixels =
             this.props.orderStore.orderList.length === 1
-                ? 120
-                : 50
+                ? 125
+                : 60
         if (scrollDown)
             this.props.scrollRelative(scrollPixels)
     }
@@ -69,8 +69,13 @@ export class FancyMenuItem extends PureComponent {
     }
 
     styles = StyleSheet.create({
+        view: {
+
+        },
         menuItemCard: {
-            margin: 5,
+            marginLeft: 5,
+            marginRight: 5,
+            marginTop: 5,
         },
     })
 
@@ -81,12 +86,13 @@ export class FancyMenuItem extends PureComponent {
 
         log(menuItem.name, getMenuItemImage(menuItem))
         const isEven = this.props.rowNumber % 2 === 0
-        const backgroundColor = isEven
-            ? '#fff'
-            : config.theme.menuItemBackgroundColor
-        const marginBottom = this.haveOrderItems ? 10 : 0
+        const backgroundColor = '#fff'
+            // isEven
+            //     ? '#fff'
+            //     : config.theme.menuItemBackgroundColor
+        const marginBottom = this.haveOrderItems ? 0 : 0
 
-        return <View style={{/*marginBottom: marginBottom*/}}>
+        return <View style={this.styles.view}>
             <View style={{backgroundColor: backgroundColor}}>
                 <TouchableOpacity
                         onPress={this.showModal}
