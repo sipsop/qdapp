@@ -281,9 +281,10 @@ class MapStore {
 
     /* Determine what to focus on: a bar or the current location */
     @computed get focusPoint() {
-        if (this.currentMarker) {
+        if (this.currentMarker && this.currentMarker.address) {
             // log("BAR FOCUS POINT", this.lastSelectedMarker.name)
-            return getBarCoords(this.lastSelectedMarker)
+            // return getBarCoords(this.lastSelectedMarker)
+            return getBarCoords(this.currentMarker)
         }
         // log("CURRENT LOCATION FOCUS POINT")
         return this.currentLocation
