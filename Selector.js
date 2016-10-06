@@ -134,22 +134,26 @@ export class SelectorRow extends PureComponent {
         onPress: () => void
         align: 'left' | 'right' | 'center'
     */
+
+    styles = {
+        buttonRow: {
+            flex: 0,
+            height: 55,
+            justifyContent: 'center',
+            borderBottomWidth: 0.5,
+            borderBottomColor: config.theme.primary.medium,
+        },
+    }
+
     render = () => {
         var alignItems = 'center'
         if (this.props.align === 'left')
             alignItems = 'flex-start'
         else if (this.props.align === 'right')
             alignItems = 'flex-end'
+        const style = {...this.styles.buttonRow, alignItems: alignItems}
         return <TouchableOpacity
-                    style={
-                        { flex: 0
-                        , height: 55
-                        , justifyContent: 'center'
-                        , alignItems: alignItems
-                        , borderBottomWidth: 0.5
-                        , borderBottomColor: config.theme.primary.medium
-                        }
-                    }
+                    style={style}
                     onPress={this.props.onPress}
                     >
             {this.props.children}

@@ -383,11 +383,9 @@ export class TimeInfo extends PureComponent {
     }
 
     renderOpeningTime = (openingTime : OpeningTime) => {
-        return <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Time style={timeTextStyle} time={openingTime.open} />
-            <T style={timeTextStyle}> - </T>
-            <Time style={timeTextStyle} time={openingTime.close} />
-        </View>
+        return <OpeningTimeView
+                    openingTime={openingTime}
+                    textStyle={timeTextStyle} />
     }
 
     renderUnknownOpeningTime = () => {
@@ -402,6 +400,31 @@ export class TimeInfo extends PureComponent {
         }
 
         return <T style={timeTextStyle}>{text}</T>
+    }
+}
+
+@observer
+export class OpeningTimeView extends PureComponent {
+    /* properties:
+        openingTime: OpeningTime
+        textStyle: style object
+    */
+
+    styles = StyleSheet.create({
+        row: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        }
+    })
+
+    render = () => {
+        const textStyle = this.props.textStyle
+        const openingTime = this.props.openingTime
+        return <View style={this.styles.row}>
+            <Time style={textStyle} time={openingTime.open} />
+            <T style={textStyle}> - </T>
+            <Time style={textStyle} time={openingTime.close} />
+        </View>
     }
 }
 

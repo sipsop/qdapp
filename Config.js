@@ -54,6 +54,7 @@ export const config = {
         secondary:      purplePalette,
         addColor:       'rgb(51, 162, 37)',
         removeColor:    '#900',
+        todayBackgroundColor: purple700Trans(0.08),
         // menuItemBackgroundColor: grey(0.03),
         // menuItemBackgroundColorSecondary: grey(0.06),
         menuItemBackgroundColor: purple700Trans(0.03),
