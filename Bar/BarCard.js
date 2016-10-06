@@ -284,12 +284,6 @@ export class BarCardFooter extends PureComponent {
 
     render = () => {
         const bar = this.props.bar
-        const mapButton = (
-            <View style={{justifyContent: 'flex-end', marginRight: 5}}>
-                  <PlaceInfo bar={bar} />
-            </View>
-        )
-
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
             <View style={{flex : 1, marginLeft: 5}}>
                 <View style={{flexDirection: 'row'}}>
@@ -298,7 +292,12 @@ export class BarCardFooter extends PureComponent {
                 </View>
                 {this.props.showBarName && <BarName barName={bar.name} />}
             </View>
-            {this.props.showMapButton && mapButton}
+            {
+                this.props.showMapButton &&
+                    <View style={{justifyContent: 'flex-end', marginRight: 5}}>
+                          <PlaceInfo bar={bar} />
+                    </View>
+            }
         </View>
     }
 }
@@ -327,6 +326,19 @@ export class PlaceInfo extends PureComponent {
         bar: schema.Bar
     */
 
+    styles = StyleSheet.create({
+        buttonStyle: {
+            width: 50,
+            height: 50,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+        },
+        buttonItems: {
+            margin: 5,
+            alignItems: 'center',
+        },
+    })
+
     handlePress = () => {
         tabStore.setCurrentTab(0)
         mapStore.focusBar(this.props.bar, true)
@@ -336,14 +348,14 @@ export class PlaceInfo extends PureComponent {
 
     render = () => {
         return <View>
-            <TouchableOpacity onPress={this.handlePress}>
-                <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+            <TouchableOpacity onPress={this.handlePress} style={this.styles.buttonStyle}>
+                <View style={this.styles.buttonItems}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
+                    <T style={{color: '#fff', fontSize: 14}}>
+                        MAP
+                        {/*this.props.bar.address.city*/}
+                    </T>
                 </View>
-                <T style={{color: '#fff', fontSize: 14}}>
-                    MAP
-                    {/*this.props.bar.address.city*/}
-                </T>
             </TouchableOpacity>
         </View>
     }
