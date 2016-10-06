@@ -38,10 +38,17 @@ export class Checkout extends PureComponent {
 
     payNow = () => {
         orderStore.setFreshOrderToken()
-        loginStore.login(() => {
-            orderStore.placeActiveOrder()
-            this.close()
-        })
+        loginStore.login(
+            () => {
+                // success
+                orderStore.placeActiveOrder()
+                this.close()
+            },
+            () => {
+                // error
+                orderStore.clearActiveOrderToken()
+            },
+        )
     }
 
     close = () => {
