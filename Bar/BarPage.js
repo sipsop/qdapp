@@ -97,6 +97,15 @@ class BarView extends Page {
 
     openingTimesModal = null
 
+    styles = {
+        stickyHeader: {
+            backgroundColor: '#000',
+            height: 50,
+            marginTop: 5,
+            marginBottom: 5,
+        },
+    }
+
     @action handleFocusBarOnMap = () => {
         mapStore.focusBar(this.props.bar)
     }
@@ -108,9 +117,8 @@ class BarView extends Page {
                     showBackButton={false} />
     }
 
-    renderStickyHeader = (height : Int) => {
-        return <View style={
-                {backgroundColor: '#000', height: height, marginTop: 5}}>
+    renderStickyHeader = () => {
+        return <View style={this.styles.stickyHeader}>
             <BarCardFooter
                 bar={this.props.bar}
                 showDistance={false}
