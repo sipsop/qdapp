@@ -47,7 +47,7 @@ export class MenuPage extends BarPageFetcher {
 export class MenuView extends Page {
     renderView = () => {
         return <View style={{flex: 1}}>
-            <View style={{flex: 1, marginTop: 5, marginBottom: 5}}>
+            <View style={{flex: 1, marginTop: 5}}>
                 <MenuList />
             </View>
             <ReviewButton />
@@ -82,10 +82,17 @@ class MenuList extends PureComponent {
 
 @observer
 class ReviewButton extends PureComponent {
+    /* properties:
+        visible: Bool
+    */
+    @computed get reviewButtonVisible() {
+        return orderStore.menuItemsOnOrder.length > 0
+    }
+
     render = () => {
-        if (orderStore.menuItemsOnOrder.length === 0) {
+        if (!this.reviewButtonVisible)
             return <View />
-        }
+
         return <LargeButton
                     label={`Review`}
                     onPress={() => {

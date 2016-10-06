@@ -5,6 +5,7 @@ import {
     ScrollView,
     PureComponent,
     T,
+    StyleSheet,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -45,6 +46,15 @@ export class OrderListDescriptor {
         this.renderFooter = props.renderFooter
     }
 
+    styles = StyleSheet.create({
+        menuItem: {
+
+        },
+        lastMenuItem: {
+            marginBottom: 5,
+        },
+    })
+
     get numberOfRows() {
         return this.props.menuItems.length
     }
@@ -55,8 +65,12 @@ export class OrderListDescriptor {
 
     renderRow = (i) => {
         const menuItem = this.props.menuItems[i]
+        const style = i === this.numberOfRows - 1 // && orderStore.menuItemsOnOrder.length === 0
+            ? this.styles.lastMenuItem
+            : undefined
         return <FancyMenuItem
                     key={menuItem.id}
+                    style={style}
                     rowNumber={i}
                     menuItem={menuItem}
                     orderStore={this.props.orderStore}

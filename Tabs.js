@@ -13,7 +13,6 @@ import { drawerStore } from './SideMenu.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 
-@observer
 export class TabView extends PureComponent {
     render = () => {
         return <ScrollableTabView
@@ -108,7 +107,6 @@ class TabStore {
         if (!currentPage)
             return
 
-        log("SETTING TABSTORE STATE", currentPage)
         this.initialPage = currentPage
         if (currentPage === 1) {
             /* NOTE: there is a bug where the Swiper in combination with

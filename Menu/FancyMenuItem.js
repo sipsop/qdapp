@@ -33,6 +33,7 @@ export class FancyMenuItem extends PureComponent {
         menuItem: MenuItem
         orderStore: OrderStore
         show{Title,Price,Heart}: Bool
+        style: style object
         scrollRelative: () => void
             scroll vertically relative to the current scroll position
     */
@@ -69,9 +70,6 @@ export class FancyMenuItem extends PureComponent {
     }
 
     styles = StyleSheet.create({
-        view: {
-
-        },
         menuItemCard: {
             marginLeft: 5,
             marginRight: 5,
@@ -81,8 +79,8 @@ export class FancyMenuItem extends PureComponent {
 
     render = () => {
         const menuItem = this.props.menuItem
-        if (!getMenuItemImage(menuItem))
-            return <View />
+        // if (!getMenuItemImage(menuItem))
+        //     return <View />
 
         log(menuItem.name, getMenuItemImage(menuItem))
         const isEven = this.props.rowNumber % 2 === 0
@@ -92,7 +90,7 @@ export class FancyMenuItem extends PureComponent {
             //     : config.theme.menuItemBackgroundColor
         const marginBottom = this.haveOrderItems ? 0 : 0
 
-        return <View style={this.styles.view}>
+        return <View style={this.props.style}>
             <View style={{backgroundColor: backgroundColor}}>
                 <TouchableOpacity
                         onPress={this.showModal}
