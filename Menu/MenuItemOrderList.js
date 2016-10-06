@@ -31,7 +31,6 @@ export class MenuItemOrderList extends PureComponent {
     /* properties:
 
     Render the order selection, e.g. "1x pint + shandy"
-
         menuItem: MenuItem
         showModalFor: ?OrderItem
             order item that we should show a modal for (just once)
@@ -159,7 +158,7 @@ export class OrderSelection extends PureComponent {
     /* properties:
         menuItem: schema.MenuItem
         orderItem: schema.OrderItem
-        onModalClose: () => void
+        onModalClose: (scrollDown : Bool) => void
         rowNumber: int
         removeRow() -> void
             remove this row
@@ -223,14 +222,14 @@ export class OrderSelection extends PureComponent {
             this.orderItem.amount = _.max(0, this.orderItem.amount - 1)
     }
 
-    handleClose = () => {
-        this.props.onModalClose()
+    handleClose = (scrollDown = true) => {
+        this.props.onModalClose(scrollDown)
     }
 
     @action handleAcceptAmountChanges = (allSelectedOptions : [[number]]) => {
         const amountSelection : [number] = allSelectedOptions[0]
         this.orderItem.amount = amountSelection[0]
-        this.handleClose()
+        this.handleClose(scrollDown = false)
     }
 
     @action handleAcceptOptions = (allSelectedOptions : [[Int]]) => {
@@ -241,16 +240,16 @@ export class OrderSelection extends PureComponent {
             )
         )
         this.orderItem.selectedOptions = stringOptions
-        this.handleClose()
+        this.handleClose(scrollDOwn = false)
     }
 
     @action handleFirstAccept = () => {
-        this.handleClose()
+        this.handleClose(scrollDown = true)
     }
 
     @action handleFirstCancel = () => {
         this.props.orderStore.removeOrderItem(this.orderItem)
-        this.handleClose()
+        this.handleClose(scrollDown = false)
     }
 
     get showModal() {

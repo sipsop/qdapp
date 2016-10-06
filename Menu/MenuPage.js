@@ -66,13 +66,10 @@ class MenuList extends PureComponent {
                   e.g. wine to beer will render 100 beer items, even
                   though only a few are visible.
         */}
-        const menuItems = tagStore.activeMenuItems //.filter(
-            // menuItem => menuItem.images && menuItem.images.length > 0
-        // )
         return <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={menuItems}
+                    menuItems={tagStore.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => <TagView />}
                     visible={this.menuItemVisible} />

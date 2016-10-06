@@ -34,7 +34,32 @@ export class SimpleListView extends PureComponent {
         this._dataSource = new ListView.DataSource({
             rowHasChanged: (i, j) => true, //i !== j,
         })
+        this.contentHeight = 0
+        this.verticalScrollPosition = 0
     }
+
+    handleContentSizeChange = (contentWidth, contentHeight) => {
+        this.contentHeight = contentHeight
+    }
+
+    handleScroll = (event) => {
+        this.verticalScrollPosition = event.nativeEvent.contentOffset.y
+    }
+
+    scrollToTop = () => {
+        this.listView.scrollTo({y: 0})
+    }
+
+    /* Scroll to the bottom of the page */
+    scrollToBottom = () => {
+        this.listView.scrollTo({y: this.contentHeight})
+    }
+
+    /* Scroll vertically relative to the current scroll position */
+    scrollRelative = (y) => {
+        this.listView.scrollTo({y: this.verticalScrollPosition + y})
+    }
+
 
     get dataSource() {
         return this._dataSource.cloneWithRows(
@@ -42,16 +67,24 @@ export class SimpleListView extends PureComponent {
         )
     }
 
+    saveRef = (listView) => {
+        this.listView = listView
+        if (this.props.getRef)
+            this.props.getRef(listView)
+    }
+
     render = () => {
         return <ListView
-                    ref={this.props.getRef}
+                    ref={this.saveRef}
                     dataSource={this.dataSource}
                     removeClippedSubviews={true}
                     enableEmptySections={true}
                     renderRow={this.props.descriptor.renderRow}
                     renderHeader={this.props.descriptor.renderHeader}
                     renderFooter={this.props.descriptor.renderFooter}
-                    {...this.props} />
+                    {...this.props}
+                    onContentSizeChange={this.handleContentSizeChange}
+                    onScroll={this.handleScroll} />
     }
 }
 

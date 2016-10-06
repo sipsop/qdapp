@@ -33,6 +33,8 @@ export class FancyMenuItem extends PureComponent {
         menuItem: MenuItem
         orderStore: OrderStore
         show{Title,Price,Heart}: Bool
+        scrollRelative: () => void
+            scroll vertically relative to the current scroll position
     */
 
     @observable showModalFor : ?OrderItem = null
@@ -49,8 +51,17 @@ export class FancyMenuItem extends PureComponent {
         this.showModalFor = orderItem
     }
 
-    @action modalClosed = () => {
+    @action modalClosed = (scrollDown) => {
         this.showModalFor = null
+        /* The first time scroll down more as we have added a 'Review' button
+           that takes up some additional space.
+        */
+        const scrollPixels =
+            this.props.orderStore.orderList.length === 1
+                ? 120
+                : 50
+        if (scrollDown)
+            this.props.scrollRelative(scrollPixels)
     }
 
     @computed get haveOrderItems() : Array<OrderItem> {

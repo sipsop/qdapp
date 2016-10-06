@@ -37,14 +37,20 @@ export class OrderListDescriptor {
         //     whether this menu item is visible
     */
 
-    constructor(props) {
+    constructor(props, getSimpleListView : () => SimpleListView) {
         this.props = props
+        /* TODO: This is pretty hacky... do this better */
+        this.getSimpleListView = getSimpleListView
         this.renderHeader = props.renderHeader
         this.renderFooter = props.renderFooter
     }
 
     get numberOfRows() {
         return this.props.menuItems.length
+    }
+
+    scrollRelative = (y) => {
+        this.getSimpleListView().scrollRelative(y)
     }
 
     renderRow = (i) => {
@@ -57,7 +63,8 @@ export class OrderListDescriptor {
                     /* visible={() => this.props.visible(i)} */
                     showTitle={this.props.showTitle}
                     showPrice={this.props.showPrice}
-                    showHeart={this.props.showHeart} />
+                    showHeart={this.props.showHeart}
+                    scrollRelative={this.scrollRelative} />
     }
 }
 
@@ -76,9 +83,13 @@ export class OrderList extends PureComponent {
         showPrice: Bool
         showheart: Bool
     */
+
+    simpleListView = null
+
     render = () => {
         return <SimpleListView
-                    descriptor={new OrderListDescriptor(this.props)}
+                    ref={ref => this.simpleListView = ref}
+                    descriptor={new OrderListDescriptor(this.props, () => this.simpleListView)}
                     initialListSize={2}
                     pageSize={1} />
     }

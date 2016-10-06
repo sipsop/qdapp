@@ -108,6 +108,7 @@ export class PickerCollection extends PureComponent {
         // this.props.pickerItems.forEach(pickerItem => {
         //     pickerItem.selected = pickerItem.selectedInModal
         // })
+        // const firstAccept = this.props.showModal && this.props.onFirstAccept
         this.props.onAcceptChanges(this.selectedInModal)
         if (this.props.showModal && this.props.onFirstAccept)
             this.props.onFirstAccept()
