@@ -13,6 +13,7 @@ import { loginStore } from './Login.js'
 import { tagStore } from './Tags.js'
 import { mapStore } from './Maps/MapStore.js'
 import { paymentStore } from './Payment/PaymentStore.js'
+import { historyStore } from './History.js'
 
 const log = _.logger('Store.js')
 
@@ -131,4 +132,5 @@ export {
     orderStore,
     tagStore,
     paymentStore,
+    historyStore,
 }

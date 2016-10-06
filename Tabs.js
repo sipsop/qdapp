@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { PureComponent } from './Component.js'
 import * as _ from './Curry.js'
 import { config } from './Config.js'
+import { historyStore } from './History.js'
 import { drawerStore } from './SideMenu.js'
 
 const { log, assert } = _.utils('./Tabs.js')
@@ -74,7 +75,6 @@ class TabStore {
     @observable currentPage = 0
 
     constructor() {
-        this.history = []
         this.initialPage = 0
     }
 
@@ -84,16 +84,12 @@ class TabStore {
 
     @action setCurrentTab = (i) => {
         if (this.currentPage !== i) {
-            this.history.push(this.currentPage)
-            this.currentPage = i
+            historyStore.push('tab', this.currentPage)
+            this.setTab(i)
         }
     }
 
-    @action gotoPreviousTab = () => {
-        if (this.history.length) {
-            this.currentPage = this.history.pop()
-        }
-    }
+    @action setTab = (i) => this.currentPage = i
 
     getState = () => {
         return { currentPage: this.currentPage }
@@ -125,6 +121,7 @@ class TabStore {
 }
 
 export const tabStore = new TabStore()
+historyStore.registerHandler('tab', tabStore.setTab)
 
 _.safeAutorun(() => {
     /* Set the currentPage whenever the TabView is ready */

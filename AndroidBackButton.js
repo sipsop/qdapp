@@ -1,11 +1,13 @@
 import { Platform, BackAndroid } from 'react-native'
 
-import { tabStore } from './Store.js'
+import { tabStore, historyStore } from './Store.js'
+// import { historyStore } from './History.js'
 
 export const handleBackButton = () => {
     if (Platform.OS === 'android') {
         BackAndroid.addEventListener('hardwareBackPress', function() {
-            tabStore.gotoPreviousTab()
+            // tabStore.gotoPreviousTab()
+            historyStore.goBack()
             return true
         })
     }
