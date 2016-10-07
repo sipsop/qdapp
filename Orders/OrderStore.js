@@ -1,6 +1,7 @@
 /* @flow */
 
 import { observable, computed, action, asMap } from 'mobx'
+import shortid from 'shortid'
 
 import { DownloadResult, emptyResult, downloadManager, NetworkError, graphQLArg } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'

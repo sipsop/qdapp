@@ -1,10 +1,14 @@
 import { NetworkError, simpleFetchJSON } from './HTTP.js'
+import * as _ from './Curry.js'
 
 const segmentURL = 'https://api.segment.io/v1/batch'
+
+const { log, assert } = _.utils('./Segment.js')
 
 export class Segment {
 
     constructor(segmentAPIWriteKey) {
+        // base64 encoded api key
         this.segmentAPIWriteKey = segmentAPIWriteKey
         this.messages = []
         this.userID = null
@@ -20,6 +24,12 @@ export class Segment {
         }
     }
 
+    emptyState = () => {
+        return {
+            messages: [],
+        }
+    }
+
     setState = (segmentState) => {
         this.messages = segmentState.messages || []
     }
@@ -31,7 +41,7 @@ export class Segment {
     get httpBasicAuth() {
         const username = this.segmentAPIWriteKey
         const password = ''
-        const authParam = b64encode(`${username}:${password}`)
+        const authParam = `${username}:${password}`
         return `Basic ${authParam}`
     }
 
@@ -73,13 +83,13 @@ export class Segment {
 
     _dispatchNow = async () => {
         /* Format request body and get HTTP options */
-        const httpOptions = this.httpOPtions
+        const httpOptions = this.httpOptions
         /* Erase messages for now */
         const messages = this.messages
         this.messages = []
 
         try {
-            console.log("Dispatching to segment.io...", httpOptions)
+            log("Dispatching to segment.io...", httpOptions)
             await simpleFetchJSON(segmentURL, httpOptions, 15000)
         } catch (e) {
             /* Keep old messages around for now, but do not exceed
@@ -87,7 +97,7 @@ export class Segment {
             */
             if (!e instanceof NetworkError && !e instanceof TimeoutError)
                 throw e
-            log("ERROR DISPATCHING :(")
+            log("ERROR DISPATCHING :(", e)
             this.messages = [...messages, this.messages].slice(-1000)
         }
     }
@@ -186,5 +196,5 @@ export class Segment {
 */
 const timestamp = () => new Date().toISOString()
 
-const segmentAPIWriteKey = '8YaFpcfDuRtdGSYe9hOHyUjolsXyPUnM'
+const segmentAPIWriteKey = 'OFlhRnBjZkR1UnRkR1NZZTloT0h5VWpvbHNYeVBVbk0='
 export const segment = new Segment(segmentAPIWriteKey)

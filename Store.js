@@ -48,6 +48,7 @@ export class Store {
             _.logError(e)
         }
         this.initialized = true
+        segment.initialized()
         await mapStore.initialize()
     }
 
@@ -74,6 +75,8 @@ export class Store {
             mapStore.setState(state.mapState)
         if (state.tagState)
             tagStore.setState(state.tagState)
+        if (state.segment)
+            segment.setState(state.segment)
     })
 
     getState = () => {
@@ -85,6 +88,7 @@ export class Store {
             orderState: orderStore.getState(),
             mapState:   mapStore.getState(),
             tagState:   tagStore.getState(),
+            segment:    segment.getState(),
         })
     }
 
@@ -98,6 +102,7 @@ export class Store {
             orderState: orderStore.emptyState(),
             mapState:   mapStore.emptyState(),
             tagState:   tagStore.emptyState(),
+            segment:    segment.emptyState(),
         }
     }
 
@@ -134,4 +139,5 @@ export {
     tagStore,
     paymentStore,
     historyStore,
+    segment,
 }
