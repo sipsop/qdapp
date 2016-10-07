@@ -2,6 +2,7 @@ import Auth0Lock from 'react-native-lock'
 import { observable, action, computed } from 'mobx'
 import { getTime, Hour, Minute } from './Time.js'
 import { config } from './Config.js'
+import { segment } from './Segment.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('Login.js')
@@ -40,26 +41,35 @@ class LoginStore {
     @observable profile = null
     @observable tokenInfo : TokenInfo = null
     @observable loginError = null
+    @observable deviceID = null
 
     refreshAfter = null
     expiresAfter = null
 
     getState = () => {
         return {
-            profile: this.profile,
-            tokenInfo: this.tokenInfo,
-            refreshAfter: this.refreshAfter,
-            expiresAfter: this.expiresAfter,
+            profile:        this.profile,
+            tokenInfo:      this.tokenInfo,
+            refreshAfter:   this.refreshAfter,
+            expiresAfter:   this.expiresAfter,
+            deviceID:       this.deviceID,
         }
     }
 
     @action setState = (state) => {
         log("login state", state.refreshAfter, state.expiresAfter)
-        this.profile = state.profile
-        this.tokenInfo = state.tokenInfo
+        this.profile      = state.profile
+        this.tokenInfo    = state.tokenInfo
         this.refreshAfter = state.refreshAfter
         this.expiresAfter = state.expiresAfter
-        segment.setUserID(this.userIDOrDeviceID)
+        this.deviceID     = state.deviceID || _.uuid()
+        /* Segment recommends this is only called once or when traits change,
+           but this seems easier
+        */
+        segment.identify({
+            email: this.email,
+            name:  this.name,
+        })
     }
 
     login = (callbackSuccess, callbackError) => {
@@ -68,6 +78,8 @@ class LoginStore {
             this.refreshToken(callbackSuccess, callbackError)
         } else if (this.isLoggedIn) {
             // All done
+            if (this.userID && this.deviceID)
+                segment.alias(this.deviceID, this.userID)
             callbackSuccess()
         } else {
             // Log in first
@@ -155,6 +167,14 @@ class LoginStore {
         return this.profile ? this.profile.userId : null
     }
 
+    @computed get userOrDeviceID() {
+        return this.userID || this.deviceID
+    }
+
+    @computed get name() {
+        return this.profile ? this.profile.name : null
+    }
+
     @computed get userName() {
         return this.profile ? this.profile.nickname : null
     }
@@ -169,3 +189,7 @@ class LoginStore {
 }
 
 export const loginStore = new LoginStore()
+
+_.safeAutorun(() => {
+    segment.setUserID(loginStore.userOrDeviceID)
+})

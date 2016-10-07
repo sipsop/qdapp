@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import shortid from 'shortid'
 import { autorun } from 'mobx'
 import { getTime } from './Time.js'
 
@@ -369,6 +370,15 @@ export const union = _.union
 export const clone = _.clone
 export const sum = xs => fold((x, y) => x + y, 0, xs)
 export const product = xs => fold((x, y) => x * y, 1, xs)
+
+
+export const uuid = () => {
+    var id = ""
+    for (var i = 0; i < 4; i++) {
+        id += shortid.generate()
+    }
+    return id
+}
 
 /*********************** Async Stuff ******************************/
 

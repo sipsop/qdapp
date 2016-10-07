@@ -21,7 +21,7 @@ export class Segment {
     }
 
     setState = (segmentState) => {
-        this.messages = segmentState.messages || [],
+        this.messages = segmentState.messages || []
     }
 
     initialized = () => {
@@ -37,7 +37,7 @@ export class Segment {
 
     get headers() {
         return {
-            'Content-Type':  'application/json'
+            'Content-Type':  'application/json',
             'Authorization': this.httpBasicAuth,
         }
     }
@@ -87,6 +87,7 @@ export class Segment {
             */
             if (!e instanceof NetworkError && !e instanceof TimeoutError)
                 throw e
+            log("ERROR DISPATCHING :(")
             this.messages = [...messages, this.messages].slice(-1000)
         }
     }
@@ -137,7 +138,7 @@ export class Segment {
             'event':        event,
             'properties':   properties,
             'timestamp':    timestamp(),
-        },
+        })
     }
 
     /* Record a visit to a particular screen in the app, e.g.
@@ -169,11 +170,11 @@ export class Segment {
     /* Record a user alias -- e.g. on account creation */
     alias = (previousUserID, newUserID) => {
         this.messages.push({
-            'previousId':   previousID,
+            'previousId':   previousUserID,
             'userId':       newUserID,
             'timestamp':    timestamp(),
         })
-        this.userID = newUserID
+        this.setUserID(newUserID)
     }
 
 }
@@ -185,4 +186,5 @@ export class Segment {
 */
 const timestamp = () => new Date().toISOString()
 
-export const segment = new Segment()
+const segmentAPIWriteKey = '8YaFpcfDuRtdGSYe9hOHyUjolsXyPUnM'
+export const segment = new Segment(segmentAPIWriteKey)

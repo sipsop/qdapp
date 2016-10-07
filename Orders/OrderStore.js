@@ -1,7 +1,6 @@
 /* @flow */
 
 import { observable, computed, action, asMap } from 'mobx'
-import shortid from 'shortid'
 
 import { DownloadResult, emptyResult, downloadManager, NetworkError, graphQLArg } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
@@ -13,14 +12,6 @@ import { loginStore } from '../Login.js'
 import { getStripeToken } from '../Payment/StripeAPI.js'
 // import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
-
-const uuid = () => {
-    var id = ""
-    for (var i = 0; i < 4; i++) {
-        id += shortid.generate()
-    }
-    return id
-}
 
 /*********************************************************************/
 
@@ -283,7 +274,7 @@ class OrderStore {
     }
 
     @action setFreshOrderToken = () => {
-        this.setOrderToken(uuid())
+        this.setOrderToken(_.uuid())
     }
 
     @action clearActiveOrderToken = () => {
