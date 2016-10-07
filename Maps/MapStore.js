@@ -117,7 +117,7 @@ class MapStore {
 
     @observable currentMarker : ?Bar = null
     @observable currentLocation : Coords = initialLocation
-    @observable searchRadius : number = 5000 // 5 kilometer search radius
+    @observable searchRadius : number = 7000 // 5 kilometer search radius
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
     @observable searchResponse1 : DownloadResult<SearchResponse> = emptyResult()
     @observable searchResponse2 : DownloadResult<SearchResponse> = emptyResult()
