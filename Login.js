@@ -59,6 +59,7 @@ class LoginStore {
         this.tokenInfo = state.tokenInfo
         this.refreshAfter = state.refreshAfter
         this.expiresAfter = state.expiresAfter
+        segment.setUserID(this.userIDOrDeviceID)
     }
 
     login = (callbackSuccess, callbackError) => {

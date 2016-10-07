@@ -14,6 +14,7 @@ import { tagStore } from './Tags.js'
 import { mapStore } from './Maps/MapStore.js'
 import { paymentStore } from './Payment/PaymentStore.js'
 import { historyStore } from './History.js'
+import { segment } from './Segment.js'
 
 const log = _.logger('Store.js')
 
