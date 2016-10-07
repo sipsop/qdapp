@@ -11,6 +11,7 @@ import * as _ from './Curry.js'
 import { config } from './Config.js'
 import { historyStore } from './History.js'
 import { drawerStore } from './SideMenu.js'
+import { segment } from './Segment.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 
@@ -69,6 +70,21 @@ class TabBarWithMenu extends PureComponent {
     }
 }
 
+const getScreenName = (tabNo) => {
+    switch (tabNo) {
+        case 0:
+            return 'Discover'
+        case 1:
+            return 'Bar'
+        case 2:
+            return 'Menu'
+        case 3:
+            return 'Order'
+        default:
+            return '?'
+    }
+}
+
 class TabStore {
     // ScrollableTabView
     @observable tabView = null
@@ -86,6 +102,7 @@ class TabStore {
         if (this.currentPage !== i) {
             historyStore.push('tab', this.currentPage)
             this.setTab(i)
+            segment.screen(getScreenName(i))
         }
     }
 
