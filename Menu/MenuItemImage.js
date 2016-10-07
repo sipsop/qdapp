@@ -23,15 +23,23 @@ export class MenuItemImage extends PureComponent {
     render = () => {
         const style = this.props.style || styles.image
         const menuItem = this.props.menuItem
-        const url = getMenuItemImage(menuItem)
+        const url = getMenuItemImage(menuItem, size = config.images.menuReceiptImgSize)
         return <Img url={url} style={style} />
     }
 }
 
-export const getMenuItemImage = (menuItem : menuItem) : URL => {
-    const image = menuItem.images && menuItem.images.length && menuItem.images[0]
+export const getMenuItemImage = (menuItem : menuItem, size = 'medium') : URL => {
+    var image = menuItem.images && menuItem.images.length && menuItem.images[0]
     if (image && image.indexOf('pixabay') >= 0)
         return undefined
+    if (image.startsWith('/static')) {
+        const parts = image.split('.')
+        if (parts.length === 2) {
+            [image, ext] = parts
+            log("RETURING", size, "IMAGE", image)
+            return `${image}-${size}.${ext}`
+        }
+    }
     return image
 }
 

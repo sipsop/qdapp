@@ -60,6 +60,10 @@ export const config = {
         menuItemBackgroundColor: purple700Trans(0.03),
         menuItemBackgroundColorSecondary: purple700Trans(0.06),
     },
+    images: {
+        menuReceiptImgSize: 'small',
+        menuCardImgSize: 'large',
+    },
     nearbyCacheInfo: {
         noCache:      false,
         // refreshAfter: 20 * Minute,

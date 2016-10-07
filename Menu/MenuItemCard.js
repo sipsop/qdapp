@@ -18,6 +18,7 @@ import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
 import * as _ from '../Curry.js'
+import { config } from '../Config.js'
 import { tagStore } from '../Store.js'
 
 const { log, assert } = _.utils('./Menu/DetailedMenuItem.js')
@@ -49,7 +50,7 @@ export class MenuItemCard extends PureComponent {
         const menuItem = this.props.menuItem
         return <Img
                     style={{flex: 0, height: this.props.imageHeight}}
-                    url={getMenuItemImage(menuItem)}
+                    url={getMenuItemImage(menuItem, size = config.images.menuCardImgSize)}
                     >
             <View style={this.styles.header}>
                 <BackButton

@@ -79,10 +79,6 @@ export class FancyMenuItem extends PureComponent {
 
     render = () => {
         const menuItem = this.props.menuItem
-        // if (!getMenuItemImage(menuItem))
-        //     return <View />
-
-        log(menuItem.name, getMenuItemImage(menuItem))
         const isEven = this.props.rowNumber % 2 === 0
         const backgroundColor = '#fff'
             // isEven

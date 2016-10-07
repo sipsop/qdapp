@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
-  View,
-  TouchableOpacity,
+    View,
+    TouchableOpacity,
 } from 'react-native'
 import Dimensions from 'Dimensions'
 import { observable, computed, transaction, action, autorun } from 'mobx'
@@ -381,7 +381,7 @@ export class TagRow extends Component {
                 renderLabel={tagStore.getTagName}
                 toggleButton={this.toggleButton}
                 isActive={this.isActive}
-                isDisabled={this.isActive} /* disable toggle */
+                isDisabled={() => false /* this.isActive */} /* disable toggle */
                 />
         </ButtonRow>
     }
