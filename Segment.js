@@ -31,32 +31,27 @@ export class Segment {
     }
 
     setState = (segmentState) => {
-        this.messages = segmentState.messages || []
+        // this.messages = segmentState.messages || []
     }
 
     initialized = () => {
         this.dispatchMessages(5000)
     }
 
-    get httpBasicAuth() {
-        const username = this.segmentAPIWriteKey
-        const password = ''
-        const authParam = `${username}:${password}`
-        return `Basic ${authParam}`
+    httpBasicAuth = () => {
+        return `Basic ${this.segmentAPIWriteKey}`
     }
 
-    get headers() {
+    getHeaders = () => {
         return {
             'Content-Type':  'application/json',
-            'Authorization': this.httpBasicAuth,
+            'Authorization': this.httpBasicAuth(),
         }
     }
 
-    get batchQuery() {
+    getBatchQuery = () => {
         return JSON.stringify({
-            'batch': [
-                this.messages,
-            ],
+            'batch': this.messages,
             'context': {
                 'device': {
                     'type': 'phone',
@@ -67,11 +62,11 @@ export class Segment {
         })
     }
 
-    get httpOptions() {
+    getHttpOptions = () => {
         return {
             method:  'POST',
-            headers: this.headers,
-            body:    this.batchQuery,
+            headers: this.getHeaders(),
+            body:    this.getBatchQuery(),
         }
     }
 
@@ -83,14 +78,15 @@ export class Segment {
 
     _dispatchNow = async () => {
         /* Format request body and get HTTP options */
-        const httpOptions = this.httpOptions
+        const httpOptions = this.getHttpOptions()
         /* Erase messages for now */
         const messages = this.messages
         this.messages = []
 
         try {
             log("Dispatching to segment.io...", httpOptions)
-            await simpleFetchJSON(segmentURL, httpOptions, 15000)
+            const response = await simpleFetchJSON(segmentURL, httpOptions, 15000)
+            log("GOT RESPONSE", response)
         } catch (e) {
             /* Keep old messages around for now, but do not exceed
                1000 messages
@@ -196,5 +192,7 @@ export class Segment {
 */
 const timestamp = () => new Date().toISOString()
 
-const segmentAPIWriteKey = 'OFlhRnBjZkR1UnRkR1NZZTloT0h5VWpvbHNYeVBVbk0='
+const key = '8AbRuKat3knA6wvUqiIk8jbSVZuQwtyv'
+// echo -n '8AbRuKat3knA6wvUqiIk8jbSVZuQwtyv:' | base64
+const segmentAPIWriteKey = 'OEFiUnVLYXQza25BNnd2VXFpSWs4amJTVlp1UXd0eXY6'
 export const segment = new Segment(segmentAPIWriteKey)

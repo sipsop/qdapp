@@ -172,7 +172,7 @@ class Cache {
     set = async (key, value, cacheInfo : CacheInfo) : CacheEntry => {
         const cacheEntry = CacheEntry.freshEntry(key, value, cacheInfo)
         await this.storage.set(key, cacheEntry)
-        log("Cached entry with key", key)
+        // log("Cached entry with key", key)
         return cacheEntry
     }
 

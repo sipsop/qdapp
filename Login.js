@@ -66,6 +66,7 @@ class LoginStore {
         /* Segment recommends this is only called once or when traits change,
            but this seems easier
         */
+        segment.setUserID(this.userOrDeviceID)
         segment.identify({
             email: this.email,
             name:  this.name,

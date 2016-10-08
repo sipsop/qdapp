@@ -108,6 +108,8 @@ export class Store {
 
     saveToLocalStorage = async (state) => {
         if (!_.deepEqual(state, this.previousState)) {
+            // log(state)
+            // log(this.previousState)
             this.previousState = state
             await cache.set('qd:state', state)
         }
