@@ -60,7 +60,7 @@ export class DiscoverBarCard extends PureComponent {
     }
 
     @action setBar = () => {
-        barStore.setBarID(this.props.bar.id)
+        barStore.setBarID(this.props.bar.id, track = true)
         tabStore.setCurrentTab(1)
     }
 
@@ -68,7 +68,7 @@ export class DiscoverBarCard extends PureComponent {
         const photos = this.props.bar.photos
         const useGenericPicture = !photos || !photos.length
 
-        log("RENDERING BAR CARD", this.props.bar.name)
+        // log("RENDERING BAR CARD", this.props.bar.name)
 
         return <View style={this.styles.view}>
             <ConfirmChangeBarModal
@@ -341,7 +341,7 @@ export class PlaceInfo extends PureComponent {
 
     handlePress = () => {
         tabStore.setCurrentTab(0)
-        mapStore.focusBar(this.props.bar, true)
+        mapStore.focusBar(this.props.bar, true, track = true)
         // mapStore.currentMarker = this.props.bar
         // TODO: Scroll to top
     }

@@ -49,6 +49,11 @@ export class Store {
         }
         this.initialized = true
         segment.initialized()
+        segment.track('Application Opened', {
+            from_background: true, // TODO:
+            // referring_application: 'GMail',
+            // url: 'url://location'
+        })
         await mapStore.initialize()
     }
 

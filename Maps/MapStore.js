@@ -2,7 +2,7 @@
 
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
-import { store, barStore } from '../Store.js'
+import { store, barStore, segment } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
 import { getPlaceInfo } from './PlaceInfo.js'
@@ -295,12 +295,15 @@ class MapStore {
     }
 
     /* Select or de-select a marker */
-    @action setCurrentMarker = (bar : Bar) => {
+    @action setCurrentMarker = (bar : Bar, track = false) => {
         this.currentMarker = bar
+        if (track) {
+            segment.track('Select Marker', segment.barProps(bar))
+        }
     }
 
     /* Focus the given bar on the map */
-    @action focusBar = (bar : Bar, switchToDiscoverPage = true) => {
+    @action focusBar = (bar : Bar, switchToDiscoverPage = true, track = false) => {
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
@@ -308,7 +311,10 @@ class MapStore {
         }
         if (switchToDiscoverPage)
             store.switchToDiscoverPage(true)
-        this.setCurrentMarker(bar)
+        if (track) {
+            segment.track('Focus Bar on Map', segment.barProps(bar))
+        }
+        this.setCurrentMarker(bar, track = false)
         this.follow(false)
     }
 

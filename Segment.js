@@ -137,7 +137,7 @@ export class Segment {
             },
         })
     */
-    track = ({event, properties}) => {
+    track = (event, properties) => {
         this.messages.push({
             'type':         'track',
             'userId':       this.userID,
@@ -183,6 +183,7 @@ export class Segment {
         this.setUserID(newUserID)
     }
 
+    /* NOTE: BarStore.js does some monkey patching ... */
 }
 
 /* NOTE on timestamps:
@@ -192,7 +193,11 @@ export class Segment {
 */
 const timestamp = () => new Date().toISOString()
 
-const key = '8AbRuKat3knA6wvUqiIk8jbSVZuQwtyv'
+
+export const makeSegment = (Segment) => {
+    return new Segment(segmentAPIWriteKey)
+}
+
 // echo -n '8AbRuKat3knA6wvUqiIk8jbSVZuQwtyv:' | base64
 const segmentAPIWriteKey = 'OEFiUnVLYXQza25BNnd2VXFpSWs4amJTVlp1UXd0eXY6'
-export const segment = new Segment(segmentAPIWriteKey)
+export const segment = makeSegment(Segment)

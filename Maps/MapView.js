@@ -37,7 +37,7 @@ export class MapView extends DownloadResultView {
     }
 
     @action handleMapPress = (value) => {
-        mapStore.setCurrentMarker(null)
+        mapStore.setCurrentMarker(null, track = true)
     }
 
     getDownloadResult = () => mapStore.searchResponse
@@ -116,11 +116,11 @@ class MapMarker extends PureComponent {
     }
 
     @action handleMarkerPress = () => {
-        mapStore.setCurrentMarker(this.props.bar)
+        mapStore.setCurrentMarker(this.props.bar, track = true)
     }
 
     @action handleCalloutPress = () => {
-        barStore.setBarID(this.props.bar.id)
+        barStore.setBarID(this.props.bar.id, true)
         tabStore.setCurrentTab(1)
     }
 

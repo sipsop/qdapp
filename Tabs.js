@@ -11,7 +11,7 @@ import * as _ from './Curry.js'
 import { config } from './Config.js'
 import { historyStore } from './History.js'
 import { drawerStore } from './SideMenu.js'
-import { segment } from './Segment.js'
+import { segment } from './Store.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 

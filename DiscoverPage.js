@@ -20,7 +20,7 @@ import { Header, TextHeader } from './Header.js'
 import { SelectableButton } from './ButtonRow.js'
 import { Descriptor, SimpleListView } from './SimpleListView.js'
 import { T } from './AppText.js'
-import { store, barStore, mapStore, historyStore } from './Store.js'
+import { store, barStore, mapStore, historyStore, segment } from './Store.js'
 import { config } from './Config.js'
 import * as _ from './Curry.js'
 
@@ -119,6 +119,11 @@ class NearbyButton extends PureComponent {
         store.setMapVisible(false)
         mapStore.allowBarListReordering(true)
         historyStore.push('nearby')
+        const currentMarker = mapStore.getCurrentMarker()
+        const properties = currentMarker &&
+            {nearMe: false, placeID: currentMarker.id, placeName: currentMarker.name} ||
+            {'nearMe': true}
+        segment.track('Bar List', properties)
     }
 
     render = () => {

@@ -6,6 +6,7 @@ import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tagStore } from '../Tags.js'
+import { segment } from '../Segment.js'
 
 /************************* Types ***********************************/
 
@@ -42,7 +43,7 @@ class BarStore {
     }
 
     @action setState = async ({barID}) => {
-        await this._setBarID(barID, focusOnMap = false)
+        await this._setBarID(barID, track = false, focusOnMap = false)
     }
 
     /*************************** Getters *********************************/
@@ -110,15 +111,23 @@ class BarStore {
         return downloadResult.update(data => data.menu)
     }
 
-
     _getBarInfo = async (placeID : PlaceID) => {
         return await mapStore.getPlaceInfo(placeID)
     }
 
-    _setBarID = async (barID, focusOnMap = true) => {
+    trackSelectBar = (barID) => {
+        segment.track('Select Bar', {
+            placeID:    this.barID,
+            placeName:  this.barName,
+        })
+    }
+
+    _setBarID = async (barID, track = false, focusOnMap = true) => {
         const bar = this.getBar()
-        if (bar && bar.id === barID && this.menu)
+        if (bar && bar.id === barID && this.menu) {
+            if (track) this.trackSelectBar(barID)
             return /* All done */
+        }
 
         if (!barID) {
             /* Clear the download results */
@@ -129,8 +138,6 @@ class BarStore {
             })
             return
         }
-
-        log("Setting bar with placeID =", barID)
 
         transaction(() => {
             this.barID = barID
@@ -148,6 +155,7 @@ class BarStore {
             transaction(() => {
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
+                if (track) this.trackSelectBar(barID)
                 if (focusOnMap && this.getBar() != null) {
                     setTimeout(() => {
                         mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
@@ -232,17 +240,42 @@ class BarStore {
     /* Functions that can be invoked async without catching errors */
 
     refreshBar = _.logErrors(async () => {
-        if (this.barID)
+        if (this.barID) {
+            segment.track('Refresh Bar', {
+                placeID:    this.barID,
+                placeName:  this.barName,
+            })
             await this._setBarID(this.barID)
+        }
     })
 
     getBarMenu = _.logErrors(this._getBarMenu)
     getBarInfo = _.logErrors(this._getBarInfo)
-    setBarID = _.logErrors(this._setBarID)
+
+    setBarID = _.logErrors(async (barID, track = false, focusOnMap = true) => {
+        await this._setBarID(barID, track, focusOnMap)
+    })
 
     /*********************************************************************/
 
 }
+
+/************************** MONEKY PATCH SEGMENT *********************/
+
+segment.trackCurrentBar = (event, properties) => {
+    segment.track(event, {...segment.barProps(barStore.getBar()), ...properties})
+}
+
+segment.barProps = (bar : ?Bar) => {
+    if (!bar)
+        return null
+    return {
+        placeID:    bar.id,
+        placeName:  bar.name,
+    }
+}
+
+/************************** END HACKERY *********************/
 
 export const getBarOpenTime = (bar : Bar) : ?OpeningTime => {
     if (!bar.openingTimes)

@@ -23,7 +23,7 @@ import { BarPage } from './Bar/BarPage.js'
 import { MenuPage } from './Menu/MenuPage.js'
 import { OrderPage } from './Orders/OrderPage.js'
 import { TabView } from './Tabs.js'
-import { store, barStore, tabStore } from './Store.js'
+import { store, barStore, tabStore, segment } from './Store.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
 import { Checkout } from './Payment/Checkout.js'
@@ -39,7 +39,6 @@ class App extends Component {
     }
 
     render = () => {
-        log("RENDERING APP:", store.initialized, this.barSelected)
         if (!store.initialized)
             return <Loader />
         if (!this.barSelected)

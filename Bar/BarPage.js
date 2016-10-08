@@ -31,8 +31,7 @@ import { Page } from '../Page.js'
 import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
-import { mapStore } from '../Maps/MapStore.js'
-import { tabStore, barStore } from '../Store.js'
+import { tabStore, barStore, mapStore, segment } from '../Store.js'
 import { config } from '../Config.js'
 import { merge, safeAutorun, log } from '../Curry.js'
 
@@ -107,7 +106,7 @@ class BarView extends Page {
     }
 
     @action handleFocusBarOnMap = () => {
-        mapStore.focusBar(this.props.bar)
+        mapStore.focusBar(this.props.bar, switchToDiscoverPage = true, track = true)
     }
 
     renderBarHeader = (height : Int) => {
@@ -155,6 +154,10 @@ class BarView extends Page {
 
     handleShowOpeningTimes = () => {
         this.openingTimesModal.show()
+        segment.track('Show Opening Times', {
+            placeID:    this.props.bar.id,
+            placeName:  this.props.bar.name,
+        })
     }
 
     renderView = () => {
