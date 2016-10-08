@@ -139,9 +139,9 @@ android {
 }
 
 dependencies {
+    // compile 'com.auth0.android:lock-googleplus:2.3.+'
     compile project(':react-native-awesome-card-io')
     compile project(':react-native-lock')
-    // compile 'com.auth0.android:lock-googleplus:2.3.+'
     // compile project(':react-native-wheel-picker')
     compile project(':react-native-vector-icons')
     // compile project(':react-native-spinner-android')
@@ -162,4 +162,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.compile
   into 'libs'
 }
-
