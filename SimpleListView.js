@@ -4,12 +4,15 @@ import {
     View,
     PureComponent,
     ListView,
+    RefreshControl,
     T,
 } from './Component.js'
+import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
 import * as _ from './Curry.js'
+import { config } from './Config.js'
 
 const { log, assert } = _.utils('./SimpleListView.js')
 
@@ -60,6 +63,20 @@ export class SimpleListView extends PureComponent {
         this.listView.scrollTo({y: this.verticalScrollPosition + y})
     }
 
+    getRefreshControl = () => {
+        if (!this.props.descriptor.refresh)
+            return undefined
+
+        return <RefreshControl
+                    refreshing={this.props.descriptor.refreshing}
+                    onRefresh={this.props.descriptor.refresh}
+                    tintColor={config.theme.primary.medium}
+                    title="Loading..."
+                    titleColor="#000"
+                    colors={[config.theme.primary.medium, config.theme.primary.dark, '#000']}
+                    progressBackgroundColor="#fff" />
+    }
+
 
     get dataSource() {
         return this._dataSource.cloneWithRows(
@@ -80,6 +97,7 @@ export class SimpleListView extends PureComponent {
                     removeClippedSubviews={true}
                     enableEmptySections={true}
                     renderRow={this.props.descriptor.renderRow}
+                    refreshControl={this.getRefreshControl()}
                     renderHeader={this.props.descriptor.renderHeader}
                     renderFooter={this.props.descriptor.renderFooter}
                     {...this.props}
@@ -89,12 +107,25 @@ export class SimpleListView extends PureComponent {
 }
 
 export class Descriptor {
+
+    @observable refreshing = false
+
     get numberOfRows() {
         throw Error("numberOfRows not implemented")
     }
 
     renderRow = (i) => {
         throw Error("renderRow not implemented")
+    }
+
+    refresh : ?() => void = undefined
+    startRefresh = () => this.refreshing = true
+    doneRefresh  = () => this.refreshing = false
+
+    runRefresh = async (f) => {
+        this.startRefresh()
+        await f()
+        this.doneRefresh()
     }
 }
 

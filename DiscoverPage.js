@@ -52,6 +52,10 @@ class DiscoverViewDescriptor extends Descriptor {
         store.setMapVisible(true)
     }
 
+    refresh = async () => {
+        await this.runRefresh(mapStore.updateNearbyBars)
+    }
+
     renderRow = (i) => {
         const bar = mapStore.nearbyBarList[i]
         return <DiscoverBarCard
