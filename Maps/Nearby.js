@@ -4,6 +4,7 @@ import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parseBar } from './PlaceInfo.js'
 import { config } from '../Config.js'
+import { getCacheInfo } from '../Cache.js'
 import * as _ from '../Curry.js'
 
 import type { Int, Float } from '../Types.js'
@@ -43,6 +44,7 @@ const searchNearby = async (
         locationType : string,
         includeOpenNowOnly = true,
         pagetoken    = undefined,
+        force        = false
         ) : Promise<DownloadResult<SearchResponse>> => {
 
     var params
@@ -67,7 +69,8 @@ const searchNearby = async (
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
     const options = { method: 'GET' }
     // log("FETCHING ", url)
-    const jsonDownloadResult = await downloadManager.fetchJSON(key, url, options, config.nearbyCacheInfo)
+    const jsonDownloadResult = await downloadManager.fetchJSON(
+        key, url, options, getCacheInfo(config.nearbyCacheInfo, force))
     if (!jsonDownloadResult.value)
         return jsonDownloadResult
 
@@ -86,9 +89,10 @@ export const searchNearbyFirstPage = async (
         locationType : string,
         includeOpenNowOnly = true,
         pagetoken    = undefined,
+        force        = false,
         ) => {
     const jsonDownloadResult = await searchNearby(
-        apiKey, coords, radius, locationType, includeOpenNowOnly, pagetoken)
+        apiKey, coords, radius, locationType, includeOpenNowOnly, pagetoken, force)
     return jsonDownloadResult.update(parseResponse)
 }
 

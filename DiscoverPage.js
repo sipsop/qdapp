@@ -53,7 +53,7 @@ class DiscoverViewDescriptor extends Descriptor {
     }
 
     refresh = async () => {
-        await this.runRefresh(mapStore.updateNearbyBars)
+        await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
     }
 
     renderRow = (i) => {

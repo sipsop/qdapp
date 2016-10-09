@@ -15,6 +15,12 @@ export type CacheInfo = {
     expiresAfter: Float,
 }
 
+export const getCacheInfo = (cacheInfo, force = false) => {
+    if (force)
+        return { noCache: true }
+    return cacheInfo
+}
+
 
 const keyPrefix = 'qd:'
 const key = (args) => {

@@ -318,8 +318,7 @@ class MapStore {
         this.follow(false)
     }
 
-    searchNearby = async (barType = 'bar', pagetoken = undefined) : Promise<DownloadResult<SearchResponse>> => {
-        log("SEARCHING NEARBY", pagetoken)
+    searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
         return await searchNearbyFirstPage( // searchNearbyFirstPage(
             APIKey,
             initialLocation,    // this.currentLocation,
@@ -327,6 +326,7 @@ class MapStore {
             barType,
             true,
             pagetoken,
+            force,
         )
     }
 
@@ -334,9 +334,10 @@ class MapStore {
         return this.searchResponse
     }
 
-    @action updateNearbyBars = async () : void => {
+    @action updateNearbyBars = async (force = false) : void => {
         // this.searchResponse.downloadStarted()
-        this.searchResponse = await this.searchNearby('bar')
+        this.searchResponse = await this.searchNearby(
+            'bar', pagetoken = undefined, force = force)
         this.enableMoreButton()
     }
 
