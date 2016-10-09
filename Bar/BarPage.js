@@ -13,7 +13,7 @@ import {
 } from '../Component.js'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
-import { observable, action, computed } from 'mobx'
+import { observable, action, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
@@ -21,6 +21,7 @@ import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { BarMenu } from './BarMenu.js'
 import { BarPhoto, BarCardFooter, OpeningTimeView } from './BarCard.js'
 
+import { themedRefreshControl } from '../SimpleListView.js'
 import { TextHeader } from '../Header.js'
 import { TextSelectorRow } from '../Selector.js'
 import { SimpleModal } from '../Modals.js'
@@ -88,11 +89,14 @@ export class BarPage extends BarPageFetcher {
     }
 }
 
+@observer
 class BarView extends Page {
     /* properties:
         bar:  Bar
         menu: Menu
     */
+
+    @observable refreshing = false
 
     openingTimesModal = null
 
@@ -160,20 +164,37 @@ class BarView extends Page {
         })
     }
 
+    handleRefresh = () => {
+        this.refreshing = true
+        transaction(async () => {
+            await barStore.updateBarAndMenu(barStore.barID, force = true)
+            this.refreshing = false
+        })
+    }
+
+    getRefreshControl = () => {
+        return themedRefreshControl({
+            refreshing: this.refreshing,
+            onRefresh:  this.handleRefresh,
+        })
+    }
+
     renderView = () => {
         const bar = this.props.bar
         const menu = this.props.menu
 
         return (
             <ParallaxScrollView
-                    /* backgroundColor="black" */
                     backgroundSpeed={60}
                     contentBackgroundColor='#fff'
                     parallaxHeaderHeight={250}
                     renderForeground={() => this.renderBarHeader(250)}
                     renderStickyHeader={this.renderStickyHeader}
                     stickyHeaderHeight={50}
+                    refreshControl={this.getRefreshControl()}
                     >
+            {/*<ScrollView refreshControl={this.getRefreshControl()}>*/}
+                {/*this.renderBarHeader()*/}
                 <View style={this.styles.view}>
                     <OpeningTimesModal
                         ref={ref => this.openingTimesModal = ref}
@@ -234,6 +255,7 @@ class BarView extends Page {
                         />
                     {/* TODO: display additional attribution stuff here */}
                 </View>
+            {/*</ScrollView>*/}
             </ParallaxScrollView>
         )
     }

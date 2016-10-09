@@ -67,14 +67,10 @@ export class SimpleListView extends PureComponent {
         if (!this.props.descriptor.refresh)
             return undefined
 
-        return <RefreshControl
-                    refreshing={this.props.descriptor.refreshing}
-                    onRefresh={this.props.descriptor.refresh}
-                    tintColor={config.theme.primary.medium}
-                    title="Loading..."
-                    titleColor="#000"
-                    colors={[config.theme.primary.medium, config.theme.primary.dark, '#000']}
-                    progressBackgroundColor="#fff" />
+        return themedRefreshControl({
+            refreshing: this.props.descriptor.refreshing,
+            onRefresh: this.props.descriptor.refresh,
+        })
     }
 
 
@@ -104,6 +100,17 @@ export class SimpleListView extends PureComponent {
                     onContentSizeChange={this.handleContentSizeChange}
                     onScroll={this.handleScroll} />
     }
+}
+
+export const themedRefreshControl = ({refreshing, onRefresh}) => {
+    return <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={config.theme.primary.medium}
+                title="Loading..."
+                titleColor="#000"
+                colors={[config.theme.primary.medium, config.theme.primary.dark, '#000']}
+                progressBackgroundColor="#fff" />
 }
 
 export class Descriptor {

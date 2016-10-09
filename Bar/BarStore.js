@@ -144,7 +144,19 @@ class BarStore {
             this.bar.downloadStarted()
             this.menuDownloadResult.downloadStarted()
         })
+        await this.updateBarAndMenu(barID)
+        if (track)
+            this.trackSelectBar(barID)
+        if (focusOnMap && this.getBar() != null) {
+            setTimeout(() => {
+                mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
+            }, 1000)
+        }
+        await tagStore.fetchTags()
+    }
 
+    updateBarAndMenu = async (barID, force = false) => {
+        // TODO: Implement 'force'
         const [barDownloadResult, menuDownloadResult] = await Promise.all(
             [ this._getBarInfo(barID), this._getBarMenu(barID) ])
         if (this.barID === barID) {
@@ -155,15 +167,8 @@ class BarStore {
             transaction(() => {
                 this.setBarDownloadResult(barDownloadResult)
                 this.setMenuDownloadResult(menuDownloadResult)
-                if (track) this.trackSelectBar(barID)
-                if (focusOnMap && this.getBar() != null) {
-                    setTimeout(() => {
-                        mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
-                    }, 1000)
-                }
             })
         }
-        await tagStore.fetchTags()
     }
 
     @action setBarDownloadResult = (downloadResult) => {
