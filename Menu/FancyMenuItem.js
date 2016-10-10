@@ -23,6 +23,7 @@ import { OrderList } from '../Orders/OrderList.js'
 import * as _ from '../Curry.js'
 import { config } from '../Config.js'
 import { tagStore } from '../Store.js'
+import { analytics } from '../Analytics.js'
 
 const { log, assert } = _.utils('./Menu/DetailedMenuItem.js')
 
@@ -39,6 +40,7 @@ export class FancyMenuItem extends PureComponent {
     */
 
     @observable showModalFor : ?OrderItem = null
+    tracked = false
 
     static defaultProps = {
         showTitle: true,
@@ -76,6 +78,15 @@ export class FancyMenuItem extends PureComponent {
             marginTop: 5,
         },
     })
+
+    componentDidMount = () => {
+        /* TODO: Is this guard necessary? */
+        if (!this.tracked) {
+            log("Tracking scroll menu...")
+            analytics.trackScrollMenu(this.props.rowNumber)
+            this.tracked = true
+        }
+    }
 
     render = () => {
         const menuItem = this.props.menuItem

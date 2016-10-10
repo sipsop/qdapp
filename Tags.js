@@ -13,7 +13,9 @@ import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from './AppText.js'
 import { Map, mapCreate } from './Map.js'
 import { barStore } from './Bar/BarStore.js'
+import { segment } from './Segment.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
+import { analytics } from './Analytics.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Tags.js')
@@ -190,7 +192,6 @@ export class TagStore {
             this.tagSelection.push(tagID)
             // this._restoreHistory(tagID)
         })
-
         // log("excluded:", excluded)
         // log("reachableExcluded:", reachableExcluded)
         // log("New tag selection:", this.tagSelection)
@@ -355,12 +356,14 @@ export class TagRow extends Component {
         isExcluded(tagID) -> bool
     */
 
-    toggleButton = (tagID) => {
+    @action toggleButton = (tagID) => {
         if (this.isActive(tagID)) {
             tagStore.popTag(tagID)
         } else {
             tagStore.pushTag(tagID)
         }
+        if (tagStore.tagSelection.length >= 1)
+            analytics.trackTagFilter()
     }
 
     isActive = (tagID) => {

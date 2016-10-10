@@ -11,7 +11,8 @@ import LinearGradient from 'react-native-linear-gradient'
 import { observer } from 'mobx-react/native'
 
 import { T } from '../AppText.js'
-import { store, favStore, tabStore, tagStore } from '../Store.js'
+import { store, favStore, tabStore, tagStore, segment } from '../Store.js'
+import { analytics } from '../Analytics.js'
 import { log } from '../Curry.js'
 
 import type { String, URL } from '../Types.js'
@@ -151,6 +152,7 @@ const menuPadding = 5
     handleCardPress = () => {
         tabStore.setCurrentTab(2)
         tagStore.pushTag(this.props.tag)
+        analytics.trackMenuCardClick(this.props.tag)
     }
 
 }

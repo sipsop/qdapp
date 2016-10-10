@@ -24,6 +24,7 @@ import { BarPageFetcher } from '../Bar/BarPage.js'
 import { LargeButton } from '../Button.js'
 import { TagView } from '../Tags.js'
 import { store, tabStore, barStore, tagStore, orderStore } from '../Store.js'
+import { analytics } from '../Analytics.js'
 import { config } from '../Config.js'
 import * as _ from '../Curry.js'
 
