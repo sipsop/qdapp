@@ -5,7 +5,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { TextHeader } from '../Header.js'
-import { SimpleListView } from '../SimpleListView.js'
+import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
 import { barStore, loginStore, orderStore } from '../Store.js'
@@ -119,10 +119,16 @@ export class OrderHistoryModal extends PureComponent {
     }
 }
 
-class OrderHistoryDescriptor {
+class OrderHistoryDescriptor extends Descriptor {
 
     @computed get numberOfRows() {
         return orderHistoryStore.orderHistory.length
+    }
+
+    refresh = async () => {
+        await this.runRefresh(async () => {
+            await orderHistoryStore.fetchOrderHistory()
+        })
     }
 
     renderRow = (i) => {

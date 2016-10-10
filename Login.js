@@ -18,7 +18,7 @@ const lockOpts = {
     closable: true,
     // code: true,
     // magicLink: true,
-    // connections: [/*"google", "facebook", "sms" "github",*/ "email", /* "touchid" */],
+    connections: [/*"google", "facebook", "sms" "github",*/ "email", /* "touchid" */],
     authParams: {
         scope: "openid email offline_access",
     },
