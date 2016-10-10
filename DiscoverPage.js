@@ -9,6 +9,7 @@ import {
 } from './Component.js'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
+import InfiniteScrollView from 'react-native-infinite-scroll-view'
 
 import { Page, Loader } from './Page.js'
 import { LargeButton } from './Button.js'
@@ -242,7 +243,17 @@ class BarListPage extends Page {
         showMap()
     }
 
+    loadMore = async () => {
+        log("LOADING MORE DATA.............")
+        await loadMoreData(false)
+    }
+
     renderView = () => {
+        const infiniteScrollProps = {
+            ...this.props,
+            canLoadMore:     mapStore.canLoadMoreData,
+            onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
+        }
         return  <View style={this.styles.view}>
             <BackButton
                 onBack={this.showMap}
@@ -256,6 +267,7 @@ class BarListPage extends Page {
                 descriptor={discoverViewDescriptor}
                 initialListSize={2}
                 pageSize={1}
+                /* renderScrollComponent={props => <InfiniteScrollView {...infiniteScrollProps} />} */
                 />
         </View>
     }
@@ -265,6 +277,11 @@ const showMap = () => {
     store.setMapVisible(true)
 }
 
+
+const loadMoreData = async (canReorderBarList : Bool) => {
+    mapStore.allowBarListReordering(canReorderBarList)
+    await mapStore.loadMoreData()
+}
 
 @observer
 class MoreButton extends PureComponent {
@@ -293,11 +310,6 @@ class MoreButton extends PureComponent {
         },
     }
 
-    @action loadMoreData = () => {
-        mapStore.allowBarListReordering(this.props.canReorderBarList)
-        mapStore.loadMoreData()
-    }
-
     render = () => {
         return <View style={this.props.horizontal && this.styles.horizontal}>
             {
@@ -309,7 +321,7 @@ class MoreButton extends PureComponent {
                     label="More"
                     style={{...this.styles.button, ...this.props.style}}
                     fontSize={this.props.fontSize}
-                    onPress={this.loadMoreData}
+                    onPress={() => loadMoreData(this.props.canReorderBarList)}
                     disabled={!mapStore.moreButtonEnabled} />
             }
         </View>
