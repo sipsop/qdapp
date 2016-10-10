@@ -57,6 +57,14 @@ export class MenuView extends Page {
 
 @observer
 class MenuList extends PureComponent {
+
+    handleRefresh = async () => {
+        await Promise.all([
+            barStore.updateMenuInfo(barStore.barID, force = true),
+            tagStore.fetchTags(force = true),
+        ])
+    }
+
     render = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
@@ -72,6 +80,7 @@ class MenuList extends PureComponent {
                     menuItems={tagStore.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => <TagView />}
+                    onRefresh={this.handleRefresh}
                     visible={this.menuItemVisible} />
     }
 

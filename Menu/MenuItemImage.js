@@ -36,7 +36,6 @@ export const getMenuItemImage = (menuItem : menuItem, size = 'medium') : URL => 
         const parts = image.split('.')
         if (parts.length === 2) {
             [image, ext] = parts
-            log("RETURING", size, "IMAGE", image)
             return `${image}-${size}.${ext}`
         }
     }

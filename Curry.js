@@ -57,9 +57,9 @@ export const logErrors2 = (target, key, descriptor) => {
     return descriptor
 }
 
-export const runAndLogErrors = callback => {
+export const runAndLogErrors = async (callback) => {
     try {
-        callback()
+        await callback()
     } catch (err) {
         logError(err)
     }

@@ -11,7 +11,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { barStore, orderStore } from '../Store.js'
-import { SimpleListView } from '../SimpleListView.js'
+import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem } from '../Menu/DetailedMenuItem.js'
 import { MenuItemImage } from '../Menu/MenuItemImage.js'
@@ -26,7 +26,7 @@ const { log, assert } = _.utils('./Orders/OrderList.js')
 // assert(HeaderText != null)
 // assert(MenuItemImage != null)
 
-export class OrderListDescriptor {
+export class OrderListDescriptor extends Descriptor {
     /* properties:
         menuItems: [MenuItem]
             menu items to show
@@ -34,16 +34,21 @@ export class OrderListDescriptor {
             store for the orders
         renderHeader: ?() => Component
         renderFooter: ?() => Component
+        onRefresh: async () => void
         // visible: (i) => Bool
         //     whether this menu item is visible
     */
 
     constructor(props, getSimpleListView : () => SimpleListView) {
+        super()
         this.props = props
         /* TODO: This is pretty hacky... do this better */
         this.getSimpleListView = getSimpleListView
         this.renderHeader = props.renderHeader
         this.renderFooter = props.renderFooter
+        this.refresh = this.props.onRefresh && (
+            () => this.runRefresh(this.props.onRefresh)
+        )
     }
 
     styles = StyleSheet.create({
@@ -91,6 +96,7 @@ export class OrderList extends PureComponent {
             store for the orders
         renderHeader: ?() => Component
         renderFooter: ?() => Component
+        onRefresh: ?() => void
         visible: (i) => Bool
             whether this menu item is visible
         showTitle: Bool
