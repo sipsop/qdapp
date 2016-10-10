@@ -19,7 +19,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
 
 import { BarMenu } from './BarMenu.js'
-import { BarPhoto, BarCardFooter, OpeningTimeView } from './BarCard.js'
+import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from './BarCard.js'
 
 import { themedRefreshControl } from '../SimpleListView.js'
 import { TextHeader } from '../Header.js'
@@ -65,24 +65,6 @@ export class BarPage extends BarPageFetcher {
         width: int
         height: int
     */
-
-    @observable autoplay = true
-
-    constructor(props) {
-        super(props)
-        this.timer = undefined
-        safeAutorun(() => {
-            /* Whenever barStore.bar changes, reinitialize autoplay to `true`
-               and cancel any timers that are going to set it to `false`
-            */
-            barStore.getBarDownloadResult()
-            this.autoplay = true
-            if (this.timer) {
-                clearTimeout(this.timer)
-                this.timer = undefined
-            }
-        })
-    }
 
     renderFinished = ([bar, menu]) => {
         return <BarView bar={bar} menu={menu} />
@@ -378,36 +360,59 @@ export class LazyBarHeader extends PureComponent {
 @observer
 export class BarHeader extends PureComponent {
     /* properties:
+        bar: Bar
         imageHeight: Int
         showBackButton: Bool
         onBack: () => void
     */
 
+    @observable autoplay = true
+    timeout = 3.0 // switch to next image after 3 seconds
+
+    constructor(props) {
+        super(props)
+        this.timer = undefined
+        safeAutorun(() => {
+            /* Whenever barStore.bar changes, reinitialize autoplay to `true`
+               and cancel any timers that are going to set it to `false`
+            */
+            barStore.getBarDownloadResult()
+            this.autoplay = true
+            if (this.timer) {
+                clearTimeout(this.timer)
+                this.timer = undefined
+            }
+        })
+    }
+
+    componentDidMount = () => {
+        if (this.autoplay) {
+            this.timer = setTimeout(
+                () => { this.autoplay = false },
+                (this.timeout * this.props.bar.photos.length) * 1000,
+            )
+        }
+    }
+
     render = () => {
         const bar = this.props.bar
 
         const imageHeight = this.props.imageHeight
-        const timeout = 3.0 // switch to next image after 3 seconds
-        if (this.autoplay) {
-            this.timer = setTimeout(
-                () => { this.autoplay = false },
-                (timeout * bar.images.length) * 1000,
-            )
-        }
 
         return (
             <ImageSwiper
                 height={imageHeight}
                 autoplay={this.autoplay}
-                autoplayTimeout={timeout}
+                autoplayTimeout={this.timeout}
+                showButtons={true}
                 >
                 {
                     bar.photos.map((photo, i) =>
-                        <BarPhoto
+                        <LazyBarPhoto
                             key={photo.url}
                             bar={bar}
                             photo={photo}
-                            timeout={i === 0 ? 0 : 1000}
+                            timeout={i * 500 - 500}
                             imageHeight={imageHeight}
                             showMapButton={false}
                             {...this.props}

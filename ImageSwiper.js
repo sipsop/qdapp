@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  T,
   Text,
   View,
-} from 'react-native'
+} from './Component.js'
 import Swiper from 'react-native-swiper'
+import { config } from './Config.js'
 
 // TODO: Check out this one:
 //
@@ -33,17 +35,15 @@ export class ImageSwiper extends Component {
     render = () => {
         const dot = <View style={dotStyles.dotStyle} />
         const activeDot = <View style={dotStyles.activeDotStyle} />
-        // const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
-        // const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
+        const prevButton = <Text style={buttonStyles.buttonTextStyle}>&#xab;</Text>
+        const nextButton = <Text style={buttonStyles.buttonTextStyle}>&#xbb;</Text>
         return <Swiper
                     showsButtons={this.props.showButtons}
                     height={this.props.height}
                     dot={dot}
                     activeDot={activeDot}
-                    /*
                     prevButton={prevButton}
                     nextButton={nextButton}
-                    */
                     width={this.props.width}
                     autoplay={this.props.autoplay}
                     autoplayTimeout={this.props.autoplayTimeout}
@@ -79,7 +79,7 @@ const dotStyles = StyleSheet.create({
 const buttonStyles = StyleSheet.create({
     buttonTextStyle: {
         fontSize: 50,
-        color: 'rgba(236, 230, 223, 0.8)',
+        color: config.theme.primary.medium,
         // fontFamily: 'Arial',
     }
 })

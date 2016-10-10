@@ -13,7 +13,7 @@ export type Bar = {
     id:             String,
     // signedUp:       boolean,
     name:           String,
-    images:         Array<Photo>,
+    photos:         Array<Photo>,
     address:        Address,
     // optional fields
     desc:           ?String,
