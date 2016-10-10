@@ -39,6 +39,10 @@ export class OrderPage extends Page {
         // orderStore.placeActiveOrder()
     }
 
+    handleRefresh = async () => {
+        await barStore.updateMenuInfo(barStore.barID, force = true)
+    }
+
     renderView = () => {
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
@@ -67,6 +71,7 @@ export class OrderPage extends Page {
             showTitle:      true,
             showPrice:      false,
             showHeart:      true,
+            onRefresh:      this.handleRefresh,
         })
         return <View style={{flex: 1}}>
             <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />
