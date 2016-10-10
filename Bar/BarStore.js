@@ -54,7 +54,7 @@ class BarStore {
 
     /*************************** Network *********************************/
 
-    _getBarMenu = async (placeID : PlaceID) : Promise<DownloadResult<Menu>> => {
+    _getBarMenu = async (placeID : PlaceID, force = false) : Promise<DownloadResult<Menu>> => {
         const menuQuery = `
             fragment PriceFragment on Price {
                 currency
@@ -107,12 +107,13 @@ class BarStore {
         `
 
         key = `qd:placeID=${placeID}`
-        const downloadResult = await downloadManager.graphQL(key, menuQuery)
+        const cacheInfo = force ? { noCache: true } : undefined
+        const downloadResult = await downloadManager.graphQL(key, menuQuery, cacheInfo)
         return downloadResult.update(data => data.menu)
     }
 
-    _getBarInfo = async (placeID : PlaceID) => {
-        return await mapStore.getPlaceInfo(placeID)
+    _getBarInfo = async (placeID : PlaceID, force = false) => {
+        return await mapStore.getPlaceInfo(placeID, force = force)
     }
 
     trackSelectBar = (barID) => {
@@ -155,19 +156,28 @@ class BarStore {
         await tagStore.fetchTags()
     }
 
-    updateBarAndMenu = async (barID, force = false) => {
-        // TODO: Implement 'force'
-        const [barDownloadResult, menuDownloadResult] = await Promise.all(
-            [ this._getBarInfo(barID), this._getBarMenu(barID) ])
-        if (this.barID === barID) {
-            /* NOTE: a user may have selected a different bar
-                     before this download has completed, in
-                     which case we should ignore the download.
-            */
-            transaction(() => {
-                this.setBarDownloadResult(barDownloadResult)
-                this.setMenuDownloadResult(menuDownloadResult)
-            })
+    @action updateBarAndMenu = async (barID, force = false) => {
+        await Promise.all([
+            this.updateBarInfo(barID, force = force),
+            this.updateMenuInfo(barID, force = force),
+        ])
+    }
+
+    @action updateBarInfo = async (barID, force = false) => {
+        const barDownloadResult = await this._getBarInfo(barID, force = force)
+        /* NOTE: a user may have selected a different bar
+                 before this download has completed, in
+                 which case we should ignore the download.
+        */
+        if (barID === this.barID) {
+            this.setBarDownloadResult(barDownloadResult)
+        }
+    }
+
+    @action updateMenuInfo = async (barID, force = false) => {
+        const menuDownloadResult = await this._getBarMenu(barID, force = force)
+        if (barID === this.barID) {
+            this.setMenuDownloadResult(menuDownloadResult)
         }
     }
 

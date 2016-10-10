@@ -410,8 +410,8 @@ class MapStore {
         return results
     }
 
-    getPlaceInfo = async (placeID : PlaceID) : Promise<DownloadResult<Bar>> => {
-        return await getPlaceInfo(APIKey, placeID)
+    getPlaceInfo = async (placeID : PlaceID, force = false) : Promise<DownloadResult<Bar>> => {
+        return await getPlaceInfo(APIKey, placeID, force = force)
     }
 
     @observable barMarkers = [

@@ -15,7 +15,7 @@ const { log, assert } = _.utils('./Maps/PlaceInfo.js')
 
 const BaseURL = "https://maps.googleapis.com/maps/api/place/details/json"
 
-export const getPlaceInfo = async (apiKey : Key, placeID : String)
+export const getPlaceInfo = async (apiKey : Key, placeID : String, force = false)
         : Promise<DownloadResult<Bar>> =>
         {
     const url = buildURL(BaseURL, {
@@ -23,8 +23,9 @@ export const getPlaceInfo = async (apiKey : Key, placeID : String)
         placeid: placeID,
     })
     const key = `qd:placeInfo:placeID=${placeID}`
+    const cacheInfo = force ? { noCache: true } : undefined
     const jsonDownloadResult = await downloadManager.fetchJSON(
-        key, url, {method: 'GET'})
+        key, url, {method: 'GET'}, cacheInfo)
     if (jsonDownloadResult.value && jsonDownloadResult.value.status !== 'OK')
         throw Error(jsonDownloadResult.value.status)
     const result = jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
