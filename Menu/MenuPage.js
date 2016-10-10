@@ -61,7 +61,7 @@ class MenuList extends PureComponent {
     handleRefresh = async () => {
         await Promise.all([
             barStore.updateMenuInfo(barStore.barID, force = true),
-            tagStore.fetchTags(force = true),
+            tagStore.fetchTags(restartDownload = false, force = true),
         ])
     }
 

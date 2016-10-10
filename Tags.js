@@ -106,8 +106,9 @@ export class TagStore {
             this.tagSelection = tagState.tagSelection
     }
 
-    fetchTags = async (force = false) => {
-        this.tagDownloadResult.downloadStarted()
+    fetchTags = async (restartDownload = true, force = false) => {
+        if (restartDownload)
+            this.tagDownloadResult.downloadStarted()
         const cacheInfo = force ? { noCache: true } : undefined
         const downloadResult = await downloadManager.graphQL(
             'qd:tags', tagQuery, cacheInfo)
