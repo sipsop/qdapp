@@ -2,14 +2,14 @@ import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
 } from '../Component.js'
-import { observable, action, autorun, computed, asMap } from 'mobx'
+import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { OrderTotal } from '../Orders/Receipt.js'
 import { LargeButton } from '../Button.js'
 import { LazyBarPhoto } from '../Bar/BarCard.js'
-import { SimpleListView } from '../SimpleListView.js'
+import { SimpleListView, themedRefreshControl } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
@@ -31,6 +31,8 @@ const { log, assert } = _.utils('Payment/Checkout.js')
 export class Checkout extends PureComponent {
     /* properties:
     */
+
+    @observable refreshing = false
 
     styles = StyleSheet.create({
 
@@ -55,6 +57,21 @@ export class Checkout extends PureComponent {
         orderStore.setCheckoutVisibility(false)
     }
 
+    handleRefresh = async () => {
+        this.refreshing = true
+        transaction(async () => {
+            await barStore.updateBarAndMenu(barStore.barID, force = true)
+            this.refreshing = false
+        })
+    }
+
+    getRefreshControl = () => {
+        return themedRefreshControl({
+            refreshing: this.refreshing,
+            onRefresh:  this.handleRefresh,
+        })
+    }
+
     render = () => {
         if (!orderStore.checkoutVisible)
             return <View />
@@ -75,7 +92,7 @@ export class Checkout extends PureComponent {
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
                     >
-                <View style={{flex: 1}}>
+                <ScrollView refreshControl={this.getRefreshControl()}>
                     <LazyBarPhoto
                         bar={bar}
                         photo={bar.photos[0]}
@@ -97,7 +114,7 @@ export class Checkout extends PureComponent {
                     <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
                         <TipRoundButton />
                     </View>
-                </View>
+                </ScrollView>
         </OkCancelModal>
     }
 }
