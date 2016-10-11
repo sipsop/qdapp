@@ -68,13 +68,11 @@ export class Analytics {
     }
 
     trackMenuItemViewed = (menuItem, position = undefined) => {
-        segment.track('Product Viewed', { // getProductInfo(menuItem, position))
-            product_id: menuItem.id,
-        })
+        segment.track('Product Viewed', getProductInfo(menuItem))
     }
 
     trackMenuItemClicked = (menuItem, position = undefined) => {
-        segment.track('Product Clicked', getProductInfo(menuItem, position))
+        segment.track('Product Clicked', getProductInfo(menuItem))
         this.trackMenuItemViewed(menuItem, position)
     }
 
@@ -204,7 +202,7 @@ const getProductList = (productList) => {
     )
 }
 
-const getProductInfo = (menuItem, position = undefined) => {
+const getProductInfo = (menuItem) => {
     const result = {
         product_id: menuItem.id,
         category:   this.category,
@@ -219,13 +217,13 @@ const getProductInfo = (menuItem, position = undefined) => {
 
              Is this a problem?
     */
-    if (position != null)
-        result.position = position
+    // if (position != null)
+    //     result.position = position
     return result
 }
 
-const getProductOrderInfo = (menuItem, orderItem, position = undefined) => {
-    const productInfo = getProductInfo(menuItem, position)
+const getProductOrderInfo = (menuItem, orderItem) => {
+    const productInfo = getProductInfo(menuItem)
     return {
         ...productInfo,
         variant: getVariant(orderItem),
