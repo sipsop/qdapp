@@ -15,6 +15,7 @@ import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Header, HeaderText, TextHeader } from '../Header.js'
 import { barStore, orderStore, loginStore } from '../Store.js'
+import { analytics } from '../Analytics.js'
 import * as _ from '../Curry.js'
 
 import { CardInput, makeAddCardButton } from './CardInput.js'
@@ -40,9 +41,11 @@ export class Checkout extends PureComponent {
 
     payNow = () => {
         orderStore.setFreshOrderToken()
+        analytics.trackCheckoutStep(3)
         loginStore.login(
             () => {
                 // success
+                analytics.trackCheckoutFinish()
                 orderStore.placeActiveOrder()
                 this.close()
             },
@@ -55,6 +58,11 @@ export class Checkout extends PureComponent {
 
     close = () => {
         orderStore.setCheckoutVisibility(false)
+    }
+
+    cancel = () => {
+        this.close()
+        analytics.trackCheckoutCancel()
     }
 
     handleRefresh = async () => {
@@ -98,7 +106,7 @@ export class Checkout extends PureComponent {
                         photo={bar.photos[0]}
                         imageHeight={150}
                         showBackButton={true}
-                        onBack={this.close}
+                        onBack={this.cancel}
                         />
                     {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
                     <SelectedCardInfo />
@@ -143,15 +151,24 @@ export class SelectedCardInfo extends PureComponent {
         },
     })
 
+    trackPress = () => {
+        analytics.trackCheckoutStep(2)
+    }
+
     render = () => {
         const haveCard = paymentStore.selectedCardNumber != null
         if (!haveCard)
-            return <AddACardButton style={{marginTop: 0, borderBottomWidth: this.styles.view.borderBottomWidth}} />
+            return <AddACardButton
+                        style={{marginTop: 0, borderBottomWidth: this.styles.view.borderBottomWidth}}
+                        trackPress={this.trackPress} />
 
         return <View style={this.styles.view}>
             <TouchableOpacity
                     style={{flex: 1}}
-                    onPress={() => this.paymentConfigModal.show()}>
+                    onPress={() => {
+                        this.paymentConfigModal.show()
+                        this.trackPress()
+                    }}>
                 <View style={this.styles.cardView}>
                     <PaymentConfigModal
                         ref={ref => this.paymentConfigModal = ref}
@@ -175,6 +192,7 @@ export class AddACardButton extends PureComponent {
     /* properties:
         label: String
         style: style object
+        trackPress: ?() => void
     */
     static defaultProps = {
         label: "Add a Card",
@@ -187,7 +205,9 @@ export class AddACardButton extends PureComponent {
                 : { }
 
         return <View style={{...addCardStyle, ...this.props.style}}>
-            <CardInput label={this.props.label} />
+            <CardInput
+                trackPress={this.trackPress}
+                label={this.props.label} />
         </View>
     }
 }

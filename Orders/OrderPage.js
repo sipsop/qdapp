@@ -24,6 +24,7 @@ import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
 import { store, tabStore, barStore, orderStore, paymentStore } from '../Store.js'
+import { analytics } from '../Analytics.js'
 import { config } from '../Config.js'
 
 const largeButtonStyle = {
@@ -35,6 +36,8 @@ const largeButtonStyle = {
 export class OrderPage extends Page {
     handleOrderPress = () => {
         orderStore.setCheckoutVisibility(true)
+        orderStore.freshCheckoutID()
+        analytics.trackCheckoutStart()
         // orderStore.setFreshOrderToken()
         // orderStore.placeActiveOrder()
     }

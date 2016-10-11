@@ -9,6 +9,7 @@ import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 import { LargeButton } from '../Button.js'
 import { logger } from '../Curry.js'
 import { paymentStore } from './PaymentStore.js'
+import { analytics } from '../Analytics.js'
 import { config } from '../Config.js'
 
 
@@ -32,6 +33,9 @@ export class CardInput extends PureComponent {
     /* properties:
         label: String
             label to render on the button
+        trackPress: ?() => void
+        trackSuccess: ?() => void
+        trackFailure: ?() => void
     */
 
     componentWillMount = () => {
@@ -44,14 +48,22 @@ export class CardInput extends PureComponent {
             .scanCard(scanConfig)
             .then(card => {
                 paymentStore.addCard(card)
+                this.props.trackSuccess && this.props.trackSuccess()
+                analytics.trackEnterPaymentInfo()
             })
             .catch(() => {
                 // the user cancelled
+                this.props.trackFailure && this.props.trackFailure()
             })
     }
 
+    handlePress = () => {
+        this.props.trackPress && this.props.trackPress()
+        this.scanCard()
+    }
+
     render = () => {
-        return makeAddCardButton(this.props.label, this.scanCard)
+        return makeAddCardButton(this.props.label, this.handlePress)
     }
 }
 

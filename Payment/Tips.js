@@ -10,6 +10,7 @@ import { TextHeader } from '../Header.js'
 import { LargeButton } from '../Button.js'
 import { orderStore } from '../Store.js'
 import { config } from '../Config.js'
+import { analytics } from '../Analytics.js'
 import * as _ from '../Curry.js'
 
 import type { String, Int } from '../Types.js'

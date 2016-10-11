@@ -71,6 +71,7 @@ class OrderStore {
     @observable activeOrderID : ?ID = null
     @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
     @observable cartID = _.uuid()
+    @observable checkoutID = null
 
     getOrderResultDownload = () => this.orderResultDownload
 
@@ -223,6 +224,7 @@ class OrderStore {
                 pickupLocation:     this.pickupLocation,
             },
             cartID:                 this.cartID,
+            checkoutID:             this.checkoutID,
         }
     }
 
@@ -233,6 +235,7 @@ class OrderStore {
             orderResultDownload: emptyResult(),
             delivery: null,
             cartID: _.uuid(),
+            checkoutID: null,
         }
     }
 
@@ -246,6 +249,7 @@ class OrderStore {
         }
         if (orderState.cartID)
             this.cartID = orderState.cartID
+        this.checkoutID = orderState.checkoutID
         if (orderState.delivery) {
             this.delivery = orderState.delivery.delivery
             this.tableNumber = orderState.delivery.tableNumber
@@ -281,6 +285,10 @@ class OrderStore {
 
     @action setFreshOrderToken = () => {
         this.setOrderToken(_.uuid())
+    }
+
+    @action freshCheckoutID = () => {
+        this.checkoutID = _.uuid()
     }
 
     @action clearActiveOrderToken = () => {

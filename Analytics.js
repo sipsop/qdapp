@@ -1,8 +1,12 @@
 import { barStore, tagStore, mapStore, orderStore, segment } from './Store.js'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
+import * as _ from './Curry.js'
 
 export class Analytics {
+
+    checkoutID = null
+    stepNumber = null
 
     @computed get menuItemsListID() {
         return 'menuItemsAt_' + barStore.barID
@@ -78,6 +82,7 @@ export class Analytics {
 
     trackAddItem = (menuItem, orderItem) => {
         segment.track('Product Added', {
+            cart_id:    orderStore.cartID,
             product_id: menuItem.id,
             variant:    getVariant(orderItem),
         })
@@ -85,6 +90,7 @@ export class Analytics {
 
     trackRemoveItem = (menuItem, orderItem) => {
         segment.track('Product Removed', {
+            cart_id:    orderStore.cartID,
             product_id: menuItem.id,
             variant:    getVariant(orderItem),
         })
@@ -99,40 +105,79 @@ export class Analytics {
 
     /* Checkout */
 
-    // TODO:
-}
-
-const getProductList = (productList) => {
-    return productList.map(
-        menuItem => {
-            return {
-                product_id: menuItem.id,
-            }
+    getCheckoutProps = () => {
+        return {
+            checkout_id:    this.checkoutID,
+            order_id:       this.checkoutID,
+            value:          getPrice(orderStore.totalPlusTip),
+            // discount:    ..., // TODO:
+            // coupon:      ..., // TODO:
+            currency:       getCurrencyCode(orderStore.currency),
+            // TODO: products.quantity
+            products:       orderStore.menuItemsOnOrder.map(getProductInfo),
         }
-    )
-}
-
-
-const getProductInfo = (menuItem, position = undefined) => {
-    const result = {
-        product_id: menuItem.id,
-        category:   this.category,
-        name:       menuItem.name,
-        price:      getPrice(menuItem.price),
-        currency:   getCurrencyCode(menuItem.price),
-        // TODO: brand
     }
-    /* TODO: Segment docs say we need the *same* properties for
-             'Checkout Started' etc as 'Product Added'. However, we
-             don't have access to 'position' during checkout.
 
-             Is this a problem?
-    */
-    if (position != null)
-        result.position = position
-    return result
+    trackCheckoutStart = () => {
+        this.checkoutID = _.uuid()
+        segment.track('Checkout Started', this.getCheckoutProps())
+        this.trackCheckoutStep(1)
+    }
+
+    trackCheckoutFinish = () => {
+        if (this.stepNumber != null) {
+            this.trackCheckoutStepFinish(this.stepNumber)
+        }
+        segment.track('Order Completed', this.getCheckoutProps())
+        this.clearCheckoutInfo()
+    }
+
+    trackCheckoutCancel = () => {
+        segment.track('Order Cancelled', this.getCheckoutProps())
+        this.clearCheckoutInfo()
+    }
+
+    /* Checkout steps */
+
+    trackCheckoutStep = (stepNumber) => {
+        if (this.stepNumber != null) {
+            this.trackCheckoutStepFinish(this.stepNumber)
+        }
+        this.trackCheckoutStepStart(stepNumber)
+    }
+
+    trackCheckoutStepStart = (stepNumber) => {
+        this.stepNumber = stepNumber
+        segment.track('Checkout Step Viewed', {
+            checkout_id:    this.checkout_id,
+            step:           stepNumber,
+        })
+    }
+
+    trackCheckoutStepFinish = (stepNumber) => {
+        this.stepNmber = null
+        segment.track('Checkout Step Completed', {
+            checkout_id:    this.checkout_id,
+            step:           stepNumber,
+        })
+    }
+
+    trackEnterPaymentInfo = () => {
+        const checkoutID = this.checkoutID || _.uuid()
+        segment.track('Payment Info Entered', {
+            order_id:       checkoutID,
+            checkout_id:    checkoutID,
+        })
+    }
+
+    /* Checkout info clear */
+
+    clearCheckoutInfo = () => {
+        this.checkoutID = null
+        this.stepNumber = null
+    }
+
 }
-
 
 const getScreenName = (tabNo) => {
     switch (tabNo) {
@@ -149,6 +194,36 @@ const getScreenName = (tabNo) => {
     }
 }
 
+const getProductList = (productList) => {
+    return productList.map(
+        menuItem => {
+            return {
+                product_id: menuItem.id,
+            }
+        }
+    )
+}
+
+const getProductInfo = (menuItem, position = undefined) => {
+    const result = {
+        product_id: menuItem.id,
+        category:   this.category,
+        name:       menuItem.name,
+        price:      getPrice(menuItem.price.price),
+        currency:   getCurrencyCode(menuItem.price.currency),
+        // TODO: brand
+    }
+    /* TODO: Segment docs say we need the *same* properties for
+             'Checkout Started' etc as 'Product Added'. However, we
+             don't have access to 'position' during checkout.
+
+             Is this a problem?
+    */
+    if (position != null)
+        result.position = position
+    return result
+}
+
 const getProductOrderInfo = (menuItem, orderItem, position = undefined) => {
     const productInfo = getProductInfo(menuItem, position)
     return {
@@ -161,12 +236,12 @@ const getVariant = (orderItem) => {
     return JSON.stringify(orderItem.selectedOptions)
 }
 
-const getPrice = (price : Price) => {
-    return price.price / 100
+const getPrice = (price : Float) => {
+    return price / 100
 }
 
-const getCurrencyCode = (price : Price) => {
-    switch (price.currency) {
+const getCurrencyCode = (currency : Currency) => {
+    switch (currency) {
         case 'Sterling':
             return 'GBP'
         case 'Euros':
