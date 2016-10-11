@@ -12,6 +12,8 @@ import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/Checkout.js'
 import { LazyComponent } from './LazyComponent.js'
 import { OrderHistoryModal, orderHistoryStore } from './Orders/History.js'
+import { analytics } from './Analytics.js'
+import { segment } from './Segment.js'
 import { config } from './Config.js'
 import { cache } from './Cache.js'
 import * as _ from './Curry.js'
@@ -46,6 +48,7 @@ class PaymentConfig extends PureComponent {
                 onPress={() => {
                     drawerStore.disable()
                     this.paymentConfigModal.show()
+                    segment.track('Payment Info Viewed')
                 }}
                 />
             <PaymentConfigModal
@@ -97,6 +100,7 @@ class OrderHistory extends PureComponent {
                         () => {
                             this.orderHistoryModal.show()
                             orderHistoryStore.fetchOrderHistory()
+                            segment.track('Order History Viewed')
                         },
                         () => {
                             drawerStore.enable()
@@ -124,10 +128,12 @@ class Settings extends PureComponent {
             tabStore.setCurrentTab(0)
             drawerStore.setClosed()
         })
+        segment.track('Cache Cleared')
     })
 
     deleteAccount = _.logErrors(async () => {
         // TODO: implement
+        segment.track('Account Deleted')
     })
 
     render = () => {
@@ -138,6 +144,7 @@ class Settings extends PureComponent {
                 onPress={() => {
                     drawerStore.disable()
                     this.settingsModal.show()
+                    segment.track('Settings Viewed')
                 }}
                 />
             <SimpleModal

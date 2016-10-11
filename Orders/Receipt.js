@@ -13,7 +13,7 @@ import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '../Config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore, loginStore } from '../Store.js'
+import { store, tabStore, loginStore, segment } from '../Store.js'
 
 import { barStore, orderStore } from '../Store.js'
 import * as _ from '../Curry.js'
@@ -65,6 +65,7 @@ export class ReceiptModal extends PureComponent {
         orderStore.clearOrderList()
         tabStore.setCurrentTab(2)
         this.closeModal()
+        segment.track('Receipt Closed')
     }
 
     @action closeModal = () => {

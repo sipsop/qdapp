@@ -141,8 +141,9 @@ class OrderHistoryDescriptor extends Descriptor {
     renderHeader = () => {
         return <View style={{flex: 0, height: 55, marginBottom: cardMargin}}>
             <TextHeader
-                    label="Order History"
-                    rowHeight={55} />
+                label="Order History"
+                rowHeight={55}
+                />
         </View>
     }
 }
@@ -343,8 +344,10 @@ class OrderHistoryStore {
 
     _fetchOrderHistory = async () => {
         this.orderHistoryDownload.downloadStarted()
+        log('query...', getHistoryQuery())
         const download = await downloadManager.graphQL(
             'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
+        log("GOT RESULT", download.state, download.value)
         _.runAndLogErrors(() => {
             this.orderHistoryDownload = download.update(data => data.recentOrders)
         })

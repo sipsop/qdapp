@@ -142,6 +142,7 @@ class LoginStore {
         this.tokenInfo = null
         this.refreshAfter = null
         this.expiresAfter = null
+        segment.track('Logout')
     }
 
     @action setLoginInfo = (profile, tokenInfo) => {
