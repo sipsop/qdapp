@@ -104,8 +104,10 @@ export class TagStore {
     }
 
     @action setState = (tagState) => {
-        if (Array.isArray(tagState.tagSelection))
+        if (Array.isArray(tagState.tagSelection)) {
             this.tagSelection = tagState.tagSelection
+            // analytics.trackTagFilter()
+        }
     }
 
     fetchTags = async (restartDownload = true, force = false) => {
@@ -172,6 +174,7 @@ export class TagStore {
     pushTag = (tagID) => {
         if (_.includes(this.tagSelection, tagID)) {
             /* Tag already included, all done */
+            analytics.trackTagFilter()
             return
         }
 
@@ -192,6 +195,9 @@ export class TagStore {
             this.tagSelection.push(tagID)
             // this._restoreHistory(tagID)
         })
+
+        analytics.trackTagFilter()
+
         // log("excluded:", excluded)
         // log("reachableExcluded:", reachableExcluded)
         // log("New tag selection:", this.tagSelection)
@@ -362,8 +368,8 @@ export class TagRow extends Component {
         } else {
             tagStore.pushTag(tagID)
         }
-        if (tagStore.tagSelection.length >= 1)
-            analytics.trackTagFilter()
+        // if (tagStore.tagSelection.length >= 1)
+        //     analytics.trackTagFilter()
     }
 
     isActive = (tagID) => {

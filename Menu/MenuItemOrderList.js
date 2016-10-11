@@ -20,6 +20,7 @@ import { LazyComponent, lazyWrap } from '../LazyComponent.js'
 import { Price, sumPrices } from '../Price.js'
 import { PickerCollection, PickerItem } from '../Pickers.js'
 import { store, orderStore } from '../Store.js'
+import { analytics } from '../Analytics.js'
 import { getMenuItemImage } from './MenuItemImage.js'
 import * as _ from '../Curry.js'
 import { config } from '../Config.js'
@@ -224,10 +225,12 @@ export class OrderSelection extends PureComponent {
     }
 
     @action handleDecrease = () => {
-        if (this.orderItem.amount === 0)
+        if (this.orderItem.amount === 0) {
+            analytics.trackRemoveItem(this.props.menuItem, this.orderItem)
             this.props.orderStore.removeOrderItem(this.orderItem)
-        else
+        } else {
             this.orderItem.amount = _.max(0, this.orderItem.amount - 1)
+        }
     }
 
     handleClose = (scrollDown = true) => {
@@ -252,6 +255,7 @@ export class OrderSelection extends PureComponent {
     }
 
     @action handleFirstAccept = () => {
+        analytics.trackAddItem(this.props.menuItem, this.orderItem)
         this.handleClose(scrollDown = true)
     }
 

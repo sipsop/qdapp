@@ -150,9 +150,9 @@ const menuPadding = 5
     }
 
     handleCardPress = () => {
+        analytics.trackMenuCardClick(this.props.tag)
         tabStore.setCurrentTab(2)
         tagStore.pushTag(this.props.tag)
-        analytics.trackMenuCardClick(this.props.tag)
     }
 
 }

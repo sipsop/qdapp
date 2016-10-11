@@ -52,6 +52,7 @@ export class FancyMenuItem extends PureComponent {
         const orderItem = createOrderItem(this.props.menuItem)
         this.props.orderStore.addOrderItem(orderItem)
         this.showModalFor = orderItem
+        analytics.trackMenuItemClicked(this.props.menuItem, this.props.rowNumber)
     }
 
     @action modalClosed = (scrollDown) => {
@@ -82,8 +83,8 @@ export class FancyMenuItem extends PureComponent {
     componentDidMount = () => {
         /* TODO: Is this guard necessary? */
         if (!this.tracked) {
-            log("Tracking scroll menu...")
-            analytics.trackScrollMenu(this.props.rowNumber)
+            // analytics.trackScrollMenu(this.props.rowNumber)
+            // analytics.trackMenuItemViewed(this.props.menuItem, this.props.rowNumber)
             this.tracked = true
         }
     }
