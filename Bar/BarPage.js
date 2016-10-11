@@ -173,7 +173,7 @@ class BarView extends Page {
                     renderForeground={() => this.renderBarHeader(250)}
                     renderStickyHeader={this.renderStickyHeader}
                     stickyHeaderHeight={50}
-                    refreshControl={this.getRefreshControl()}
+                    /* refreshControl={this.getRefreshControl()} */
                     >
             {/*<ScrollView refreshControl={this.getRefreshControl()}>*/}
                 {/*this.renderBarHeader()*/}
