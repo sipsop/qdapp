@@ -239,7 +239,7 @@ class LoginInfo extends PureComponent {
         return <SideMenuEntry
                     text="Sign In"
                     icon={icon("sign-in")}
-                    onPress={loginStore.login} />
+                    onPress={() => loginStore.login(null, null)} />
     }
 }
 

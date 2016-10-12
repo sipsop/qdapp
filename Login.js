@@ -71,9 +71,11 @@ class LoginStore {
             email: this.email,
             name:  this.name,
         })
+        log('User Auth Token', this.getAuthToken())
     }
 
     login = (callbackSuccess, callbackError) => {
+        log("CALLED LOGIN", callbackSuccess, callbackError)
         if (this.shouldRefreshToken()) {
             // Refresh idToken
             this.refreshToken(callbackSuccess, callbackError)
@@ -122,8 +124,10 @@ class LoginStore {
             }
             // Authentication worked!
             this.setLoginInfo(profile, tokenInfo)
-            if (callbackSuccess)
+            if (callbackSuccess) {
+                log('..................', callbackSuccess)
                 callbackSuccess()
+            }
         })
     }
 
