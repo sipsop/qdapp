@@ -11,13 +11,14 @@ const { log, assert } = _.utils('./Cache.js')
 
 export type CacheInfo = {
     noCache:      Bool,
+    getFromCache: Bool,
     refreshAfter: Float,
     expiresAfter: Float,
 }
 
 export const getCacheInfo = (cacheInfo, force = false) => {
     if (force)
-        return { noCache: true }
+        return { getFromCache: false, ...cacheInfo }
     return cacheInfo
 }
 

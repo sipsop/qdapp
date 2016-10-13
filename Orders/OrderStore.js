@@ -11,6 +11,7 @@ import { barStore } from '../Bar/BarStore.js'
 import { paymentStore } from '../Payment/PaymentStore.js'
 import { loginStore } from '../Login.js'
 import { getStripeToken } from '../Payment/StripeAPI.js'
+import { OrderResultQuery } from './OrderQuery.js'
 // import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
 
@@ -39,6 +40,7 @@ export type OrderResult = {
     estimatedTime:  Float,
     receipt:        String,
     userName:       String,
+    menuItems:      Array<MenuItem>,
     orderList:      Array<OrderItem>,
     totalAmount:    Int,
     totalPrice:     Int,
@@ -301,17 +303,6 @@ class OrderStore {
         this.orderResultDownload.reset()
     }
 
-    placeActiveOrderStub = () => {
-        this.orderResultDownload.downloadFinished({
-            errorMessage:   null,
-            queueSize:      2,
-            estimatedTime:  90,
-            receipt:        'x4J',
-            userName:       'Mark',
-            orderList:      this.orderList.slice(),
-        })
-    }
-
     @computed get haveDeliveryMethod() {
         if (this.delivery === 'Table')
             return !!this.tableNumber
@@ -321,10 +312,7 @@ class OrderStore {
 
     /* Submit order to server */
     _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
-        // return this.placeActiveOrderStub()
-
         const barID    = barStore.barID
-        /* TODO: force lorgin at payment screen... */
         const userName = loginStore.userName
         const currency = 'Sterling'
 
@@ -364,63 +352,72 @@ class OrderStore {
                 ? this.pickupLocation
                 : ""
 
-        /* TODO: Utility to build queries correctly and safely */
-        const query = `
-            query {
-                placeOrder(
-                        barID:       ${graphQLArg(barStore.barID)},
-                        token:       ${graphQLArg(loginStore.getAuthToken())},
-                        userName:    ${graphQLArg(userName)},
-                        currency:    ${graphQLArg(currency)},
-                        price:       ${graphQLArg(total)},
-                        tip:         ${graphQLArg(this.tipAmount)},
-                        orderList:   ${graphQLArg(orderList)},
-                        stripeToken: ${graphQLArg(stripeToken)},
-                        delivery:    ${graphQLArg(this.delivery)},
-                        tableNumber: ${graphQLArg(tableNumber)},
-                        pickupLocation: ${graphQLArg(pickupLocation)}
-                        ) {
-                    errorMessage
-                    time {
-                        hour
-                        minute
-                        second
-                    }
-                    userName
-                	queueSize
-                    estimatedTime
-                    receipt
-                    totalPrice
-                    tip
-
-                    delivery
-                    tableNumber
-                    pickupLocation
+        const placeOrderQuery = {
+            PlaceOrder: {
+                args: {
+                    barID:          barStore.barID,
+                    authToken:      loginStore.getAuthToken(),
+                    userName:       userName,
+                    currency:       currency,
+                    price:          total,
+                    tip:            this.tipAmount,
+                    orderList:      orderList,
+                    stripeToken:    stripeToken,
+                    delivery:       this.delivery,
+                    tableNumber:    tableNumber,
+                    pickupLocation: pickupLocation,
+                },
+                result: {
+                    orderResult: OrderResultQuery,
                 }
             }
-        `
-        log('Sending query:', query)
-        const orderResultDownload = await downloadManager.graphQLMutate(query)
+        }
+        // const query = `
+        //     query {
+        //         placeOrder(
+        //                 barID:       ${graphQLArg(barStore.barID)},
+        //                 token:       ${graphQLArg(loginStore.getAuthToken())},
+        //                 userName:    ${graphQLArg(userName)},
+        //                 currency:    ${graphQLArg(currency)},
+        //                 price:       ${graphQLArg(total)},
+        //                 tip:         ${graphQLArg(this.tipAmount)},
+        //                 orderList:   ${graphQLArg(orderList)},
+        //                 stripeToken: ${graphQLArg(stripeToken)},
+        //                 delivery:    ${graphQLArg(this.delivery)},
+        //                 tableNumber: ${graphQLArg(tableNumber)},
+        //                 pickupLocation: ${graphQLArg(pickupLocation)}
+        //                 ) {
+        //             errorMessage
+        //             time {
+        //                 hour
+        //                 minute
+        //                 second
+        //             }
+        //             userName
+        //         	queueSize
+        //             estimatedTime
+        //             receipt
+        //             totalPrice
+        //             tip
+        //
+        //             delivery
+        //             tableNumber
+        //             pickupLocation
+        //         }
+        //     }
+        // `
+        // log('Sending query:', query)
+        // const orderResultDownload = await downloadManager.graphQLMutate(query)
+        const orderResultDownload = await downloadManager.queryMutate(placeOrderQuery)
         log('Order placed:', orderResultDownload)
-
-
-        if (orderResultDownload.value)
-            orderResultDownload.update(value => value.placeOrder)
-
         if (orderResultDownload.value) {
-            orderResultDownload.update(result => {
-                result.orderList = this.orderList
-                result.totalPrice = this.total
-                result.tip = this.tipAmount
-
-                assert(result.userName != null, 'result.userName != null')
+            orderResultDownload.update(value => {
+                const result = value.orderResult
                 assert(result.queueSize != null, 'result.queueSize != null')
                 assert(result.estimatedTime != null, 'result.estimatedTime != null')
                 assert(result.receipt != null, 'result.receipt != null')
                 return result
             })
-        } else {
-            orderResultDownload.downloadError('Error contacting server...')
         }
         this.orderResultDownload = orderResultDownload
     }

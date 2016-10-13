@@ -16,6 +16,7 @@ import { barStore } from './Bar/BarStore.js'
 import { segment } from './Segment.js'
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from './HTTP.js'
 import { analytics } from './Analytics.js'
+import { config } from './Config.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Tags.js')
@@ -134,7 +135,7 @@ export class TagStore {
     fetchTags = async (restartDownload = true, force = false) => {
         if (restartDownload)
             this.tagDownloadResult.downloadStarted()
-        const cacheInfo = force ? { noCache: true } : undefined
+        const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
         const downloadResult = await downloadManager.query(
             'qd:tags', tagQuery(barStore.barID), cacheInfo)
         _.runAndLogErrors(() => {

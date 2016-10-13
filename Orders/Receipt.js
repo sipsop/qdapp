@@ -209,7 +209,8 @@ export class Receipt extends PureComponent {
             <Info orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
             <SimpleOrderList
-                menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)}
+                /* menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)} */
+                menuItems={orderResult.menuItems}
                 orderList={orderResult.orderList}
                 />
             <OrderTotal

@@ -7,6 +7,7 @@ import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tagStore } from '../Tags.js'
 import { segment } from '../Segment.js'
+import { config } from '../Config.js'
 
 /************************* Types ***********************************/
 
@@ -107,7 +108,7 @@ class BarStore {
         `
 
         key = `qd:placeID=${placeID}`
-        const cacheInfo = force ? { noCache: true } : undefined
+        const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
         const downloadResult = await downloadManager.graphQL(key, menuQuery, cacheInfo)
         return downloadResult.update(data => data.menu)
     }

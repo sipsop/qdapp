@@ -71,13 +71,21 @@ export const config = {
         expiresAfter: 5 * Day,
     },
     defaultCacheInfo: {
-        noCache:     false,
-        refreshAfter: Week,
-        expiresAfter: Month,
+        noCache:        false,
+        getFromCache:   true,
+        refreshAfter:   Week,
+        expiresAfter:   Month,
+    },
+    defaultRefreshCacheInfo: {
+        noCache:        false,
+        getFromCache:   false,
+        refreshAfter:   Week,
+        expiresAfter:   Month,
     },
     auth: {
         /* Auth token refresh params */
         /* TODO: UPDATE THESE FOR PRODUCTION */
+        getFromCache: true,
         refreshAfter: 30 * Minute, //30 * Second,  // this should be ~1H
         expiresAfter: 1 *  Hour,   // this should be ~8H
     },

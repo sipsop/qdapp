@@ -13,6 +13,7 @@ import { BarCard, BarName, timeTextStyle } from '../Bar/BarCard.js'
 import { Receipt } from './Receipt.js'
 import { config } from '../Config.js'
 import { Second } from '../Time.js'
+import { OrderResultQuery } from './OrderQuery.js'
 import * as _ from '../Curry.js'
 
 /***************************************************************************/
@@ -22,62 +23,6 @@ import type { CacheInfo } from '../Cache.js'
 /***************************************************************************/
 
 const { log, assert } = _.utils('./Orders/History.js')
-
-PriceQuery = {
-    currency:   'String',
-    option:     'String',
-    price:      'Int',
-}
-
-MenuItemOptionQuery = {
-    name:           'String',
-    optionType:     'String',
-    optionList:     ['String'],
-    prices:         [PriceQuery],
-    defaultOption:  'Int',
-}
-
-/* qdserver.model.MenuItemDef */
-MenuItemQuery = {
-    id:         'String',
-    name:       'String',
-    desc:       'String',
-    images:     ['String'],
-    abv:        'String',
-    year:       'Int',
-    tags:       ['String'],
-    // optionsID:  'String',
-    options:    [MenuItemOptionQuery],
-}
-
-OrderItemQuery = {
-    id:                 'String',
-    menuItemID:         'String',
-    selectedOptions:    [['String']],
-    amount:             'Int',
-}
-
-OrderResultQuery = {
-    errorMessage: 'String',
-    barID:        'String',
-    timestamp:    'Float',
-    // userName:     'String',
-
-    queueSize:     'Int',
-    estimatedTime: 'Int',
-    receipt:       'String',
-
-    menuItems:      [MenuItemQuery],
-    orderList:      [OrderItemQuery],
-    totalAmount:    'Int',
-    totalPrice:     'Int',
-    tip:            'Int',
-    currency:       'String',
-
-    delivery:       'String',
-    tableNumber:    'String',
-    pickupLocation: 'String',
-}
 
 const getHistoryQuery = () => {
     assert(loginStore.userID != null, 'loginStore.userID != null')
@@ -316,13 +261,13 @@ class SimpleReceiptModal extends PureComponent {
                     onClose={this.props.onClose}
                     >
             <Receipt
-                    bar={this.props.bar}
-                    orderResult={this.props.orderResult}
-                    showEstimate={false}
-                    showBackButton={true}
-                    onClose={this.close}
-                    alwaysShowTotal={true}
-                    />
+                bar={this.props.bar}
+                orderResult={this.props.orderResult}
+                showEstimate={false}
+                showBackButton={true}
+                onClose={this.close}
+                alwaysShowTotal={true}
+                />
         </SimpleModal>
     }
 }

@@ -401,8 +401,12 @@ const fetchJSONWithTimeouts = async /*<T>*/(
 
     var result
     try {
-        if (cacheInfo && cacheInfo.noCache) {
+        if (cacheInfo && (cacheInfo.noCache || cacheInfo.getFromCache === false)) {
             result = await refreshCallback()
+            if (!cacheInfo.noCache) {
+                /* TODO: Make sure getFromCache is set by all callers */
+                cache.set(key, result, cacheInfo)
+            }
         } else {
             result = await cache.get(key, refreshCallback, null, cacheInfo)
         }

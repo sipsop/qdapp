@@ -3,6 +3,7 @@
 import { DownloadResult, downloadManager } from '../HTTP.js'
 import { buildURL } from '../URLs.js'
 import { parsePhoto } from './Photos.js'
+import { config } from '../Config.js'
 import * as _ from '../Curry.js'
 
 import type { Int, Float, URL, HTML } from '../Types.js'
@@ -23,7 +24,7 @@ export const getPlaceInfo = async (apiKey : Key, placeID : String, force = false
         placeid: placeID,
     })
     const key = `qd:placeInfo:placeID=${placeID}`
-    const cacheInfo = force ? { noCache: true } : undefined
+    const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
     const jsonDownloadResult = await downloadManager.fetchJSON(
         key, url, {method: 'GET'}, cacheInfo)
     if (jsonDownloadResult.value && jsonDownloadResult.value.status !== 'OK')
