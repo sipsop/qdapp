@@ -133,7 +133,10 @@ class Cache {
             if (!(e instanceof KeyError || e instanceof InvalidCacheEntry))
                 throw e
             cacheEntry = await this.refreshKey(key, refreshCallback, cacheInfo)
-            return cacheEntry.value
+            return {
+                value:      cacheEntry.value,
+                fromCache:  false,
+            }
         }
     }
 
@@ -142,12 +145,18 @@ class Cache {
         if (cacheEntry.refreshAfter > now) {
             // Value does not need to be refreshed
             log("Reusing value from cache...", key, cacheEntry.refreshAfter)
-            return cacheEntry.value
+            return {
+                value:     cacheEntry.value,
+                fromCache: true,
+            }
         } else {
             log("Refreshing cache entry...", key)
             try {
                 cacheEntry = await this.refreshKey(key, refreshCallback, cacheInfo)
-                return cacheEntry.value
+                return {
+                    value:     cacheEntry.value,
+                    fromCache: false,
+                }
             } catch (e) {
                 if (!(e instanceof NetworkError))
                     throw e
@@ -155,13 +164,19 @@ class Cache {
                     // Entry has expired, re-throw network error
                     if (expiredCallback) {
                         cacheEntry = await this.refreshKey(key, expiredCallback, cacheInfo)
-                        return cacheEntry.value
+                        return {
+                            value:     cacheEntry.value,
+                            fromCache: false,
+                        }
                     }
                     throw e
                 }
-                // Entry should be refresh, but cannot currently be refreshed
-                // due ot network errors. Return old value
-                return cacheEntry.value
+                // Entry should be refreshed, but cannot currently be refreshed
+                // due to network errors. Return old value
+                return {
+                    value:     cacheEntry.value,
+                    fromCache: true,
+                }
             }
         }
     }

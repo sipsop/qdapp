@@ -308,16 +308,24 @@ class DownloadManager {
             },
             body: JSON.stringify(query),
         }
-        const result = await this.fetchJSON(
-            key, 'http://192.168.0.17:9000/api/v1/', httpOptions, cacheInfo, timeoutDesc)
-        const value = result.value
+        const downloadResult = await this.fetchJSON(
+            key,
+            'http://192.168.0.17:9000/api/v1/',
+            httpOptions,
+            cacheInfo,
+            timeoutDesc,
+            acceptValueFromCache = (value) => {
+                return value.result && !value.error
+            }
+        )
+        const value = downloadResult.value
         if (value && value.error) {
             /* GraphQL error */
             const errorMessage = value.error
-            return result.downloadError(errorMessage)
+            return downloadResult.downloadError(errorMessage)
         }
 
-        return result.update(value => value.result)
+        return downloadResult.update(value => value.result)
     }
 
     graphQLMutate = async (query) => {
@@ -364,6 +372,7 @@ class DownloadManager {
             httpOptions : HTTPOptions,
             cacheInfo : CacheInfo,
             timeoutDesc = 'normal',
+            acceptValueFromCache = (value) => true,
         ) : Promise<DownloadResult<T>> => {
         assert(url)
         /* Try a fresh download... */
@@ -372,7 +381,9 @@ class DownloadManager {
             key, url, httpOptions,
             timeoutInfo.refreshTimeout,
             timeoutInfo.expiryTimeout,
-            cacheInfo)
+            cacheInfo,
+            acceptValueFromCache = acceptValueFromCache,
+        )
     }
 
 }
@@ -389,6 +400,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         refreshTimeout  : Float,
         expiredTimeout  : Float,
         cacheInfo       : CacheInfo,
+        acceptValueFromCache = (value) => true,
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
@@ -408,7 +420,14 @@ const fetchJSONWithTimeouts = async /*<T>*/(
                 cache.set(key, result, cacheInfo)
             }
         } else {
-            result = await cache.get(key, refreshCallback, null, cacheInfo)
+            const cachedValue = await cache.get(key, refreshCallback, null, cacheInfo)
+            if (cachedValue.fromCache && !acceptValueFromCache(cachedValue.value)) {
+                /* Do not accept value from cache (e.g. due to incomplete/erroroneous download */
+                result = await refreshCallback()
+                cache.set(key, result, cacheInfo)
+            } else {
+                result = cachedValue.value
+            }
         }
         return new DownloadResult().downloadFinished(result)
     } catch (e) {

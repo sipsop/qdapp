@@ -58,10 +58,10 @@ export class Store {
     }
 
     loadFromLocalStorage = async () => {
-        const savedState = await cache.get('qd:state', () => null)
-        if (savedState) {
+        const { fromCache, value } = await cache.get('qd:state', () => null)
+        if (value) {
             // log("Restoring state...", savedState)
-            await this.setState(savedState)
+            await this.setState(value)
         }
     }
 
