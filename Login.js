@@ -75,7 +75,6 @@ class LoginStore {
     }
 
     login = (callbackSuccess, callbackError) => {
-        log("CALLED LOGIN", callbackSuccess, callbackError)
         if (this.shouldRefreshToken()) {
             // Refresh idToken
             this.refreshToken(callbackSuccess, callbackError)

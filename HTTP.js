@@ -286,6 +286,40 @@ const getTimeoutInfo = (timeoutDesc) => {
 
 class DownloadManager {
 
+    queryMutate = async (query) => {
+        return await this.query('DO_NOT_CACHE', query, { noCache: true })
+    }
+
+    query = async (
+            /* key used for caching responses */
+            key : string,
+            /* GraphQL query string to execute */
+            query : 'object',
+            /* Callback that decides whether the download is still relevant */
+            cacheInfo    : CacheInfo,
+            timeoutDesc = 'normal',
+            ) => {
+        assert(typeof(query) == 'object', typeof(query))
+        log("SENDING QUERY", JSON.stringify(query))
+        const httpOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(query),
+        }
+        const result = await this.fetchJSON(
+            key, 'http://192.168.0.17:9000/api/v1/', httpOptions, cacheInfo, timeoutDesc)
+        const value = result.value
+        if (value && value.error) {
+            /* GraphQL error */
+            const errorMessage = value.error
+            return result.downloadError(errorMessage)
+        }
+
+        return result.update(value => value.result)
+    }
+
     graphQLMutate = async (query) => {
         return await this.graphQL('DO_NOT_CACHE', query, { noCache: true })
     }

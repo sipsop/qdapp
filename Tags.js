@@ -20,21 +20,42 @@ import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Tags.js')
 
-const tagQuery = `
-    query tags {
-        menuTags {
-            tagInfo {
-                tagID
-                tagName
-                excludes
-            }
-            tagGraph {
-                srcID
-                dstIDs
-            }
+// const tagQuery = `
+//     query tags {
+//         menuTags {
+//             tagInfo {
+//                 tagID
+//                 tagName
+//                 excludes
+//             }
+//             tagGraph {
+//                 srcID
+//                 dstIDs
+//             }
+//         }
+//     }
+// `
+
+const tagQuery = (barID) => {
+    return {
+        Tags: {
+            args: {
+                barID: barID,
+            },
+            result: {
+                tagInfo: [{
+                    tagID:   'String',
+                    tagName: 'String',
+                    excludes: ['String'],
+                }],
+                tagGraph: [{
+                    srcID:  'String',
+                    dstIDs: ['String'],
+                }],
+            },
         }
     }
-`
+}
 
 /* Root tags: beer, wine, spirits, cocktails, water, ... */
 export const rootIDs = [ '#beer', '#wine', '#spirit', '#cocktail', '#water' ]
@@ -114,10 +135,10 @@ export class TagStore {
         if (restartDownload)
             this.tagDownloadResult.downloadStarted()
         const cacheInfo = force ? { noCache: true } : undefined
-        const downloadResult = await downloadManager.graphQL(
-            'qd:tags', tagQuery, cacheInfo)
+        const downloadResult = await downloadManager.query(
+            'qd:tags', tagQuery(barStore.barID), cacheInfo)
         _.runAndLogErrors(() => {
-            this.tagDownloadResult = downloadResult.update(data => data.menuTags)
+            this.tagDownloadResult = downloadResult
         })
     }
 
@@ -324,7 +345,7 @@ export class TagView extends DownloadResultView {
     }
 
     getDownloadResult = () => tagStore.tagDownloadResult
-    refreshPage = () => tagStore.fetchTags()
+    refreshPage = () => tagStore.fetchTags(restartDownload = true, force = true)
     renderNotStarted = () => <View />
 
     renderFinished = (tags) => {
