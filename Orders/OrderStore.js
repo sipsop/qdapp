@@ -32,8 +32,9 @@ export type OrderState = {
 }
 
 export type OrderResult = {
-    date:           DateType,
-    time:           Time,
+    // date:           DateType,
+    // time:           Time,
+    timestamp:      Float,
     queueSize:      Int,
     estimatedTime:  Float,
     receipt:        String,

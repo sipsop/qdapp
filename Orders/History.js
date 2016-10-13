@@ -23,71 +23,144 @@ import type { CacheInfo } from '../Cache.js'
 
 const { log, assert } = _.utils('./Orders/History.js')
 
+PriceQuery = {
+    currency:   'String',
+    option:     'String',
+    price:      'Int',
+}
+
+MenuItemOptionQuery = {
+    name:           'String',
+    optionType:     'String',
+    optionList:     ['String'],
+    prices:         [PriceQuery],
+    defaultOption:  'Int',
+}
+
+/* qdserver.model.MenuItemDef */
+MenuItemQuery = {
+    id:         'String',
+    name:       'String',
+    desc:       'String',
+    images:     ['String'],
+    abv:        'String',
+    year:       'Int',
+    tags:       ['String'],
+    // optionsID:  'String',
+    options:    [MenuItemOptionQuery],
+}
+
+OrderItemQuery = {
+    id:                 'String',
+    menuItemID:         'String',
+    selectedOptions:    [['String']],
+    amount:             'Int',
+}
+
+OrderResultQuery = {
+    errorMessage: 'String',
+    barID:        'String',
+    timestamp:    'Float',
+    // userName:     'String',
+
+    queueSize:     'Int',
+    estimatedTime: 'Int',
+    receipt:       'String',
+
+    menuItems:      [MenuItemQuery],
+    orderList:      [OrderItemQuery],
+    totalAmount:    'Int',
+    totalPrice:     'Int',
+    tip:            'Int',
+    currency:       'String',
+
+    delivery:       'String',
+    tableNumber:    'String',
+    pickupLocation: 'String',
+}
+
 const getHistoryQuery = () => {
     assert(loginStore.userID != null, 'loginStore.userID != null')
-    return `
-        fragment PriceFragment on Price {
-            currency
-            option
-            price
-        }
+    assert(loginStore.getAuthToken() != null, 'loginStore.getAuthToken() != null')
 
-        query history {
-            recentOrders(token: ${graphQLArg(loginStore.getAuthToken())}, n: 100) {
-                orderHistory {
-                    barID
-                    date {
-                        year
-                        month
-                        day
-                    }
-                    time {
-                        hour
-                        minute
-                        second
-                    }
-                    userName
-                    queueSize
-                    estimatedTime
-                    receipt
-                    menuItems {
-                        id
-                        name
-                        desc
-                        images
-                        tags
-                        price {
-                            ...PriceFragment
-                        }
-                        options {
-                            name
-                            optionType
-                            optionList
-                            prices {
-                                ...PriceFragment
-                            }
-                            defaultOption
-                        }
-                    }
-                    orderList {
-                        id
-                        menuItemID
-                        selectedOptions
-                        amount
-                    }
-                    totalAmount
-                    totalPrice
-                    tip
-                    currency
-
-                    delivery
-                    tableNumber
-                    pickupLocation
-                }
-            }
+    return {
+        OrderHistory: {
+            args: {
+                authToken: loginStore.getAuthToken(),
+                n: 100,
+            },
+            result: {
+                orderHistory: [OrderResultQuery],
+            },
         }
-    `
+    }
 }
+
+// const getHistoryQuery = () => {
+//     assert(loginStore.userID != null, 'loginStore.userID != null')
+//     return `
+//         fragment PriceFragment on Price {
+//             currency
+//             option
+//             price
+//         }
+//
+//         query history {
+//             recentOrders(token: ${graphQLArg(loginStore.getAuthToken())}, n: 100) {
+//                 orderHistory {
+//                     barID
+//                     date {
+//                         year
+//                         month
+//                         day
+//                     }
+//                     time {
+//                         hour
+//                         minute
+//                         second
+//                     }
+//                     userName
+//                     queueSize
+//                     estimatedTime
+//                     receipt
+//                     menuItems {
+//                         id
+//                         name
+//                         desc
+//                         images
+//                         tags
+//                         price {
+//                             ...PriceFragment
+//                         }
+//                         options {
+//                             name
+//                             optionType
+//                             optionList
+//                             prices {
+//                                 ...PriceFragment
+//                             }
+//                             defaultOption
+//                         }
+//                     }
+//                     orderList {
+//                         id
+//                         menuItemID
+//                         selectedOptions
+//                         amount
+//                     }
+//                     totalAmount
+//                     totalPrice
+//                     tip
+//                     currency
+//
+//                     delivery
+//                     tableNumber
+//                     pickupLocation
+//                 }
+//             }
+//         }
+//     `
+// }
 
 const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
 
@@ -275,6 +348,7 @@ class HistoryBarCardFooter extends PureComponent {
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <Icon name="clock-o" size={15} color={this.props.textColor} />
+                    {/*
                     <DateView
                         date={orderResult.date}
                         textStyle={{...timeTextStyle, marginLeft: 5}}
@@ -283,6 +357,7 @@ class HistoryBarCardFooter extends PureComponent {
                         time={orderResult.time}
                         textStyle={{...timeTextStyle, marginLeft: 5}}
                         />
+                    */}
                 </View>
                 <T style={{color: this.props.textColor, textAlign: 'right'}}>#{orderResult.receipt}</T>
             </View>
@@ -345,19 +420,20 @@ class OrderHistoryStore {
     _fetchOrderHistory = async () => {
         this.orderHistoryDownload.downloadStarted()
         log('query...', getHistoryQuery())
-        const download = await downloadManager.graphQL(
+        const download = await downloadManager.query(
             'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
+        // const download = await downloadManager.graphQL(
+        //     'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
         log("GOT RESULT", download.state, download.value)
         _.runAndLogErrors(() => {
-            this.orderHistoryDownload = download.update(data => data.recentOrders)
+            this.orderHistoryDownload = download.update(data => data.orderHistory)
         })
     }
 
     @computed get orderHistory() : Array<OrderResult> {
         if (!this.orderHistoryDownload.value)
             return []
-
-        return this.orderHistoryDownload.value.orderHistory
+        return this.orderHistoryDownload.value
     }
 }
 
