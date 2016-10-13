@@ -124,7 +124,6 @@ class LoginStore {
             // Authentication worked!
             this.setLoginInfo(profile, tokenInfo)
             if (callbackSuccess) {
-                log('..................', callbackSuccess)
                 callbackSuccess()
             }
         })

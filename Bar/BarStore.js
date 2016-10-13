@@ -1,13 +1,14 @@
 import { observable, transaction, computed, action, asMap } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
-import { DownloadResult, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tagStore } from '../Tags.js'
 import { segment } from '../Segment.js'
 import { config } from '../Config.js'
+import { getMenuQuery } from './MenuQuery.js'
 
 /************************* Types ***********************************/
 
@@ -55,65 +56,19 @@ class BarStore {
 
     /*************************** Network *********************************/
 
-    _getBarMenu = async (placeID : PlaceID, force = false) : Promise<DownloadResult<Menu>> => {
-        const menuQuery = `
-            fragment PriceFragment on Price {
-                currency
-                option
-                price
-            }
-
-            fragment SubMenuFragment on SubMenu {
-                image
-                menuItems {
-                    id
-                    name
-                    desc
-                    images
-                    tags
-                    price {
-                        ...PriceFragment
-                    }
-                    options {
-                        name
-                        optionType
-                        optionList
-                        prices {
-                            ...PriceFragment
-                        }
-                        defaultOption
-                    }
-                }
-            }
-
-            query {
-                menu(placeID : ${graphQLArg(placeID)}) {
-                    beer {
-                        ...SubMenuFragment
-                    }
-                    wine {
-                        ...SubMenuFragment
-                    }
-                    spirits {
-                        ...SubMenuFragment
-                    }
-                    cocktails {
-                        ...SubMenuFragment
-                    }
-                    water {
-                        ...SubMenuFragment
-                    }
-                }
-            }
-        `
-
-        key = `qd:placeID=${placeID}`
+    _getBarMenu = async (barID : PlaceID, force = false) : Promise<DownloadResult<Menu>> => {
         const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
-        const downloadResult = await downloadManager.graphQL(key, menuQuery, cacheInfo)
+        const downloadResult = await downloadManager.query(
+            `qd:bar:barID=${barID}`,
+            getMenuQuery(barID),
+            cacheInfo
+        )
+        log("GOT RESULT", downloadResult)
+        return downloadResult
 
         /* Normalize the data, by setting 'menuItem.options' for each 'menuItem.optionID' */
-        return downloadResult.update(data => {
-            const menu = data.menu
+        // return downloadResult.update(data => {
+            // const menu = data.menu
             // const allOptions = {}
             // menu.allMenuItemOptions.forEach(menuItemOption => {
             //     allOptions[menuItemOption.id] = menuItemOption
@@ -126,8 +81,8 @@ class BarStore {
             //         }
             //     })
             // })
-            return menu
-        })
+        //     return menu
+        // })
     }
 
     _getBarInfo = async (placeID : PlaceID, force = false) => {
