@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { TextHeader } from '../Header.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
-import { DownloadResult, DownloadResultView, emptyResult, downloadManager, graphQLArg } from '../HTTP.js'
+import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
 import { barStore, loginStore, orderStore } from '../Store.js'
 import { BarCard, BarName, timeTextStyle } from '../Bar/BarCard.js'
 import { Receipt } from './Receipt.js'
@@ -40,72 +40,6 @@ const getHistoryQuery = () => {
         }
     }
 }
-
-// const getHistoryQuery = () => {
-//     assert(loginStore.userID != null, 'loginStore.userID != null')
-//     return `
-//         fragment PriceFragment on Price {
-//             currency
-//             option
-//             price
-//         }
-//
-//         query history {
-//             recentOrders(token: ${graphQLArg(loginStore.getAuthToken())}, n: 100) {
-//                 orderHistory {
-//                     barID
-//                     date {
-//                         year
-//                         month
-//                         day
-//                     }
-//                     time {
-//                         hour
-//                         minute
-//                         second
-//                     }
-//                     userName
-//                     queueSize
-//                     estimatedTime
-//                     receipt
-//                     menuItems {
-//                         id
-//                         name
-//                         desc
-//                         images
-//                         tags
-//                         price {
-//                             ...PriceFragment
-//                         }
-//                         options {
-//                             name
-//                             optionType
-//                             optionList
-//                             prices {
-//                                 ...PriceFragment
-//                             }
-//                             defaultOption
-//                         }
-//                     }
-//                     orderList {
-//                         id
-//                         menuItemID
-//                         selectedOptions
-//                         amount
-//                     }
-//                     totalAmount
-//                     totalPrice
-//                     tip
-//                     currency
-//
-//                     delivery
-//                     tableNumber
-//                     pickupLocation
-//                 }
-//             }
-//         }
-//     `
-// }
 
 const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
 
@@ -367,8 +301,6 @@ class OrderHistoryStore {
         log('query...', getHistoryQuery())
         const download = await downloadManager.query(
             'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
-        // const download = await downloadManager.graphQL(
-        //     'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
         log("GOT RESULT", download.state, download.value)
         _.runAndLogErrors(() => {
             this.orderHistoryDownload = download.update(data => data.orderHistory)

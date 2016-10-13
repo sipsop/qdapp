@@ -3,7 +3,7 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { DownloadResult, emptyResult, downloadManager, NetworkError, graphQLArg } from '../HTTP.js'
+import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
 import { store } from '../Store.js'
@@ -372,44 +372,8 @@ class OrderStore {
                 }
             }
         }
-        // const query = `
-        //     query {
-        //         placeOrder(
-        //                 barID:       ${graphQLArg(barStore.barID)},
-        //                 token:       ${graphQLArg(loginStore.getAuthToken())},
-        //                 userName:    ${graphQLArg(userName)},
-        //                 currency:    ${graphQLArg(currency)},
-        //                 price:       ${graphQLArg(total)},
-        //                 tip:         ${graphQLArg(this.tipAmount)},
-        //                 orderList:   ${graphQLArg(orderList)},
-        //                 stripeToken: ${graphQLArg(stripeToken)},
-        //                 delivery:    ${graphQLArg(this.delivery)},
-        //                 tableNumber: ${graphQLArg(tableNumber)},
-        //                 pickupLocation: ${graphQLArg(pickupLocation)}
-        //                 ) {
-        //             errorMessage
-        //             time {
-        //                 hour
-        //                 minute
-        //                 second
-        //             }
-        //             userName
-        //         	queueSize
-        //             estimatedTime
-        //             receipt
-        //             totalPrice
-        //             tip
-        //
-        //             delivery
-        //             tableNumber
-        //             pickupLocation
-        //         }
-        //     }
-        // `
-        // log('Sending query:', query)
-        // const orderResultDownload = await downloadManager.graphQLMutate(query)
         const orderResultDownload = await downloadManager.queryMutate(placeOrderQuery)
-        log('Order placed:', orderResultDownload)
+        // log('Order placed:', orderResultDownload)
         if (orderResultDownload.value) {
             orderResultDownload.update(value => {
                 const result = value.orderResult

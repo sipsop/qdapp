@@ -110,7 +110,24 @@ class BarStore {
         key = `qd:placeID=${placeID}`
         const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
         const downloadResult = await downloadManager.graphQL(key, menuQuery, cacheInfo)
-        return downloadResult.update(data => data.menu)
+
+        /* Normalize the data, by setting 'menuItem.options' for each 'menuItem.optionID' */
+        return downloadResult.update(data => {
+            const menu = data.menu
+            // const allOptions = {}
+            // menu.allMenuItemOptions.forEach(menuItemOption => {
+            //     allOptions[menuItemOption.id] = menuItemOption
+            // })
+            // Object.values(menu).forEach(menuItems => {
+            //     menuItems.forEach(menuItem => {
+            //         menuItem.options = {
+            //             ...allOptions[menuItem.optionsID],
+            //             ...menuItem.options,
+            //         }
+            //     })
+            // })
+            return menu
+        })
     }
 
     _getBarInfo = async (placeID : PlaceID, force = false) => {

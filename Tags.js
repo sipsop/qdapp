@@ -21,22 +21,6 @@ import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Tags.js')
 
-// const tagQuery = `
-//     query tags {
-//         menuTags {
-//             tagInfo {
-//                 tagID
-//                 tagName
-//                 excludes
-//             }
-//             tagGraph {
-//                 srcID
-//                 dstIDs
-//             }
-//         }
-//     }
-// `
-
 const tagQuery = (barID) => {
     return {
         Tags: {
