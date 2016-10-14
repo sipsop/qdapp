@@ -310,7 +310,7 @@ class DownloadManager {
         }
         const downloadResult = await this.fetchJSON(
             key,
-            'http://192.168.0.17:9000/api/v1/',
+            HOST + '/api/v1/',
             httpOptions,
             cacheInfo,
             timeoutDesc,
