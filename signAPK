@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ ! $@ ]; then
+    echo "Require keystore password as argument"
+    exit 1
+fi
+
+cp my-release-key.keystore android/app
+
+if [ ! -d ~/.gradle ]; then
+    mkdir ~/.gradle
+fi
+
+echo "Writing .gradle/gradle.properties"
+echo "MYAPP_RELEASE_STORE_FILE=my-release-key.keystore" > ~/.gradle/gradle.properties
+echo "MYAPP_RELEASE_KEY_ALIAS=my-key-alias" >> ~/.gradle/gradle.properties
+echo "MYAPP_RELEASE_STORE_PASSWORD=$@" >> ~/.gradle/gradle.properties
+echo "MYAPP_RELEASE_KEY_PASSWORD=$@" >> ~/.gradle/gradle.properties
+
+echo "Make sure to modify android/app/build.gradle according to https://facebook.github.io/react-native/docs/signed-apk-android.html"
+
+(cd android && ./gradlew assembleRelease) &&
+    cp android/app/build/outputs/apk/app-release.apk .
+
+# echo "Then run '(cd android && ./gradlew assembleRelease)'"
+# echo "The APK should then be available under android/app/build/outputs/apk/app-release.apk"
+echo "The APK is available under 'app-release.apk'"
+echo "NOTE: You can test out the APK with 'react-native run-android --variant=release'"
+echo "(Before that you may have to run 'adb uninstall com.awesomeproject')"
