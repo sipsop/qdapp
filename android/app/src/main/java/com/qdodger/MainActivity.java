@@ -1,4 +1,4 @@
-package com.awesomeproject;
+package com.qdodger;
 
 import com.facebook.react.ReactActivity;
 import com.airbnb.android.react.maps.MapsPackage;

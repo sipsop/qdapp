@@ -26,4 +26,4 @@ echo "Make sure to modify android/app/build.gradle according to https://facebook
 # echo "The APK should then be available under android/app/build/outputs/apk/app-release.apk"
 echo "The APK is available under 'app-release.apk'"
 echo "NOTE: You can test out the APK with 'react-native run-android --variant=release'"
-echo "(Before that you may have to run 'adb uninstall com.awesomeproject')"
+echo "(Before that you may have to run 'adb uninstall com.qdodger')"
