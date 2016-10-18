@@ -19,8 +19,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
+import { DownloadResultView } from '../HTTP.js'
 import { OrderList } from '../Orders/OrderList.js'
-import { BarPageFetcher } from '../Bar/BarPage.js'
 import { LargeButton } from '../Button.js'
 import { TagView } from '../Tags.js'
 import { store, tabStore, barStore, tagStore, orderStore } from '../Store.js'
@@ -40,7 +40,10 @@ const { log, assert } = _.utils('./Menu/MenuPage.js')
 const rowHeight = 55
 
 @observer
-export class MenuPage extends BarPageFetcher {
+export class MenuPage extends DownloadResultView {
+    errorMessage = "Error downloading bar and menu info"
+    refreshPage = () => barStore.refreshBar()
+    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
     renderFinished = (bar) => <MenuView />
 }
 

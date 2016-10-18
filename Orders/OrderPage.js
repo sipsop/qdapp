@@ -56,7 +56,7 @@ export class OrderPage extends Page {
     renderEmptyOrder = () => {
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
-                label="Add Items to Order"
+                label="Add Items"
                 onPress={() => tabStore.setCurrentTab(2)}
                 style={largeButtonStyle}
                 />

@@ -62,6 +62,8 @@ export class DiscoverBarCard extends PureComponent {
     @action setBar = () => {
         barStore.setBarID(this.props.bar.id, track = true)
         tabStore.setCurrentTab(1)
+        if (barStore.barScrollView)
+            barStore.barScrollView.scrollTo({x: 0, y: 0})
     }
 
     render = () => {

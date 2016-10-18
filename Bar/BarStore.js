@@ -34,6 +34,9 @@ class BarStore {
 
     @observable today : Int
 
+    /* ScrollView component on the bar page */
+    barScrollView = null
+
     /*************************** State ***********************************/
 
     getState = () => {
@@ -51,6 +54,7 @@ class BarStore {
     /*************************** Getters *********************************/
 
     getBarDownloadResult = () => this.bar
+    getMenuDownloadResult = () => this.menuDownloadResult
     getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
     getBar = () => this.bar.value
 
@@ -63,7 +67,6 @@ class BarStore {
             getMenuQuery(barID),
             cacheInfo
         )
-        log("GOT RESULT", downloadResult)
         return downloadResult
 
         /* Normalize the data, by setting 'menuItem.options' for each 'menuItem.optionID' */

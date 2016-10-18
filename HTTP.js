@@ -195,7 +195,8 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderNotStarted = () => {
-        throw Error('NotImplemented')
+        return <View />
+        // throw Error('NotImplemented')
     }
 
     renderFinished = (value : T) => {

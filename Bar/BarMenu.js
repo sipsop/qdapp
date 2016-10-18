@@ -26,12 +26,10 @@ const menuPadding = 5
 
 @observer export class BarMenu extends PureComponent {
     /* properties:
-        bar: Bar
         menu: Menu
     */
 
     render = () => {
-        const bar = this.props.bar
         const menu = this.props.menu
         const rows =
             [ [ { name: "Beer", tag: '#beer', submenu: menu.beer }
