@@ -114,9 +114,9 @@ const exampleCard = (cardType : String, cardNumber : String) : Card => {
 if (_.DEV) {
     const addExample = (cardType, cardNumber) => paymentStore.addCard(exampleCard(cardType, cardNumber))
     setTimeout(() => {
-        addExample('Visa',              '4111111111111111')
-        addExample('MasterCard', 	    '5500000000000022')
-        addExample('American Express', 	'340000000000033')
+        // addExample('Visa',              '4111111111111111')
+        // addExample('MasterCard', 	    '5500000000000022')
+        // addExample('American Express', 	'340000000000033')
         // addExample("Diner's Club",      '30000000000044')
         // addExample('Carte Blanche',     '30000000000055')
         // addExample('Discover', 	        '6011000000000066')
