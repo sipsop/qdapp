@@ -35,6 +35,10 @@ export class Checkout extends PureComponent {
 
     @observable refreshing = false
 
+    @computed get haveCardNumber() {
+        return paymentStore.selectedCardNumber != null
+    }
+
     styles = StyleSheet.create({
 
     })
@@ -91,12 +95,13 @@ export class Checkout extends PureComponent {
 
         return <OkCancelModal
                     visible={orderStore.checkoutVisible}
-                    showOkButton={true}
+                    showOkButton={this.haveCardNumber}
                     showCancelButton={false}
                     cancelModal={this.close}
                     okModal={this.payNow}
                     okLabel={`Buy Now`}
-                    okDisabled={paymentStore.selectedCardNumber == null}
+                    /* okDisabled={!this.haveCardNumber}
+                    okDisabledColor='rgba(0, 0, 0, 0.5)' */
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
                     >

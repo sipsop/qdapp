@@ -120,6 +120,7 @@ export class Button extends Component {
         backgroundColor: str
         borderColor: str
         disabled: bool
+        disabledColor: str
     */
 
     static defaultProps = {
@@ -152,6 +153,10 @@ export class Button extends Component {
             buttonStyle.background = this.props.backgroundColor
         if (this.props.borderColor)
             buttonStyle.border = this.props.borderColor
+
+        if (this.props.disabledColor && this.props.disabled) {
+            buttonStyle.background = this.props.disabledColor
+        }
 
         const button = <View style={{flex: 1, justifyContent: 'center'}}>
             <View style={

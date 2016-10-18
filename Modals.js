@@ -186,8 +186,11 @@ export class OkCancelModal extends PureComponent {
         cancelDisabled: bool
         okBackgroundColor: String
         okBorderColor: String
+        okDisabledColor: String
         cancelBackgroundColor: String
         cancelBorderColor: String
+        cancelDisabledColor: String
+        disabledColor: String
     */
 
     static defaultProps = {
@@ -207,6 +210,7 @@ export class OkCancelModal extends PureComponent {
                 primary={false}
                 style={{flex: 1, margin: 5, height: 55}}
                 disabled={this.props.cancelDisabled}
+                disabledColor={this.props.cancelDisabledColor || this.props.disabledColor}
                 backgroundColor={this.props.cancelBackgroundColor}
                 borderColor={this.props.cancelBorderColor}
                 />
@@ -219,6 +223,7 @@ export class OkCancelModal extends PureComponent {
                 onPress={this.props.okModal}
                 style={{flex: 1, margin: 5, height: 55}}
                 disabled={this.props.okDisabled}
+                disabledColor={this.props.okDisabledColor || this.props.disabledColor}
                 backgroundColor={this.props.okBackgroundColor}
                 borderColor={this.props.okBorderColor}
                 />
