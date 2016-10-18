@@ -5,6 +5,8 @@ if [ ! $@ ]; then
     exit 1
 fi
 
+echo "Do not forget to bump 'versionCode' in android/app/build.gradle"
+
 cp my-release-key.keystore android/app
 
 if [ ! -d ~/.gradle ]; then

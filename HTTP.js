@@ -454,5 +454,11 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
-    return await response.json()
+    // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
+    const jsonData = await response.text()
+    log("parsing json...")
+    const result = JSON.parse(jsonData.replace( /\\u2028|\\u2029/g, ''))
+    log("done parsing json...")
+    return result
+    // return await response.json()
 }
