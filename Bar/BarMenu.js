@@ -40,8 +40,9 @@ const menuPadding = 5
             , [ { name: "Spirits", tag: '#spirit', submenu: menu.spirits }
               , { name: "Cocktails", tag: '#cocktail', submenu: menu.cocktails }
               ]
-            , [ { name: "Water", tag: '#water', submenu: menu.water } ]
-            // , [ { name: "Snacks", tag: '#snacks', submenu: menu.snacks }
+            , [ { name: "Water", tag: '#water', submenu: menu.water }
+              , { name: "Snacks", tag: '#snack', submenu: menu.snacks }
+              ]
             //   , { name: "Food", tag: '#food', submenu: menu.food }
             //   ]
             ]

@@ -179,8 +179,8 @@ class BarStore {
             , menu.spirits
             , menu.cocktails
             , menu.water
-            // , menu.snacks
-            // , menu.food
+            , menu.snacks
+            , menu.food
             ])
         const menuItems = subMenus.map(subMenu => subMenu.menuItems)
         // menuItems.forEach(xs => {

@@ -12,7 +12,8 @@ if [ ! -d ~/.gradle ]; then
 fi
 
 echo "Writing .gradle/gradle.properties"
-echo "MYAPP_RELEASE_STORE_FILE=my-release-key.keystore" > ~/.gradle/gradle.properties
+echo "org.gradle.daemon=true" >~/.gradle/gradle.properties
+echo "MYAPP_RELEASE_STORE_FILE=my-release-key.keystore" >> ~/.gradle/gradle.properties
 echo "MYAPP_RELEASE_KEY_ALIAS=my-key-alias" >> ~/.gradle/gradle.properties
 echo "MYAPP_RELEASE_STORE_PASSWORD=$@" >> ~/.gradle/gradle.properties
 echo "MYAPP_RELEASE_KEY_PASSWORD=$@" >> ~/.gradle/gradle.properties

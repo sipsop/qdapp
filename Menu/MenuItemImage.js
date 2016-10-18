@@ -30,8 +30,8 @@ export class MenuItemImage extends PureComponent {
 
 export const getMenuItemImage = (menuItem : menuItem, size = 'medium') : URL => {
     var image = menuItem.images && menuItem.images.length && menuItem.images[0]
-    if (image && image.indexOf('pixabay') >= 0)
-        return undefined
+    // if (image && image.indexOf('pixabay') >= 0)
+    //     return undefined
     if (image && image.startsWith('/static')) {
         const parts = image.split('.')
         if (parts.length === 2) {
