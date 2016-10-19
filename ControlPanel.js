@@ -215,10 +215,6 @@ class LoginInfo extends PureComponent {
     }
 
     renderLoggedIn = () => {
-        const height =
-            loginStore.loggedIn && loginStore.isBarOwner
-                ? 250
-                : 250
         return <View style={
                 { flex: 0
                 // , height: height

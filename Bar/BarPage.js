@@ -88,12 +88,22 @@ export class BarPage extends Page {
                     /* refreshControl={this.getRefreshControl()} */
                     >
             <BarIcons />
+            <DownloadErrorView />
             <View style={this.styles.menuView}>
                 <MenuView />
             </View>
             <BarFooter />
         </ParallaxScrollView>
     }
+}
+
+
+@observer
+class DownloadErrorView extends DownloadResultView {
+    errorMessage = "Error downloading bar info"
+    refreshPage = () => barStore.refreshBar()
+    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
+    renderFinished = (menu) => <View />
 }
 
 @observer
@@ -103,7 +113,8 @@ class BarHeader extends BarInfoFetcher {
     */
 
     renderNotStarted = () => <View style={{height: this.props.imageHeight}} />
-
+    renderError = () => <View />
+    renderInProgress = () => <View />
     renderFinished = () => {
         return <LazyBarImages
                     bar={barStore.getBar()}
@@ -123,6 +134,8 @@ class BarStickyHeader extends BarInfoFetcher {
         },
     })
 
+    renderError = () => <View />
+    renderInProgress = () => <View />
     renderFinished = () => {
         return <View style={this.styles.stickyHeader}>
             <BarCardFooter
@@ -195,6 +208,8 @@ class BarIcons extends BarInfoFetcher {
         })
     }
 
+    renderError = () => <View />
+    renderInProgress = () => <View />
     renderFinished = (bar) => {
         return <View style={this.styles.view}>
             <OpeningTimesModal
@@ -231,11 +246,14 @@ class MenuView extends DownloadResultView {
     errorMessage = "Error downloading menu"
     refreshPage = () => barStore.updateMenuInfo(barStore.barID, force = true)
     getDownloadResult = () => barStore.getMenuDownloadResult()
+    renderError = () => <View />
     renderFinished = (menu) => <BarMenu menu={menu} />
 }
 
 @observer
 class BarFooter extends BarInfoFetcher {
+    renderError = () => <View />
+    renderInProgress = () => <View />
     renderFinished = (bar) => {
         return <View>
             <InfoItem
