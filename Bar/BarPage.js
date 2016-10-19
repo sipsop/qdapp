@@ -17,6 +17,7 @@ import { observable, action, computed, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
+import { phonecall, email, web } from 'react-native-communications'
 
 import { BarMenu } from './BarMenu.js'
 import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from './BarCard.js'
@@ -135,6 +136,11 @@ class BarStickyHeader extends BarInfoFetcher {
     }
 }
 
+const handleFocusBarOnMap = (bar) => {
+    mapStore.focusBar(bar, switchToDiscoverPage = true, track = true)
+}
+
+
 @observer
 class BarIcons extends BarInfoFetcher {
     /* properties:
@@ -143,12 +149,7 @@ class BarIcons extends BarInfoFetcher {
     */
 
     @observable refreshing = false
-
     openingTimesModal = null
-
-    @action handleFocusBarOnMap = () => {
-        mapStore.focusBar(this.props.bar, switchToDiscoverPage = true, track = true)
-    }
 
     styles = StyleSheet.create({
         view: {
@@ -216,7 +217,7 @@ class BarIcons extends BarInfoFetcher {
             </FavBarContainer>
             <TouchableOpacity
                     style={this.styles.iconStyle}
-                    onPress={this.handleFocusBarOnMap}
+                    onPress={() => handleFocusBarOnMap(bar)}
                     >
                 <Icon name="map-marker" size={40} color="rgb(181, 42, 11)" />
                 <T style={{color: '#000000'}}>MAP</T>
@@ -240,13 +241,13 @@ class BarFooter extends BarInfoFetcher {
             <InfoItem
                 iconName="map-marker"
                 info={formatAddress(bar.address)}
-                onClick={this.handleFocusBarOnMap}
+                onClick={() => handleFocusBarOnMap(bar)}
                 />
             {bar.phone ?
                 <InfoItem
                     iconName="phone"
                     info={bar.phone}
-                    onClick={() => undefined}
+                    onClick={() => phonecall(bar.phone, false)}
                     />
                 : undefined
             }
@@ -256,7 +257,7 @@ class BarFooter extends BarInfoFetcher {
                     /* iconName="external-link" */
                     iconName="firefox"
                     info={bar.website}
-                    onClick={() => undefined}
+                    onClick={() => web(bar.website)}
                     />
                 : undefined
             }
