@@ -12,6 +12,7 @@ import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/Checkout.js'
 import { LazyComponent } from './LazyComponent.js'
 import { OrderHistoryModal, orderHistoryStore } from './Orders/History.js'
+import { DownloadResultView } from './HTTP.js'
 import { analytics } from './Analytics.js'
 import { segment } from './Segment.js'
 import { config } from './Config.js'
@@ -214,9 +215,13 @@ class LoginInfo extends PureComponent {
     }
 
     renderLoggedIn = () => {
+        const height =
+            loginStore.loggedIn && loginStore.isBarOwner
+                ? 250
+                : 250
         return <View style={
                 { flex: 0
-                , height: 200
+                // , height: height
                 , justifyContent: 'center'
                 // , backgroundColor: 'rgba(24, 7, 51, 0.8)'
                 // , borderBottomWidth: 0.5
@@ -232,6 +237,9 @@ class LoginInfo extends PureComponent {
                     {loginStore.email}
                 </T>
             </View>
+            <View style={{marginTop: 20, marginBottom: 20}}>
+                <BarOwnerProfile />
+            </View>
         </View>
     }
 
@@ -240,6 +248,37 @@ class LoginInfo extends PureComponent {
                     text="Sign In"
                     icon={icon("sign-in")}
                     onPress={() => loginStore.login(null, null)} />
+    }
+}
+
+/* Show errors for downloading the user profile of owned bars */
+@observer
+export class BarOwnerProfile extends DownloadResultView {
+    errorMessage = "Error downloading profile info"
+
+    styles = {
+        view: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 10,
+        },
+        textStyle: {
+            color: '#fff',
+            fontSize: 16,
+        }
+    }
+
+    getDownloadResult = () => loginStore.barOwnerProfileDownloadResult
+    refreshPage = () => loginStore.setBarOwnerProfile()
+    renderFinished = () => {
+        if (!loginStore.isBarOwner)
+            <View />
+        return <View style={this.styles.view}>
+            <T style={this.styles.textStyle}>
+                Navigate to your bar page to control bar settings.
+            </T>
+        </View>
     }
 }
 

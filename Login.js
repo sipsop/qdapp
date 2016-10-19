@@ -1,8 +1,10 @@
+import { PureComponent, T } from './Component.js'
 import Auth0Lock from 'react-native-lock'
 import { observable, action, computed } from 'mobx'
 import { getTime, Hour, Minute } from './Time.js'
 import { config } from './Config.js'
 import { segment } from './Segment.js'
+import { DownloadResult, emptyResult, downloadManager, DownloadResultView } from './HTTP.js'
 import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('Login.js')
@@ -37,11 +39,19 @@ type TokenInfo = {
     accessToken:    String,
 }
 
+type UserProfile = {
+    is_bar_owner: Bool,
+    bars: Array<String>,
+}
+
 class LoginStore {
     @observable profile = null
     @observable tokenInfo : TokenInfo = null
     @observable loginError = null
     @observable deviceID = null
+
+    /* For bar owners */
+    @observable barOwnerProfileDownloadResult : DownloadResult<UserProfile> = emptyResult()
 
     refreshAfter = null
     expiresAfter = null
@@ -71,7 +81,8 @@ class LoginStore {
             email: this.email,
             name:  this.name,
         })
-        log('User Auth Token', this.getAuthToken())
+        if (this.isLoggedIn)
+            this.setBarOwnerProfile()
     }
 
     login = (callbackSuccess, callbackError) => {
@@ -123,6 +134,7 @@ class LoginStore {
             }
             // Authentication worked!
             this.setLoginInfo(profile, tokenInfo)
+            this.setBarOwnerProfile()
             if (callbackSuccess) {
                 callbackSuccess()
             }
@@ -137,6 +149,41 @@ class LoginStore {
 
     isTokenExpired = () => {
         return !this.getAuthToken() || !this.expiresAfter || getTime() >= this.expiresAfter
+    }
+
+    setBarOwnerProfile = _.logErrors(async () => {
+        this.barOwnerProfileDownloadResult.downloadStarted()
+        this.barOwnerProfileDownloadResult = await downloadManager.query(
+            'qd:bar:profile',
+            {
+                UserProfile: {
+                    args: {
+                        authToken: this.getAuthToken(),
+                    },
+                    result: {
+                        profile: {
+                            is_bar_owner: 'Bool',
+                            'bars': ['String'],
+                        }
+                    }
+                }
+            },
+            /* Refresh info on each startup / login */
+            config.defaultRefreshCacheInfo,
+        )
+    })
+
+    @computed get barOwnerProfile() : UserProfile {
+        return this.barOwnerProfileDownloadResult.value &&
+               this.barOwnerProfileDownloadResult.value.profile
+    }
+
+    @computed get isBarOwner() : Bool {
+        return this.barOwnerProfile && this.barOwnerProfile.is_bar_owner
+    }
+
+    @computed get ownedBars() : Array<BarID> {
+        return this.barOwnerProfile && this.barOwnerProfile.bars || []
     }
 
     @action logout = () => {
