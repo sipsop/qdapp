@@ -5,6 +5,7 @@ import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
+import { barStatusStore } from './BarStatus.js'
 import { tagStore } from '../Tags.js'
 import { segment } from '../Segment.js'
 import { config } from '../Config.js'
@@ -100,6 +101,7 @@ class BarStore {
     }
 
     _setBarID = async (barID, track = false, focusOnMap = true) => {
+        log("Setting barID", barID)
         const bar = this.getBar()
         if (bar && bar.id === barID && this.menu) {
             if (track) this.trackSelectBar(barID)
@@ -129,12 +131,16 @@ class BarStore {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
             }, 1000)
         }
-        await tagStore.fetchTags()
+        await Promise.all([
+            tagStore.fetchTags(),
+            barStatusStore.downloadBarStatus(this.barID),
+        ])
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {
         await Promise.all([
             this.updateBarInfo(barID, force = force),
+            /* TODO: Group queries (bar status + menu + tags) */
             this.updateMenuInfo(barID, force = force),
         ])
     }

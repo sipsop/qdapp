@@ -154,7 +154,7 @@ class LoginStore {
     setBarOwnerProfile = _.logErrors(async () => {
         this.barOwnerProfileDownloadResult.downloadStarted()
         this.barOwnerProfileDownloadResult = await downloadManager.query(
-            'qd:bar:profile',
+            `qd:bar:profile:user=${this.userID}`,
             {
                 UserProfile: {
                     args: {

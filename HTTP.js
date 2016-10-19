@@ -6,6 +6,7 @@ import {
     ActivityIndicator,
     View,
     TouchableOpacity,
+    StyleSheet,
     T,
 } from './Component.js';
 import { observable, transaction, computed, action } from 'mobx'
@@ -171,6 +172,24 @@ export class DownloadResultView<T> extends PureComponent {
     inProgressMessage = null
     errorMessage = null
 
+    styles = StyleSheet.create({
+        inProgress: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        error: {
+            // flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#000', // 'rgba(0, 0, 0, 0.8)',
+            margin: 10,
+            borderRadius: 5,
+            padding: 5,
+            // maxHeight: 150,
+        },
+    })
+
     render = () => {
         const res = this.getDownloadResult()
         if (res.state == 'NotStarted') {
@@ -204,7 +223,7 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderInProgress = () => {
-        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        return <View style={this.styles.inProgress}>
             {
                 this.inProgressMessage
                     ? <T style={{fontSize: 20, color: '#000'}}>
@@ -224,11 +243,12 @@ export class DownloadResultView<T> extends PureComponent {
         const errorMessage = this.errorMessage + (message ? ': ' : '')
         const errorTextStyle = {
             fontSize: 20,
-            color: config.theme.primary.dark,
+            color: '#fff',
+            // color: config.theme.primary.dark,
             // color: config.theme.removeColor,
             textAlign: 'center',
         }
-        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        return <View style={this.styles.error}>
             <T style={errorTextStyle}>{this.errorMessage}</T>
             { message
                 ? <T style={errorTextStyle}>{message}</T>
@@ -236,7 +256,9 @@ export class DownloadResultView<T> extends PureComponent {
             }
             <LargeButton
                 style={{marginTop: 20}}
-                label="Refresh"
+                prominent={false}
+                textColor={config.theme.primary.medium}
+                label="REFRESH"
                 onPress={this.refreshPage}
                 />
         </View>
@@ -301,7 +323,7 @@ class DownloadManager {
             timeoutDesc = 'normal',
             ) => {
         assert(typeof(query) == 'object', typeof(query))
-        log("SENDING QUERY", JSON.stringify(query))
+        // log("SENDING QUERY", JSON.stringify(query))
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -456,9 +478,9 @@ export const simpleFetchJSON = async /*<T>*/(
     }
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
     const jsonData = await response.text()
-    log("parsing json...")
+    // log("parsing json...")
     const result = JSON.parse(jsonData.replace( /\\u2028|\\u2029/g, ''))
-    log("done parsing json...")
+    // log("done parsing json...")
     return result
     // return await response.json()
 }
