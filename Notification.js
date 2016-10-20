@@ -27,6 +27,7 @@ export type Position =
 
 const { width, height } = Dimensions.get('window')
 
+@observer
 export class Notification extends PureComponent {
     /* properties:
         position: Position
@@ -138,9 +139,9 @@ export class Notification extends PureComponent {
 
         if (absolute) {
             style.position = 'absolute'
-            if (!style.width)
+            if (!style.width && !style.minWidth)
                 style.width = width - 10
-            if (!style.height)
+            if (!style.height && !style.minHeight)
                 style.height = height - 10
 
             if (position.includes('Center')) {

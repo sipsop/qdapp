@@ -18,6 +18,7 @@ import { config } from './Config.js'
 
 export const Notification = _Notification
 
+@observer
 export class BarStatusNotification extends DownloadResultView {
 
     errorMessage      = "Error downloading bar status"
@@ -26,7 +27,7 @@ export class BarStatusNotification extends DownloadResultView {
 
     renderFinished = () => {
         var message = null
-        var closeable = false
+        var closeable = true
 
         if (!barStatusStore.isQDodgerBar) {
             message = 'No menu available :('
@@ -34,14 +35,14 @@ export class BarStatusNotification extends DownloadResultView {
             message = `${barStore.barName} is not currently accepting orders`
         } else if (!barStatusStore.tableService) {
             message = `No table service available, sorry.`
-            closeable = true
+            // closeable = true
         }
 
         if (!message)
             return null
 
         return <Notification
-                    style={{height: 55}}
+                    style={{minHeight: 55}}
                     message={message}
                     position="TopCenter"
                     closeable={closeable} />
