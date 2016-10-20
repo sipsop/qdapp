@@ -234,11 +234,10 @@ export class DownloadResultView<T> extends PureComponent {
         assert(this.errorMessage != null,
                "Expected errorMessage to be set in DownloadResultView")
         message = message.strip()
-        const errorMessage = this.errorMessage + (message ? ': ' : '')
+        const errorMessage = this.errorMessage + (message ? ':\n' : '\n') + message
         return <Notification
                     dismissLabel="REFRESH"
                     onPress={this.refreshPage}
-                    position={this.errorPosition}
                     message={errorMessage}
                     textSize="medium"
                     absolutePosition={false} />

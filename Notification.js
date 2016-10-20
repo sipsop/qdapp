@@ -11,7 +11,10 @@ import {
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import * as _ from './Curry.js'
 import { config } from './Config.js'
+
+const { assert, log } = _.utils('./Notification.js')
 
 export type Position =
     | 'TopLeft'
@@ -48,7 +51,7 @@ export class Notification extends PureComponent {
         closeable: true,
         dismissLabel: 'DISMISS',
         absolutePosition: true,
-        textSize: 'small',
+        textSize: 'medium',
         dismissDirection: 'row',
     }
 
@@ -80,19 +83,23 @@ export class Notification extends PureComponent {
             // bottom and left set in render()
         },
         notification: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             borderRadius: 10,
-            margin: 5,
             padding: 5,
         },
         textStyle: {
             small: {
                 color: '#fff',
                 fontSize: 15,
+                textAlign: 'center',
             },
             medium: {
                 color: '#fff',
                 fontSize: 20,
+                textAlign: 'center',
             },
         },
         dismiss: {
@@ -130,6 +137,7 @@ export class Notification extends PureComponent {
         }
 
         if (absolute) {
+            style.position = 'absolute'
             if (!style.width)
                 style.width = width - 10
             if (!style.height)
@@ -140,6 +148,8 @@ export class Notification extends PureComponent {
                 if (position === 'Center')
                     style.top = _.max(0, (height - style.height) / 2)
             }
+        } else if (!style.margin) {
+            style.margin = 5
         }
 
         const textSize = this.props.textSize
