@@ -9,6 +9,7 @@ import {
     T,
     StyleSheet,
     Picker,
+    Dimensions,
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -23,14 +24,18 @@ import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
-import { store, tabStore, barStore, orderStore, paymentStore } from '../Store.js'
+import { DownloadResultView } from '../HTTP.js'
+import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '../Store.js'
 import { analytics } from '../Analytics.js'
+import * as _ from '../Curry.js'
 import { config } from '../Config.js'
 
 const largeButtonStyle = {
     height: 55,
     margin: 5,
 }
+
+const { width } = Dimensions.get('window')
 
 @observer
 export class OrderPage extends Page {
@@ -63,10 +68,27 @@ export class OrderPage extends Page {
         </View>
     }
 
+    styles = {
+        test: {
+            position: 'absolute',
+            width: 300,
+            height: 110,
+            top: 10,
+            left: _.max((width - 300) / 2, 0),
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: 10,
+        },
+        emptyView: {
+            width: 1,
+            height: 120,
+        },
+    }
+
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            renderHeader:   () => <OrderPageHeader />,
+            // renderHeader:   () => <OrderPageHeader />,
+            renderHeader:   () => <View style={this.styles.emptyView} />,
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
             menuItems:      orderStore.menuItemsOnOrder,
@@ -77,10 +99,18 @@ export class OrderPage extends Page {
             onRefresh:      this.handleRefresh,
         })
         return <View style={{flex: 1}}>
+            {/* modals */}
             <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />
             <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
+            {/* Order stuff */}
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
+            {/* Delivery Method. This needs to be at the end to give it a
+                higher elevation than the preceding elements.
+            */}
+            <View style={this.styles.test}>
+                <DeliveryMethod primary={true} />
+            </View>
         </View>
     }
 }
@@ -88,24 +118,34 @@ export class OrderPage extends Page {
 @observer
 class OrderPageHeader extends PureComponent {
     styles = StyleSheet.create({
-        deliveryMethod: {
-            marginTop: 2,
-            borderTopWidth: 2,
-            borderBottomWidth: 2,
-            borderColor: '#000',
-        }
+        deliveryMethodView: {
+            // position: 'absolute',
+            top: 0,
+            left: 0,
+            maxWidth: 250,
+            height: 100,
+            margin: 10,
+            // padding: 10,
+            // backgroundColor: '#000', // 'rgba(255, 255, 255, 0.8)',
+            borderRadius: 10,
+        },
+        // deliveryMethod: {
+        //     backgroundColor: '#fff',
+        // },
     })
     render = () => {
         const bar = barStore.getBar()
-        return <View>
-            <DeliveryMethod primary={true} style={this.styles.deliveryMethod} />
-            <TextHeader label="Order" rowHeight={55} primary={false} />
+        return <View style={this.styles.deliveryMethodView}>
+            <DeliveryMethod
+                primary={true}
+                style={this.styles.deliveryMethod}
+                />
         </View>
     }
 }
 
 @observer
-class DeliveryMethod extends PureComponent {
+class DeliveryMethod extends DownloadResultView {
     /* properties:
         primary: Bool
         style: style obj
@@ -134,9 +174,9 @@ class DeliveryMethod extends PureComponent {
         },
     })
 
-    static defaultProps = {
-        pickupLocations: ['Main Bar', 'First Floor'],
-    }
+    errorMessage = "Error downloading bar info"
+    refreshPage  = () => barStatusStore.refreshBarStatus(barStore.barID)
+    getDownloadResult = () => barStatusStore.barStatusDownload
 
     @action tableDelivery = () => {
         orderStore.delivery = 'Table'
@@ -166,13 +206,17 @@ class DeliveryMethod extends PureComponent {
         return 'Pickup'
     }
 
-    render = () => {
-        const tableDelivery = orderStore.delivery === 'Table'
-        const pickup = orderStore.delivery === 'Pickup' && this.props.pickupLocations.length > 1
-        const showSecondRow = tableDelivery || pickup
-        const tableNumber = orderStore.tableNumber
-            ? "" + orderStore.tableNumber
-            : ""
+    renderFinished = (barStatus) => {
+        const tableDelivery =
+            orderStore.delivery === 'Table' &&
+            barStatusStore.tableService
+        const pickup =
+            orderStore.delivery === 'Pickup' &&
+            barStatusStore.pickupLocations.length > 1
+        const tableNumber =
+            orderStore.tableNumber
+                ? "" + orderStore.tableNumber
+                : ""
 
         return <View style={this.props.style}>
             {/*
@@ -235,8 +279,19 @@ class DeliveryMethod extends PureComponent {
                             onValueChange={location => orderStore.pickupLocation = location}
                             style={this.styles.pickerStyle}
                             >
+                        {
+                            barStatusStore.pickupLocations.map(label =>
+                                <Picker.Item
+                                    key={label}
+                                    label={label}
+                                    value={label}
+                                    />
+                            )
+                        }
+                        {/*
                         <Picker.Item label="Main Bar" value="Main Bar" />
                         <Picker.Item label="First Floor" value="First Floor" />
+                        */}
                     </Picker>
                 }
             </View>
