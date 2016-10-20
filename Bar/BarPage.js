@@ -156,11 +156,6 @@ const handleFocusBarOnMap = (bar) => {
 
 @observer
 class BarIcons extends BarInfoFetcher {
-    /* properties:
-        bar:  Bar
-        menu: Menu
-    */
-
     @observable refreshing = false
     openingTimesModal = null
 
@@ -188,8 +183,8 @@ class BarIcons extends BarInfoFetcher {
     handleShowOpeningTimes = () => {
         this.openingTimesModal.show()
         segment.track('Show Opening Times', {
-            placeID:    this.props.bar.id,
-            placeName:  this.props.bar.name,
+            placeID:    barStore.barID,
+            placeName:  barStore.barName,
         })
     }
 
@@ -252,37 +247,45 @@ class MenuView extends DownloadResultView {
 
 @observer
 class BarFooter extends BarInfoFetcher {
+    styles = StyleSheet.create({
+        infoView: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            borderRadius: 10,
+            margin: 10,
+        }
+    })
     renderError = () => <View />
     renderInProgress = () => <View />
     renderFinished = (bar) => {
         return <View>
-            <InfoItem
-                iconName="map-marker"
-                info={formatAddress(bar.address)}
-                onClick={() => handleFocusBarOnMap(bar)}
-                />
-            {bar.phone ?
+            <View style={this.styles.infoView}>
                 <InfoItem
-                    iconName="phone"
-                    info={bar.phone}
-                    onClick={() => phonecall(bar.phone, false)}
+                    iconName="map-marker"
+                    info={formatAddress(bar.address)}
+                    onClick={() => handleFocusBarOnMap(bar)}
                     />
-                : undefined
-            }
-            {bar.website ?
-                <InfoItem
-                    /* iconName="chrome" */
-                    /* iconName="external-link" */
-                    iconName="firefox"
-                    info={bar.website}
-                    onClick={() => web(bar.website)}
-                    />
-                : undefined
-            }
+                {bar.phone ?
+                    <InfoItem
+                        iconName="phone"
+                        info={bar.phone}
+                        onClick={() => phonecall(bar.phone, false)}
+                        />
+                    : undefined
+                }
+                {bar.website ?
+                    <InfoItem
+                        /* iconName="chrome" */
+                        /* iconName="external-link" */
+                        iconName="firefox"
+                        info={bar.website}
+                        onClick={() => web(bar.website)}
+                        />
+                    : undefined
+                }
+            </View>
             <View style={{alignItems: 'center'}}>
                 <Image
                     source={require('../logos/powered_by_google_on_white.png')}
-                    style={{marginTop: 10}}
                     />
                 {/* TODO: display additional attribution stuff here */}
             </View>
@@ -483,23 +486,30 @@ class InfoItem extends PureComponent {
         info: str
         onClick: callback when the info item is clicked (or undefined)
     */
+
+    styles = StyleSheet.create({
+        view: {
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            minHeight: 50,
+        },
+        iconView: {
+            width: 70,
+            alignItems: 'center',
+        },
+    })
     render = () => {
         var info = (
-            <View style={
-                    { flexDirection: 'row'
-                    , justifyContent: 'flex-start'
-                    , alignItems: 'center'
-                    , minHeight: 50
-                    }
-                }>
-                <View style={{width: 70, alignItems: 'center'}}>
+            <View style={this.styles.view}>
+                <View style={this.styles.iconView}>
                     <Icon
                         name={this.props.iconName}
                         size={30}
-                        color={config.theme.secondary.medium}
+                        color={config.theme.primary.medium}
                         />
                 </View>
-                <T style={{fontSize: 15, color: 'rgba(0, 0, 0, 0.6)'}}>
+                <T style={{fontSize: 15, color: '#fff'}}>
                     {this.props.info}
                 </T>
             </View>

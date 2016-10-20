@@ -466,6 +466,8 @@ export const simpleFetchJSON = async /*<T>*/(
         downloadTimeout : Float,
         ) : Promise<T> => {
     var response : Response
+    httpOptions = httpOptions || {}
+    httpOptions['Accept-Encoding'] = 'gzip,deflate'
     try {
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await _.timeout(downloadTimeout, fetchPromise)
@@ -476,6 +478,7 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
+    log("HTTP RESPONSE HEADERS", response.headers)
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
     const jsonData = await response.text()
     // log("parsing json...")
