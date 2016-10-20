@@ -5,7 +5,6 @@ import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
 import * as _ from '../Curry.js'
 import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
-import { barStatusStore } from './BarStatus.js'
 import { tagStore } from '../Tags.js'
 import { segment } from '../Segment.js'
 import { config } from '../Config.js'
@@ -131,10 +130,7 @@ class BarStore {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
             }, 1000)
         }
-        await Promise.all([
-            tagStore.fetchTags(),
-            barStatusStore.downloadBarStatus(this.barID),
-        ])
+        await tagStore.fetchTags()
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {
