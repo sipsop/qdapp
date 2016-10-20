@@ -8,6 +8,7 @@ import * as _ from './Curry.js'
 import { favStore } from './Fav.js'
 import { tabStore } from './Tabs.js'
 import { barStore } from './Bar/BarStore.js'
+import { barStatusStore } from './Bar/BarStatus.js'
 import { orderStore } from './Orders/OrderStore.js'
 import { loginStore } from './Login.js'
 import { tagStore } from './Tags.js'
@@ -30,7 +31,6 @@ export class Store {
     }
 
     @action switchToDiscoverPage = (scrollToTop) => {
-        log("SWITCHING TO DISCOVER PAGE")
         tabStore.setCurrentTab(0)
         this.mapVisible = true
         // if (scrollToTop && this.discoverScrollView)
@@ -55,6 +55,8 @@ export class Store {
             // url: 'url://location'
         })
         await mapStore.initialize()
+        if (barStore.barID)
+            await barStatusStore.refreshBarStatus(barStore.barID)
     }
 
     loadFromLocalStorage = async () => {
@@ -70,6 +72,8 @@ export class Store {
             paymentStore.setState(state.payState)
         if (state.barState)
             await barStore.setState(state.barState)
+        if (state.barStatusState)
+            await barStatusStore.setState(state.barStatusState)
         if (state.tabState)
             await tabStore.setState(state.tabState)
         if (state.loginState)
@@ -86,28 +90,30 @@ export class Store {
 
     getState = () => {
         return _.asData({
-            payState:   paymentStore.getState(),
-            barState:   barStore.getState(),
-            tabState:   tabStore.getState(),
-            loginState: loginStore.getState(),
-            orderState: orderStore.getState(),
-            mapState:   mapStore.getState(),
-            tagState:   tagStore.getState(),
-            segment:    segment.getState(),
+            payState:       paymentStore.getState(),
+            barState:       barStore.getState(),
+            barStatusState: barStatusStore.getState(),
+            tabState:       tabStore.getState(),
+            loginState:     loginStore.getState(),
+            orderState:     orderStore.getState(),
+            mapState:       mapStore.getState(),
+            tagState:       tagStore.getState(),
+            segment:        segment.getState(),
         })
     }
 
     emptyState = () => {
         return {
-            payState:   paymentStore.getState(),
-            loginState: loginStore.getState(),
+            payState:       paymentStore.getState(),
+            loginState:     loginStore.getState(),
 
-            barState:   barStore.emptyState(),
-            tabState:   tabStore.emptyState(),
-            orderState: orderStore.emptyState(),
-            mapState:   mapStore.emptyState(),
-            tagState:   tagStore.emptyState(),
-            segment:    segment.emptyState(),
+            barState:       barStore.emptyState(),
+            barStatusState: barStatusStore.emptyState(),
+            tabState:       tabStore.emptyState(),
+            orderState:     orderStore.emptyState(),
+            mapState:       mapStore.emptyState(),
+            tagState:       tagStore.emptyState(),
+            segment:        segment.emptyState(),
         }
     }
 
@@ -140,6 +146,7 @@ export {
     favStore,
     tabStore,
     barStore,
+    barStatusStore,
     loginStore,
     mapStore,
     orderStore,
