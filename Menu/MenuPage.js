@@ -20,10 +20,11 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
 import { DownloadResultView } from '../HTTP.js'
+import { BarStatusNotification } from '../Notifications.js'
 import { OrderList } from '../Orders/OrderList.js'
 import { LargeButton } from '../Button.js'
 import { TagView } from '../Tags.js'
-import { store, tabStore, barStore, tagStore, orderStore } from '../Store.js'
+import { store, tabStore, barStore, barStatusStore, orderStore } from '../Store.js'
 import { analytics } from '../Analytics.js'
 import { config } from '../Config.js'
 import * as _ from '../Curry.js'
@@ -50,6 +51,8 @@ export class MenuPage extends DownloadResultView {
 @observer
 export class MenuView extends Page {
     renderView = () => {
+        if (!barStatusStore.takingOrders)
+            return <BarStatusNotification />
         return <View style={{flex: 1}}>
             <View style={{flex: 1, marginTop: 5}}>
                 <MenuList />

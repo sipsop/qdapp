@@ -16,6 +16,7 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
+import { BarStatusNotification } from '../Notifications.js'
 import { MenuItem, createMenuItem } from '../Menu/MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { SelectableButton } from '../ButtonRow.js'
@@ -30,6 +31,8 @@ import { analytics } from '../Analytics.js'
 import * as _ from '../Curry.js'
 import { config } from '../Config.js'
 
+const { assert, log } = _.utils('./Orders/OrderPage.js')
+
 const largeButtonStyle = {
     height: 55,
     margin: 5,
@@ -39,34 +42,6 @@ const { width } = Dimensions.get('window')
 
 @observer
 export class OrderPage extends Page {
-    handleOrderPress = () => {
-        orderStore.setCheckoutVisibility(true)
-        orderStore.freshCheckoutID()
-        analytics.trackCheckoutStart()
-        // orderStore.setFreshOrderToken()
-        // orderStore.placeActiveOrder()
-    }
-
-    handleRefresh = async () => {
-        await barStore.updateMenuInfo(barStore.barID, force = true)
-    }
-
-    renderView = () => {
-        if (orderStore.menuItemsOnOrder.length > 0)
-            return this.renderOrderList()
-        return this.renderEmptyOrder()
-    }
-
-    /*** EMPTY ***/
-    renderEmptyOrder = () => {
-        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <LargeButton
-                label="Add Items"
-                onPress={() => tabStore.setCurrentTab(2)}
-                style={largeButtonStyle}
-                />
-        </View>
-    }
 
     styles = {
         deliveryMethodView: {
@@ -87,6 +62,37 @@ export class OrderPage extends Page {
             width: 1,
             height: 125,
         },
+    }
+
+    handleOrderPress = () => {
+        orderStore.setCheckoutVisibility(true)
+        orderStore.freshCheckoutID()
+        analytics.trackCheckoutStart()
+        // orderStore.setFreshOrderToken()
+        // orderStore.placeActiveOrder()
+    }
+
+    handleRefresh = async () => {
+        await barStore.updateMenuInfo(barStore.barID, force = true)
+    }
+
+    renderView = () => {
+        if (!barStatusStore.takingOrders)
+            return <BarStatusNotification />
+        if (orderStore.menuItemsOnOrder.length > 0)
+            return this.renderOrderList()
+        return this.renderEmptyOrder()
+    }
+
+    /*** EMPTY ***/
+    renderEmptyOrder = () => {
+        return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <LargeButton
+                label="Add Items"
+                onPress={() => tabStore.setCurrentTab(2)}
+                style={largeButtonStyle}
+                />
+        </View>
     }
 
     /*** NONEMPTY ***/
@@ -123,7 +129,7 @@ export class OrderPage extends Page {
 }
 
 @observer
-class DeliveryMethod extends DownloadResultView {
+class DeliveryMethod extends PureComponent {
     /* properties:
         primary: Bool
         style: style obj
@@ -151,10 +157,6 @@ class DeliveryMethod extends DownloadResultView {
             width: 150,
         },
     })
-
-    errorMessage = "Error downloading bar status"
-    refreshPage  = () => barStatusStore.refreshBarStatus(barStore.barID)
-    getDownloadResult = () => barStatusStore.barStatusDownload
 
     @action tableDelivery = () => {
         orderStore.delivery = 'Table'
@@ -184,10 +186,7 @@ class DeliveryMethod extends DownloadResultView {
         return 'Pickup'
     }
 
-    renderFinished = (barStatus) => {
-        // if (!barStatusStore.takingOrders)
-            // return <BarStatusNotification />
-
+    render = () => {
         const tableDelivery =
             orderStore.delivery === 'Table' &&
             barStatusStore.tableService
