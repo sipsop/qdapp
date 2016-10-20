@@ -446,3 +446,12 @@ export const timeout = async (timeout, promise) => {
 export const sleep = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
+
+/************************************************************************/
+/* Strings */
+
+if (!String.prototype.strip) {
+    String.prototype.strip = function () {
+        return this.replace(/^\s+|\s+$/g, '')
+    }
+}

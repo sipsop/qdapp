@@ -12,6 +12,7 @@ import {
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { Notification } from './Notification.js'
 import { Cache, cache } from './Cache.js'
 import { LargeButton } from './Button.js'
 import { PureComponent } from './Component.js'
@@ -165,10 +166,6 @@ export const emptyResult =
 /* React Component for rendering a downloadResult in its different states */
 @observer
 export class DownloadResultView<T> extends PureComponent {
-    /* props:
-        downloadResult: DownloadResult
-    */
-
     inProgressMessage = null
     errorMessage = null
 
@@ -182,7 +179,7 @@ export class DownloadResultView<T> extends PureComponent {
             // flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#000', // 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             margin: 10,
             borderRadius: 5,
             padding: 5,
@@ -213,11 +210,7 @@ export class DownloadResultView<T> extends PureComponent {
         throw Error('NotImplemented')
     }
 
-    renderNotStarted = () => {
-        return <View />
-        // throw Error('NotImplemented')
-    }
-
+    renderNotStarted = () => null
     renderFinished = (value : T) => {
         throw Error('NotImplemented')
     }
@@ -240,28 +233,37 @@ export class DownloadResultView<T> extends PureComponent {
     renderError = (message : string) => {
         assert(this.errorMessage != null,
                "Expected errorMessage to be set in DownloadResultView")
+        message = message.strip()
         const errorMessage = this.errorMessage + (message ? ': ' : '')
-        const errorTextStyle = {
-            fontSize: 20,
-            color: '#fff',
-            // color: config.theme.primary.dark,
-            // color: config.theme.removeColor,
-            textAlign: 'center',
-        }
-        return <View style={this.styles.error}>
-            <T style={errorTextStyle}>{this.errorMessage}</T>
-            { message
-                ? <T style={errorTextStyle}>{message}</T>
-                : undefined
-            }
-            <LargeButton
-                style={{marginTop: 20}}
-                prominent={false}
-                textColor={config.theme.primary.medium}
-                label="REFRESH"
-                onPress={this.refreshPage}
-                />
-        </View>
+        return <Notification
+                    dismissLabel="REFRESH"
+                    onPress={this.refreshPage}
+                    position={this.errorPosition}
+                    message={errorMessage}
+                    textSize="medium"
+                    absolutePosition={false} />
+
+        // const errorTextStyle = {
+        //     fontSize: 20,
+        //     color: '#fff',
+        //     // color: config.theme.primary.dark,
+        //     // color: config.theme.removeColor,
+        //     textAlign: 'center',
+        // }
+        // return <View style={this.styles.error}>
+        //     <T style={errorTextStyle}>{this.errorMessage}</T>
+        //     { message
+        //         ? <T style={errorTextStyle}>{message}</T>
+        //         : undefined
+        //     }
+        //     <LargeButton
+        //         style={{marginTop: 20}}
+        //         prominent={false}
+        //         textColor={config.theme.primary.medium}
+        //         label="REFRESH"
+        //         onPress={this.refreshPage}
+        //         />
+        // </View>
     }
 }
 
@@ -478,7 +480,7 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
-    log("HTTP RESPONSE HEADERS", response.headers)
+    // log("HTTP RESPONSE HEADERS", response.headers)
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
     const jsonData = await response.text()
     // log("parsing json...")

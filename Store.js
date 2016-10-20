@@ -56,7 +56,7 @@ export class Store {
         })
         await mapStore.initialize()
         if (barStore.barID)
-            await barStatusStore.refreshBarStatus(barStore.barID)
+            await barStatusStore.periodicallyDownloadBarStatus()
     }
 
     loadFromLocalStorage = async () => {
@@ -140,6 +140,7 @@ export class Store {
 }
 
 const popup = (title, message) => Alert.alert(title, message)
+
 
 export const store = new Store()
 export {

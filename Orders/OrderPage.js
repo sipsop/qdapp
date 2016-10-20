@@ -69,14 +69,16 @@ export class OrderPage extends Page {
     }
 
     styles = {
-        test: {
+        deliveryMethodView: {
             position: 'absolute',
             width: width - 10,
-            height: 120,
             top: 5,
             left: 5,
+        },
+        deliveryMethod: {
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderRadius: 10,
+            height: 120,
             padding: 10,
             borderWidth: 0.5,
             borderColor: config.theme.primary.medium,
@@ -90,7 +92,6 @@ export class OrderPage extends Page {
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            // renderHeader:   () => <OrderPageHeader />,
             renderHeader:   () => <View style={this.styles.emptyView} />,
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
@@ -111,38 +112,12 @@ export class OrderPage extends Page {
             {/* Delivery Method. This needs to be at the end to give it a
                 higher elevation than the preceding elements.
             */}
-            <View style={this.styles.test}>
-                <DeliveryMethod primary={true} />
+            <View style={this.styles.deliveryMethodView}>
+                <DeliveryMethod
+                    style={this.styles.deliveryMethod}
+                    primary={true}
+                    />
             </View>
-        </View>
-    }
-}
-
-@observer
-class OrderPageHeader extends PureComponent {
-    styles = StyleSheet.create({
-        deliveryMethodView: {
-            // position: 'absolute',
-            top: 0,
-            left: 0,
-            maxWidth: 250,
-            height: 100,
-            margin: 10,
-            // padding: 10,
-            // backgroundColor: '#000', // 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 10,
-        },
-        // deliveryMethod: {
-        //     backgroundColor: '#fff',
-        // },
-    })
-    render = () => {
-        const bar = barStore.getBar()
-        return <View style={this.styles.deliveryMethodView}>
-            <DeliveryMethod
-                primary={true}
-                style={this.styles.deliveryMethod}
-                />
         </View>
     }
 }
@@ -177,7 +152,7 @@ class DeliveryMethod extends DownloadResultView {
         },
     })
 
-    errorMessage = "Error downloading bar info"
+    errorMessage = "Error downloading bar status"
     refreshPage  = () => barStatusStore.refreshBarStatus(barStore.barID)
     getDownloadResult = () => barStatusStore.barStatusDownload
 
@@ -210,6 +185,9 @@ class DeliveryMethod extends DownloadResultView {
     }
 
     renderFinished = (barStatus) => {
+        // if (!barStatusStore.takingOrders)
+            // return <BarStatusNotification />
+
         const tableDelivery =
             orderStore.delivery === 'Table' &&
             barStatusStore.tableService
@@ -222,29 +200,6 @@ class DeliveryMethod extends DownloadResultView {
                 : ""
 
         return <View style={this.props.style}>
-            {/*
-            <TextHeader label="Delivery" rowHeight={55} />
-            <View>
-                <View style={this.styles.rowStyle}>
-                    <LargeButton
-                        label={`Table Delivery`}
-                        onPress={this.tableDelivery}
-                        style={this.styles.buttonStyle}
-                        prominent={false}
-                        textColor='#000'
-                        fontSize={20}
-                        borderColor='#000' />
-
-                    <LargeButton
-                        label={`Pickup`}
-                        onPress={this.pickup}
-                        style={this.styles.buttonStyle}
-                        prominent={false}
-                        textColor='#000'
-                        fontSize={20}
-                        borderColor='#000' />
-                </View>
-                */}
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
                     primary={this.props.primary}>
                 <SelectableButton
@@ -291,10 +246,6 @@ class DeliveryMethod extends DownloadResultView {
                                     />
                             )
                         }
-                        {/*
-                        <Picker.Item label="Main Bar" value="Main Bar" />
-                        <Picker.Item label="First Floor" value="First Floor" />
-                        */}
                     </Picker>
                 }
             </View>
