@@ -67,7 +67,9 @@ export const runAndLogErrors = async (callback) => {
 
 export const logError = err => {
     // TODO: Crashlytics etc
-    console.error(err)
+    if (err) { // this will crash on undefined
+        console.error(err)
+    }
 }
 
 export const safeAutorun = callback => autorun(() => {

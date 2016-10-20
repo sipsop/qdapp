@@ -40,7 +40,10 @@ export class Checkout extends PureComponent {
     }
 
     styles = StyleSheet.create({
-
+        cardInfo: {
+            marginLeft: 5,
+            marginRight: 5,
+        }
     })
 
     payNow = () => {
@@ -114,8 +117,10 @@ export class Checkout extends PureComponent {
                         onBack={this.cancel}
                         />
                     {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
-                    <SelectedCardInfo />
-                    <TipComponent style={this.styles.tipSlider} />
+                    <View style={this.styles.cardInfo}>
+                        <SelectedCardInfo />
+                    </View>
+                    <TipComponent />
                     <OrderTotal
                         style={{marginRight: 10}}
                         total={orderStore.total + orderStore.tipAmount}

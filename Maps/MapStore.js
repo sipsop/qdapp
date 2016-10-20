@@ -259,7 +259,15 @@ class MapStore {
         /* Improve with a fresh rough estimate */
         navigator.geolocation.getCurrentPosition(
             this.updateLocation,
-            (error) => _.logError(error.message),
+            /* Note: you need to provide an error callback, or it will throw
+                     an exception on errors.
+                     Just do nothing to swallow errors, such as
+
+                        'Location request timed out'
+
+               TODO: Show notification to user that location couldn't be obtained
+            */
+            (error) => null, //_.logError(error),
         )
 
         // update every 10s
