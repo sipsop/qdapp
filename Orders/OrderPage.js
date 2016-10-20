@@ -71,16 +71,19 @@ export class OrderPage extends Page {
     styles = {
         test: {
             position: 'absolute',
-            width: 300,
-            height: 110,
-            top: 10,
-            left: _.max((width - 300) / 2, 0),
+            width: width - 10,
+            height: 120,
+            top: 5,
+            left: 5,
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderRadius: 10,
+            padding: 10,
+            borderWidth: 0.5,
+            borderColor: config.theme.primary.medium,
         },
         emptyView: {
             width: 1,
-            height: 120,
+            height: 125,
         },
     }
 
