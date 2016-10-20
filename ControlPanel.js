@@ -27,13 +27,13 @@ assert(drawerStore != null, 'drawerStore is null')
 @observer
 export class ControlPanel extends PureComponent {
     render = () => {
-        return <View style={{flex: 1}}>
+        return <ScrollView style={{flex: 1}}>
             <LoginInfo />
             <PaymentConfig />
             <OrderHistory />
             <Settings />
             <Signout />
-        </View>
+        </ScrollView>
     }
 }
 
