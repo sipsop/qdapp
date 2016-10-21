@@ -35,7 +35,9 @@ import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
 import { tabStore, barStore, mapStore, segment } from '../Store.js'
 import { config } from '../Config.js'
-import { merge, safeAutorun, log } from '../Curry.js'
+import * as _ from '../Curry.js'
+
+const { assert, log } = _.utils('./Bar/BarPage.js')
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {
@@ -46,6 +48,7 @@ export class BarInfoFetcher extends DownloadResultView {
     }
 
     getDownloadResult = () => {
+        assert(barStore.getBarDownloadResult() != null, "Bar download result is null...")
         return barStore.getBarDownloadResult()
     }
 }
@@ -103,7 +106,7 @@ class DownloadErrorView extends DownloadResultView {
     errorMessage = "Error downloading bar info"
     refreshPage = () => barStore.refreshBar()
     getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
-    renderFinished = (menu) => <View />
+    renderFinished = (menu) => null
 }
 
 @observer
@@ -254,8 +257,8 @@ class BarFooter extends BarInfoFetcher {
             margin: 10,
         }
     })
-    renderError = () => <View />
-    renderInProgress = () => <View />
+    renderError = () => null
+    renderInProgress = () => null
     renderFinished = (bar) => {
         return <View>
             <View style={this.styles.infoView}>
@@ -422,7 +425,7 @@ export class BarImages extends PureComponent {
     constructor(props) {
         super(props)
         this.timer = undefined
-        safeAutorun(() => {
+        _.safeAutorun(() => {
             /* Whenever barStore.bar changes, reinitialize autoplay to `true`
                and cancel any timers that are going to set it to `false`
             */

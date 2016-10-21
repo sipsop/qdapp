@@ -16,7 +16,7 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
-import { BarStatusNotification } from '../Notifications.js'
+import { BarInfoNotification } from '../NotificationBar.js'
 import { MenuItem, createMenuItem } from '../Menu/MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { SelectableButton } from '../ButtonRow.js'
@@ -25,7 +25,6 @@ import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
-import { DownloadResultView } from '../HTTP.js'
 import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '../Store.js'
 import { analytics } from '../Analytics.js'
 import * as _ from '../Curry.js'
@@ -78,7 +77,7 @@ export class OrderPage extends Page {
 
     renderView = () => {
         if (!barStatusStore.takingOrders)
-            return <BarStatusNotification />
+            return <BarInfoNotification />
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()

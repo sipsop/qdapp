@@ -39,11 +39,15 @@ export class Notification extends PureComponent {
         style: {
             width: Int,
             height: Int,
+            borderRadius : Int,
+            margin: Int,
             ...
         }
         absolutePosition: Bool
             absolute positioning for notification?
         textSize: 'small' | 'medium'
+        numberOfLines: Int
+            number of lines to clip message at
     */
 
     @observable visible = true
@@ -53,7 +57,7 @@ export class Notification extends PureComponent {
         dismissLabel: 'DISMISS',
         absolutePosition: true,
         textSize: 'medium',
-        dismissDirection: 'row',
+        dismissDirection: 'column',
     }
 
     styles = {
@@ -88,7 +92,6 @@ export class Notification extends PureComponent {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            borderRadius: 10,
             padding: 5,
         },
         textStyle: {
@@ -134,7 +137,7 @@ export class Notification extends PureComponent {
             ...absolute && this.styles[position] || undefined,
             ...this.styles.notification,
             ...this.props.style,
-            flexDirection: this.dismissDirection,
+            flexDirection: this.props.dismissDirection,
         }
 
         if (absolute) {
@@ -153,10 +156,17 @@ export class Notification extends PureComponent {
             style.margin = 5
         }
 
+        if (!style.borderRadius)
+            style.borderRadius = 10
+
         const textSize = this.props.textSize
+        const textStyle = this.styles.textStyle[textSize]
+        if (this.props.dismissDirection === 'row') {
+            textStyle.numberOfLines = this.props.numberOfLines
+        }
 
         return <View style={style}>
-            <T style={this.styles.textStyle[textSize]}>
+            <T style={textStyle}>
                 {this.props.message}
             </T>
             { this.props.closeable &&

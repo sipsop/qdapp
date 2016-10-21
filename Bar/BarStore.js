@@ -1,4 +1,4 @@
-import { observable, transaction, computed, action, asMap } from 'mobx'
+import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
@@ -21,13 +21,8 @@ const { log, assert } = _.utils('./Bar/BarStore.js')
 
 class BarStore {
     // DownloadResult[schema.Bar]
-    @observable bar : DownloadResult<Bar> = emptyResult()
+    @observable barDownloadResult : DownloadResult<Bar> = emptyResult()
     @observable menuDownloadResult : DownloadResult<Menu> = emptyResult()
-
-    @observable barAndMenuDownloadResult = DownloadResult.combine([
-        this.bar,
-        this.menuDownloadResult,
-    ])
 
     // BarID
     @observable barID = null
@@ -53,10 +48,17 @@ class BarStore {
 
     /*************************** Getters *********************************/
 
-    getBarDownloadResult = () => this.bar
+    @computed get barAndMenuDownloadResult() {
+        return DownloadResult.combine([
+            this.barDownloadResult,
+            this.menuDownloadResult,
+        ])
+    }
+
+    getBarDownloadResult = () => this.barDownloadResult
     getMenuDownloadResult = () => this.menuDownloadResult
     getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
-    getBar = () => this.bar.value
+    getBar = () => this.barDownloadResult.value
 
     /*************************** Network *********************************/
 
@@ -111,7 +113,7 @@ class BarStore {
             /* Clear the download results */
             transaction(() => {
                 this.barID = barID
-                this.bar.reset()
+                this.barDownloadResult.reset()
                 this.menuDownloadResult.reset()
             })
             return
@@ -119,7 +121,7 @@ class BarStore {
 
         transaction(() => {
             this.barID = barID
-            this.bar.downloadStarted()
+            this.barDownloadResult.downloadStarted()
             this.menuDownloadResult.downloadStarted()
         })
         await this.updateBarAndMenu(barID)
@@ -162,7 +164,7 @@ class BarStore {
     @action setBarDownloadResult = (downloadResult) => {
         if (!downloadResult)
             throw Error("DownloadResult is undefined in setBarDownloadResult!")
-        this.bar.from(downloadResult)
+        this.barDownloadResult = downloadResult
     }
 
     @action setMenuDownloadResult = (downloadResult) => {
