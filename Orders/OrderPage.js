@@ -76,8 +76,8 @@ export class OrderPage extends Page {
     }
 
     renderView = () => {
-        if (!barStatusStore.takingOrders)
-            return <BarInfoNotification />
+        // if (!barStatusStore.takingOrders)
+        //     return <BarInfoNotification />
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()

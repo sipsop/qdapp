@@ -271,6 +271,7 @@ export class JSONDownload {
     @observable value   : ?T            = null
     @observable timestamp = null
     @observable errorAttempts : Int = 0
+    @observable lastRefreshState = null
 
     errorMessage    : ?String = null
     periodicRefresh : ?Int = null           /* refresh every N seconds */
@@ -339,12 +340,19 @@ export class JSONDownload {
         ))
     }
 
+    @computed get refreshStateChanged() {
+        return !_.deepEqual(this.refreshState, this.lastRefreshState)
+    }
+
     /* Should we start refreshing the download now? */
     @computed get shouldRefreshNow() {
         return (
-            download.active &&
-            this.dependenciesFinished &&
-            (download.shouldRetry || download.shouldRefresh)
+            this.active &&
+            this.dependenciesFinished && (
+                this.shouldRetry   ||
+                this.shouldRefresh ||
+                this.refreshStateChanged
+            )
         )
     }
 
