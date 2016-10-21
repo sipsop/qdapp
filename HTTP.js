@@ -20,6 +20,7 @@ import { Loader } from './Page.js'
 import { config } from './Config.js'
 import { store } from './Store.js'
 import { HOST } from './Host.js'
+import { getTime, Second, Minute } from './Time.js'
 import * as _ from './Curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
@@ -82,14 +83,12 @@ export class DownloadResult<T> {
         this.state   = downloadResult.state
         this.message = downloadResult.message
         this.value   = downloadResult.value
-        this.refresh = downloadResult.refresh
     }
 
     @action reset = (state = 'NotStarted') : DownloadResult<T> => {
         this.state   = state
         this.message = null
         this.value   = null
-        this.refresh = null
         return this
     }
 
@@ -99,7 +98,6 @@ export class DownloadResult<T> {
 
     @action downloadError = (message : string, refresh : () => void) : DownloadResult<T> => {
         this.reset('Error')
-        this.refresh = refresh
         return this
     }
 
@@ -261,65 +259,248 @@ export class DownloadResultView<T> extends PureComponent {
                     message={errorMessage}
                     textSize="medium"
                     absolutePosition={false} />
-
-        // const errorTextStyle = {
-        //     fontSize: 20,
-        //     color: '#fff',
-        //     // color: config.theme.primary.dark,
-        //     // color: config.theme.removeColor,
-        //     textAlign: 'center',
-        // }
-        // return <View style={this.styles.error}>
-        //     <T style={errorTextStyle}>{this.errorMessage}</T>
-        //     { message
-        //         ? <T style={errorTextStyle}>{message}</T>
-        //         : undefined
-        //     }
-        //     <LargeButton
-        //         style={{marginTop: 20}}
-        //         prominent={false}
-        //         textColor={config.theme.primary.medium}
-        //         label="REFRESH"
-        //         onPress={this.refreshPage}
-        //         />
-        // </View>
     }
 }
 
-export const graphQLArg = (obj) => _graphQLArg(_.asData(obj))
 
-const _graphQLArg = (obj) => {
-    if (obj == null) {
-        return obj
-    } else if (typeof(obj) === 'number') {
-        return JSON.stringify(obj)
-    } else if (typeof(obj) === 'string') {
-        return JSON.stringify(obj)
-    } else if (Array.isArray(obj)) {
-        const items = obj.map(_graphQLArg).join(', ')
-        return `[ ${items} ]`
-    } else if (typeof(obj) === 'object') {
-        const fields = Object.keys(obj).map(key => {
-            const value = _graphQLArg(obj[key])
-            return `${key}: ${value}`
-        }).join(', ')
-        return `{ ${fields} }`
-    } else {
-        throw Error(`Unknown type: ${typeof(obj)}`)
+
+export class JSONDownload {
+
+    @observable state   : DownloadState = 'NotStarted'
+    @observable message : ?string       = undefined
+    @observable value   : ?T            = null
+    @observable timestamp = null
+    @observable errorAttempts : Int = 0
+
+    errorMessage    : ?String = null
+    periodicRefresh : ?Int = null           /* refresh every N seconds */
+    depends         : Array<Download> = []  /* Download dependencies */
+    active          : Bool = true
+    cacheKey        : String = true
+    httpOptions     = undefined
+    url             = null
+
+    /* Refresh downloads that had an error when connectivity resumes /
+       user presses refresh
+    */
+    refreshOnError  = true
+
+    /* How long results should be cached for */
+    cacheInfo = config.defaultCacheInfo
+
+    /* Cache info for forced refreshes */
+    refreshCacheInfo = config.defaultRefreshCacheInfo
+
+    /* How long before a download times out */
+    timeoutDesc = 'normal'
+
+    @computed get refreshState() {
+        return null
+    }
+
+    /* Whether to cache the downloaded result */
+    cacheResult = (result) => {
+        return true
+    }
+
+    /***********************************************************************/
+    /* Refresh                                                             */
+    /***********************************************************************/
+
+    @computed get _inProgress() {
+        return this.inProgress && this.timestamp + 30 < ticker.now
+    }
+
+    /* Is the download outdated? */
+    @computed get shouldRefresh() {
+        const outdated = this.periodicRefresh &&
+                         (this.timestamp + this.periodicRefresh < ticker.now)
+        return outdated && !this._inProgress
+    }
+
+    /* Should we retry errored downloads? */
+    @computed get shouldRetry() {
+        /* We should start a download when either it has never started, or when
+           it has had an error and not been reattempted for the last 10s.
+        */
+        return (
+            this.state === 'NotStarted' || (
+                this.state === 'Error' &&
+                this.errorAttempts < 3 &&
+                this.timestamp + 10 < ticker.now
+            )
+        )
+    }
+
+    /* Have all download dependencies finished? */
+    @computed get dependenciesFinished() {
+        return _.all(this.depends.map(
+            download => download.finished
+        ))
+    }
+
+    /* Should we start refreshing the download now? */
+    @computed get shouldRefreshNow() {
+        return (
+            download.active &&
+            this.dependenciesFinished &&
+            (download.shouldRetry || download.shouldRefresh)
+        )
+    }
+
+    /* Method to force a refresh (e.g. on UI pull downs) */
+    forceRefresh = (restartDownload = true) => {
+        this.refresh(this.refreshCacheInfo, restartDownload)
+    }
+
+    /* Start download. Internal use only. */
+    refresh = async (cacheInfo, restartDownload = true) => {
+        // Update timestamp
+        transaction(() => {
+            if (restartDownload || this.state === 'NotStarted')
+                this.downloadStarted()
+            this.timestamp = getTime()
+        })
+
+        // Download
+        cacheInfo = cacheInfo || this.cacheInfo
+        const downloadResult = await downloadManager.fetchJSON(
+            this.cacheKey,
+            this.url,
+            this.httpOptions,
+            this.cacheInfo,
+            this.timeoutDesc,
+            this.acceptValueFromCache,
+        )
+
+        // Update state
+        if (downloadResult.state === 'Finished')
+            this.downloadFinished(downloadResult.value)
+        else if (downloadResult.state === 'Error')
+            this.downloadError(message)
+        else
+            throw Error(`Invalid download state: ${downloadResult.state}`)
+    }
+
+    /***********************************************************************/
+    /* Download State                                                      */
+    /***********************************************************************/
+
+    @action reset = (state = 'NotStarted') : DownloadResult<T> => {
+        this.state   = state
+        this.message = null
+        this.value   = null
+        this.resetErrorAttempts()
+        return this
+    }
+
+    @action resetErrorAttempts = () => {
+        this.errorAttempts = 0
+    }
+
+    @action downloadStarted = () : DownloadResult<T> => {
+        return this.reset('InProgress')
+    }
+
+    @action downloadError = (message : string) : DownloadResult<T> => {
+        this.errorAttempts += 1
+        this.state = 'Error'
+        this.value = null
+        this.message = message
+        return this
+    }
+
+    @action downloadFinished = (value : T) : DownloadResult<T> => {
+        this.reset('Finished')
+        this.value = value
+        return this
+    }
+
+    @computed get finished() {
+        return this.state === 'Finished'
+    }
+
+    @computed get inProgress() {
+        return this.state === 'InProgress'
     }
 }
 
+export class QueryDownload extends JSONDownload {
+    url = HOST + '/api/v1/'
+
+    get httpOptions() {
+        return {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(thisquery),
+        }
+    }
+
+    @computed get query() {
+        return null
+    }
+
+    @computed get refreshState() {
+        return this.query
+    }
+
+    acceptValueFromCache = (value) => {
+        return value.result && !value.error
+    }
+
+    refresh = async (cacheInfo) => {
+        const result = await JSONDownload.refresh.bind(this)(cacheInfo)
+        if (this.value && this.value.error)
+            this.downloadError(this.value.error)
+        else if (this.value)
+            this.downloadFinished(this.value.result)
+    }
+}
+
+export class QueryMutation extends QueryDownload {
+    cacheKey = 'DO_NOT_CACHE'
+    cacheInfo = { noCache: true }
+    refreshCacheInfo = { noCache: true }
+    refreshOnError = false
+}
+
+export const latest = (d1, d2) => {
+    if (d1.state !== 'Finished' || !d1.timestamp)
+        return d2
+    if (d2.state !== 'Finished' || !d2.timestamp)
+        return d1
+    if (d1.timestamp > d2.timestamp)
+        return d1
+    else
+        return d2
+}
+
+class Ticker {
+    @observable now = getTime()
+}
+
+export const ticker = new Ticker()
+
+/* Update ticker every 5s */
+const updateTicker = () => {
+    ticker.now = getTime()
+    setTimeout(updateTicker, 5000)
+}
+
+updateTicker()
 
 const getTimeoutInfo = (timeoutDesc) => {
     if (timeoutDesc === 'short')
         return {
-            refreshTimeout: 3000,
-            expiryTimeout:  8000,
+            refreshTimeout: 6000,
+            expiryTimeout:  9000,
         }
     if (timeoutDesc === 'normal')
         return {
-            refreshTimeout: 9000,
-            expiryTimeout:  18000,
+            refreshTimeout: 10000,
+            expiryTimeout:  20000,
         }
     if (timeoutDesc === 'long')
         return {
@@ -330,13 +511,31 @@ const getTimeoutInfo = (timeoutDesc) => {
 
 class DownloadManager {
 
-    queryMutate = async (query, downloadResult) => {
+    constructor() {
+        this.downloads = []
+    }
+
+    declareDownload = (download) => {
+        this.downloads.push(download)
+        autorun(() => {
+            if (download.shouldRefreshNow) {
+                download.refresh()
+            }
+        })
+    }
+
+    /* Refresh errored downloads, e.g. after re-gaining connectivity */
+    @action refreshDownloads = () => {
+        this.downloads.forEach(download => {
+            download.resetErrorAttempts()
+        })
+    }
+
+    queryMutate = async (query) => {
         return await this.query(
             'DO_NOT_CACHE',
             query,
             { noCache: true },
-            undefined,
-            downloadResult,
         )
     }
 
@@ -348,7 +547,6 @@ class DownloadManager {
             /* Callback that decides whether the download is still relevant */
             cacheInfo    : CacheInfo,
             timeoutDesc = 'normal',
-            downloadResult : ?DownloadResult,
             ) => {
         assert(typeof(query) == 'object', typeof(query))
         // log("SENDING QUERY", JSON.stringify(query))
@@ -359,7 +557,7 @@ class DownloadManager {
             },
             body: JSON.stringify(query),
         }
-        downloadResult = await this.fetchJSON(
+        const downloadResult = await this.fetchJSON(
             key,
             HOST + '/api/v1/',
             httpOptions,
@@ -368,56 +566,16 @@ class DownloadManager {
             acceptValueFromCache = (value) => {
                 return value.result && !value.error
             },
-            downloadResult,
         )
         const value = downloadResult.value
         if (value && value.error) {
             /* GraphQL error */
             const errorMessage = value.error
-            return downloadResult.downloadError(errorMessage, refresh = (downloadResult) => {
-                downloadResult.downloadStarted()
-                this.query(
-                    key, query, cacheInfo, timeoutDesc, downloadResult,
-                )
-            })
+            return downloadResult.downloadError(errorMessage)
         }
 
         return downloadResult.update(value => value.result)
     }
-
-    // graphQLMutate = async (query) => {
-    //     return await this.graphQL('DO_NOT_CACHE', query, { noCache: true })
-    // }
-    //
-    // /* Execute a GraphQL query */
-    // graphQL = async /*<T>*/(
-    //         /* key used for caching responses */
-    //         key : string,
-    //         /* GraphQL query string to execute */
-    //         query : string,
-    //         /* Callback that decides whether the download is still relevant */
-    //         cacheInfo    : CacheInfo,
-    //         timeoutDesc = 'normal',
-    //         ) => { //: Promise<DownloadResult<T>> => {
-    //     const httpOptions = {
-    //         method: 'POST',
-    //         headers: {
-    //             // 'Accept': 'application/json',
-    //             'Content-Type': 'application/graphql',
-    //         },
-    //         body: query,
-    //     }
-    //     const result = await this.fetchJSON(
-    //         key, HOST + '/graphql', httpOptions, cacheInfo, timeoutDesc)
-    //     const value = result.value
-    //     if (value && value.errors && value.errors.length > 0) {
-    //         /* GraphQL error */
-    //         const errorMessage = value.errors[0].message
-    //         return result.downloadError(errorMessage)
-    //     }
-    //
-    //     return result.update(value => value.data)
-    // }
 
     /* HTTP GET/POST/etc to a URL */
     fetchJSON = async /*<T>*/(
@@ -430,7 +588,6 @@ class DownloadManager {
             cacheInfo : CacheInfo,
             timeoutDesc = 'normal',
             acceptValueFromCache = (value) => true,
-            downloadResult : ?DownloadResult = undefined,
         ) : Promise<DownloadResult<T>> => {
         assert(url)
         /* Try a fresh download... */
@@ -441,7 +598,6 @@ class DownloadManager {
             timeoutInfo.expiryTimeout,
             cacheInfo,
             acceptValueFromCache = acceptValueFromCache,
-            downloadResult = downloadResult,
         )
     }
 
@@ -460,7 +616,6 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         expiredTimeout  : Float,
         cacheInfo       : CacheInfo,
         acceptValueFromCache = (value) => true,
-        downloadResult       = null,
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
@@ -470,8 +625,6 @@ const fetchJSONWithTimeouts = async /*<T>*/(
     const expiredCallback = async () => {
         return await simpleFetchJSON(url, httpOptions, expiredTimeout)
     }
-
-    downloadResult = downloadResult || emptyResult()
 
     var result
     try {
@@ -491,16 +644,10 @@ const fetchJSONWithTimeouts = async /*<T>*/(
                 result = cachedValue.value
             }
         }
-        return downloadResult.downloadFinished(result)
+        return emptyResult().downloadFinished(result)
     } catch (e) {
         if (isNetworkError(e))
-            return downloadResult.downloadError(e.message, refresh = (downloadResult) => {
-                downloadResult.downloadStarted()
-                fetchJSONWithTimeouts(
-                    key, url, httpOptions, refreshTimeout, expiredTimeout,
-                    cacheInfo, acceptValueFromCache, downloadResult,
-                )
-            })
+            return emptyResult().downloadError(e.message)
         throw e
     }
 }
