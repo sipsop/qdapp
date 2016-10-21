@@ -20,7 +20,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
 import { DownloadResultView } from '../HTTP.js'
-import { BarStatusNotification } from '../Notifications.js'
+import { NotificationBar } from '../NotificationBar.js'
 import { OrderList } from '../Orders/OrderList.js'
 import { LargeButton } from '../Button.js'
 import { TagView } from '../Tags.js'
@@ -40,25 +40,29 @@ const { log, assert } = _.utils('./Menu/MenuPage.js')
 
 const rowHeight = 55
 
+// @observer
+// export class MenuPage extends DownloadResultView {
+//     errorMessage = "Error downloading bar and menu info"
+//     refreshPage = () => barStore.refreshBar()
+//     getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
+//     renderFinished = (bar) => <MenuView />
+// }
+
 @observer
-export class MenuPage extends DownloadResultView {
-    errorMessage = "Error downloading bar and menu info"
-    refreshPage = () => barStore.refreshBar()
-    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
-    renderFinished = (bar) => <MenuView />
+export class MenuPage extends Page {
+    renderView = () => {
+        return <MenuView />
+    }
 }
 
 @observer
-export class MenuView extends Page {
-    renderView = () => {
+export class MenuView extends PureComponent {
+    render = () => {
         if (!barStatusStore.isQDodgerBar)
-            return <BarStatusNotification absolutePosition={false} />
+            return null
 
-        return <View style={{flex: 1}}>
-            <View style={{flex: 1, marginTop: 5}}>
-                <MenuList />
-            </View>
-            <BarStatusNotification />
+        return <View style={{flex: 1, marginTop: 5}}>
+            <MenuList />
             <ReviewButton />
         </View>
     }

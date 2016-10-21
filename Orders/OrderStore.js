@@ -327,7 +327,11 @@ class OrderStore {
             log('Stripe token error', err)
             if (!(err instanceof NetworkError))
                 throw err
-            this.orderResultDownload.downloadError(err.message)
+            this.orderResultDownload.downloadError(
+                err.message,
+                // Make sure to obtain new login tokens if necesary
+                refresh = null,
+            )
             return
         }
         log('Got stripe token', stripeToken)

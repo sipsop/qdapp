@@ -77,7 +77,9 @@ const searchNearby = async (
     const doc = jsonDownloadResult.value
     if (doc.status !== 'OK') {
         jsonDownloadResult.downloadError(
-            `Error downloading data from google maps (${doc.status}): ${doc.error_message}`)
+            `Error downloading data from google maps (${doc.status}): ${doc.error_message}`,
+            refresh = null, /* TODO: */
+        )
     }
     return jsonDownloadResult
 }
