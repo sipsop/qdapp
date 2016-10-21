@@ -125,7 +125,7 @@ export class Notification extends PureComponent {
     close = () => this.visible = false
 
     render = () => {
-        if (!this.visible)
+        if (!this.visible || this.props.visible === false)
             return null
 
         const absolute = this.props.absolutePosition
