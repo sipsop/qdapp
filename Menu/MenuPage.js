@@ -58,8 +58,8 @@ export class MenuPage extends Page {
 @observer
 export class MenuView extends PureComponent {
     render = () => {
-        if (!barStatusStore.isQDodgerBar)
-            return null
+        // if (!barStatusStore.isQDodgerBar)
+        //     return null
 
         return <View style={{flex: 1, marginTop: 5}}>
             <MenuList />
