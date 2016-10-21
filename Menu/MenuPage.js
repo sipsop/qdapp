@@ -52,7 +52,7 @@ export class MenuPage extends DownloadResultView {
 export class MenuView extends Page {
     renderView = () => {
         if (!barStatusStore.isQDodgerBar)
-            return <BarStatusNotification />
+            return <BarStatusNotification absolutePosition={false} />
 
         return <View style={{flex: 1}}>
             <View style={{flex: 1, marginTop: 5}}>
