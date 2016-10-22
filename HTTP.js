@@ -278,7 +278,7 @@ const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
         if (restartDownload || download.state === 'NotStarted')
             download.downloadStarted()
         download.timestamp = getTime()
-        download.lastRefreshState = refreshState
+        download.lastRefreshState = JSON.stringify(refreshState)
     })
 
     // Download
@@ -339,14 +339,14 @@ export class JSONDownload {
     }
 
     @computed get httpOptions() {
-        return undefined
+        return null
     }
 
     /* Refresh the download whenever 'url' or 'httpOptions' change */
     @computed get refreshState() {
         return {
             url: this.url,
-            httpOptions: this.httpOption,
+            httpOptions: this.httpOptions,
         }
     }
 
@@ -383,7 +383,10 @@ export class JSONDownload {
     }
 
     @computed get refreshStateChanged() {
-        return !_.deepEqual(this.refreshState, this.lastRefreshState)
+        const refreshState = JSON.stringify(this.refreshState)
+        const result = !_.deepEqual(refreshState, this.lastRefreshState)
+        log("REFRESH STATE HAS CHANGED", result)
+        return result
     }
 
     /* Should we start refreshing the download now? */
