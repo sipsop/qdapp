@@ -247,7 +247,7 @@ export class DownloadResultView<T> extends PureComponent {
 
     formatErrorMessage = (message : String) => {
         const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
-        message = message.strip()
+        message = message && message.strip()
         return this.getDownloadResult().errorMessage + (message ? ':\n' : '\n') + message
     }
 
@@ -278,6 +278,10 @@ const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
         if (restartDownload || download.state === 'NotStarted')
             download.downloadStarted()
         download.timestamp = getTime()
+        if (download.refreshStateChanged) {
+            /* lastValue has become stale, clear it */
+            download.lastValue = null
+        }
         download.lastRefreshState = JSON.stringify(refreshState)
     })
 
@@ -302,7 +306,12 @@ export class JSONDownload {
     @observable state   : DownloadState = 'NotStarted'
     @observable message : ?string       = undefined
     @observable value   : ?T            = null
-    @observable _lastValue : ?T = null
+
+    /*  The last 'value' result of this download. This is useful during the
+        'refresh period' (state = 'InProgress'), where we clear 'value' but
+        don't want to show the loading indicator to the user.
+    */
+    @observable lastValue : ?T = null
     @observable timestamp = null
     @observable errorAttempts : Int = 0
     @observable lastRefreshState = null
@@ -385,7 +394,7 @@ export class JSONDownload {
     @computed get refreshStateChanged() {
         const refreshState = JSON.stringify(this.refreshState)
         const result = !_.deepEqual(refreshState, this.lastRefreshState)
-        log("REFRESH STATE HAS CHANGED", result)
+        // log("REFRESH STATE HAS CHANGED", result)
         return result
     }
 
@@ -452,20 +461,8 @@ export class JSONDownload {
     @action downloadFinished = (value : T) : DownloadResult<T> => {
         this.reset('Finished')
         this.value = value
-        this._lastValue = value
+        this.lastValue = value
         return this
-    }
-
-    /*  The last 'value' result of this download. This is useful during the
-        'refresh period' (state = 'InProgress'), where we clear 'value' but
-        don't want to show the loading indicator to the user.
-    */
-    @computed get lastValue() {
-        if (this.refreshStateChanged) {
-            /* lastValue is stale, do not use */
-            return null
-        }
-        return this._lastValue
     }
 
     @computed get finished() {
