@@ -20,9 +20,6 @@ import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './Bar.js'
 const { log, assert } = _.utils('./Bar/BarStore.js')
 
 class BarStore {
-    // DownloadResult[schema.Bar]
-    @observable barDownloadResult : DownloadResult<Bar> = emptyResult()
-
     // BarID
     @observable barID = null
 
@@ -49,14 +46,16 @@ class BarStore {
 
     @computed get barAndMenuDownloadResult() {
         return DownloadResult.combine([
-            this.barDownloadResult,
+            this.getBarDownloadResult(),
+            this.getMenuDownloadResult(),
         ])
     }
 
-    getBarDownloadResult = () => this.barDownloadResult
+    getBarDownloadResult = () => downloadManager.getDownload('barInfo')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
     getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
-    getBar = () => this.barDownloadResult.value
+
+    getBar = () => this.getBarDownloadResult().lastValue
 
     /*************************** Network *********************************/
 
@@ -101,28 +100,10 @@ class BarStore {
 
     _setBarID = async (barID, track = false, focusOnMap = true) => {
         log("Setting barID", barID)
-        const bar = this.getBar()
-        if (bar && bar.id === barID && this.menu) {
-            if (track) this.trackSelectBar(barID)
-            return /* All done */
-        }
-
-        if (!barID) {
-            /* Clear the download results */
-            transaction(() => {
-                this.barID = barID
-                this.barDownloadResult.reset()
-            })
-            return
-        }
-
-        transaction(() => {
-            this.barID = barID
-            this.barDownloadResult.downloadStarted()
-        })
-        await this.updateBarAndMenu(barID)
+        this.barID = barID
         if (track)
             this.trackSelectBar(barID)
+        await this.getBarDownloadResult().wait()
         if (focusOnMap && this.getBar() != null) {
             setTimeout(() => {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
@@ -139,25 +120,17 @@ class BarStore {
     }
 
     @action updateBarInfo = async (barID, force = false) => {
-        const barDownloadResult = await this._getBarInfo(barID, force = force)
         /* NOTE: a user may have selected a different bar
                  before this download has completed, in
                  which case we should ignore the download.
         */
-        if (barID === this.barID) {
-            this.setBarDownloadResult(barDownloadResult)
-        }
+        if (force)
+            downloadManager.forceRefresh('barInfo')
     }
 
     @action updateMenuInfo = async (barID, force = false) => {
         if (force)
             await downloadManager.forceRefresh('menu')
-    }
-
-    @action setBarDownloadResult = (downloadResult) => {
-        if (!downloadResult)
-            throw Error("DownloadResult is undefined in setBarDownloadResult!")
-        this.barDownloadResult = downloadResult
     }
 
     @computed get menu() {

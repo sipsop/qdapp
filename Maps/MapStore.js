@@ -61,6 +61,8 @@ const normalDelta : Delta = {
 
 
 export const getBarCoords = (bar : Bar) => {
+    if (!bar.address)
+        log("DO NOT HAVE AN ADDRESS", bar)
     return {
         latitude: bar.address.lat,
         longitude: bar.address.lon,
