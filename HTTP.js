@@ -444,28 +444,25 @@ export class JSONDownload {
     }
 
     refresh = async (cacheInfo) => {
-        const result = await refreshDownload(this, cacheInfo)
-        this._fromResult(result)
-    }
-
-    @action _fromResult = ({downloadResult, refreshState}) => {
+        const {downloadResult, refreshState} = await refreshDownload(this, cacheInfo)
         if (!_.deepEqual(refreshState, this.refreshState)) {
             // Result from an out-of-date download -- do not use
             return
         }
-
-        // Update state
-        if (downloadResult.state === 'Finished') {
-            this.downloadFinished(downloadResult.value)
-            this.finish()
-        } else if (downloadResult.state === 'Error') {
-            this.downloadError(downloadResult.message)
-        } else {
-            throw Error(`Invalid download state: ${downloadResult.state}`)
-        }
+        transaction(() => {
+            // Update state
+            if (downloadResult.state === 'Finished') {
+                this.downloadFinished(downloadResult.value)
+                this.finish()
+            } else if (downloadResult.state === 'Error') {
+                this.downloadError(downloadResult.message)
+            } else {
+                throw Error(`Invalid download state: ${downloadResult.state}`)
+            }
+        })
     }
 
-    finish = () => {
+    @action finish = () => {
         /* Update the download state here for any finished download */
     }
 
@@ -599,6 +596,7 @@ class DownloadManager {
 
     constructor() {
         this.downloads = {}
+        this.disposeHandlers = {}
     }
 
     declareDownload = (download) => {
@@ -607,7 +605,7 @@ class DownloadManager {
         assert(this.downloads[download.name] == undefined,
                `Download.name already defined (${download.name})`)
         this.downloads[download.name] = download
-        autorun(() => {
+        this.disposeHandlers[download.name] = autorun(() => {
             if (download.shouldRefreshNow) {
                 download.refresh()
             }
@@ -616,6 +614,9 @@ class DownloadManager {
 
     removeDownload = (name) => {
         delete this.downloads[name]
+        /* Dispose of autorun that re-triggers download */
+        this.disposeHandlers[name]()
+        delete this.disposeHandlers[name]
     }
 
     forceRefresh = async (name, restartDownload = true) => {
