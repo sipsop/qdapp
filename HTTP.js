@@ -290,48 +290,6 @@ export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
     return new DownloadResult(errorMessage)
 }
 
-/*
-Start download. Internal use only.
-
-    NOTE: Bind this here to work around babel bug that doesn't allow super
-          method calls from async functions
-*/
-const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
-    log("Refreshing download:", download.name)
-    // const refreshState = JSON.stringify(download.refreshState)
-    const refreshState = download.refreshState
-
-    // Update timestamp
-    transaction(() => {
-        if (restartDownload || download.state === 'NotStarted')
-            download.downloadStarted()
-        download.timestamp = getTime()
-        if (download.refreshStateChanged) {
-            /* lastValue has become stale, clear it */
-            download.lastValue = null
-        }
-        download.lastRefreshState = refreshState
-    })
-
-    // Download
-    cacheInfo = cacheInfo || download.cacheInfo
-    const downloadResult = await downloadManager.fetchJSON(
-        download.cacheKey,
-        download.url,
-        download.httpOptions,
-        download.cacheInfo,
-        download.timeoutDesc,
-        download.acceptValueFromCache,
-    )
-
-    return {
-        downloadResult: downloadResult,
-        refreshState: refreshState,
-    }
-}
-
-
-
 export class JSONDownload {
 
     @observable state   : DownloadState = 'NotStarted'
@@ -346,6 +304,7 @@ export class JSONDownload {
     @observable timestamp = null
     @observable errorAttempts : Int = 0
     @observable lastRefreshState = null
+    promise = null
 
     name            : String = null
     errorMessage    : ?String = null
@@ -444,7 +403,34 @@ export class JSONDownload {
     }
 
     refresh = async (cacheInfo) => {
-        const {downloadResult, refreshState} = await refreshDownload(this, cacheInfo)
+        log("Refreshing download:", this.name)
+        const refreshState = this.refreshState
+
+        // Update timestamp
+        transaction(() => {
+            // if (this.state === 'NotStarted')
+            this.downloadStarted()
+            this.timestamp = getTime()
+            if (this.refreshStateChanged) {
+                /* lastValue has become stale, clear it */
+                this.lastValue = null
+            }
+            this.lastRefreshState = refreshState
+        })
+
+        // Download
+        cacheInfo = cacheInfo || this.cacheInfo
+        const promise = downloadManager.fetchJSON(
+            this.cacheKey,
+            this.url,
+            this.httpOptions,
+            this.cacheInfo,
+            this.timeoutDesc,
+            this.acceptValueFromCache,
+        )
+        this.promise = promise
+        const downloadResult = await promise
+
         if (!_.deepEqual(refreshState, this.refreshState)) {
             // Result from an out-of-date download -- do not use
             return
@@ -464,6 +450,11 @@ export class JSONDownload {
 
     @action finish = () => {
         /* Update the download state here for any finished download */
+    }
+
+    wait = async () => {
+        if (this.promise)
+            await this.promise
     }
 
     /***********************************************************************/
