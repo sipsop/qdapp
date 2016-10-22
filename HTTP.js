@@ -47,6 +47,121 @@ export type DownloadState =
     | 'Finished'    // download error
     | 'Error'       // download error
 
+
+/***********************************************************************/
+/* Components */
+/***********************************************************************/
+
+/* React Component for rendering a downloadResult in its different states */
+@observer
+export class DownloadResultView<T> extends PureComponent {
+    inProgressMessage = null
+    errorMessage = null
+
+    styles = StyleSheet.create({
+        inProgress: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        error: {
+            // flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            margin: 10,
+            borderRadius: 5,
+            padding: 5,
+            // maxHeight: 150,
+        },
+    })
+
+    render = () => {
+        const res = this.getDownloadResult()
+        assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
+        if (res.state == 'NotStarted') {
+            return this.renderNotStarted()
+        } else if (res.state == 'InProgress') {
+            return this.renderInProgress()
+        } else if (res.state == 'Finished') {
+            return this.renderFinished(res.value)
+        } else if (res.state == 'Error') {
+            return this.renderError(res.message)
+        } else {
+            throw Error('unreachable')
+        }
+    }
+
+    getDownloadResult = () => {
+        throw Error('NotImplemented')
+    }
+
+    refreshPage = () => {
+        const downloadResult = this.getDownloadResult()
+        if (downloadResult.refresh)
+            downloadResult.refresh()
+    }
+
+    renderNotStarted = () => null
+    renderFinished = (value : T) => {
+        throw Error('NotImplemented')
+    }
+
+    renderInProgress = () => {
+        return <View style={this.styles.inProgress}>
+            {
+                this.inProgressMessage
+                    ? <T style={{fontSize: 20, color: '#000'}}>
+                        {this.inProgressMessage}
+                      </T>
+                    : undefined
+            }
+            <View>
+                <Loader />
+            </View>
+        </View>
+    }
+
+    formatErrorMessage = (message : String) => {
+        const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
+        message = message && message.strip()
+        return this.getDownloadResult().errorMessage + (message ? ':\n' : '\n') + message
+    }
+
+    renderError = (message : string) => {
+        const errorMessage = this.formatErrorMessage(message)
+        return <Notification
+                    dismissLabel="REFRESH"
+                    onPress={this.refreshPage}
+                    message={errorMessage}
+                    textSize="medium"
+                    absolutePosition={false} />
+    }
+}
+
+export class DownloadComponent extends PureComponent {
+    downloadName = null
+
+    componentDidMount = () => {
+        const download = this.getDownload()
+        this.downloadName = download.name + '.' + _.uuid()
+        download.name = this.downloadName
+        downloadManager.declareDownload(download)
+    }
+
+    componentWillUnmount = () => {
+        downloadManager.removeDownload(this.downloadName)
+    }
+
+    getDownload = () => {
+        throw Error("getDownload() not implemented")
+    }
+}
+
+/***********************************************************************/
+/* Network stuff */
+/***********************************************************************/
+
 export class DownloadResult<T> {
 
     @observable state   : DownloadState = 'NotStarted'
@@ -174,94 +289,6 @@ class CombinedDownloadResult<T> {
 export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
     return new DownloadResult(errorMessage)
 }
-
-/* React Component for rendering a downloadResult in its different states */
-@observer
-export class DownloadResultView<T> extends PureComponent {
-    inProgressMessage = null
-    errorMessage = null
-
-    styles = StyleSheet.create({
-        inProgress: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        error: {
-            // flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            margin: 10,
-            borderRadius: 5,
-            padding: 5,
-            // maxHeight: 150,
-        },
-    })
-
-    render = () => {
-        const res = this.getDownloadResult()
-        assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
-        if (res.state == 'NotStarted') {
-            return this.renderNotStarted()
-        } else if (res.state == 'InProgress') {
-            return this.renderInProgress()
-        } else if (res.state == 'Finished') {
-            return this.renderFinished(res.value)
-        } else if (res.state == 'Error') {
-            return this.renderError(res.message)
-        } else {
-            throw Error('unreachable')
-        }
-    }
-
-    getDownloadResult = () => {
-        throw Error('NotImplemented')
-    }
-
-    refreshPage = () => {
-        const downloadResult = this.getDownloadResult()
-        if (downloadResult.refresh)
-            downloadResult.refresh()
-    }
-
-    renderNotStarted = () => null
-    renderFinished = (value : T) => {
-        throw Error('NotImplemented')
-    }
-
-    renderInProgress = () => {
-        return <View style={this.styles.inProgress}>
-            {
-                this.inProgressMessage
-                    ? <T style={{fontSize: 20, color: '#000'}}>
-                        {this.inProgressMessage}
-                      </T>
-                    : undefined
-            }
-            <View>
-                <Loader />
-            </View>
-        </View>
-    }
-
-    formatErrorMessage = (message : String) => {
-        const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
-        message = message && message.strip()
-        return this.getDownloadResult().errorMessage + (message ? ':\n' : '\n') + message
-    }
-
-    renderError = (message : string) => {
-        const errorMessage = this.formatErrorMessage(message)
-        return <Notification
-                    dismissLabel="REFRESH"
-                    onPress={this.refreshPage}
-                    message={errorMessage}
-                    textSize="medium"
-                    absolutePosition={false} />
-    }
-}
-
 
 /*
 Start download. Internal use only.
@@ -428,12 +455,18 @@ export class JSONDownload {
         }
 
         // Update state
-        if (downloadResult.state === 'Finished')
+        if (downloadResult.state === 'Finished') {
             this.downloadFinished(downloadResult.value)
-        else if (downloadResult.state === 'Error')
+            this.finish()
+        } else if (downloadResult.state === 'Error') {
             this.downloadError(downloadResult.message)
-        else
+        } else {
             throw Error(`Invalid download state: ${downloadResult.state}`)
+        }
+    }
+
+    finish = () => {
+        /* Update the download state here for any finished download */
     }
 
     /***********************************************************************/
@@ -503,16 +536,12 @@ export class QueryDownload extends JSONDownload {
         return value.result && !value.error
     }
 
-    refresh = async (cacheInfo) => {
-        const result = await refreshDownload(this, cacheInfo)
-        transaction(() => {
-            this._fromResult(result)
-            /* Unpack the queries result value or error message */
-            if (this.value && this.value.error)
-                this.downloadError(this.value.error)
-            else if (this.value)
-                this.downloadFinished(this.value.result)
-        })
+    @action finish = () => {
+        /* Unpack the queries result value or error message */
+        if (this.value && this.value.error)
+            this.downloadError(this.value.error)
+        else if (this.value)
+            this.downloadFinished(this.value.result)
     }
 }
 
@@ -573,13 +602,20 @@ class DownloadManager {
     }
 
     declareDownload = (download) => {
-        assert(download.name != null, "Download.name is null")
+        assert(download.name != null,
+               `Download.name is null (${download.name})`)
+        assert(this.downloads[download.name] == undefined,
+               `Download.name already defined (${download.name})`)
         this.downloads[download.name] = download
         autorun(() => {
             if (download.shouldRefreshNow) {
                 download.refresh()
             }
         })
+    }
+
+    removeDownload = (name) => {
+        delete this.downloads[name]
     }
 
     forceRefresh = async (name, restartDownload = true) => {
