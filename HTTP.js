@@ -271,6 +271,7 @@ Start download. Internal use only.
 */
 const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
     log("Refreshing download:", download.name)
+    // const refreshState = JSON.stringify(download.refreshState)
     const refreshState = download.refreshState
 
     // Update timestamp
@@ -282,7 +283,7 @@ const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
             /* lastValue has become stale, clear it */
             download.lastValue = null
         }
-        download.lastRefreshState = JSON.stringify(refreshState)
+        download.lastRefreshState = refreshState
     })
 
     // Download
@@ -296,7 +297,10 @@ const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
         download.acceptValueFromCache,
     )
 
-    return downloadResult
+    return {
+        downloadResult: downloadResult,
+        refreshState: refreshState,
+    }
 }
 
 
@@ -392,10 +396,7 @@ export class JSONDownload {
     }
 
     @computed get refreshStateChanged() {
-        const refreshState = JSON.stringify(this.refreshState)
-        const result = !_.deepEqual(refreshState, this.lastRefreshState)
-        // log("REFRESH STATE HAS CHANGED", result)
-        return result
+        return !_.deepEqual(this.refreshState, this.lastRefreshState)
     }
 
     /* Should we start refreshing the download now? */
@@ -416,12 +417,17 @@ export class JSONDownload {
     }
 
     refresh = async (cacheInfo) => {
-        const downloadResult = await refreshDownload(this, cacheInfo)
-        this._fromResult(downloadResult)
+        const result = await refreshDownload(this, cacheInfo)
+        this._fromResult(result)
     }
 
-    @action _fromResult = (downloadResult) => {
-            // Update state
+    @action _fromResult = ({downloadResult, refreshState}) => {
+        if (!_.deepEqual(refreshState, this.refreshState)) {
+            // Result from an out-of-date download -- do not use
+            return
+        }
+
+        // Update state
         if (downloadResult.state === 'Finished')
             this.downloadFinished(downloadResult.value)
         else if (downloadResult.state === 'Error')
@@ -498,9 +504,9 @@ export class QueryDownload extends JSONDownload {
     }
 
     refresh = async (cacheInfo) => {
-        const downloadResult = await refreshDownload(this, cacheInfo)
+        const result = await refreshDownload(this, cacheInfo)
         transaction(() => {
-            this._fromResult(downloadResult)
+            this._fromResult(result)
             /* Unpack the queries result value or error message */
             if (this.value && this.value.error)
                 this.downloadError(this.value.error)

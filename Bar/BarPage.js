@@ -244,7 +244,7 @@ class MenuView extends DownloadResultView {
     errorMessage = "Error downloading menu"
     refreshPage = () => barStore.updateMenuInfo(barStore.barID, force = true)
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    renderError = () => <View />
+    renderError = () => null
     renderFinished = (menu) => <BarMenu menu={menu} />
 }
 
