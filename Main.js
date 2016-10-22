@@ -29,6 +29,7 @@ import * as _ from './Curry.js'
 import { Checkout } from './Payment/Checkout.js'
 import { ReceiptModal } from './Orders/Receipt.js'
 import { Loader } from './Page.js'
+import { downloadManager } from './HTTP.js'
 
 const { log, assert } = _.utils('./Main.js')
 
@@ -99,4 +100,5 @@ export const main = async () => {
     await store.initialize()
 }
 
+require('./Downloads.js').initialize(require('./Store.js'), downloadManager)
 AppRegistry.registerComponent('AwesomeProject', () => App);

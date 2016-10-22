@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
-import { DownloadResultView } from '../HTTP.js'
+import { DownloadResultView, downloadManager } from '../HTTP.js'
 import { NotificationBar } from '../NotificationBar.js'
 import { OrderList } from '../Orders/OrderList.js'
 import { LargeButton } from '../Button.js'
@@ -74,7 +74,8 @@ class MenuList extends PureComponent {
     handleRefresh = async () => {
         await Promise.all([
             barStore.updateMenuInfo(barStore.barID, force = true),
-            tagStore.fetchTags(restartDownload = false, force = true),
+            // tagStore.fetchTags(restartDownload = false, force = true),
+            downloadManager.forceRefresh('tags'),
         ])
     }
 

@@ -132,7 +132,7 @@ class BarStore {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
             }, 1000)
         }
-        await tagStore.fetchTags()
+        // await tagStore.fetchTags()
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {

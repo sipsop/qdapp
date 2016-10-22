@@ -9,7 +9,7 @@ import {
     StyleSheet,
     T,
 } from './Component.js';
-import { observable, transaction, computed, action } from 'mobx'
+import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Notification } from './Notification.js'
@@ -263,23 +263,54 @@ export class DownloadResultView<T> extends PureComponent {
 }
 
 
+/*
+Start download. Internal use only.
+
+    NOTE: Bind this here to work around babel bug that doesn't allow super
+          method calls from async functions
+*/
+const refreshDownload = async (download, cacheInfo, restartDownload = true) => {
+    log("Refreshing download:", download.name)
+    const refreshState = download.refreshState
+
+    // Update timestamp
+    transaction(() => {
+        if (restartDownload || download.state === 'NotStarted')
+            download.downloadStarted()
+        download.timestamp = getTime()
+        download.lastRefreshState = refreshState
+    })
+
+    // Download
+    cacheInfo = cacheInfo || download.cacheInfo
+    const downloadResult = await downloadManager.fetchJSON(
+        download.cacheKey,
+        download.url,
+        download.httpOptions,
+        download.cacheInfo,
+        download.timeoutDesc,
+        download.acceptValueFromCache,
+    )
+
+    return downloadResult
+}
+
+
 
 export class JSONDownload {
 
     @observable state   : DownloadState = 'NotStarted'
     @observable message : ?string       = undefined
     @observable value   : ?T            = null
+    @observable _lastValue : ?T = null
     @observable timestamp = null
     @observable errorAttempts : Int = 0
     @observable lastRefreshState = null
 
+    name            : String = null
     errorMessage    : ?String = null
     periodicRefresh : ?Int = null           /* refresh every N seconds */
     depends         : Array<Download> = []  /* Download dependencies */
-    active          : Bool = true
-    cacheKey        : String = true
-    httpOptions     = undefined
-    url             = null
 
     /* Refresh downloads that had an error when connectivity resumes /
        user presses refresh
@@ -295,28 +326,39 @@ export class JSONDownload {
     /* How long before a download times out */
     timeoutDesc = 'normal'
 
-    @computed get refreshState() {
+    @computed get active() {
+        return true
+    }
+
+    @computed get cacheKey() {
+        throw Error("Cache key not implemented")
+    }
+
+    @computed get url() {
         return null
     }
 
-    /* Whether to cache the downloaded result */
-    cacheResult = (result) => {
-        return true
+    @computed get httpOptions() {
+        return undefined
+    }
+
+    /* Refresh the download whenever 'url' or 'httpOptions' change */
+    @computed get refreshState() {
+        return {
+            url: this.url,
+            httpOptions: this.httpOption,
+        }
     }
 
     /***********************************************************************/
     /* Refresh                                                             */
     /***********************************************************************/
 
-    @computed get _inProgress() {
-        return this.inProgress && this.timestamp + 30 < ticker.now
-    }
-
     /* Is the download outdated? */
     @computed get shouldRefresh() {
-        const outdated = this.periodicRefresh &&
-                         (this.timestamp + this.periodicRefresh < ticker.now)
-        return outdated && !this._inProgress
+        return !this.inProgress &&
+               this.periodicRefresh &&
+               (this.timestamp + this.periodicRefresh < ticker.now)
     }
 
     /* Should we retry errored downloads? */
@@ -357,35 +399,21 @@ export class JSONDownload {
     }
 
     /* Method to force a refresh (e.g. on UI pull downs) */
-    forceRefresh = (restartDownload = true) => {
-        this.refresh(this.refreshCacheInfo, restartDownload)
+    forceRefresh = async (restartDownload = true) => {
+        await this.refresh(this.refreshCacheInfo, restartDownload)
     }
 
-    /* Start download. Internal use only. */
-    refresh = async (cacheInfo, restartDownload = true) => {
-        // Update timestamp
-        transaction(() => {
-            if (restartDownload || this.state === 'NotStarted')
-                this.downloadStarted()
-            this.timestamp = getTime()
-        })
+    refresh = async (cacheInfo) => {
+        const downloadResult = await refreshDownload(this, cacheInfo)
+        this._fromResult(downloadResult)
+    }
 
-        // Download
-        cacheInfo = cacheInfo || this.cacheInfo
-        const downloadResult = await downloadManager.fetchJSON(
-            this.cacheKey,
-            this.url,
-            this.httpOptions,
-            this.cacheInfo,
-            this.timeoutDesc,
-            this.acceptValueFromCache,
-        )
-
-        // Update state
+    @action _fromResult = (downloadResult) => {
+            // Update state
         if (downloadResult.state === 'Finished')
             this.downloadFinished(downloadResult.value)
         else if (downloadResult.state === 'Error')
-            this.downloadError(message)
+            this.downloadError(downloadResult.message)
         else
             throw Error(`Invalid download state: ${downloadResult.state}`)
     }
@@ -421,7 +449,20 @@ export class JSONDownload {
     @action downloadFinished = (value : T) : DownloadResult<T> => {
         this.reset('Finished')
         this.value = value
+        this._lastValue = value
         return this
+    }
+
+    /*  The last 'value' result of this download. This is useful during the
+        'refresh period' (state = 'InProgress'), where we clear 'value' but
+        don't want to show the loading indicator to the user.
+    */
+    @computed get lastValue() {
+        if (this.refreshStateChanged) {
+            /* lastValue is stale, do not use */
+            return null
+        }
+        return this._lastValue
     }
 
     @computed get finished() {
@@ -434,15 +475,17 @@ export class JSONDownload {
 }
 
 export class QueryDownload extends JSONDownload {
-    url = HOST + '/api/v1/'
+    @computed get url() {
+        return HOST + '/api/v1/'
+    }
 
-    get httpOptions() {
+    @computed get httpOptions() {
         return {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(thisquery),
+            body: JSON.stringify(this.query),
         }
     }
 
@@ -450,20 +493,20 @@ export class QueryDownload extends JSONDownload {
         return null
     }
 
-    @computed get refreshState() {
-        return this.query
-    }
-
     acceptValueFromCache = (value) => {
         return value.result && !value.error
     }
 
     refresh = async (cacheInfo) => {
-        const result = await JSONDownload.refresh.bind(this)(cacheInfo)
-        if (this.value && this.value.error)
-            this.downloadError(this.value.error)
-        else if (this.value)
-            this.downloadFinished(this.value.result)
+        const downloadResult = await refreshDownload(this, cacheInfo)
+        transaction(() => {
+            this._fromResult(downloadResult)
+            /* Unpack the queries result value or error message */
+            if (this.value && this.value.error)
+                this.downloadError(this.value.error)
+            else if (this.value)
+                this.downloadFinished(this.value.result)
+        })
     }
 }
 
@@ -520,11 +563,12 @@ const getTimeoutInfo = (timeoutDesc) => {
 class DownloadManager {
 
     constructor() {
-        this.downloads = []
+        this.downloads = {}
     }
 
     declareDownload = (download) => {
-        this.downloads.push(download)
+        assert(download.name != null, "Download.name is null")
+        this.downloads[download.name] = download
         autorun(() => {
             if (download.shouldRefreshNow) {
                 download.refresh()
@@ -532,9 +576,22 @@ class DownloadManager {
         })
     }
 
+    forceRefresh = async (name, restartDownload = true) => {
+        await this.getDownload(name).forceRefresh(restartDownload)
+        // const download = this.getDownload(name)
+        // download.refresh(download.refreshCacheInfo)
+    }
+
+    getDownload = (name) => {
+        const download = this.downloads[name]
+        if (download == null)
+            throw Error(`No download with name ${name}`)
+        return download
+    }
+
     /* Refresh errored downloads, e.g. after re-gaining connectivity */
     @action refreshDownloads = () => {
-        this.downloads.forEach(download => {
+        Object.values(this.downloads).forEach(download => {
             download.resetErrorAttempts()
         })
     }
