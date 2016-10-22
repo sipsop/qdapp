@@ -21,27 +21,6 @@ import * as _ from './Curry.js'
 
 const { log, assert } = _.utils('./Tags.js')
 
-const tagQuery = (barID) => {
-    return {
-        Tags: {
-            args: {
-                barID: barID,
-            },
-            result: {
-                tagInfo: [{
-                    tagID:   'String',
-                    tagName: 'String',
-                    excludes: ['String'],
-                }],
-                tagGraph: [{
-                    srcID:  'String',
-                    dstIDs: ['String'],
-                }],
-            },
-        }
-    }
-}
-
 /* Root tags: beer, wine, spirits, cocktails, water, ... */
 export const rootIDs = [ '#beer', '#wine', '#spirit', '#cocktail', '#water' ]
 
@@ -85,14 +64,10 @@ export class TagStore {
 
     */
 
-    /* DownloadResult[ schema.Tags ] */
-    // @observable tagDownloadResult = null
-    /* [TagID] */
-    @observable tagSelection      = null
+    @observable tagSelection : Array<TagID> = null
     @observable asyncTagSelection = null /* synced asynchronously with 'tagSelection' */
 
     constructor() {
-        // this.tagDownloadResult   = emptyResult()
         this.tagSelection        = []
         this.tagSelectionHistory = new Map()
     }
@@ -116,23 +91,8 @@ export class TagStore {
         }
     }
 
-    // fetchTags = async (restartDownload = true, force = false) => {
-    //     if (restartDownload)
-    //         this.tagDownloadResult.downloadStarted()
-    //     const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
-    //     const downloadResult = await downloadManager.query(
-    //         'qd:tags', tagQuery(barStore.barID), cacheInfo)
-    //     _.runAndLogErrors(() => {
-    //         this.tagDownloadResult = downloadResult
-    //     })
-    // }
-
     @computed get tags() {
-        // log("Tags:", downloadManager.getDownload('tags').tags)
         return downloadManager.getDownload('tags').tags
-        // if (!this.tagDownloadResult.value)
-        //     return { tagInfo: [], tagGraph: [] }
-        // return this.tagDownloadResult.value
     }
 
     @computed get tagGraph() {
@@ -141,14 +101,6 @@ export class TagStore {
         return new Map(this.tags.tagGraph.map(
             edge => [edge.srcID, edge.dstIDs]
         ))
-        // const result = new Map()
-        // const edges = this.tags.tagGraph.forEach((edge) => {
-        //     if (!result.has(edge.srcID))
-        //         result.set(edge.srcID, [])
-        //     const dstIDs = result.get(edge.srcID)
-        //     dstIDs.push(edge.dstID)
-        // })
-        // return result
     }
 
     @computed get tagNames() {
@@ -331,11 +283,8 @@ export class TagView extends DownloadResultView {
         // return _.union(_.flatten(tagStore.tagSelection.map(tagStore.tagExcludes.get)))
     }
 
-    getDownloadResult = () => downloadManager.getDownload('tags') //tagStore.tagDownloadResult
-    refreshPage = async () => {
-        await downloadManager.forceRefresh('tags')
-        // tagStore.fetchTags(restartDownload = true, force = true)
-    }
+    getDownloadResult = () => downloadManager.getDownload('tags')
+    refreshPage = async () => await downloadManager.forceRefresh('tags')
     renderNotStarted = () => <View />
 
     renderFinished = (tags) => {
