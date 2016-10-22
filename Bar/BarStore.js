@@ -22,7 +22,6 @@ const { log, assert } = _.utils('./Bar/BarStore.js')
 class BarStore {
     // DownloadResult[schema.Bar]
     @observable barDownloadResult : DownloadResult<Bar> = emptyResult()
-    @observable menuDownloadResult : DownloadResult<Menu> = emptyResult()
 
     // BarID
     @observable barID = null
@@ -51,12 +50,11 @@ class BarStore {
     @computed get barAndMenuDownloadResult() {
         return DownloadResult.combine([
             this.barDownloadResult,
-            this.menuDownloadResult,
         ])
     }
 
     getBarDownloadResult = () => this.barDownloadResult
-    getMenuDownloadResult = () => this.menuDownloadResult
+    getMenuDownloadResult = () => downloadManager.getDownload('menu')
     getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
     getBar = () => this.barDownloadResult.value
 
@@ -114,7 +112,6 @@ class BarStore {
             transaction(() => {
                 this.barID = barID
                 this.barDownloadResult.reset()
-                this.menuDownloadResult.reset()
             })
             return
         }
@@ -122,7 +119,6 @@ class BarStore {
         transaction(() => {
             this.barID = barID
             this.barDownloadResult.downloadStarted()
-            this.menuDownloadResult.downloadStarted()
         })
         await this.updateBarAndMenu(barID)
         if (track)
@@ -132,7 +128,6 @@ class BarStore {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
             }, 1000)
         }
-        // await tagStore.fetchTags()
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {
@@ -155,10 +150,8 @@ class BarStore {
     }
 
     @action updateMenuInfo = async (barID, force = false) => {
-        const menuDownloadResult = await this._getBarMenu(barID, force = force)
-        if (barID === this.barID) {
-            this.setMenuDownloadResult(menuDownloadResult)
-        }
+        if (force)
+            await downloadManager.forceRefresh('menu')
     }
 
     @action setBarDownloadResult = (downloadResult) => {
@@ -167,12 +160,8 @@ class BarStore {
         this.barDownloadResult = downloadResult
     }
 
-    @action setMenuDownloadResult = (downloadResult) => {
-        this.menuDownloadResult.from(downloadResult)
-    }
-
     @computed get menu() {
-        return this.menuDownloadResult.value
+        return downloadManager.getDownload('menu').lastValue
     }
 
     @computed get allMenuItems() {
