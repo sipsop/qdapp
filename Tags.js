@@ -86,13 +86,13 @@ export class TagStore {
     */
 
     /* DownloadResult[ schema.Tags ] */
-    @observable tagDownloadResult = null
+    // @observable tagDownloadResult = null
     /* [TagID] */
     @observable tagSelection      = null
     @observable asyncTagSelection = null /* synced asynchronously with 'tagSelection' */
 
     constructor() {
-        this.tagDownloadResult   = emptyResult()
+        // this.tagDownloadResult   = emptyResult()
         this.tagSelection        = []
         this.tagSelectionHistory = new Map()
     }
@@ -116,21 +116,23 @@ export class TagStore {
         }
     }
 
-    fetchTags = async (restartDownload = true, force = false) => {
-        if (restartDownload)
-            this.tagDownloadResult.downloadStarted()
-        const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
-        const downloadResult = await downloadManager.query(
-            'qd:tags', tagQuery(barStore.barID), cacheInfo)
-        _.runAndLogErrors(() => {
-            this.tagDownloadResult = downloadResult
-        })
-    }
+    // fetchTags = async (restartDownload = true, force = false) => {
+    //     if (restartDownload)
+    //         this.tagDownloadResult.downloadStarted()
+    //     const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
+    //     const downloadResult = await downloadManager.query(
+    //         'qd:tags', tagQuery(barStore.barID), cacheInfo)
+    //     _.runAndLogErrors(() => {
+    //         this.tagDownloadResult = downloadResult
+    //     })
+    // }
 
     @computed get tags() {
-        if (!this.tagDownloadResult.value)
-            return { tagInfo: [], tagGraph: [] }
-        return this.tagDownloadResult.value
+        // log("Tags:", downloadManager.getDownload('tags').tags)
+        return downloadManager.getDownload('tags').tags
+        // if (!this.tagDownloadResult.value)
+        //     return { tagInfo: [], tagGraph: [] }
+        // return this.tagDownloadResult.value
     }
 
     @computed get tagGraph() {
@@ -329,8 +331,11 @@ export class TagView extends DownloadResultView {
         // return _.union(_.flatten(tagStore.tagSelection.map(tagStore.tagExcludes.get)))
     }
 
-    getDownloadResult = () => tagStore.tagDownloadResult
-    refreshPage = () => tagStore.fetchTags(restartDownload = true, force = true)
+    getDownloadResult = () => downloadManager.getDownload('tags') //tagStore.tagDownloadResult
+    refreshPage = async () => {
+        await downloadManager.forceRefresh('tags')
+        // tagStore.fetchTags(restartDownload = true, force = true)
+    }
     renderNotStarted = () => <View />
 
     renderFinished = (tags) => {
