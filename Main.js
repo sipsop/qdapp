@@ -34,7 +34,7 @@ import { downloadManager } from './HTTP.js'
 const { log, assert } = _.utils('./Main.js')
 
 @observer
-class App extends Component {
+export class App extends Component {
     @computed get barSelected() {
         return !!barStore.barID || tabStore.currentPage !== 0
     }
@@ -101,4 +101,3 @@ export const main = async () => {
 }
 
 require('./Downloads.js').initialize(require('./Store.js'), downloadManager)
-AppRegistry.registerComponent('AwesomeProject', () => App);
