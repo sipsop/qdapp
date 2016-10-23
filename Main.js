@@ -33,13 +33,29 @@ import { downloadManager } from './HTTP.js'
 
 const { log, assert } = _.utils('./Main.js')
 
+/* Do not allow font scaling */
+Text.defaultProps.allowFontScaling = false
+
 @observer
 export class App extends Component {
     @computed get barSelected() {
         return !!barStore.barID || tabStore.currentPage !== 0
     }
 
+    // componentWillMount = () => {
+    //     StatusBar.setHidden(true)
+    // }
+
     render = () => {
+        return <View style={{flex: 1}}>
+            { Platform.OS === 'ios' &&
+                <StatusBar animated={false} hidden={true} barStyle="light-content" />
+            }
+            {this.renderApp()}
+        </View>
+    }
+
+    renderApp = () => {
         if (!store.initialized)
             return <Loader />
         if (!this.barSelected)
@@ -52,8 +68,7 @@ export class App extends Component {
 class Main extends Component {
 
     render = () => {
-        return  <SideMenu content={<ControlPanel />}>
-            {/*<StatusBar hidden={true} />*/}
+        return <SideMenu content={<ControlPanel />}>
             <View style={{flex: 1, flexDirection: 'row'}}>
                 {/*
                 <Checkout />
