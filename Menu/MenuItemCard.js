@@ -115,7 +115,7 @@ class MenuItemFooter extends PureComponent {
 
     textStyles = {
         titleText: {
-            fontSize: 25,
+            fontSize: 22,
             fontWeight: 'bold',
             color: '#fff',
             // textDecorationLine: 'underline',

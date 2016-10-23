@@ -287,7 +287,7 @@ export class BarCardFooter extends PureComponent {
     render = () => {
         const bar = this.props.bar
         return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
-            <View style={{flex : 1, marginLeft: 5}}>
+            <View style={{flex : 1, marginLeft: 5, flexWrap: 'wrap'}}>
                 <View style={{flexDirection: 'row'}}>
                     {this.props.showTimeInfo && <TimeInfo bar={bar} />}
                     {this.props.showDistance && <Distance bar={bar} />}
@@ -311,8 +311,10 @@ export class BarName extends PureComponent {
     */
     render = () => {
         return <T style={
-                    { fontSize: 25
+                    { fontSize: 22
                     , color: config.theme.primary.light
+                    , ellipsizeMode='clip'
+                    , numberOfLines={2}
                     // , color: config.theme.primary.medium
                     // , color: '#fff'
                     // , color: '#000'
