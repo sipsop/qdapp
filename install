@@ -1,0 +1,47 @@
+#!/bin/bash
+
+rm -rf node_modules
+rm package.json
+cat >package.json <<EOF
+{
+    "name": "AwesomeProject",
+    "version": "0.0.1"
+}
+EOF
+
+npm install --save \
+    es6-map \
+    lodash \
+    shortid \
+    mobx \
+    mobx-react \
+    merge \
+    react \
+    react-native \
+    react-native-fs \
+    react-addons-pure-render-mixin \
+    react-native-awesome-card-io \
+    react-native-checkbox \
+    react-native-drawer \
+    react-native-infinite-scroll-view \
+    react-native-linear-gradient \
+    react-native-lock \
+    react-native-maps \
+    react-native-modalbox \
+    react-native-communications \
+    react-native-parallax-scroll-view \
+    react-native-scrollable-tab-view \
+    react-native-slider \
+    react-native-swiper \
+    react-native-vector-icons
+
+npm install --save-dev
+    babel-plugin-transform-decorators-legacy \
+    babel-preset-react-native \
+    babel-preset-react-native-stage-0 \
+    babel-preset-stage-3 \
+    flow-bin \
+    babel-plugin-syntax-flow \
+    babel-plugin-transform-flow-strip-types \
+
+echo "Now run 'react-native upgrade' and 'react-native link'"

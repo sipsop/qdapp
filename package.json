@@ -1,54 +1,44 @@
 {
-  "name": "AwesomeProject",
+  "name": "QDodger",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2"
+    "test": "jest"
   },
   "dependencies": {
-    "@remobile/react-native-cache-image": "^1.0.0",
-    "babel-plugin-syntax-flow": "^6.13.0",
-    "babel-plugin-transform-flow-strip-types": "^6.14.0",
     "es6-map": "^0.1.4",
-    "lodash": "^4.14.0",
+    "lodash": "^4.16.4",
     "merge": "^1.2.0",
-    "mobx": "^2.4.1",
-    "mobx-react": "^3.5.3",
-    "react": "^15.2.1",
-    "react-addons-pure-render-mixin": "^15.3.0",
-    "react-native": "^0.31.0",
-    "react-native-awesome-card-io": "^0.2.4",
+    "mobx": "^2.6.0",
+    "mobx-react": "^3.5.8",
+    "react": "^15.3.2",
+    "react-addons-pure-render-mixin": "^15.3.2",
+    "react-native": "^0.35.0",
+    "react-native-awesome-card-io": "^0.4.0",
     "react-native-checkbox": "^1.0.15",
-    "react-native-credit-card-input": "^0.2.3",
     "react-native-drawer": "^2.3.0",
+    "react-native-fs": "^2.0.1-rc.2",
     "react-native-infinite-scroll-view": "^0.4.2",
-    "react-native-linear-gradient": "^1.5.12",
+    "react-native-linear-gradient": "^1.5.13",
     "react-native-lock": "^0.4.0",
-    "react-native-maps": "^0.7.1",
-    "react-native-modalbox": "^1.3.5",
+    "react-native-maps": "git+https://github.com/airbnb/react-native-maps.git",
+    "react-native-modalbox": "^1.3.8",
     "react-native-parallax-scroll-view": "^0.19.0",
-    "react-native-scrollable-tab-view": "^0.5.4",
+    "react-native-scrollable-tab-view": "^0.6.0",
     "react-native-slider": "^0.9.1",
-    "react-native-swiper": "^1.4.10",
-    "react-native-vector-icons": "^2.0.3",
+    "react-native-swiper": "^1.5.2",
+    "react-native-vector-icons": "^2.1.0",
     "shortid": "^2.2.6"
   },
-  "devDependencies": {
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-preset-react-native": "^1.9.0",
-    "babel-preset-react-native-stage-0": "^1.0.1",
-    "babel-preset-stage-3": "^6.11.0",
-    "flow-bin": "^0.30.0"
+  "jest": {
+    "preset": "jest-react-native"
   },
-  "rnpm": {
-    "assets": [
-      "Roboto_Mono/RobotoMono-Regular.ttf",
-      "Roboto_Mono/RobotoMono-Bold.ttf",
-      "Open_Sans/OpenSans-Regular.ttf",
-      "Open_Sans/OpenSans-Semibold.ttf",
-      "Open_Sans/OpenSans-Bold.ttf",
-      "Open_Sans/OpenSans-ExtraBold.ttf"
-    ]
+  "devDependencies": {
+    "babel-jest": "16.0.0",
+    "babel-preset-react-native": "1.9.0",
+    "jest": "16.0.2",
+    "jest-react-native": "16.0.0",
+    "react-test-renderer": "15.3.2"
   }
 }
