@@ -12,28 +12,6 @@ import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
 
 const { log, assert } = _.utils('./Maps/PlaceInfo.js')
 
-/************************* Network ***********************************/
-
-const BaseURL = "https://maps.googleapis.com/maps/api/place/details/json"
-
-export const getPlaceInfo = async (apiKey : Key, placeID : String, force = false)
-        : Promise<DownloadResult<Bar>> =>
-        {
-    const url = buildURL(BaseURL, {
-        key: apiKey,
-        placeid: placeID,
-    })
-    const key = `qd:placeInfo:placeID=${placeID}`
-    const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
-    const jsonDownloadResult = await downloadManager.fetchJSON(
-        key, url, {method: 'GET'}, cacheInfo)
-    if (jsonDownloadResult.value && jsonDownloadResult.value.status !== 'OK')
-        throw Error(jsonDownloadResult.value.status)
-    const result = jsonDownloadResult.update(doc => parseBar(doc.result, doc.html_attributions))
-    return result
-}
-
-/************************* Response Parsing **************************/
 
 export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar => {
     return {
