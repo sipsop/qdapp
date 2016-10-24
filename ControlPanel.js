@@ -11,7 +11,7 @@ import { SmallOkCancelModal, SimpleModal } from './Modals.js'
 import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/Checkout.js'
 import { LazyComponent } from './LazyComponent.js'
-import { OrderHistoryModal, orderHistoryStore } from './Orders/History.js'
+import { OrderHistoryModal } from './Orders/History.js'
 import { DownloadResultView } from './HTTP.js'
 import { analytics } from './Analytics.js'
 import { segment } from './Segment.js'
@@ -100,7 +100,7 @@ class OrderHistory extends PureComponent {
                     loginStore.login(
                         () => {
                             this.orderHistoryModal.show()
-                            orderHistoryStore.fetchOrderHistory()
+                            // orderHistoryStore.fetchOrderHistory()
                             segment.track('Order History Viewed')
                         },
                         () => {
