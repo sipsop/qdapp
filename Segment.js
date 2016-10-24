@@ -84,16 +84,13 @@ export class Segment {
         this.messages = []
 
         try {
-            // log("Dispatching to segment.io...", httpOptions)
             const response = await simpleFetchJSON(segmentURL, httpOptions, 15000)
-            // log("GOT RESPONSE", response)
         } catch (e) {
             /* Keep old messages around for now, but do not exceed
                1000 messages
             */
             if (!e instanceof NetworkError && !e instanceof TimeoutError)
                 throw e
-            // log("ERROR DISPATCHING :(", e)
             this.messages = [...messages, this.messages].slice(-1000)
         }
     }

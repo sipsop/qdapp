@@ -5,7 +5,6 @@ import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { store, barStore, segment } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
-import { getPlaceInfo } from './PlaceInfo.js'
 import { Second } from '../Time.js'
 import * as _ from '../Curry.js'
 
@@ -418,10 +417,6 @@ class MapStore {
                 return 0
         })
         return results
-    }
-
-    getPlaceInfo = async (placeID : PlaceID, force = false) : Promise<DownloadResult<Bar>> => {
-        return await getPlaceInfo(APIKey, placeID, force = force)
     }
 
     @observable barMarkers = [
