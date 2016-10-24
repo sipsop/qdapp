@@ -20,7 +20,6 @@ import * as _ from '../Curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
 import { paymentStore } from '../Payment/PaymentStore.js'
-import { getStripeToken } from '../Payment/StripeAPI.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -37,7 +36,7 @@ export class ReceiptModal extends PureComponent {
     }
 
     @computed get downloadState() {
-        return orderStore.getOrderResultDownload().state
+        return downloadManager.getDownload('placeOrder').state
     }
 
     @computed get showCloseButton() {
@@ -115,7 +114,7 @@ export class PlaceOrderDownloadView extends DownloadResultView {
     errorMessage      = "There was an error processing your order"
 
     getDownloadResult = () => {
-        return orderStore.getOrderResultDownload()
+        return downloadManager.getDownload('placeOrder')
     }
 
     refreshPage = () => {

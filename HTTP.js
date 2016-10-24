@@ -312,26 +312,29 @@ export class JSONDownload {
     @observable timestamp = null
     @observable errorAttempts : Int = 0
     @observable lastRefreshState = null
-    promise = null
+    @observable promise = null
 
-    name            : String = null
-    errorMessage    : ?String = null
-    periodicRefresh : ?Int = null           /* refresh every N seconds */
-    depends         : Array<Download> = []  /* Download dependencies */
+    @observable name            : String = null
+    @observable errorMessage    : ?String = null
+    @observable periodicRefresh : ?Int = null           /* refresh every N seconds */
+    @observable depends         : Array<String> = []  /* Download dependency names */
 
     /* Refresh downloads that had an error when connectivity resumes /
        user presses refresh
     */
-    refreshOnError  = true
+    @observable refreshOnError  = true
+
+    /* Restore download state after a restart */
+    @observable restoreAfterRestart = false
 
     /* How long results should be cached for */
-    cacheInfo = config.defaultCacheInfo
+    @observable cacheInfo = config.defaultCacheInfo
 
     /* Cache info for forced refreshes */
-    refreshCacheInfo = config.defaultRefreshCacheInfo
+    @observable refreshCacheInfo = config.defaultRefreshCacheInfo
 
     /* How long before a download times out */
-    timeoutDesc = 'normal'
+    @observable timeoutDesc = 'normal'
 
     @computed get active() {
         return true
@@ -354,6 +357,28 @@ export class JSONDownload {
         return {
             url: this.url,
             httpOptions: this.httpOptions,
+        }
+    }
+
+    /***********************************************************************/
+    /* State (Use when restoreAfterRestart = true)                         */
+    /***********************************************************************/
+
+    getState = () => {
+        return {
+            state:      this.state,
+            message:    this.message,
+            value:      this.value,
+        }
+    }
+
+    @action setState = (downloadState) => {
+        this.state   = downloadState.state
+        this.message = downloadState.message
+        this.value   = downloadState.value
+        if (downloadState.state === 'InProgress') {
+            this.state = 'Error'
+            this.message = 'Please try again'
         }
     }
 
@@ -385,7 +410,7 @@ export class JSONDownload {
     /* Have all download dependencies finished? */
     @computed get dependenciesFinished() {
         return _.all(this.depends.map(
-            download => download.finished
+            downloadName => downloadManager.getDownload(downloadName).finished
         ))
     }
 
@@ -432,7 +457,7 @@ export class JSONDownload {
             this.cacheKey,
             this.url,
             this.httpOptions,
-            this.cacheInfo,
+            cacheInfo,
             this.timeoutDesc,
             this.acceptValueFromCache,
         )
@@ -543,9 +568,10 @@ export class QueryDownload extends JSONDownload {
 
 export class QueryMutation extends QueryDownload {
     cacheKey = 'DO_NOT_CACHE'
-    cacheInfo = { noCache: true }
-    refreshCacheInfo = { noCache: true }
+    cacheInfo = config.noCache
+    refreshCacheInfo = config.noCache
     refreshOnError = false
+    restoreAfterRestart = true
 }
 
 export const latest = (d1, d2) => {
@@ -596,6 +622,33 @@ class DownloadManager {
     constructor() {
         this.downloads = {}
         this.disposeHandlers = {}
+        this.downloadStatesToRestore = {}
+    }
+
+    @computed get downloadStates() {
+        const downloadStatesToRestore = {}
+        this.downloads.forEach(download => {
+            if (download.restoreAfterRestart) {
+                downloadStatesToRestore[download.name] = download.getState()
+            }
+        })
+        return downloadStatesToRestore
+    }
+
+    getState = () => {
+        return {
+            downloadStates: this.downloadStates,
+        }
+    }
+
+    emptyState = () => {
+        return {
+            downloadStates: [],
+        }
+    }
+
+    setState = (downloadManagerState) => {
+        this.downloadStatesToRestore = downloadManagerState.downloadStates
     }
 
     declareDownload = (download) => {
@@ -603,7 +656,19 @@ class DownloadManager {
                `Download.name is null (${download.name})`)
         assert(this.downloads[download.name] == undefined,
                `Download.name already defined (${download.name})`)
+
+        /* Save the download */
         this.downloads[download.name] = download
+
+        /* Restore the download state after e.g. an app restart
+           (useful for query mutations that shouldn't be restarted automatically)
+        */
+        const downloadState = this.downloadStatesToRestore[download.name]
+        if (downloadState != undefined && download.restoreAfterRestart) {
+            download.setState(downloadState)
+        }
+
+        /* Refresh download when necessary */
         this.disposeHandlers[download.name] = autorun(() => {
             if (download.shouldRefreshNow) {
                 download.refresh()

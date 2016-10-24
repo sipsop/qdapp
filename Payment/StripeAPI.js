@@ -14,9 +14,6 @@ export type CardToken = String
 
 const stripeURL = 'https://api.stripe.com/v1/'
 
-const stripeTestAPIKey = "sk_test_8MKOs1GQ5iKWE5mAi44c36yY"
-const stripeAPIKey = stripeTestAPIKey
-
 /*********************************************************************/
 
 // Adapted from https://github.com/xcarpentier/react-native-stripe-api/

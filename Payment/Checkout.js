@@ -47,7 +47,7 @@ export class Checkout extends PureComponent {
     })
 
     payNow = () => {
-        orderStore.setFreshOrderToken()
+        // orderStore.setFreshOrderToken()
         analytics.trackCheckoutStep(3)
         loginStore.login(
             () => {
@@ -58,7 +58,6 @@ export class Checkout extends PureComponent {
             },
             () => {
                 // error
-                orderStore.clearActiveOrderToken()
             },
         )
     }

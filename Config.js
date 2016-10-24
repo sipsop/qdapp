@@ -82,6 +82,9 @@ export const config = {
         refreshAfter:   Week,
         expiresAfter:   Month,
     },
+    noCache: {
+        noCache:        true,
+    }
     auth: {
         /* Auth token refresh params */
         /* TODO: UPDATE THESE FOR PRODUCTION */

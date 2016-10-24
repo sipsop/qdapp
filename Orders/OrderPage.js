@@ -67,8 +67,6 @@ export class OrderPage extends Page {
         orderStore.setCheckoutVisibility(true)
         orderStore.freshCheckoutID()
         analytics.trackCheckoutStart()
-        // orderStore.setFreshOrderToken()
-        // orderStore.placeActiveOrder()
     }
 
     handleRefresh = async () => {
