@@ -123,7 +123,6 @@ class MapStore {
     @observable searchResponse1 : DownloadResult<SearchResponse> = emptyResult()
     @observable searchResponse2 : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
-    @observable followUserLocation : Bool = false
     @observable canReorderBarList : Bool = false
     @observable moreButtonLoading : Bool = false
     @observable moreButtonEnabled : Bool = false
@@ -138,15 +137,6 @@ class MapStore {
 
     initialize = async () => {
         mapStore.trackLocation()
-        // _.safeAutorun(() => {
-        //     if (mapStore.followUserLocation) {
-        //         log("START LOCATION TRACKING")
-        //         mapStore.trackLocation()
-        //     } else if (mapStore.watchID != null) {
-        //         log("STOP LOCATION TRACKING")
-        //         navigator.geolocation.clearWatch(this.watchID)
-        //     }
-        // })
         await this.updateNearbyBars()
     }
 
@@ -154,7 +144,6 @@ class MapStore {
         return {
             currentMarker:      this.currentMarker,
             currentLocation:    this.currentLocation,
-            followUserLocation: this.followUserLocation,
             region:             this.region,
         }
     }
@@ -163,7 +152,6 @@ class MapStore {
         return {
             currentMarker:      null,
             currentLocation:    this.currentLocation,
-            followUserLocation: true,
             region:             this.region,
         }
     }
@@ -172,17 +160,12 @@ class MapStore {
         this.currentMarker      = /* barStore.getBar() || */ mapState.currentMarker
         this.lastSelectedMarker = mapState.currentMarker
         this.currentLocation    = mapState.currentLocation
-        this.followUserLocation = mapState.followUserLocation || !mapState.currentMarker
         // this.region             = mapState.region
         if (this.currentMarker) {
             this.focusBar(this.currentMarker, false)
         } else {
             this.animateToUserLocation = true
         }
-    }
-
-    @action follow = (followUserLocation) => {
-        this.followUserLocation = followUserLocation
     }
 
     @action updateLocation = (position) => {
@@ -284,7 +267,6 @@ class MapStore {
 
     /* User changed region, stop following user location */
     @action userChangedRegion = (region) => {
-        this.follow(false)
         this.region = region
     }
 
@@ -324,7 +306,6 @@ class MapStore {
             segment.trackCurrentBar('Focus Bar on Map')
         }
         this.setCurrentMarker(bar, track = false)
-        this.follow(false)
     }
 
     searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
