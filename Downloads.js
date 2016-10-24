@@ -69,8 +69,7 @@ export class HistoryQueryDownload extends QueryDownload {
     }
 
     @computed get active() {
-        return stores.loginStore.userID != null &&
-               stores.loginStore.getAuthToken() != null
+        return stores.loginStore.isLoggedIn
     }
 
     @computed get query() {
@@ -92,6 +91,41 @@ export class HistoryQueryDownload extends QueryDownload {
             ? this.lastValue.orderHistory
             : []
     }
+}
+
+
+class BarOwnerProfileDownload extends QueryDownload {
+    name = 'barOwnerProfile'
+    cacheInfo = config.defaultRefreshCacheInfo
+
+    @computed get cacheKey() {
+        return `qd:barOwnerProfile:userID${stores.loginStore.userID}`
+    }
+
+    @computed get active() {
+        return stores.loginStore.isLoggedIn
+    }
+
+    @computed get query() {
+        return {
+            UserProfile: {
+                args: {
+                    authToken: stores.loginStore.getAuthToken(),
+                },
+                result: {
+                    profile: {
+                        is_bar_owner: 'Bool',
+                        'bars': ['String'],
+                    }
+                }
+            }
+        }
+    }
+
+    @computed get profile() {
+        return this.lastValue.profile
+    }
+
 }
 
 class BarQueryDownload extends QueryDownload {
@@ -212,6 +246,7 @@ var stores = null
 export const initialize = (_stores, downloadManager) => {
     stores = _stores
     downloadManager.declareDownload(new SelectedBarInfoDownload())
+    downloadManager.declareDownload(new BarOwnerProfileDownload())
     downloadManager.declareDownload(new BarStatusDownload())
     downloadManager.declareDownload(new TagsDownload())
     downloadManager.declareDownload(new MenuDownload())
