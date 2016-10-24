@@ -5,10 +5,11 @@ import { JSONDownload, QueryDownload, QueryMutation } from './HTTP.js'
 import { buildURL } from './URLs.js'
 import { parseBar } from './Maps/PlaceInfo.js'
 import { MenuItemQuery } from './Bar/MenuQuery.js'
+import { OrderResultQuery } from './Orders/OrderQuery.js'
 
 const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
 
-class CurrentBarInfoDownload extends JSONDownload {
+class SelectedBarInfoDownload extends JSONDownload {
     name = 'barInfo'
 
     @computed get active() {
@@ -44,7 +45,7 @@ class CurrentBarInfoDownload extends JSONDownload {
 }
 
 /* Reusable bar info download */
-class BarInfoDownload extends CurrentBarInfoDownload {
+export class BarInfoDownload extends SelectedBarInfoDownload {
     constructor(placeID) {
         super()
         this._placeID = placeID
@@ -56,6 +57,39 @@ class BarInfoDownload extends CurrentBarInfoDownload {
 
     @computed get placeID() {
         return this._placeID
+    }
+}
+
+export class HistoryQueryDownload extends QueryDownload {
+    name = 'history'
+
+    @computed get cacheKey() {
+        return `qd:history:userID${stores.loginStore.userID}`
+    }
+
+    @computed get active() {
+        return stores.loginStore.userID != null &&
+               stores.loginStore.getAuthToken() != null
+    }
+
+    @computed get query() {
+        return {
+            OrderHistory: {
+                args: {
+                    authToken: stores.loginStore.getAuthToken(),
+                    n: 100,
+                },
+                result: {
+                    orderHistory: [OrderResultQuery],
+                }
+            }
+        }
+    }
+
+    @computed get orderHistory() {
+        return this.lastValue
+            ? this.lastValue.orderHistory
+            : []
     }
 }
 
@@ -146,7 +180,7 @@ var stores = null
 
 export const initialize = (_stores, downloadManager) => {
     stores = _stores
-    downloadManager.declareDownload(new CurrentBarInfoDownload())
+    downloadManager.declareDownload(new SelectedBarInfoDownload())
     downloadManager.declareDownload(new TagsDownload())
     downloadManager.declareDownload(new MenuDownload())
 }

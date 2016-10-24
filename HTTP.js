@@ -129,6 +129,7 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderError = (message : string) => {
+        // return null
         const errorMessage = this.formatErrorMessage(message)
         return <Notification
                     dismissLabel="REFRESH"
@@ -139,19 +140,26 @@ export class DownloadResultView<T> extends PureComponent {
     }
 }
 
-export class DownloadComponent extends PureComponent {
+export class DownloadComponent extends DownloadResultView {
     downloadName = null
+    @observable download = emptyResult()
 
     componentDidMount = () => {
-        const download = this.getDownload()
-        this.downloadName = download.name + '.' + _.uuid()
-        download.name = this.downloadName
-        downloadManager.declareDownload(download)
+        this.download = this.getDownload()
+        this.downloadName = this.download.name + '.' + _.uuid()
+        this.download.name = this.downloadName
+        downloadManager.declareDownload(this.download)
     }
 
     componentWillUnmount = () => {
         downloadManager.removeDownload(this.downloadName)
     }
+
+    refreshPage = () => {
+        downloaManager.forceRefresh(this.downloadName)
+    }
+
+    getDownloadResult = () => this.download
 
     getDownload = () => {
         throw Error("getDownload() not implemented")

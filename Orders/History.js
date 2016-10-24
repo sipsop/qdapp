@@ -7,13 +7,14 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { TextHeader } from '../Header.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
-import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
+import { DownloadResult, DownloadResultView, DownloadComponent, emptyResult, downloadManager } from '../HTTP.js'
 import { barStore, loginStore, orderStore } from '../Store.js'
 import { BarCard, BarName, timeTextStyle } from '../Bar/BarCard.js'
 import { Receipt } from './Receipt.js'
 import { config } from '../Config.js'
 import { Second } from '../Time.js'
 import { OrderResultQuery } from './OrderQuery.js'
+import { BarInfoDownload, HistoryQueryDownload } from '../Downloads.js'
 import * as _ from '../Curry.js'
 
 /***************************************************************************/
@@ -72,19 +73,24 @@ export class OrderHistoryModal extends PureComponent {
 }
 
 class OrderHistoryDescriptor extends Descriptor {
+    constructor(orderHistoryDownload, orderHistory) {
+        super()
+        this.orderHistoryDownload = orderHistoryDownload
+        this.orderHistory = orderHistory
+    }
 
     @computed get numberOfRows() {
-        return orderHistoryStore.orderHistory.length
+        return this.orderHistory.length
     }
 
     refresh = async () => {
         await this.runRefresh(async () => {
-            await orderHistoryStore.fetchOrderHistory()
+            await this.orderHistoryDownload.forceRefresh()
         })
     }
 
     renderRow = (i) => {
-        const orderResult = orderHistoryStore.orderHistory[i]
+        const orderResult = this.orderHistory[i]
         return <HistoryBarCard
                     rowNumber={i}
                     orderResult={orderResult} />
@@ -101,30 +107,32 @@ class OrderHistoryDescriptor extends Descriptor {
 }
 
 @observer
-export class OrderHistory extends DownloadResultView {
+export class OrderHistory extends DownloadComponent {
     errorMessage = "Error downloading order history..."
-    getDownloadResult = () => orderHistoryStore.getOrderHistoryDownload()
-    refreshPage = () => orderHistoryStore.fetchOrderHistory()
-    renderNotStarted = () => <View />
-
+    getDownload = () => {
+        return new HistoryQueryDownload()
+    }
     renderFinished = (_) => {
-        return <SimpleListView descriptor={new OrderHistoryDescriptor()} />
+        const descriptor = new OrderHistoryDescriptor(
+            this.download,
+            this.download.orderHistory,
+        )
+        return <SimpleListView descriptor={descriptor} />
     }
 }
 
 @observer
-class HistoryBarCard extends DownloadResultView {
+class HistoryBarCard extends DownloadComponent {
     /* properties:
         rowNumber: Int
         orderResult: OrderResult
     */
-    @observable barDownload = emptyResult()
     receiptModal = null
-
     errorMessage = "Error downloading bar info"
-    refreshPage  = () => this.downloadBarInfo()
-    getDownloadResult = () => this.barDownload
-    renderNotStarted = () => <View />
+
+    getDownload = () => {
+        return new BarInfoDownload(this.barID)
+    }
 
     get orderResult() {
         return this.props.orderResult
@@ -135,17 +143,12 @@ class HistoryBarCard extends DownloadResultView {
     }
 
     get bar() {
-        return this.barDownload.value
+        return this.download.lastValue
     }
 
     showReceiptModal = () => {
         this.receiptModal.show()
     }
-
-    componentDidMount = _.logErrors(async () => {
-        this.barDownload.downloadStarted()
-        this.barDownload = await barStore._getBarInfo(this.barID)
-    })
 
     renderFinished = (bar) => {
         log("rendering bar card number", this.props.rowNumber)
@@ -285,33 +288,3 @@ const formatNumber = (i) => {
         return '0' + i
     return '' + i
 }
-
-
-class OrderHistoryStore {
-    @observable orderHistoryDownload = emptyResult()
-
-    getOrderHistoryDownload = () => this.orderHistoryDownload
-
-    fetchOrderHistory = _.logErrors(async () => {
-        await this._fetchOrderHistory()
-    })
-
-    _fetchOrderHistory = async () => {
-        this.orderHistoryDownload.downloadStarted()
-        log('query...', getHistoryQuery())
-        const download = await downloadManager.query(
-            'qd:order:history', getHistoryQuery(), cacheInfo, timeoutDesc = 'short')
-        log("GOT RESULT", download.state, download.value)
-        _.runAndLogErrors(() => {
-            this.orderHistoryDownload = download.update(data => data.orderHistory)
-        })
-    }
-
-    @computed get orderHistory() : Array<OrderResult> {
-        if (!this.orderHistoryDownload.value)
-            return []
-        return this.orderHistoryDownload.value
-    }
-}
-
-export const orderHistoryStore = new OrderHistoryStore()

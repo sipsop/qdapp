@@ -67,24 +67,6 @@ class BarStore {
             cacheInfo
         )
         return downloadResult
-
-        /* Normalize the data, by setting 'menuItem.options' for each 'menuItem.optionID' */
-        // return downloadResult.update(data => {
-            // const menu = data.menu
-            // const allOptions = {}
-            // menu.allMenuItemOptions.forEach(menuItemOption => {
-            //     allOptions[menuItemOption.id] = menuItemOption
-            // })
-            // Object.values(menu).forEach(menuItems => {
-            //     menuItems.forEach(menuItem => {
-            //         menuItem.options = {
-            //             ...allOptions[menuItem.optionsID],
-            //             ...menuItem.options,
-            //         }
-            //     })
-            // })
-        //     return menu
-        // })
     }
 
     _getBarInfo = async (placeID : PlaceID, force = false) => {
@@ -104,6 +86,7 @@ class BarStore {
         if (track)
             this.trackSelectBar(barID)
         await this.getBarDownloadResult().wait()
+        /* Update the selected marker on the map */
         if (focusOnMap && this.getBar() != null) {
             setTimeout(() => {
                 mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
@@ -114,18 +97,13 @@ class BarStore {
     @action updateBarAndMenu = async (barID, force = false) => {
         await Promise.all([
             this.updateBarInfo(barID, force = force),
-            /* TODO: Group queries (bar status + menu + tags) */
             this.updateMenuInfo(barID, force = force),
         ])
     }
 
     @action updateBarInfo = async (barID, force = false) => {
-        /* NOTE: a user may have selected a different bar
-                 before this download has completed, in
-                 which case we should ignore the download.
-        */
         if (force)
-            downloadManager.forceRefresh('barInfo')
+            await downloadManager.forceRefresh('barInfo')
     }
 
     @action updateMenuInfo = async (barID, force = false) => {
