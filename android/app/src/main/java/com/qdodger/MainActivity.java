@@ -1,12 +1,6 @@
 package com.qdodger;
 
 import com.facebook.react.ReactActivity;
-import com.airbnb.android.react.maps.MapsPackage;
-import com.auth0.lock.react.LockReactPackage;
-// import com.zyu.ReactNativeWheelPickerPackage;
-// import com.oblador.vectoricons.VectorIconsPackage;
-// import com.webschik.SpinnerPackage;
-// import com.webschik.reactnativedropdown.SpinnerPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -16,41 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "AwesomeProject";
+        return "QDodger";
     }
-
-    // protected List<ReactPackage> getPackages() {
-    //      return Arrays.asList(
-    //         new MainReactPackage(),
-    //        new MapsPackage(),
-    //         new LockReactPackage(),
-    //         new MapsPackage()
-    //         // new ReactNativeWheelPickerPackage(),
-    //         // new VectorIconsPackage(),
-    //         // new SpinnerPackage(),
-    //         // new MapsPackage()
-    //         // new ReactNativeWheelPickerPackage()
-    //     );
-    // }
-
-    // @Override
-    // protected void onCreate(Bundle savedInstanceState) {
-    //   super.onCreate(savedInstanceState);
-    //   mReactRootView = new ReactRootView(this);
-
-    //   mReactInstanceManager = ReactInstanceManager.builder()
-    //     .setApplication(getApplication())
-    //     .setBundleAssetName("index.android.bundle")
-    //     .setJSMainModuleName("index.android")
-    //     .addPackage(new MainReactPackage())
-    //     .addPackage(new SpinnerPackage())              // add here
-    //     .setUseDeveloperSupport(BuildConfig.DEBUG)
-    //     .setInitialLifecycleState(LifecycleState.RESUMED)
-    //     .build();
-
-    //   mReactRootView.startReactApplication(mReactInstanceManager, "ExampleRN", null);
-
-    //   setContentView(mReactRootView);
-    // }
 }
-

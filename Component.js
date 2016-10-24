@@ -55,7 +55,7 @@ class T extends PureComponent {
         return <Text
             style={style}
             numberOfLines={this.props.numberOfLines}
-            ellipsizeMode={this.props.ellipsizeMode}
+            /* ellipsizeMode={this.props.ellipsizeMode} */
             lineBreakMode={this.props.ellipsizeMode}
             >
             {this.props.children}
@@ -75,7 +75,7 @@ class Mono extends PureComponent {
         return <Text
             style={style}
             numberOfLines={this.props.numberOfLines}
-            ellipsizeMode={this.props.ellipsizeMode}
+            /* ellipsizeMode={this.props.ellipsizeMode} */
             >
             {this.props.children}
         </Text>

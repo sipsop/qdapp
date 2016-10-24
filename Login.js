@@ -129,7 +129,6 @@ class LoginStore {
             }
             // Authentication worked!
             this.setLoginInfo(profile, tokenInfo)
-            this.setBarOwnerProfile()
             if (callbackSuccess) {
                 callbackSuccess()
             }

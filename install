@@ -4,7 +4,7 @@ rm -rf node_modules
 rm package.json
 cat >package.json <<EOF
 {
-    "name": "AwesomeProject",
+    "name": "QDodger",
     "version": "0.0.1"
 }
 EOF
@@ -16,6 +16,7 @@ npm install --save \
     mobx \
     mobx-react \
     merge \
+    credit-card-type \
     react \
     react-native \
     react-native-fs \
@@ -33,15 +34,16 @@ npm install --save \
     react-native-scrollable-tab-view \
     react-native-slider \
     react-native-swiper \
-    react-native-vector-icons
-
-npm install --save-dev
+    react-native-vector-icons \
     babel-plugin-transform-decorators-legacy \
     babel-preset-react-native \
     babel-preset-react-native-stage-0 \
     babel-preset-stage-3 \
-    flow-bin \
     babel-plugin-syntax-flow \
     babel-plugin-transform-flow-strip-types \
+
+
+npm install --save-dev
+    flow-bin
 
 echo "Now run 'react-native upgrade' and 'react-native link'"

@@ -4,18 +4,16 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
+import com.auth0.lock.react.LockReactPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
+import com.rnfs.RNFSPackage;
 import com.cardio.RNCardIOPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.airbnb.android.react.maps.MapsPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
-
-// import com.auth0.lock.react;
-import com.auth0.lock.react.LockReactPackage;
-import com.auth0.core.Strategies;
-import com.auth0.identity.IdentityProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,15 +28,15 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      LockReactPackage lockReactPackage = new LockReactPackage();
-    //   lockReactPackage.addIdentityProvider(Strategies.GooglePlus, new GooglePlusIdentityProvider(this));
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNCardIOPackage(),
-          lockReactPackage,
-          new MapsPackage(),
-          new LinearGradientPackage()
-          );
+            new VectorIconsPackage(),
+            new MapsPackage(),
+            new LockReactPackage(),
+            new LinearGradientPackage(),
+            new RNFSPackage(),
+            new RNCardIOPackage()
+      );
     }
   };
 

@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />
@@ -20,6 +19,39 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw" />
+
+      <!-- Auth0 stuff -->
+      <activity
+        android:name="com.auth0.lock.LockActivity"
+        android:theme="@style/Lock.Theme"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask">
+      </activity>
+      <!--Auth0 Lock End-->
+      <!--Auth0 Lock Embedded WebView-->
+      <activity
+          android:name="com.auth0.identity.web.WebViewActivity"
+          android:theme="@style/Lock.Theme">
+      </activity>
+      <!--Auth0 Lock Embedded WebView End-->
+      <!--Auth0 Lock Passwordless-->
+      <activity
+          android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
+          android:theme="@style/Lock.Theme"
+          android:screenOrientation="portrait"
+          android:launchMode="singleTask">
+      </activity>
+      <activity
+          android:name="com.auth0.lock.passwordless.CountryCodeActivity"
+          android:theme="@style/Lock.Theme">
+      </activity>
+      <!--Auth0 Lock Passwordless End-->
+
+
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -30,37 +62,6 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-      <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw" />
-
-        <!-- Auth0 stuff -->
-        <activity
-          android:name="com.auth0.lock.LockActivity"
-          android:theme="@style/Lock.Theme"
-          android:screenOrientation="portrait"
-          android:launchMode="singleTask">
-        </activity>
-        <!--Auth0 Lock End-->
-        <!--Auth0 Lock Embedded WebView-->
-        <activity
-            android:name="com.auth0.identity.web.WebViewActivity"
-            android:theme="@style/Lock.Theme">
-        </activity>
-        <!--Auth0 Lock Embedded WebView End-->
-        <!--Auth0 Lock Passwordless-->
-        <activity
-            android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
-            android:theme="@style/Lock.Theme"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask">
-        </activity>
-        <activity
-            android:name="com.auth0.lock.passwordless.CountryCodeActivity"
-            android:theme="@style/Lock.Theme">
-        </activity>
-        <!--Auth0 Lock Passwordless End-->
-
     </application>
 
 </manifest>

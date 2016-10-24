@@ -1,7 +1,6 @@
 import { UIManager } from 'react-native'
 import { React, Component, PureComponent, Platform } from '../Component.js'
 
-import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
@@ -75,23 +74,6 @@ export const makeAddCardButton = (label : String, onPress : () => void) => {
             prominent={false}
             textColor={config.theme.addColor}
             borderColor={config.theme.addColor} />
-}
-
-@observer
-export class CardInput2 extends PureComponent {
-
-    onChange = (value) => {
-        log(value)
-    }
-
-    render = () => {
-        return <CreditCardInput
-                    onChange={this.onChange}
-                    placeholders={placeHolders}
-                    validColor={'#000000'}
-                    placeholderColor={'rgba(0, 0, 0, 0.65)'}
-                    />
-    }
 }
 
 if (Platform.OS !== 'ios')
