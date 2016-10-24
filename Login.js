@@ -50,9 +50,6 @@ class LoginStore {
     @observable loginError = null
     @observable deviceID = null
 
-    /* For bar owners */
-    @observable barOwnerProfileDownloadResult : DownloadResult<UserProfile> = emptyResult()
-
     refreshAfter = null
     expiresAfter = null
 
@@ -81,8 +78,6 @@ class LoginStore {
             email: this.email,
             name:  this.name,
         })
-        if (this.isLoggedIn)
-            this.setBarOwnerProfile()
     }
 
     login = (callbackSuccess, callbackError) => {
@@ -151,31 +146,8 @@ class LoginStore {
         return !this.getAuthToken() || !this.expiresAfter || getTime() >= this.expiresAfter
     }
 
-    setBarOwnerProfile = _.logErrors(async () => {
-        this.barOwnerProfileDownloadResult.downloadStarted()
-        this.barOwnerProfileDownloadResult = await downloadManager.query(
-            `qd:bar:profile:user=${this.userID}`,
-            {
-                UserProfile: {
-                    args: {
-                        authToken: this.getAuthToken(),
-                    },
-                    result: {
-                        profile: {
-                            is_bar_owner: 'Bool',
-                            'bars': ['String'],
-                        }
-                    }
-                }
-            },
-            /* Refresh info on each startup / login */
-            config.defaultRefreshCacheInfo,
-        )
-    })
-
     @computed get barOwnerProfile() : UserProfile {
-        return this.barOwnerProfileDownloadResult.value &&
-               this.barOwnerProfileDownloadResult.value.profile
+        return downloadManager.getDownload('barOwnerProfile').profile
     }
 
     @computed get isBarOwner() : Bool {
@@ -241,6 +213,7 @@ class LoginStore {
 
 export const loginStore = new LoginStore()
 
+/* Track logins */
 _.safeAutorun(() => {
     segment.setUserID(loginStore.userOrDeviceID)
 })

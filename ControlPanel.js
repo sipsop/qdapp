@@ -12,7 +12,7 @@ import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/Checkout.js'
 import { LazyComponent } from './LazyComponent.js'
 import { OrderHistoryModal } from './Orders/History.js'
-import { DownloadResultView } from './HTTP.js'
+import { DownloadResultView, downloadManager } from './HTTP.js'
 import { analytics } from './Analytics.js'
 import { segment } from './Segment.js'
 import { config } from './Config.js'
@@ -265,11 +265,12 @@ export class BarOwnerProfile extends DownloadResultView {
         }
     }
 
-    getDownloadResult = () => loginStore.barOwnerProfileDownloadResult
-    refreshPage = () => loginStore.setBarOwnerProfile()
+    getDownloadResult = () => downloadManager.getDownload('barOwnerProfile')
+    refreshPage = () => downloadManager.forceRefresh('barOwnerProfile')
+
     renderFinished = () => {
         if (!loginStore.isBarOwner)
-            <View />
+            null
         return <View style={this.styles.view}>
             <T style={this.styles.textStyle}>
                 Navigate to your bar page to control bar settings.
