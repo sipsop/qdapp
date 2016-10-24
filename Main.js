@@ -9,6 +9,7 @@ import {
     ListView,
     TouchableOpacity,
     StatusBar,
+    Platform,
 } from 'react-native'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'

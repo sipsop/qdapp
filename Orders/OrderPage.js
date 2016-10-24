@@ -186,7 +186,7 @@ class DeliveryMethod extends PureComponent {
     }
 
     render = () => {
-        const tableDelivery =
+        const tableService =
             orderStore.delivery === 'Table' &&
             barStatusStore.tableService
         const pickup =
@@ -197,28 +197,37 @@ class DeliveryMethod extends PureComponent {
                 ? "" + orderStore.tableNumber
                 : ""
 
+        if (!tableService && !pickup) {
+            return null
+        }
+
         return <View style={this.props.style}>
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
                     primary={this.props.primary}>
-                <SelectableButton
-                    label='Table'
-                    renderLabel={this.renderLabel}
-                    onPress={this.tableDelivery}
-                    active={this.isActive('Table')}
-                    disabled={this.isActive('Table')} /* disable active buttons */
-                    style={{flex: 1}}
-                    />
-                <SelectableButton
-                    label='Pickup'
-                    renderLabel={this.renderLabel}
-                    onPress={this.pickup}
-                    active={this.isActive('Pickup')}
-                    disabled={this.isActive('Pickup')} /* disable active buttons */
-                    style={{flex: 1}}
-                    />
+                { tableService &&
+                    <SelectableButton
+                        label='Table'
+                        renderLabel={this.renderLabel}
+                        onPress={this.tableDelivery}
+                        active={this.isActive('Table')}
+                        disabled={this.isActive('Table')} /* disable active buttons */
+                        style={{flex: 1}}
+                        />
+                }
+                {
+                    pickup &&
+                    <SelectableButton
+                        label='Pickup'
+                        renderLabel={this.renderLabel}
+                        onPress={this.pickup}
+                        active={this.isActive('Pickup')}
+                        disabled={this.isActive('Pickup')} /* disable active buttons */
+                        style={{flex: 1}}
+                        />
+                }
             </Header>
             <View style={this.styles.optStyle}>
-                { tableDelivery &&
+                { tableService &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
