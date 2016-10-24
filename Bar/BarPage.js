@@ -47,10 +47,7 @@ export class BarInfoFetcher extends DownloadResultView {
         barStore.updateBarInfo(barStore.barID, force = true)
     }
 
-    getDownloadResult = () => {
-        assert(barStore.getBarDownloadResult() != null, "Bar download result is null...")
-        return barStore.getBarDownloadResult()
-    }
+    getDownloadResult = () => barStore.getBarDownloadResult()
 }
 
 const headerHeight = 250
@@ -91,22 +88,12 @@ export class BarPage extends Page {
                     /* refreshControl={this.getRefreshControl()} */
                     >
             <BarIcons />
-            <DownloadErrorView />
             <View style={this.styles.menuView}>
                 <MenuView />
             </View>
             <BarFooter />
         </ParallaxScrollView>
     }
-}
-
-
-@observer
-class DownloadErrorView extends DownloadResultView {
-    errorMessage = "Error downloading bar info"
-    refreshPage = () => barStore.refreshBar()
-    getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
-    renderFinished = (menu) => null
 }
 
 @observer
@@ -244,7 +231,7 @@ class MenuView extends DownloadResultView {
     errorMessage = "Error downloading menu"
     refreshPage = () => barStore.updateMenuInfo(barStore.barID, force = true)
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    renderError = () => null
+    // renderError = () => null
     renderFinished = (menu) => <BarMenu menu={menu} />
 }
 

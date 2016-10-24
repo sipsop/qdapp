@@ -7,6 +7,7 @@ import { store } from '../Store.js'
 import { mapStore } from '../Maps/MapStore.js'
 import { tagStore } from '../Tags.js'
 import { segment } from '../Segment.js'
+import { analytics } from '../Analytics.js'
 import { config } from '../Config.js'
 import { getMenuQuery } from './MenuQuery.js'
 
@@ -44,47 +45,17 @@ class BarStore {
 
     /*************************** Getters *********************************/
 
-    @computed get barAndMenuDownloadResult() {
-        return DownloadResult.combine([
-            this.getBarDownloadResult(),
-            this.getMenuDownloadResult(),
-        ])
-    }
-
     getBarDownloadResult = () => downloadManager.getDownload('barInfo')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
-    getBarAndMenuDownloadResult = () => this.barAndMenuDownloadResult
-
     getBar = () => this.getBarDownloadResult().lastValue
 
     /*************************** Network *********************************/
-
-    _getBarMenu = async (barID : PlaceID, force = false) : Promise<DownloadResult<Menu>> => {
-        const cacheInfo = force ? config.defaultRefreshCacheInfo : undefined
-        const downloadResult = await downloadManager.query(
-            `qd:bar:barID=${barID}`,
-            getMenuQuery(barID),
-            cacheInfo
-        )
-        return downloadResult
-    }
-
-    _getBarInfo = async (placeID : PlaceID, force = false) => {
-        return await mapStore.getPlaceInfo(placeID, force = force)
-    }
-
-    trackSelectBar = (barID) => {
-        segment.track('Select Bar', {
-            placeID:    this.barID,
-            placeName:  this.barName,
-        })
-    }
 
     _setBarID = async (barID, track = false, focusOnMap = true) => {
         log("Setting barID", barID)
         this.barID = barID
         if (track)
-            this.trackSelectBar(barID)
+            analytics.trackSelectBar(this.barID, this.barName)
         await this.getBarDownloadResult().wait()
         /* Update the selected marker on the map */
         if (focusOnMap && this.getBar() != null) {
@@ -111,6 +82,9 @@ class BarStore {
             await downloadManager.forceRefresh('menu')
     }
 
+    /***********************************************************************/
+    /* Menu */
+
     @computed get menu() {
         return downloadManager.getDownload('menu').lastValue
     }
@@ -130,14 +104,6 @@ class BarStore {
             , menu.food
             ])
         const menuItems = subMenus.map(subMenu => subMenu.menuItems)
-        // menuItems.forEach(xs => {
-        //     if (!Array.isArray(xs))
-        //         throw Error("Expected an array of menu items: " + xs)
-        //     xs.forEach(menuItem => {
-        //         if (!menuItem.id)
-        //             throw Error("Menu item must have an ID")
-        //     })
-        // })
         return _.flatten(menuItems)
     }
 
@@ -174,24 +140,9 @@ class BarStore {
     /*********************************************************************/
     /* Functions that can be invoked async without catching errors */
 
-    refreshBar = _.logErrors(async () => {
-        if (this.barID) {
-            segment.track('Refresh Bar', {
-                placeID:    this.barID,
-                placeName:  this.barName,
-            })
-            await this._setBarID(this.barID)
-        }
-    })
-
-    getBarMenu = _.logErrors(this._getBarMenu)
-    getBarInfo = _.logErrors(this._getBarInfo)
-
     setBarID = _.logErrors(async (barID, track = false, focusOnMap = true) => {
         await this._setBarID(barID, track, focusOnMap)
     })
-
-    /*********************************************************************/
 
 }
 

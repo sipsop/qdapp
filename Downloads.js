@@ -6,6 +6,7 @@ import { buildURL } from './URLs.js'
 import { parseBar } from './Maps/PlaceInfo.js'
 import { MenuItemQuery } from './Bar/MenuQuery.js'
 import { OrderResultQuery } from './Orders/OrderQuery.js'
+import { config } from './Config.js'
 
 const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
 
@@ -106,7 +107,37 @@ class BarQueryDownload extends QueryDownload {
     @computed get barID() {
         return stores.barStore.barID
     }
+}
 
+class BarStatusDownload extends BarQueryDownload {
+    name = 'barStatus'
+
+    // update bar status every 30s
+    cacheInfo = config.defaultRefreshCacheInfo
+    periodicRefresh = 30
+
+    @computed get query() {
+        return {
+            BarStatus: {
+                args: {
+                    /* NOTE: Use require() to resolve cyclic dependency */
+                    barID: this.barID,
+                },
+                result: {
+                    bar_status: {
+                        qdodger_bar:      'Bool',
+                        taking_orders:    'Bool',
+                        table_service:    'String',
+                        pickup_locations: ['String'],
+                    }
+                }
+            }
+        }
+    }
+
+    @computed get barStatus() {
+        return this.lastValue.bar_status
+    }
 }
 
 class TagsDownload extends BarQueryDownload {
@@ -181,6 +212,7 @@ var stores = null
 export const initialize = (_stores, downloadManager) => {
     stores = _stores
     downloadManager.declareDownload(new SelectedBarInfoDownload())
+    downloadManager.declareDownload(new BarStatusDownload())
     downloadManager.declareDownload(new TagsDownload())
     downloadManager.declareDownload(new MenuDownload())
 }
