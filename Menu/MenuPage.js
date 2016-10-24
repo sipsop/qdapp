@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
-import { DownloadResultView, downloadManager } from '../HTTP.js'
+import { downloadManager, DownloadResultView } from '../HTTP.js'
 import { NotificationBar } from '../NotificationBar.js'
 import { OrderList } from '../Orders/OrderList.js'
 import { LargeButton } from '../Button.js'
@@ -39,14 +39,6 @@ import type { OrderItem } from './Orders/OrderStore.js'
 const { log, assert } = _.utils('./Menu/MenuPage.js')
 
 const rowHeight = 55
-
-// @observer
-// export class MenuPage extends DownloadResultView {
-//     errorMessage = "Error downloading bar and menu info"
-//     refreshPage = () => barStore.refreshBar()
-//     getDownloadResult = () => barStore.getBarAndMenuDownloadResult()
-//     renderFinished = (bar) => <MenuView />
-// }
 
 @observer
 export class MenuPage extends Page {
@@ -69,9 +61,11 @@ export class MenuView extends PureComponent {
 }
 
 @observer
-class MenuList extends PureComponent {
+class MenuList extends DownloadResultView {
 
-    handleRefresh = async () => {
+    errorMessage = "Error downloading menu"
+
+    refreshPage = async () => {
         await Promise.all([
             barStore.updateMenuInfo(barStore.barID, force = true),
             // tagStore.fetchTags(restartDownload = false, force = true),
@@ -79,7 +73,9 @@ class MenuList extends PureComponent {
         ])
     }
 
-    render = () => {
+    getDownloadResult = () => downloadManager.getDownload('menu')
+
+    renderFinished = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
                   reuse state. This has the effect of "reloading"
@@ -94,7 +90,7 @@ class MenuList extends PureComponent {
                     menuItems={tagStore.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => <TagView />}
-                    onRefresh={this.handleRefresh}
+                    onRefresh={this.refreshPage}
                     visible={this.menuItemVisible} />
     }
 

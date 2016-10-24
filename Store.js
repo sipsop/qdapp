@@ -55,8 +55,6 @@ export class Store {
             // url: 'url://location'
         })
         await mapStore.initialize()
-        if (barStore.barID)
-            await barStatusStore.periodicallyDownloadBarStatus()
     }
 
     loadFromLocalStorage = async () => {

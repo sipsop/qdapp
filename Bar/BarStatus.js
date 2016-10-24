@@ -25,53 +25,14 @@ export type BarStatus = {
     pickup_locations: Array<String>,
 }
 
-/* Update bar status every 5 minutes */
-const TIMEOUT = 1000 * 60 * 5
-
 class BarStatusStore {
-
-    @observable barStatusDownload : DownloadResult<BarStatus> = emptyResult().downloadStarted()
 
     emptyState = () => {}
     getState = () => {}
     setState = async (barStatusState) => undefined
 
-    periodicallyDownloadBarStatus = async () => {
-        await this.downloadBarStatus()
-        setTimeout(this.periodicallyDownloadBarStatus, TIMEOUT)
-    }
-
-    downloadBarStatus = async () => {
-        barID = barStore.barID
-        this.barID = barID
-        const barStatusQuery = {
-            BarStatus: {
-                args: {
-                    /* NOTE: Use require() to resolve cyclic dependency */
-                    barID: barID,
-                },
-                result: {
-                    bar_status: {
-                        qdodger_bar:      'Bool',
-                        taking_orders:    'Bool',
-                        table_service:    'String',
-                        pickup_locations: ['String'],
-                    }
-                }
-            }
-        }
-        this.barStatusDownload.downloadStarted()
-        this.barStatusDownload = await downloadManager.query(
-            `qd:bar:status:barID=${barID}`,
-            barStatusQuery,
-            config.defaultRefreshCacheInfo,
-        )
-        // log("Got bar status result:", this.barStatusDownload)
-    }
-
     @computed get barStatus() : ?BarStatus {
-        return this.barStatusDownload.value &&
-               this.barStatusDownload.value.bar_status
+        return downloadManager.getDownload('barStatus').barStatus
     }
 
     @computed get isQDodgerBar() : Bool {
@@ -90,15 +51,7 @@ class BarStatusStore {
         return this.barStatus && this.barStatus.pickup_locations
     }
 
-    /* Update bar status when barID changes */
-
-    @observable barID = null
-
-    @computed get barIDChanged() {
-        return barStore.barID != this.barID
-    }
-
-    getBarStatusNotification = () => {
+    @computed get barStatusNotification() {
         var message = null
         var closeable = false
         if (!this.isQDodgerBar) {
@@ -122,12 +75,3 @@ class BarStatusStore {
 }
 
 export const barStatusStore = new BarStatusStore()
-
-
-autorun(() => {
-    /* Run this immediately whenever barID changes */
-    if (barStatusStore.barIDChanged) {
-        // log("DOWNLOADING...", barStore.barID)
-        barStatusStore.downloadBarStatus()
-    }
-})

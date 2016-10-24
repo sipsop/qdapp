@@ -81,10 +81,10 @@ export class DownloadResultView<T> extends PureComponent {
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
         if (res.state == 'NotStarted') {
             return this.renderNotStarted()
+        } else if (res.state == 'Finished' || res.lastValue != null) {
+            return this.renderFinished(res.lastValue)
         } else if (res.state == 'InProgress') {
             return this.renderInProgress()
-        } else if (res.state == 'Finished') {
-            return this.renderFinished(res.value)
         } else if (res.state == 'Error') {
             return this.renderError(res.message)
         } else {
@@ -124,8 +124,8 @@ export class DownloadResultView<T> extends PureComponent {
 
     formatErrorMessage = (message : String) => {
         const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
-        message = message && message.strip()
-        return this.getDownloadResult().errorMessage + (message ? ':\n' : '\n') + message
+        message = message && '\n' + message.strip()
+        return errorMessage + (message ? ':\n' + message : '')
     }
 
     renderError = (message : string) => {
@@ -620,8 +620,6 @@ class DownloadManager {
 
     forceRefresh = async (name, restartDownload = true) => {
         await this.getDownload(name).forceRefresh(restartDownload)
-        // const download = this.getDownload(name)
-        // download.refresh(download.refreshCacheInfo)
     }
 
     getDownload = (name) => {

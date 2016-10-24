@@ -30,7 +30,23 @@ export class Analytics {
             this.trackCartViewed()
     }
 
-    /* Bar Page */
+    /* Bar Stuff */
+
+    trackSelectBar = (barID, barName) => {
+        segment.track('Select Bar', {
+            placeID:    barID,
+            placeName:  barName,
+        })
+    }
+
+    trackBarRefresh = (barID, barName) => {
+        segment.track('Refresh Bar', {
+            placeID:    barID,
+            placeName:  barName,
+        })
+    }
+
+
 
     trackMenuCardClick = (tagID) => {
         segment.trackCurrentBar('Menu Card Clicked', {
