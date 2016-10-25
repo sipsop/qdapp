@@ -7,13 +7,18 @@ import { config } from './Config.js'
 /***********************************************************************/
 
 export class StripeTokenDownload extends JSONDownload {
+    /* properties:
+        shouldPlaceOrderNow: Bool
+        selectedCard: Card
+    */
+
     name = 'stripe'
     cacheKey = 'DO_NOT_CACHE'
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
 
     @computed get active() {
-        return stores.orderStore.shouldPlaceOrderNow()
+        return this.props.shouldPlaceOrderNow
     }
 
     @computed get url() {
@@ -21,7 +26,7 @@ export class StripeTokenDownload extends JSONDownload {
     }
 
     @computed get card() : Card {
-        return stores.paymentStore.getSelectedCard()
+        return this.props.selectedCard
     }
 
     @computed get httpOptions() {

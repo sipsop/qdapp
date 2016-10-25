@@ -3,6 +3,8 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
+import { StripeTokenDownload } from '../network/api/payment.js'
+import { PlaceOrderDownload } from '../network/api/order.js'
 import { DownloadResult, emptyResult, downloadManager, NetworkError } from '../HTTP.js'
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { updateSelection } from '../Selection.js'
@@ -14,8 +16,6 @@ import { getStripeToken } from '../Payment/StripeAPI.js'
 import { OrderResultQuery } from './OrderQuery.js'
 // import uuid from 'react-native-uuid'
 import * as _ from '../Curry.js'
-
-/*********************************************************************/
 
 import type { BarID, MenuItemID, DateType, Time } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
@@ -52,9 +52,7 @@ export type OrderResult = {
     pickupLocation: ?String,
 }
 
-/*********************************************************************/
-
-const { log, assert } = _.utils('./Orders/OrderStore.js')
+const { log, assert } = _.utils('./model/orderstore.js')
 
 class OrderStore {
 
@@ -72,7 +70,6 @@ class OrderStore {
 
     @observable checkoutVisible = false
     @observable activeOrderID : ?ID = null
-    // @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
 
     /* Checkout ID which is fresh for every checkout that is entered.
        The user may try checking out several times with a single shopping cart
@@ -86,7 +83,53 @@ class OrderStore {
     */
     @observable cartID = _.uuid()
 
-    // getOrderResultDownload = () => this.orderResultDownload
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
+
+    getState = () : OrderState => {
+        return {
+            orderList:              this.orderList,
+            orderToken:             this.getActiveOrderToken(),
+            delivery: {
+                delivery:           this.delivery,
+                tableNumber:        this.tableNumber,
+                pickupLocation:     this.pickupLocation,
+            },
+            cartID:                 this.cartID,
+            checkoutID:             this.checkoutID,
+        }
+    }
+
+    emptyState = () => {
+        return {
+            orderList: [],
+            orderToken: null,
+            delivery: null,
+            cartID: _.uuid(),
+            checkoutID: null,
+        }
+    }
+
+    @action setState = (orderState : OrderState) => {
+        if (orderState.orderList)
+            this.setOrderList(orderState.orderList)
+        if (orderState.orderToken) {
+            this.activeOrderID = orderState.orderToken
+        }
+        if (orderState.cartID)
+            this.cartID = orderState.cartID
+        this.checkoutID = orderState.checkoutID
+        if (orderState.delivery) {
+            this.delivery = orderState.delivery.delivery
+            this.tableNumber = orderState.delivery.tableNumber
+            this.pickupLocation = orderState.delivery.pickupLocation
+        }
+    }
+
+    /*********************************************************************/
+    /* Menu Items in Active Order                                        */
+    /*********************************************************************/
 
     getMenuItemsOnOrder = (orderList : Array<OrderItem>) : Array<MenuItem> => {
         const seen = []
@@ -103,6 +146,10 @@ class OrderStore {
     @computed get menuItemsOnOrder() : Array<MenuItem> {
         return this.getMenuItemsOnOrder(this.orderList)
     }
+
+    /*********************************************************************/
+    /* Order List                                                        */
+    /*********************************************************************/
 
     @action addOrderItem = (orderItem : OrderItem) => {
         this.orderList.push(orderItem)
@@ -125,23 +172,12 @@ class OrderStore {
         this.orderList = orderList
     }
 
-    /* Clear the order list at the bar, e.g. after closing the receipt window */
-    @action clearOrderList = () => {
-        this.setOrderList([])
-        this.clearOrderToken()
-        this.resetTip()
-    }
+    /*********************************************************************/
+    /* Tips and Total                                                    */
+    /*********************************************************************/
 
     @action resetTip = () => {
         this.setTipFactor(this.tipFactor)
-    }
-
-    /* Clear all order-related data, e.g. when switching bars */
-    @action clearOrderData = () => {
-        this.clearOrderList()
-        this.delivery = 'Table'
-        this.tableNumber = null
-        this.pickupLocation = null
     }
 
     @computed get currency() {
@@ -158,8 +194,6 @@ class OrderStore {
                 throw Error(`Currency ${currency} not supported yet`)
         }
     }
-
-    /*********************************************************************/
 
     /* Compute the price for all the selected options */
     getSubTotal = (orderItem : OrderItem) : Float => {
@@ -225,53 +259,8 @@ class OrderStore {
     }
 
     /*********************************************************************/
-
-    getState = () : OrderState => {
-        return {
-            orderList:              this.orderList,
-            orderToken:             this.getActiveOrderToken(),
-            // orderResultDownload:    this.orderResultDownload.getState(),
-            delivery: {
-                delivery:           this.delivery,
-                tableNumber:        this.tableNumber,
-                pickupLocation:     this.pickupLocation,
-            },
-            cartID:                 this.cartID,
-            checkoutID:             this.checkoutID,
-        }
-    }
-
-    emptyState = () => {
-        return {
-            orderList: [],
-            orderToken: null,
-            // orderResultDownload: emptyResult(),
-            delivery: null,
-            cartID: _.uuid(),
-            checkoutID: null,
-        }
-    }
-
-    @action setState = (orderState : OrderState) => {
-        if (orderState.orderList)
-            this.setOrderList(orderState.orderList)
-        if (orderState.orderToken) {
-            this.activeOrderID = orderState.orderToken
-            // if (orderState.orderResultDownload)
-            //     this.orderResultDownload.setState(orderState.orderResultDownload)
-        }
-        if (orderState.cartID)
-            this.cartID = orderState.cartID
-        this.checkoutID = orderState.checkoutID
-        if (orderState.delivery) {
-            this.delivery = orderState.delivery.delivery
-            this.tableNumber = orderState.delivery.tableNumber
-            this.pickupLocation = orderState.delivery.pickupLocation
-        }
-    }
-
+    /* Checkout                                                          */
     /*********************************************************************/
-    /* Checkout */
 
     @computed get haveDeliveryMethod() {
         if (this.delivery === 'Table')
@@ -297,12 +286,43 @@ class OrderStore {
     }
 
     /*********************************************************************/
-    /* Order Placement */
+    /* Order Placement                                                   */
+    /*********************************************************************/
+
+    initialize = () => {
+        downloadManager.declareDownload(new StripeTokenDownload(() => {
+            return {
+                shouldPlaceOrderNow: this.shouldPlaceOrderNow,
+                selectedCard:        paymentStore.getSelectedCard(),
+            }
+        }))
+        downloadManager.declareDownload(new PlaceOrderDownload(() => {
+            return {
+                barID:               barStore.barID,
+                shouldPlaceOrderNow: this.shouldPlaceOrderNow,
+                stripeToken:         this.stripeToken,
+                authToken:           loginStore.getAuthToken(),
+                userName:            loginStore.userName,
+                price:               this._total,
+                tipAmount:           this.tipAmount,
+                currency:            this.currency,
+                orderList:           this.orderList,
+                delivery:            this.delivery,
+                tableNumber:         this.tableNumber,
+                pickupLocation:      this.pickupLocation,
+
+            }
+        }))
+    }
+
+    @computed get stripeToken() {
+        return downloadManager.getDownload('stripe').stripeToken
+    }
 
     getActiveOrderToken = () => this.activeOrderID
 
     /* Decide whether to place the order now */
-    shouldPlaceOrderNow = () => {
+    @computed get shouldPlaceOrderNow() {
         return this.getActiveOrderToken() != null
     }
 
@@ -310,114 +330,44 @@ class OrderStore {
         this.checkoutID = _.uuid()
     }
 
-    @action clearActiveOrderToken = () => {
-        this.activeOrderID = null
-        this.cartID = _.uuid()
-    }
-
-    @action clearOrderToken = () => {
-        this.activeOrderID = null
-        // this.orderResultDownload.reset()
-    }
-
     /* Submit order to server */
-    _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
-
+    _placeActiveOrder = async () => {
         this.activeOrderID = _.uuid()
     }
-
-    //     const barID    = barStore.barID
-    //     const userName = loginStore.userName
-    //     const currency = 'Sterling'
-    //
-    //     assert(barID != null, 'barID != null')
-    //     assert(userName != null, 'userName != null')
-    //
-    //     var stripeToken
-    //     this.orderResultDownload.downloadStarted()
-    //     try {
-    //         stripeToken = await getStripeToken(paymentStore.getSelectedCard())
-    //     } catch (err) {
-    //         log('Stripe token error', err)
-    //         if (!(err instanceof NetworkError))
-    //             throw err
-    //         this.orderResultDownload.downloadError(
-    //             err.message,
-    //             // Make sure to obtain new login tokens if necesary
-    //             refresh = null,
-    //         )
-    //         return
-    //     }
-    //     log('Got stripe token', stripeToken)
-    //
-    //     const total     = this.orderListTotal(this.orderList)
-    //     const orderList = this.orderList.map(orderItem => {
-    //         return {
-    //             id:                     orderItem.id,
-    //             menuItemID:             orderItem.menuItemID,
-    //             selectedOptions:        orderItem.selectedOptions,
-    //             amount:                 orderItem.amount,
-    //         }
-    //     })
-    //
-    //     const tableNumber =
-    //         this.delivery === 'Table'
-    //             ? this.tableNumber
-    //             : ""
-    //
-    //     const pickupLocation =
-    //         this.delivery === 'Pickup'
-    //             ? this.pickupLocation
-    //             : ""
-    //
-    //     const placeOrderQuery = {
-    //         PlaceOrder: {
-    //             args: {
-    //                 barID:          barStore.barID,
-    //                 authToken:      loginStore.getAuthToken(),
-    //                 userName:       userName,
-    //                 currency:       currency,
-    //                 price:          total,
-    //                 tip:            this.tipAmount,
-    //                 orderList:      orderList,
-    //                 stripeToken:    stripeToken,
-    //                 delivery:       this.delivery,
-    //                 tableNumber:    tableNumber,
-    //                 pickupLocation: pickupLocation,
-    //             },
-    //             result: {
-    //                 orderResult: OrderResultQuery,
-    //             }
-    //         }
-    //     }
-    //     const orderResultDownload = await downloadManager.queryMutate(placeOrderQuery)
-    //     // log('Order placed:', orderResultDownload)
-    //     if (orderResultDownload.value) {
-    //         orderResultDownload.update(value => {
-    //             const result = value.orderResult
-    //             assert(result.queueSize != null, 'result.queueSize != null')
-    //             assert(result.estimatedTime != null, 'result.estimatedTime != null')
-    //             assert(result.receipt != null, 'result.receipt != null')
-    //             return result
-    //         })
-    //     }
-    //     this.orderResultDownload = orderResultDownload
-    // }
 
     placeActiveOrder = _.logErrors(async () => {
         try{
             this._placeActiveOrder()
         } catch (e) {
-            this.clearActiveOrderToken()
+            this.closeReceipt()
         }
     })
-}
 
-export type OrderItem = {
-    id:                 ID,
-    menuItemID:         MenuItemID,
-    selectedOptions:    Array<Array<String>>,
-    amount:             Int,
+    /*********************************************************************/
+    /* Clear Orders                                                      */
+    /*********************************************************************/
+
+    /* Close the receipt window, but keep the current shopping cart */
+    @action closeReceipt = () => {
+        this.activeOrderID = null
+    }
+
+    /* Clear the order list at the bar, e.g. after closing the receipt window */
+    @action closeReceiptAndResetCart = () => {
+        this.setOrderList([])
+        this.activeOrderID = null
+        this.cartID = _.uuid()
+        this.resetTip()
+    }
+
+    /* Clear all order-related data, e.g. when switching bars */
+    @action clearAllOrderData = () => {
+        this.closeReceiptAndResetCart()
+        this.delivery = 'Table'
+        this.tableNumber = null
+        this.pickupLocation = null
+    }
+
 }
 
 export const orderStore = new OrderStore()
@@ -425,7 +375,7 @@ export const orderStore = new OrderStore()
 _.safeAutorun(() => {
     /* Clear the order list whenever the selected bar changes */
     barStore.barID
-    orderStore.clearOrderData()
+    orderStore.clearAllOrderData()
 })
 
 const periodicallyUpdateTotal = () => {
@@ -434,11 +384,6 @@ const periodicallyUpdateTotal = () => {
 }
 
 periodicallyUpdateTotal()
-
-// _.safeAutorun(() => {
-//     const total = _.sum(orderStore.orderList.map(orderStore.getTotal))
-//     setTimeout(() => orderStore.total = total, 0)
-// })
 
 /*********************************************************************/
 

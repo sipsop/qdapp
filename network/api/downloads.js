@@ -26,7 +26,6 @@ type Stores = {
     // ...
 }
 
-
 var stores : Stores = null
 
 export const initialize = (_stores, downloadManager) => {

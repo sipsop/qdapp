@@ -10,8 +10,7 @@ import { PureComponent } from './Component.js'
 import * as _ from '../curry.js'
 import { config } from '../config.js'
 
-import { historyStore } from '../model/history.js'
-import { drawerStore } from '../model/drawerstore.js'
+import { historyStore, drawerStore, tabStore } from '../model/store.js'
 import { analytics } from '../network/analytics.js'
 
 const { log, assert } = _.utils('./Tabs.js')

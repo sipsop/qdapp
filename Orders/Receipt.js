@@ -68,7 +68,7 @@ export class ReceiptModal extends PureComponent {
     }
 
     @action closeModal = () => {
-        orderStore.clearActiveOrderToken()
+        orderStore.closeReceipt()
     }
 
     render = () => {

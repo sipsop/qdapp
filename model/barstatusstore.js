@@ -32,14 +32,14 @@ class BarStatusStore {
     getState = () => {}
     setState = async (barStatusState) => undefined
 
-    @computed get downloadProps() {
+    getDownloadProps = () => {
         return {
             barID: barStore.barID,
         }
     }
 
     initialize = () => {
-        downloadManager.declareDownload(new BarStatusDownload(this.downloadProps))
+        downloadManager.declareDownload(new BarStatusDownload(this.getDownloadProps))
     }
 
     @computed get barStatus() : ?BarStatus {
