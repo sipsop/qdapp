@@ -95,4 +95,10 @@ export const config = {
     /* TODO: DISABLE THESE FOR PRODUCTION */
     // refreshAfterDelta: Minute * 1,
     // expiresAfterDelta: Minute * 5,
+
+    /* API Keys */
+    mapsAPIKey: 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw',
+
+    stripeAPITestKey: "sk_test_8MKOs1GQ5iKWE5mAi44c36yY",
+    stripeAPIKey: "sk_test_8MKOs1GQ5iKWE5mAi44c36yY",
 }

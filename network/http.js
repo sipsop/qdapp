@@ -298,6 +298,7 @@ export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
     return new DownloadResult(errorMessage)
 }
 
+/* Class for declarating an JSON API request */
 export class JSONDownload {
 
     @observable state   : DownloadState = 'NotStarted'
@@ -335,6 +336,11 @@ export class JSONDownload {
 
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
+
+    constructor(props) {
+        /* NOTE: 'props' should be observable */
+        this.props = props
+    }
 
     @computed get active() {
         return true

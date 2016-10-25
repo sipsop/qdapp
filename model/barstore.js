@@ -1,22 +1,26 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager } from '../network/http.js'
-import * as _ from '../curry.js'
-import { store } from './store.js'
-import { mapStore } from '../mapstore.js'
-import { tagStore } from '../tagstore.js'
+import { BarInfoDownload } from '../network/api/maps/place-info.js'
+import { MenuDownload } from '../network/api/menu.js'
 import { segment } from '../network/analytics/segment.js'
 import { analytics } from '../network/analytics/analytics.js'
 import { config } from '../config.js'
+import * as _ from '../curry.js'
+
+import { store } from './store.js'
+import { mapStore } from './mapstore.js'
+import { tagStore } from './tagstore.js'
+import { parseBar } from './maps/place-info.js'
 
 /************************* Types ***********************************/
 
-import type { PlaceID } from '../Maps/MapStore.js'
-import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './Bar.js'
+import type { PlaceID } from './mapstore.js'
+import type { Bar, Menu, MenuItem, BarID, MenuItemID } from '../Bar/Bar.js'
 
 /************************* Store ***********************************/
 
-const { log, assert } = _.utils('./Bar/BarStore.js')
+const { log, assert } = _.utils('./model/barstore.js')
 
 class BarStore {
     // BarID
@@ -41,11 +45,26 @@ class BarStore {
         await this._setBarID(barID, track = false, focusOnMap = false)
     }
 
-    /*************************** Getters *********************************/
+    /*************************** Downloads *****************************/
 
     getBarDownloadResult = () => downloadManager.getDownload('barInfo')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
-    getBar = () => this.getBarDownloadResult().lastValue
+
+    getBar = () => {
+        const jsonResult = this.getBarDownloadResult().lastValue
+        return parseBar(this.value.result, this.value.html_attributions)
+    }
+
+    @computed get downloadProps() {
+        return {
+            barID: this.barID,
+        }
+    }
+
+    initializeDownloads = () => {
+        downloadManager.declareDownload(new BarInfoDownload())
+        downloadManager.declareDownload(new MenuDownload())
+    }
 
     /*************************** Network *********************************/
 

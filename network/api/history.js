@@ -1,0 +1,40 @@
+import { observable, computed, transaction, action, autorun } from 'mobx'
+import { QueryDownload } from '../http.js'
+import { OrderResultQuery } from './Orders/OrderQuery.js'
+
+export class HistoryQueryDownload extends QueryDownload {
+    /* properties:
+        isLoggedIn: Bool
+        authToken: String
+        userID: String
+    */
+    name = 'history'
+
+    @computed get cacheKey() {
+        return `qd:history:userID${this.props.userID}`
+    }
+
+    @computed get active() {
+        return this.props.isLoggedIn
+    }
+
+    @computed get query() {
+        return {
+            OrderHistory: {
+                args: {
+                    authToken: authToken,
+                    n: 100,
+                },
+                result: {
+                    orderHistory: [OrderResultQuery],
+                }
+            }
+        }
+    }
+
+    @computed get orderHistory() {
+        return this.lastValue
+            ? this.lastValue.orderHistory
+            : []
+    }
+}

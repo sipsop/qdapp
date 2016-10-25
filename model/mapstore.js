@@ -6,12 +6,13 @@ import { store, barStore, segment } from '../Store.js'
 import { DownloadResult, emptyResult } from '../HTTP.js'
 import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
 import { Second } from '../Time.js'
-import * as _ from '../Curry.js'
+import * as _ from '../curry.js'
+import { config } from '../config.js'
 
 import type { Bar } from '../Bar/Bar.js'
-import type { SearchResponse } from './Nearby.js'
+import type { SearchResponse } from '../network/maps/nearby.js'
 
-const { log, assert } = _.utils("Maps/MapStore.js")
+const { log, assert } = _.utils("model/maps/mapstore.js")
 
 /*********************************************************************/
 
@@ -40,8 +41,6 @@ type NativeMapView  = {
 }
 
 /*********************************************************************/
-
-export const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
 
 const initialLocation : Coords = {
     latitude: 52.207990,
@@ -310,7 +309,7 @@ class MapStore {
 
     searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
         return await searchNearbyFirstPage( // searchNearbyFirstPage(
-            APIKey,
+            config.mapsAPIKey,
             initialLocation,    // this.currentLocation,
             this.searchRadius,
             barType,

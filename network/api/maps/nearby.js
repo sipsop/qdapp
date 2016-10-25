@@ -13,6 +13,8 @@ import type { Bar, Photo } from '../Bar/Bar.js'
 
 const { log, assert } = _.utils('./Maps/Nearby.js')
 
+/* TODO: Use declarative downloads */
+
 /*********************************************************************/
 
 export type SearchResponse = {

@@ -1,8 +1,5 @@
 // @flow
 
-import { DownloadResult, downloadManager } from '../HTTP.js'
-import { buildURL } from '../URLs.js'
-import { parsePhoto } from './Photos.js'
 import { config } from '../Config.js'
 import * as _ from '../Curry.js'
 
@@ -10,8 +7,38 @@ import type { Int, Float, URL, HTML } from '../Types.js'
 import type { Key, Coords } from './MapStore.js'
 import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
 
-const { log, assert } = _.utils('./Maps/PlaceInfo.js')
+const { log, assert } = _.utils('./network/api/maps/place-info.js')
 
+export class BarInfoDownload extends JSONDownload {
+    /* properties:
+        barID: String
+    */
+
+    name = 'barInfo'
+
+    @computed get active() {
+        return this.props.barID != null
+    }
+
+    @computed get cacheKey() {
+        return `qd:placeInfo:${this.props.barID}`
+    }
+
+    @computed get url() {
+        return buildURL(
+            "https://maps.googleapis.com/maps/api/place/details/json",
+            { key: config.mapsAPIKey
+            , placeid: this.props.barID
+            }
+        )
+    }
+
+    @action finish = () => {
+        if (this.value && this.value.status !== 'OK') {
+            this.downloadError(this.value.status)
+        }
+    }
+}
 
 export const parseBar = (result : any, htmlAttrib : ?Array<HTML> = null) : Bar => {
     return {
@@ -86,4 +113,20 @@ const parseAddress = (result) => {
         lon: result.geometry.location.lng,
         formattedAddress: result.formatted_address,
     }
+}
+
+const parsePhoto = (photoRef : any) : Photo => {
+    return {
+        htmlAttrib: photoRef.html_attributions,
+        url:        getPhotoURL(photoRef.photo_reference),
+    }
+}
+
+const getPhotoURL = (photoID : String) => {
+    return buildURL("https://maps.googleapis.com/maps/api/place/photo", {
+        key: config.mapsAPIKey,
+        photoreference: photoID,
+        maxheight: 500,
+        maxwidth: 500,
+    })
 }
