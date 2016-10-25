@@ -1,4 +1,4 @@
-import { observable, computed, transaction, action, autorun } from 'mobx'
+import { computed, transaction, action, autorun } from 'mobx'
 import { QueryDownload } from '../http.js'
 import { OrderResultQuery } from './order.js'
 

@@ -3,17 +3,25 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { StripeTokenDownload } from '../network/api/payment.js'
-import { PlaceOrderDownload } from '../network/api/order.js'
-import { downloadManager } from '../network/http.js'
+import { StripeTokenDownload } from '/network/api/payment.js'
+import { PlaceOrderDownload } from '/network/api/order.js'
+import { downloadManager } from '/network/http.js'
 /* TODO: Imports */
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
-import { updateSelection } from '../Selection.js'
-import { store, barStore, paymentStore, loginStore } from './store.js'
-import * as _ from '../utils/curry.js'
+import { addToSelection } from './orderSelection.js'
+import { barStore } from '../barstore.js'
+import { paymentStore } from './paymentStore.js'
+import { loginStore } from '../loginstore.js'
+import * as _ from '/utils/curry.js'
 
 import type { BarID, MenuItemID, DateType, Time } from '../Bar/Bar.js'
 import type { Int, String } from '../Types.js'
+
+const { log, assert } = _.utils('./model/orders/orderstore.js')
+
+/*********************************************************************/
+/* Types                                                             */
+/*********************************************************************/
 
 export type OrderItem = {
     id:                 ID,
@@ -47,15 +55,13 @@ export type OrderResult = {
     pickupLocation: ?String,
 }
 
-const { log, assert } = _.utils('./model/orderstore.js')
+/*********************************************************************/
+/* Store                                                             */
+/*********************************************************************/
 
 class OrderStore {
 
     @observable orderList : Array<OrderItem> = []
-
-    // Update asynchronously
-    @observable total : Float = 0.0
-
     @observable tipFactor      : Float = 0.0
     @observable tipAmount      : Int = 0
     @observable delivery       : String = 'Table'
@@ -231,12 +237,12 @@ class OrderStore {
     }
 
     // Update the total asynchronously for UI responsiveness (see the autorun below)
-    @computed get _total() : Float {
+    @computed get total() : Float {
         return this.orderListTotal(this.orderList)
     }
 
     @computed get totalPlusTip() : Float {
-        return this._total + this.tipAmount
+        return this.total + this.tipAmount
     }
 
     @computed get totalText() : String {
@@ -298,7 +304,7 @@ class OrderStore {
                 stripeToken:         this.stripeToken,
                 authToken:           loginStore.getAuthToken(),
                 userName:            loginStore.userName,
-                price:               this._total,
+                price:               this.total,
                 tipAmount:           this.tipAmount,
                 currency:            this.currency,
                 orderList:           this.orderList,
@@ -373,13 +379,8 @@ _.safeAutorun(() => {
     orderStore.clearAllOrderData()
 })
 
-const periodicallyUpdateTotal = () => {
-    orderStore.total = orderStore._total
-    setTimeout(periodicallyUpdateTotal, 600)
-}
-
-periodicallyUpdateTotal()
-
+/*********************************************************************/
+/* Create new Order Items                                            */
 /*********************************************************************/
 
 export const createOrderItem = (menuItem : MenuItem) : OrderItem => {
@@ -396,5 +397,5 @@ const getMenuItemDefaultOptions = (menuItemOption : MenuItemOption) : String => 
         return []
     assert(menuItemOption.defaultOption >= 0)
     const option = menuItemOption.optionList[menuItemOption.defaultOption]
-    return updateSelection(menuItemOption.optionType, [], option)
+    return addToSelection(menuItemOption.optionType, [], option)
 }

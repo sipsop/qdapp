@@ -1,14 +1,14 @@
 import { React, Component, View, TouchableOpacity, T, Mono, PureComponent } from '../Component.js'
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
-import { BarStatusDownload } from '../network/api/bar/barstatus.js'
-import * as _ from '../Curry.js'
-import { segment } from '../Segment.js'
-import { barStore } from './BarStore.js'
-import { config } from '../Config.js'
+import { downloadManager } from '/network/http.js'
+import { BarStatusDownload } from '/network/api/bar/barstatus.js'
+import { segment } from '/network/segment.js'
+import { barStore } from './barstore.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
-const { assert, log } = _.utils('./Bar/BarStatus.js')
+const { assert, log } = _.utils('./model/barstatusstore.js')
 
 /*********************************************************************/
 /* Bar Status */

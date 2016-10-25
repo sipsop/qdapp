@@ -13,7 +13,7 @@ import { tagStore } from './tagstore.js'
 import { parseBar } from './maps/place-info.js'
 
 import type { PlaceID } from './mapstore.js'
-import type { Bar, Menu, MenuItem, BarID, MenuItemID } from '../Bar/Bar.js'
+import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './barstore.js'
 
 const { log, assert } = _.utils('./model/barstore.js')
 

@@ -2,17 +2,17 @@
 
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
-import { store, barStore, segment } from '../Store.js'
-import { DownloadResult, emptyResult } from '../HTTP.js'
-import { searchNearbyFirstPage, searchNearbyAllPages } from './Nearby.js'
-import { Second } from '../Time.js'
-import * as _ from '../curry.js'
-import { config } from '../config.js'
+import { store, barStore, segment } from './store.js'
+import { DownloadResult, emptyResult } from '/network/http.js'
+import { searchNearbyFirstPage, searchNearbyAllPages } from 'network/api/maps/nearby.js'
+import { Second } from '/utils/time.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
 
-import type { Bar } from '../Bar/Bar.js'
-import type { SearchResponse } from '../network/maps/nearby.js'
+import type { Bar } from './barstore.js'
+import type { SearchResponse } from '/network/api/maps/nearby.js'
 
-const { log, assert } = _.utils("model/maps/mapstore.js")
+const { log, assert } = _.utils("model/mapstore.js")
 
 /*********************************************************************/
 

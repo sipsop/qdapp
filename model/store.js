@@ -1,15 +1,15 @@
 import { observable, action } from 'mobx'
 
-import { cache } from '../network/cache.js'
-import { segment } from '../network/segment.js'
-import * as _ from '../utils/curry.js'
+import { cache } from '/network/cache.js'
+import { segment } from '/network/segment.js'
+import * as _ from '/utils/curry.js'
 
 import { analytics } from './analytics.js'
 import { favStore } from './favstore.js'
 import { tabStore } from './tabstore.js'
 import { barStore } from './barstore.js'
 import { barStatusStore } from './barstatusstore.js'
-import { orderStore } from './orderstore.js'
+import { orderStore } from './orders/orderstore.js'
 import { loginStore } from './loginstore.js'
 import { tagStore } from './tagstore.js'
 import { mapStore } from './mapstore.js'
@@ -17,7 +17,7 @@ import { paymentStore } from './paymentstore.js'
 import { historyStore } from './historystore.js'
 import { timeStore } from './timestore.js'
 
-const log = _.logger('Store.js')
+const log = _.logger('./model/store.js')
 
 export class Store {
 
