@@ -16,7 +16,7 @@ import { DownloadResultView, downloadManager } from './HTTP.js'
 import { analytics } from './Analytics.js'
 import { segment } from './Segment.js'
 import { config } from './Config.js'
-import { cache } from './Cache.js'
+import { cache } from /network/cache.js'
 import * as _ from './Curry.js'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />

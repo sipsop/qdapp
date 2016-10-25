@@ -19,7 +19,7 @@ import * as _ from '../Curry.js'
 
 /***************************************************************************/
 
-import type { CacheInfo } from '../Cache.js'
+import type { CacheInfo } from '/network/cache.js'
 
 /***************************************************************************/
 

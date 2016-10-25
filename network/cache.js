@@ -7,7 +7,7 @@ import * as _ from './Curry.js'
 
 import type { Float } from './Types.js'
 
-const { log, assert } = _.utils('./Cache.js')
+const { log, assert } = _.utils(/network/cache.js')
 
 export type CacheInfo = {
     noCache:      Bool,

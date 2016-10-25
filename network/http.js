@@ -13,19 +13,19 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Notification } from './Notification.js'
-import { Cache, cache } from './Cache.js'
+import { Cache, cache } from './cache.js'
 import { LargeButton } from './Button.js'
 import { PureComponent } from './Component.js'
 import { Loader } from './Page.js'
-import { config } from './Config.js'
-import { store } from './Store.js'
-import { HOST } from './Host.js'
+import { config } from '../config.js'
+import { store } from '../model/store.js'
+import { HOST } from './host.js'
 import { getTime, Second, Minute } from './Time.js'
-import * as _ from './Curry.js'
+import * as _ from '../curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
 
-const { log, assert } = _.utils('./HTTP.js')
+const { log, assert } = _.utils('/network/http.js')
 
 /*********************************************************************/
 

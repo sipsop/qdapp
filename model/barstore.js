@@ -1,15 +1,13 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
-import { Alert, AsyncStorage } from 'react-native'
 
-import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import * as _ from '../Curry.js'
-import { store } from '../Store.js'
-import { mapStore } from '../Maps/MapStore.js'
-import { tagStore } from '../Tags.js'
-import { segment } from '../Segment.js'
-import { analytics } from '../Analytics.js'
-import { config } from '../Config.js'
-import { getMenuQuery } from './MenuQuery.js'
+import { downloadManager } from '../network/http.js'
+import * as _ from '../curry.js'
+import { store } from './store.js'
+import { mapStore } from '../mapstore.js'
+import { tagStore } from '../tagstore.js'
+import { segment } from '../network/analytics/segment.js'
+import { analytics } from '../network/analytics/analytics.js'
+import { config } from '../config.js'
 
 /************************* Types ***********************************/
 

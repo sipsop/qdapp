@@ -2,7 +2,7 @@ import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { emptyResult, downloadManager } from './HTTP.js'
-import { cache } from './Cache.js'
+import { cache } from /network/cache.js'
 import * as _ from './Curry.js'
 
 import { favStore } from './favstore.js'
