@@ -9,6 +9,8 @@ import Drawer from 'react-native-drawer'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 
+import { drawerStore } from '../model/drawerstore.js'
+
 @observer
 export class SideMenu extends PureComponent {
     /* properties:
@@ -103,40 +105,3 @@ export class MenuIcon extends PureComponent {
         </TouchableOpacity>
     }
 }
-
-class DrawerStore {
-    @observable open = false
-    @observable disabled = false
-
-    @action disable = () => this.disabled = true
-    @action enable = () => this.disabled = false
-
-    @action setOpen = () => this.open = true
-    @action setClosed = () => this.open = false
-
-    toggleOpenClose = () => {
-        this.open = !this.open
-    }
-
-    @computed get drawerStyle() {
-        var drawerStyle = {}
-        if (this.open && !this.disabled) {
-            drawerStyle = {
-                shadowColor: '#000000',
-                shadowOpacity: 0.8
-                // shadowRadius: 3,
-            }
-        }
-        return { drawer: drawerStyle, main: {} }
-    }
-}
-
-export const drawerStore = new DrawerStore()
-
-// const drawerStyle =
-//     Platform.OS === 'android'
-//         ? { shadowColor: '#000000'
-//           , shadowOpacity: 0.8
-//           // , shadowRadius: 3
-//           }
-//         : {}

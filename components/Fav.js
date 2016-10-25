@@ -3,58 +3,12 @@ import { View, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { PureComponent } from './Component.js'
-import { observable, action, autorun, computed } from 'mobx'
+import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { loginStore } from './Store.js'
-import { config } from './Config.js'
-import * as _ from './Curry.js'
-
-/* Store */
-
-class FavStore {
-    @observable favItems = []
-    @observable favBars = []
-
-    toggleFavItem = (menuItemID) => {
-        // loginStore.login(() => {
-        toggle(this.favItems, menuItemID)
-        // })
-    }
-    toggleFavBar = (barID) => {
-        // loginStore.login(() => {
-        toggle(this.favBars, barID)
-        // })
-    }
-
-    isFavItem = (menuItemID) => _.includes(this.favItems, menuItemID)
-    isFavBar = (barID) => _.includes(this.favBars, barID)
-
-    getState = () => {
-        return {
-            favourites: {
-                favItems: this.favItems,
-                favBars: this.favBars,
-            },
-        }
-    }
-
-    @action setState = ({favourites}) => {
-        this.favItems = favourites.favItems
-        this.favBars = favourites.favBars
-    }
-}
-
-const toggle = (idList, id) => {
-    if (_.includes(idList, id))
-        idList.remove(id)
-    else
-        idList.push(id)
-}
-
-export const favStore = new FavStore()
-
-/* Components */
+import { favStore } from '../model/favstore.js'
+import { config } from '../config.js'
+import * as _ from '../curry.js'
 
 @observer
 export class Heart extends PureComponent {

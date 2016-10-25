@@ -7,11 +7,12 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { PureComponent } from './Component.js'
-import * as _ from './Curry.js'
-import { config } from './Config.js'
-import { historyStore } from './History.js'
-import { drawerStore } from './SideMenu.js'
-import { analytics } from './Analytics.js'
+import * as _ from '../curry.js'
+import { config } from '../config.js'
+
+import { historyStore } from '../model/history.js'
+import { drawerStore } from '../model/drawerstore.js'
+import { analytics } from '../network/analytics.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 
@@ -69,65 +70,3 @@ class TabBarWithMenu extends PureComponent {
         </View>
     }
 }
-
-class TabStore {
-    // ScrollableTabView
-    @observable tabView = null
-    @observable currentPage = 0
-
-    constructor() {
-        this.initialPage = 0
-    }
-
-    @action setTabView = (tabView) => {
-        this.tabView = tabView
-    }
-
-    @action setCurrentTab = (i) => {
-        if (this.currentPage !== i) {
-            historyStore.push('tab', this.currentPage)
-            this.setTab(i)
-            analytics.trackTabSwitch(i)
-        }
-    }
-
-    @action setTab = (i) => this.currentPage = i
-
-    getState = () => {
-        return { currentPage: this.currentPage }
-    }
-
-    emptyState = () => {
-        return { currentPage: 0 }
-    }
-
-    @action setState = async ({currentPage}) => {
-        if (!currentPage)
-            return
-
-        this.initialPage = currentPage
-        if (currentPage === 1) {
-            /* NOTE: there is a bug where the Swiper in combination with
-                     the scrollable tab view on the BarPage, where
-                     it sometimes does not show images if we immediately
-                     switch to the bar tab. So wait a little bit first...
-            */
-            setTimeout(() => {
-                this.setCurrentTab(currentPage)
-            }, 600)
-        } else {
-            this.setCurrentTab(currentPage)
-        }
-    }
-
-}
-
-export const tabStore = new TabStore()
-historyStore.registerHandler('tab', tabStore.setTab)
-
-_.safeAutorun(() => {
-    /* Set the currentPage whenever the TabView is ready */
-    if (tabStore.tabView) {
-        tabStore.tabView.goToPage(tabStore.currentPage)
-    }
-})
