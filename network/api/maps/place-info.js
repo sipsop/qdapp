@@ -1,11 +1,12 @@
 // @flow
 
-import { config } from '../Config.js'
-import * as _ from '../Curry.js'
+import { computed, action } from 'mobx'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
-import type { Int, Float, URL, HTML } from '../Types.js'
-import type { Key, Coords } from './MapStore.js'
-import type { Bar, BarType, Photo, TagID } from '../Bar/Bar.js'
+import type { Int, Float, URL, HTML } from '/utils/types.js'
+import type { Key, Coords } from '/model/mapstore.js'
+import type { Bar, BarType, Photo, TagID } from '/model/barstore.js'
 
 const { log, assert } = _.utils('./network/api/maps/place-info.js')
 

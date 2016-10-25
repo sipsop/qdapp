@@ -1,13 +1,13 @@
 import { AsyncStorage } from 'react-native'
 
-import { NetworkError } from './HTTP.js'
-import { Hour, Day, Month, getTime } from './Time.js'
-import { config } from './Config.js'
-import * as _ from './Curry.js'
+import { NetworkError } from './http.js'
+import { getTime } from '../utils/time.js'
+import { config } from '../utils/config.js'
+import * as _ from '../utils/curry.js'
 
-import type { Float } from './Types.js'
+import type { Float } from '../utils/types.js'
 
-const { log, assert } = _.utils(/network/cache.js')
+const { log, assert } = _.utils('./network/cache.js')
 
 export type CacheInfo = {
     noCache:      Bool,

@@ -1,6 +1,35 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
-import { QueryMutation } from './HTTP.js'
-import { OrderResultQuery } from './Orders/OrderQuery.js'
+import { QueryMutation } from '/network/http.js'
+import { MenuItemQuery } from 'bar/menu.js'
+
+export const OrderItemQuery = {
+    id:                 'String',
+    menuItemID:         'String',
+    selectedOptions:    [['String']],
+    amount:             'Int',
+}
+
+export const OrderResultQuery = {
+    errorMessage: 'String',
+    barID:        'String',
+    timestamp:    'Float',
+    userName:     'String',
+
+    queueSize:     'Int',
+    estimatedTime: 'Int',
+    receipt:       'String',
+
+    menuItems:      [MenuItemQuery],
+    orderList:      [OrderItemQuery],
+    totalAmount:    'Int',
+    totalPrice:     'Int',
+    tip:            'Int',
+    currency:       'String',
+
+    delivery:       'String',
+    tableNumber:    'String',
+    pickupLocation: 'String',
+}
 
 export class PlaceOrderDownload extends QueryMutation {
     /* properties:

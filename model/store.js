@@ -1,10 +1,10 @@
-import { observable, transaction, computed, action } from 'mobx'
-import { Alert, AsyncStorage } from 'react-native'
+import { observable, action } from 'mobx'
 
-import { emptyResult, downloadManager } from './HTTP.js'
 import { cache } from '../network/cache.js'
-import * as _ from './Curry.js'
+import { segment } from '../network/segment.js'
+import * as _ from '../utils/curry.js'
 
+import { analytics } from './analytics.js'
 import { favStore } from './favstore.js'
 import { tabStore } from './tabstore.js'
 import { barStore } from './barstore.js'
@@ -16,7 +16,6 @@ import { mapStore } from './mapstore.js'
 import { paymentStore } from './paymentstore.js'
 import { historyStore } from './historystore.js'
 import { timeStore } from './timestore.js'
-import { segment } from './Segment.js'
 
 const log = _.logger('Store.js')
 
@@ -50,12 +49,15 @@ export class Store {
         }
         this.initialized = true
 
+        await analytics.initialize()
+        await favStore.initialize()
         await tabStore.initialize()
         await barStore.initialize()
-        await mapStore.initialize()
+        await barStatusStore.initialize()
+        await orderStore.initialize()
         await loginStore.initialize()
         await tagStore.initialize()
-        await favStore.initialize()
+        await mapStore.initialize()
         await paymentStore.initialize()
         await historyStore.initialize()
         await timeStore.initialize()
@@ -148,20 +150,20 @@ export class Store {
     }
 }
 
-const popup = (title, message) => Alert.alert(title, message)
-
-
 export const store = new Store()
+
 export {
+    analytics,
     favStore,
     tabStore,
     barStore,
     barStatusStore,
-    loginStore,
-    mapStore,
     orderStore,
+    loginStore,
     tagStore,
+    mapStore,
     paymentStore,
     historyStore,
+    timeStore,
     segment,
 }

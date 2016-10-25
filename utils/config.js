@@ -1,4 +1,4 @@
-import { Second, Minute, Hour, Day, Week, Month } from './Time.js'
+import { Second, Minute, Hour, Day, Week, Month } from './time.js'
 
 const pink200 = '#F48FB1'
 const pink300 = '#F06292'

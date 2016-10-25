@@ -356,7 +356,7 @@ class MapStore {
     @action setCurrentMarker = (bar : Bar, track = false) => {
         this.currentMarker = bar
         if (track) {
-            segment.trackCurrentBar('Select Marker')
+            analytics.trackCurrentBar('Select Marker')
         }
     }
 
@@ -370,7 +370,7 @@ class MapStore {
         if (switchToDiscoverPage)
             store.switchToDiscoverPage(true)
         if (track) {
-            segment.trackCurrentBar('Focus Bar on Map')
+            analytics.trackCurrentBar('Focus Bar on Map')
         }
         this.setCurrentMarker(bar, track = false)
     }

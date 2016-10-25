@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import shortid from 'shortid'
 import { autorun } from 'mobx'
-import { getTime } from './Time.js'
+import { getTime } from './time.js'
 
 export const DEV = true
 

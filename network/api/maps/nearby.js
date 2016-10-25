@@ -1,15 +1,15 @@
 // @flow
 
-import { DownloadResult, emptyResult, downloadManager } from '../HTTP.js'
-import { buildURL } from '../URLs.js'
-import { parseBar } from './PlaceInfo.js'
-import { config } from '../Config.js'
+import { DownloadResult, emptyResult, downloadManager } from 'network/http.js'
+import { buildURL } from '/utils/urls.js'
+import { parseBar } from './place-info.js'
 import { getCacheInfo } from '/network/cache.js'
-import * as _ from '../Curry.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
-import type { Int, Float } from '../Types.js'
-import type { Key, Coords, PlaceID } from './MapStore.js'
-import type { Bar, Photo } from '../Bar/Bar.js'
+import type { Int, Float } from '/utils/types.js'
+import type { Key, Coords, PlaceID } from '/model/mapstore.js'
+import type { Bar, Photo } from '/model/barstore.js'
 
 const { log, assert } = _.utils('./Maps/Nearby.js')
 

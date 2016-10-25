@@ -1,3 +1,4 @@
+import { computed } from 'mobx'
 import { QueryDownload } from '/network/http.js'
 
 export class BarQueryDownload extends QueryDownload {

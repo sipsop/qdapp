@@ -13,7 +13,6 @@ import { BarCard, BarName, timeTextStyle } from '../Bar/BarCard.js'
 import { Receipt } from './Receipt.js'
 import { config } from '../Config.js'
 import { Second } from '../Time.js'
-import { OrderResultQuery } from './OrderQuery.js'
 import { BarInfoDownload, HistoryQueryDownload } from '../Downloads.js'
 import * as _ from '../Curry.js'
 
@@ -24,23 +23,6 @@ import type { CacheInfo } from '/network/cache.js'
 /***************************************************************************/
 
 const { log, assert } = _.utils('./Orders/History.js')
-
-const getHistoryQuery = () => {
-    assert(loginStore.userID != null, 'loginStore.userID != null')
-    assert(loginStore.getAuthToken() != null, 'loginStore.getAuthToken() != null')
-
-    return {
-        OrderHistory: {
-            args: {
-                authToken: loginStore.getAuthToken(),
-                n: 100,
-            },
-            result: {
-                orderHistory: [OrderResultQuery],
-            },
-        }
-    }
-}
 
 const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
 

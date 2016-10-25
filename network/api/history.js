@@ -1,6 +1,6 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { QueryDownload } from '../http.js'
-import { OrderResultQuery } from './Orders/OrderQuery.js'
+import { OrderResultQuery } from './order.js'
 
 export class HistoryQueryDownload extends QueryDownload {
     /* properties:

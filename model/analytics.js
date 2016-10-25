@@ -1,25 +1,46 @@
-import { barStore, tagStore, mapStore, orderStore, segment } from './Store.js'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
-import * as _ from './Curry.js'
+import * as _ from '/utils/curry.js'
+
+/* The './store.js' module. Bind this late so that stores can use this modules. */
+var stores = null
 
 export class Analytics {
 
     checkoutID = null
     stepNumber = null
 
+    initialize = () => {
+        stores = require('./store.js')
+    }
+
     @computed get menuItemsListID() {
-        return 'menuItemsAt_' + barStore.barID
+        return 'menuItemsAt_' + stores.barStore.barID
     }
 
     @computed get productList() {
-        return getProductList(tagStore.activeMenuItems)
+        return getProductList(stores.tagStore.activeMenuItems)
     }
 
     @computed get category() {
-        if (tagStore.tagSelection.length > 0)
-            return tagStore.tagSelection[0]
+        if (stores.tagStore.tagSelection.length > 0)
+            return stores.tagStore.tagSelection[0]
         return 'allItems'
+    }
+
+    /* Helpers */
+
+    trackCurrentBar = (event, properties) => {
+        segment.track(event, {...this.barProps(stores.barStore.getBar()), ...properties})
+    }
+
+    barProps = (bar : ?Bar) => {
+        if (!bar)
+            return null
+        return {
+            placeID:    bar.id,
+            placeName:  bar.name,
+        }
     }
 
     /* Tabs */
@@ -46,10 +67,8 @@ export class Analytics {
         })
     }
 
-
-
     trackMenuCardClick = (tagID) => {
-        segment.trackCurrentBar('Menu Card Clicked', {
+        this.trackCurrentBar('Menu Card Clicked', {
             tag: tagID,
         })
     }
@@ -71,7 +90,7 @@ export class Analytics {
         segment.track('Product List Filtered', {
             list_id:    this.menuItemsListID,
             category:   this.category,
-            filters:    tagStore.tagSelection.map(
+            filters:    stores.tagStore.tagSelection.map(
                 (tagID) => {
                     return {
                         type:  'tag',
@@ -96,7 +115,7 @@ export class Analytics {
 
     trackAddItem = (menuItem, orderItem) => {
         segment.track('Product Added', {
-            cart_id:    orderStore.cartID,
+            cart_id:    stores.orderStore.cartID,
             product_id: menuItem.id,
             variant:    getVariant(orderItem),
         })
@@ -104,7 +123,7 @@ export class Analytics {
 
     trackRemoveItem = (menuItem, orderItem) => {
         segment.track('Product Removed', {
-            cart_id:    orderStore.cartID,
+            cart_id:    stores.orderStore.cartID,
             product_id: menuItem.id,
             variant:    getVariant(orderItem),
         })
@@ -112,8 +131,8 @@ export class Analytics {
 
     trackCartViewed = () => {
         segment.track('Cart Viewed', {
-            cart_id:    orderStore.cartID,
-            products:   getProductList(orderStore.menuItemsOnOrder)
+            cart_id:    stores.orderStore.cartID,
+            products:   getProductList(stores.orderStore.menuItemsOnOrder)
         })
     }
 
@@ -123,12 +142,12 @@ export class Analytics {
         return {
             checkout_id:    this.checkoutID,
             order_id:       this.checkoutID,
-            value:          getPrice(orderStore.totalPlusTip),
+            value:          getPrice(stores.orderStore.totalPlusTip),
             // discount:    ..., // TODO:
             // coupon:      ..., // TODO:
-            currency:       getCurrencyCode(orderStore.currency),
+            currency:       getCurrencyCode(stores.orderStore.currency),
             // TODO: products.quantity
-            products:       orderStore.menuItemsOnOrder.map(getProductInfo),
+            products:       stores.orderStore.menuItemsOnOrder.map(getProductInfo),
         }
     }
 
