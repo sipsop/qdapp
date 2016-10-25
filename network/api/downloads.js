@@ -9,6 +9,8 @@ import { OrderResultQuery } from './Orders/OrderQuery.js'
 import { config } from './Config.js'
 
 const APIKey : Key = 'AIzaSyAPxkG5Fe5GaWdbOSwNJuZfDnA6DiKf8Pw'
+const stripeTestAPIKey = "sk_test_8MKOs1GQ5iKWE5mAi44c36yY"
+const stripeAPIKey = stripeTestAPIKey
 
 class SelectedBarInfoDownload extends JSONDownload {
     name = 'barInfo'
@@ -26,7 +28,6 @@ class SelectedBarInfoDownload extends JSONDownload {
     }
 
     @computed get url() {
-        url = "https://maps.googleapis.com/maps/api/place/details/json"
         return buildURL(
             "https://maps.googleapis.com/maps/api/place/details/json",
             { key: APIKey
@@ -234,6 +235,123 @@ class MenuDownload extends BarQueryDownload {
     }
 }
 
+/***********************************************************************/
+/* Order Placement                                                     */
+/***********************************************************************/
+
+class StripeTokenDownload extends JSONDownload {
+    name = 'stripe'
+    cacheKey = 'DO_NOT_CACHE'
+    cacheInfo = config.noCache
+    refreshCacheInfo = config.noCache
+
+    @computed get active() {
+        return stores.orderStore.shouldPlaceOrderNow()
+    }
+
+    @computed get url() {
+        return 'https://api.stripe.com/v1/tokens'
+    }
+
+    @computed get card() : Card {
+        return stores.paymentStore.getSelectedCard()
+    }
+
+    @computed get httpOptions() {
+        const properties = {
+          'card[number]':       this.card.cardNumber,
+          'card[exp_month]':    this.card.expiryMonth,
+          'card[exp_year]':     this.card.expiryYear,
+          'card[cvc]':          this.card.cvv,
+          'card[address_zip]':  this.card.postalCode,
+        }
+
+        const body = Object.entries(properties)
+            .map(([key, value]) => `${key}=${value}`)
+            .reduce((previous, current) => `${previous}&${current}`, '')
+
+        return {
+            method: 'POST',
+            headers: {
+                Accept:         'application/json',
+                Authorization:  `Bearer ${stripeAPIKey}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body,
+        }
+    }
+
+    /* Result */
+    @computed get stripeToken() {
+        return this.value && this.value.id
+    }
+}
+
+class PlaceOrderDownload extends QueryMutation {
+    name = 'placeOrder'
+
+    /* Start this download only after the 'stripe' download has finished */
+    depends = ['stripe']
+
+    // @computed get active() {
+    //     return stores.orderStore.shouldPlaceOrderNow()
+    // }
+
+    @computed get query() {
+        const orderStore = stores.orderStore
+        const total     = orderStore.orderListTotal(orderStore.orderList)
+        const orderList = orderStore.orderList.map(orderItem => {
+            return {
+                id:                     orderItem.id,
+                menuItemID:             orderItem.menuItemID,
+                selectedOptions:        orderItem.selectedOptions,
+                amount:                 orderItem.amount,
+            }
+        })
+
+        const tableNumber =
+            orderStore.delivery === 'Table'
+                ? orderStore.tableNumber
+                : ""
+
+        const pickupLocation =
+            orderStore.delivery === 'Pickup'
+                ? orderStore.pickupLocation
+                : ""
+
+        const stripeToken = downloadManager.getDownload('stripe').stripeToken
+
+        return {
+            PlaceOrder: {
+                args: {
+                    barID:          barStore.barID,
+                    authToken:      loginStore.getAuthToken(),
+                    userName:       userName,
+                    currency:       currency,
+                    price:          total,
+                    tip:            orderStore.tipAmount,
+                    orderList:      orderList,
+                    stripeToken:    stripeToken,
+                    delivery:       orderStore.delivery,
+                    tableNumber:    tableNumber,
+                    pickupLocation: pickupLocation,
+                },
+                result: {
+                    orderResult: OrderResultQuery,
+                }
+            }
+        }
+    }
+
+    @computed get orderResult() {
+        return this.lastValue && this.lastValue.orderResult
+    }
+}
+
+/***********************************************************************/
+/* Initialization                                                      */
+/***********************************************************************/
+
 /* Object to hold all stores:
 
     barStore
@@ -241,7 +359,16 @@ class MenuDownload extends BarQueryDownload {
     orderStore
     etc
 */
-var stores = null
+type Stores = {
+    barStore:       BarStore,
+    loginStore:     LoginStore,
+    orderStore:     OrderStore,
+    paymentStore:   PaymentStore,
+    // ...
+}
+
+
+var stores : Stores = null
 
 export const initialize = (_stores, downloadManager) => {
     stores = _stores

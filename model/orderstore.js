@@ -72,11 +72,21 @@ class OrderStore {
 
     @observable checkoutVisible = false
     @observable activeOrderID : ?ID = null
-    @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
-    @observable cartID = _.uuid()
+    // @observable orderResultDownload  : DownloadResult<OrderResult> = emptyResult()
+
+    /* Checkout ID which is fresh for every checkout that is entered.
+       The user may try checking out several times with a single shopping cart
+       without ever completing the order.
+    */
     @observable checkoutID = null
 
-    getOrderResultDownload = () => this.orderResultDownload
+
+    /* Shopping Card ID. Always initialized, and cleared whenever an order
+       is completed
+    */
+    @observable cartID = _.uuid()
+
+    // getOrderResultDownload = () => this.orderResultDownload
 
     getMenuItemsOnOrder = (orderList : Array<OrderItem>) : Array<MenuItem> => {
         const seen = []
@@ -220,7 +230,7 @@ class OrderStore {
         return {
             orderList:              this.orderList,
             orderToken:             this.getActiveOrderToken(),
-            orderResultDownload:    this.orderResultDownload.getState(),
+            // orderResultDownload:    this.orderResultDownload.getState(),
             delivery: {
                 delivery:           this.delivery,
                 tableNumber:        this.tableNumber,
@@ -235,7 +245,7 @@ class OrderStore {
         return {
             orderList: [],
             orderToken: null,
-            orderResultDownload: emptyResult(),
+            // orderResultDownload: emptyResult(),
             delivery: null,
             cartID: _.uuid(),
             checkoutID: null,
@@ -246,9 +256,9 @@ class OrderStore {
         if (orderState.orderList)
             this.setOrderList(orderState.orderList)
         if (orderState.orderToken) {
-            this.setOrderToken(orderState.orderToken)
-            if (orderState.orderResultDownload)
-                this.orderResultDownload.setState(orderState.orderResultDownload)
+            this.activeOrderID = orderState.orderToken
+            // if (orderState.orderResultDownload)
+            //     this.orderResultDownload.setState(orderState.orderResultDownload)
         }
         if (orderState.cartID)
             this.cartID = orderState.cartID
@@ -261,6 +271,14 @@ class OrderStore {
     }
 
     /*********************************************************************/
+    /* Checkout */
+
+    @computed get haveDeliveryMethod() {
+        if (this.delivery === 'Table')
+            return !!this.tableNumber
+        else
+            return !!this.pickupLocation
+    }
 
     @action setTipFactor = (factor) => {
         const total = this.total
@@ -274,20 +292,18 @@ class OrderStore {
         this.tipAmount = Math.ceil(amount)
     }
 
-    /*********************************************************************/
-
-    getActiveOrderToken = () => this.activeOrderID
-
     @action setCheckoutVisibility = (visible : Bool) => {
         this.checkoutVisible = visible
     }
 
-    @action setOrderToken = (token) => {
-        this.activeOrderID = token
-    }
+    /*********************************************************************/
+    /* Order Placement */
 
-    @action setFreshOrderToken = () => {
-        this.setOrderToken(_.uuid())
+    getActiveOrderToken = () => this.activeOrderID
+
+    /* Decide whether to place the order now */
+    shouldPlaceOrderNow = () => {
+        return this.getActiveOrderToken() != null
     }
 
     @action freshCheckoutID = () => {
@@ -300,96 +316,93 @@ class OrderStore {
     }
 
     @action clearOrderToken = () => {
-        this.orderResultDownload.reset()
-    }
-
-    @computed get haveDeliveryMethod() {
-        if (this.delivery === 'Table')
-            return !!this.tableNumber
-        else
-            return !!this.pickupLocation
+        this.activeOrderID = null
+        // this.orderResultDownload.reset()
     }
 
     /* Submit order to server */
     _placeActiveOrder = async () : Promise<DownloadResult<OrderResult>> => {
-        const barID    = barStore.barID
-        const userName = loginStore.userName
-        const currency = 'Sterling'
 
-        assert(barID != null, 'barID != null')
-        assert(userName != null, 'userName != null')
-
-        var stripeToken
-        this.orderResultDownload.downloadStarted()
-        try {
-            stripeToken = await getStripeToken(paymentStore.getSelectedCard())
-        } catch (err) {
-            log('Stripe token error', err)
-            if (!(err instanceof NetworkError))
-                throw err
-            this.orderResultDownload.downloadError(
-                err.message,
-                // Make sure to obtain new login tokens if necesary
-                refresh = null,
-            )
-            return
-        }
-        log('Got stripe token', stripeToken)
-
-        const total     = this.orderListTotal(this.orderList)
-        const orderList = this.orderList.map(orderItem => {
-            return {
-                id:                     orderItem.id,
-                menuItemID:             orderItem.menuItemID,
-                selectedOptions:        orderItem.selectedOptions,
-                amount:                 orderItem.amount,
-            }
-        })
-
-        const tableNumber =
-            this.delivery === 'Table'
-                ? this.tableNumber
-                : ""
-
-        const pickupLocation =
-            this.delivery === 'Pickup'
-                ? this.pickupLocation
-                : ""
-
-        const placeOrderQuery = {
-            PlaceOrder: {
-                args: {
-                    barID:          barStore.barID,
-                    authToken:      loginStore.getAuthToken(),
-                    userName:       userName,
-                    currency:       currency,
-                    price:          total,
-                    tip:            this.tipAmount,
-                    orderList:      orderList,
-                    stripeToken:    stripeToken,
-                    delivery:       this.delivery,
-                    tableNumber:    tableNumber,
-                    pickupLocation: pickupLocation,
-                },
-                result: {
-                    orderResult: OrderResultQuery,
-                }
-            }
-        }
-        const orderResultDownload = await downloadManager.queryMutate(placeOrderQuery)
-        // log('Order placed:', orderResultDownload)
-        if (orderResultDownload.value) {
-            orderResultDownload.update(value => {
-                const result = value.orderResult
-                assert(result.queueSize != null, 'result.queueSize != null')
-                assert(result.estimatedTime != null, 'result.estimatedTime != null')
-                assert(result.receipt != null, 'result.receipt != null')
-                return result
-            })
-        }
-        this.orderResultDownload = orderResultDownload
+        this.activeOrderID = _.uuid()
     }
 
+    //     const barID    = barStore.barID
+    //     const userName = loginStore.userName
+    //     const currency = 'Sterling'
+    //
+    //     assert(barID != null, 'barID != null')
+    //     assert(userName != null, 'userName != null')
+    //
+    //     var stripeToken
+    //     this.orderResultDownload.downloadStarted()
+    //     try {
+    //         stripeToken = await getStripeToken(paymentStore.getSelectedCard())
+    //     } catch (err) {
+    //         log('Stripe token error', err)
+    //         if (!(err instanceof NetworkError))
+    //             throw err
+    //         this.orderResultDownload.downloadError(
+    //             err.message,
+    //             // Make sure to obtain new login tokens if necesary
+    //             refresh = null,
+    //         )
+    //         return
+    //     }
+    //     log('Got stripe token', stripeToken)
+    //
+    //     const total     = this.orderListTotal(this.orderList)
+    //     const orderList = this.orderList.map(orderItem => {
+    //         return {
+    //             id:                     orderItem.id,
+    //             menuItemID:             orderItem.menuItemID,
+    //             selectedOptions:        orderItem.selectedOptions,
+    //             amount:                 orderItem.amount,
+    //         }
+    //     })
+    //
+    //     const tableNumber =
+    //         this.delivery === 'Table'
+    //             ? this.tableNumber
+    //             : ""
+    //
+    //     const pickupLocation =
+    //         this.delivery === 'Pickup'
+    //             ? this.pickupLocation
+    //             : ""
+    //
+    //     const placeOrderQuery = {
+    //         PlaceOrder: {
+    //             args: {
+    //                 barID:          barStore.barID,
+    //                 authToken:      loginStore.getAuthToken(),
+    //                 userName:       userName,
+    //                 currency:       currency,
+    //                 price:          total,
+    //                 tip:            this.tipAmount,
+    //                 orderList:      orderList,
+    //                 stripeToken:    stripeToken,
+    //                 delivery:       this.delivery,
+    //                 tableNumber:    tableNumber,
+    //                 pickupLocation: pickupLocation,
+    //             },
+    //             result: {
+    //                 orderResult: OrderResultQuery,
+    //             }
+    //         }
+    //     }
+    //     const orderResultDownload = await downloadManager.queryMutate(placeOrderQuery)
+    //     // log('Order placed:', orderResultDownload)
+    //     if (orderResultDownload.value) {
+    //         orderResultDownload.update(value => {
+    //             const result = value.orderResult
+    //             assert(result.queueSize != null, 'result.queueSize != null')
+    //             assert(result.estimatedTime != null, 'result.estimatedTime != null')
+    //             assert(result.receipt != null, 'result.receipt != null')
+    //             return result
+    //         })
+    //     }
+    //     this.orderResultDownload = orderResultDownload
+    // }
 
     placeActiveOrder = _.logErrors(async () => {
         try{
