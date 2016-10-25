@@ -33,7 +33,7 @@ import { Page } from '../Page.js'
 import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
-import { tabStore, barStore, mapStore, segment } from '../Store.js'
+import { tabStore, barStore, timeStore, mapStore, segment } from '../Store.js'
 import { config } from '../Config.js'
 import * as _ from '../Curry.js'
 
@@ -363,7 +363,7 @@ class OpeningTimesModal extends PureComponent {
     }
 
     renderOpeningTime = (openingTime, i) => {
-        const today = i === barStore.today
+        const today = i === timeStore.today
         const openingTimeView = {
             ...this.styles.openingTimeView,
             backgroundColor: today ? config.theme.todayBackgroundColor : '#fff'

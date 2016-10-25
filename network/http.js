@@ -337,9 +337,13 @@ export class JSONDownload {
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
 
-    constructor(props) {
-        /* NOTE: 'props' should be observable */
-        this.props = props
+    constructor(getProps {
+        /* function returning props derived from a (observable) model state */
+        this.getProps = getProps
+    }
+
+    @computed get props() {
+        return getProps())
     }
 
     @computed get active() {

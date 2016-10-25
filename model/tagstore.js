@@ -61,6 +61,10 @@ export class TagStore {
         this.tagSelectionHistory = new Map()
     }
 
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
+
     getState = () => {
         return {
             tagSelection: this.tagSelection,
@@ -80,19 +84,27 @@ export class TagStore {
         }
     }
 
-    @computed get downloadProps() {
+    /*********************************************************************/
+    /* Tags Download                                                     */
+    /*********************************************************************/
+
+    @action initialize = () => {
+        downloadManager.declareDownload(new TagsDownload(this.getDownloadProps))
+    }
+
+    getDownloadProps = () => {
         return {
             barID: barStore.barID,
         }
     }
 
-    @action initialize = () => {
-        downloadManager.declareDownload(new TagsDownload(this.downloadProps))
-    }
-
     @computed get tags() {
         return downloadManager.getDownload('tags').tags
     }
+
+    /*********************************************************************/
+    /* Tags                                                              */
+    /*********************************************************************/
 
     @computed get tagGraph() {
         if (!this.tags)

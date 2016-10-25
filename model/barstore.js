@@ -13,20 +13,14 @@ import { mapStore } from './mapstore.js'
 import { tagStore } from './tagstore.js'
 import { parseBar } from './maps/place-info.js'
 
-/************************* Types ***********************************/
-
 import type { PlaceID } from './mapstore.js'
 import type { Bar, Menu, MenuItem, BarID, MenuItemID } from '../Bar/Bar.js'
-
-/************************* Store ***********************************/
 
 const { log, assert } = _.utils('./model/barstore.js')
 
 class BarStore {
     // BarID
     @observable barID = null
-
-    @observable today : Int
 
     /* ScrollView component on the bar page */
     barScrollView = null
@@ -48,10 +42,9 @@ class BarStore {
     }
 
     initialize = () => {
-        downloadManager.declareDownload(new BarInfoDownload(this.downloadProps))
-        downloadManager.declareDownload(new MenuDownload(this.downloadProps))
+        downloadManager.declareDownload(new BarInfoDownload(this.getDownloadProps))
+        downloadManager.declareDownload(new MenuDownload(this.getDownloadProps))
     }
-
 
     /*********************************************************************/
     /* Downloads */
@@ -65,7 +58,7 @@ class BarStore {
         return parseBar(this.value.result, this.value.html_attributions)
     }
 
-    @computed get downloadProps() {
+    getDownloadProps = () => {
         return {
             barID: this.barID,
         }
@@ -190,27 +183,7 @@ segment.barProps = (bar : ?Bar) => {
 export const getBarOpenTime = (bar : Bar) : ?OpeningTime => {
     if (!bar.openingTimes)
         return null
-    return bar.openingTimes[barStore.today]
-}
-
-/* Get the day for which we should be displaying the time */
-const getDay = () => {
-    const date = new Date()
-    var day = date.getDay()
-
-    /* If it's before 06.00AM, display the date from the day before */
-    if (date.getHours() < 6)
-        day -= 1
-    if (day < 0)
-        day += 7
-    return day
-}
-
-/* Update the 'day' every 5 minutes */
-const setDay = () => {
-    barStore.today = getDay()
-    setTimeout(setDay, 1000 * 60 * 5)
+    return bar.openingTimes[timeStore.today]
 }
 
 export const barStore = new BarStore()
-setDay()

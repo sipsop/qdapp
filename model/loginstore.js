@@ -53,6 +53,10 @@ class LoginStore {
     refreshAfter = null
     expiresAfter = null
 
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
+
     getState = () => {
         return {
             profile:        this.profile,
@@ -79,10 +83,10 @@ class LoginStore {
             name:  this.name,
         })
     }
-    
-    initialize = () => {
 
-    }
+    /*********************************************************************/
+    /* Auth & Token Refresh                                              */
+    /*********************************************************************/
 
     login = (callbackSuccess, callbackError) => {
         if (this.shouldRefreshToken()) {
@@ -149,18 +153,6 @@ class LoginStore {
         return !this.getAuthToken() || !this.expiresAfter || getTime() >= this.expiresAfter
     }
 
-    @computed get barOwnerProfile() : UserProfile {
-        return downloadManager.getDownload('barOwnerProfile').profile
-    }
-
-    @computed get isBarOwner() : Bool {
-        return this.barOwnerProfile && this.barOwnerProfile.is_bar_owner
-    }
-
-    @computed get ownedBars() : Array<BarID> {
-        return this.barOwnerProfile && this.barOwnerProfile.bars || []
-    }
-
     @action logout = () => {
         this.profile = null
         this.tokenInfo = null
@@ -184,6 +176,10 @@ class LoginStore {
         this.refreshAfter = getTime() + config.auth.refreshAfter
         this.expiresAfter = getTime() + config.auth.expiresAfter
     }
+
+    /*********************************************************************/
+    /* User Profile                                                      */
+    /*********************************************************************/
 
     @computed get isLoggedIn() {
         return this.profile && this.getAuthToken()
@@ -212,6 +208,35 @@ class LoginStore {
     @computed get picture() {
         return this.profile ? this.profile.picture : null
     }
+
+    /*********************************************************************/
+    /* Bar Owner Profile                                                 */
+    /*********************************************************************/
+
+    initialize = () => {
+        downloadManager.declareDownload(new BarOwnerProfileDownload(this.getDownloadProps))
+    }
+
+    getDownloadProps = () => {
+        return {
+            isLoggedIn: this.isLoggedIn,
+            authToken:  this.getAuthToken(),
+            userID:     this.userID,
+        }
+    }
+
+    @computed get barOwnerProfile() : UserProfile {
+        return downloadManager.getDownload('barOwnerProfile').profile
+    }
+
+    @computed get isBarOwner() : Bool {
+        return this.barOwnerProfile && this.barOwnerProfile.is_bar_owner
+    }
+
+    @computed get ownedBars() : Array<BarID> {
+        return this.barOwnerProfile && this.barOwnerProfile.bars || []
+    }
+
 }
 
 export const loginStore = new LoginStore()

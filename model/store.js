@@ -15,6 +15,7 @@ import { tagStore } from './tagstore.js'
 import { mapStore } from './mapstore.js'
 import { paymentStore } from './paymentstore.js'
 import { historyStore } from './historystore.js'
+import { timeStore } from './timestore.js'
 import { segment } from './Segment.js'
 
 const log = _.logger('Store.js')
@@ -57,6 +58,7 @@ export class Store {
         await favStore.initialize()
         await paymentStore.initialize()
         await historyStore.initialize()
+        await timeStore.initialize()
 
         await segment.initialize()
         segment.track('Application Opened', {

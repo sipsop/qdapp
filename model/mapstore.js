@@ -134,11 +134,9 @@ class MapStore {
         this.animateToUserLocation = false
     }
 
-    initialize = async () => {
-        mapStore.trackLocation()
-        /* TODO: Declarative downloads */
-        await this.updateNearbyBars()
-    }
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
 
     getState = () => {
         return {
@@ -168,8 +166,17 @@ class MapStore {
         }
     }
 
+    initialize = async () => {
+        mapStore.trackLocation()
+        /* TODO: Declarative downloads */
+        await this.updateNearbyBars()
+    }
+
+    /*********************************************************************/
+    /* Location Tracking                                                 */
+    /*********************************************************************/
+
     @action updateLocation = (position) => {
-        // log("UPDATING CURREnT LOCATION...", position)
         const location = {
             latitude:   position.coords.latitude,
             longitude:  position.coords.longitude,
@@ -184,6 +191,38 @@ class MapStore {
             this.animateToUserLocation = false
         }
     }
+
+    trackLocation = () => {
+        /* Improve with a fresh rough estimate */
+        navigator.geolocation.getCurrentPosition(
+            this.updateLocation,
+            /* Note: you need to provide an error callback, or it will throw
+                     an exception on errors.
+                     Just do nothing to swallow errors, such as
+
+                        'Location request timed out'
+
+               TODO: Show notification to user that location couldn't be obtained
+            */
+            (error) => null, //_.logError(error),
+        )
+
+        // update every 10s
+        setTimeout(this.trackLocation, 10000)
+
+        // /* Keep tracking with higher accuracy */
+        // this.watchID = navigator.geolocation.watchPosition(
+        //     this.updateLocation,
+        //     (error) => _.logError(error.message),
+        //     // {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
+        // )
+    }
+
+
+
+    /*********************************************************************/
+    /* Nearby Search                                                     */
+    /*********************************************************************/
 
     /* Decide whether we allow the different page results downloaded from
        google maps to be mixed.
@@ -230,82 +269,6 @@ class MapStore {
         setTimeout(() => {
             this.moreButtonEnabled = true
         }, after)
-    }
-
-    trackLocation = () => {
-        /* Use the old location until we get an update */
-        // if (this.currentLocation) {
-        //     this.updateLocation({
-        //         coords: this.currentLocation,
-        //     })
-        // }
-
-        /* Improve with a fresh rough estimate */
-        navigator.geolocation.getCurrentPosition(
-            this.updateLocation,
-            /* Note: you need to provide an error callback, or it will throw
-                     an exception on errors.
-                     Just do nothing to swallow errors, such as
-
-                        'Location request timed out'
-
-               TODO: Show notification to user that location couldn't be obtained
-            */
-            (error) => null, //_.logError(error),
-        )
-
-        // update every 10s
-        setTimeout(this.trackLocation, 10000)
-
-        // /* Keep tracking with higher accuracy */
-        // this.watchID = navigator.geolocation.watchPosition(
-        //     this.updateLocation,
-        //     (error) => _.logError(error.message),
-        //     // {enableHighAccuracy: true}, //, timeout: 20000, maximumAge: 1000},
-        // )
-    }
-
-    /* User changed region, stop following user location */
-    @action userChangedRegion = (region) => {
-        this.region = region
-    }
-
-    /* Determine what to focus on: a bar or the current location */
-    @computed get focusPoint() {
-        if (this.currentMarker && this.currentMarker.address) {
-            // log("BAR FOCUS POINT", this.lastSelectedMarker.name)
-            // return getBarCoords(this.lastSelectedMarker)
-            return getBarCoords(this.currentMarker)
-        }
-        // log("CURRENT LOCATION FOCUS POINT")
-        return this.currentLocation
-    }
-
-    getCurrentMarker = () : ?Coords => {
-        return this.currentMarker
-    }
-
-    /* Select or de-select a marker */
-    @action setCurrentMarker = (bar : Bar, track = false) => {
-        this.currentMarker = bar
-        if (track) {
-            segment.trackCurrentBar('Select Marker')
-        }
-    }
-
-    /* Focus the given bar on the map */
-    @action focusBar = (bar : Bar, switchToDiscoverPage = true, track = false) => {
-        if (this.mapView != null) {
-            const coords = getBarCoords(bar)
-            const region = { ...coords, ...focusDelta }
-            this.mapView.animateToRegion(region, 500)
-        }
-        if (switchToDiscoverPage)
-            store.switchToDiscoverPage(true)
-        if (track) {
-            segment.trackCurrentBar('Focus Bar on Map')
-        }
-        this.setCurrentMarker(bar, track = false)
     }
 
     searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
@@ -365,6 +328,53 @@ class MapStore {
         }
     }
 
+    /*********************************************************************/
+    /* Region and Map Marker                                             */
+    /*********************************************************************/
+
+    /* User changed region, stop following user location */
+    @action userChangedRegion = (region) => {
+        this.region = region
+    }
+
+    /* Determine what to focus on: a bar or the current location */
+    @computed get focusPoint() {
+        if (this.currentMarker && this.currentMarker.address) {
+            // log("BAR FOCUS POINT", this.lastSelectedMarker.name)
+            // return getBarCoords(this.lastSelectedMarker)
+            return getBarCoords(this.currentMarker)
+        }
+        // log("CURRENT LOCATION FOCUS POINT")
+        return this.currentLocation
+    }
+
+    getCurrentMarker = () : ?Coords => {
+        return this.currentMarker
+    }
+
+    /* Select or de-select a marker */
+    @action setCurrentMarker = (bar : Bar, track = false) => {
+        this.currentMarker = bar
+        if (track) {
+            segment.trackCurrentBar('Select Marker')
+        }
+    }
+
+    /* Focus the given bar on the map */
+    @action focusBar = (bar : Bar, switchToDiscoverPage = true, track = false) => {
+        if (this.mapView != null) {
+            const coords = getBarCoords(bar)
+            const region = { ...coords, ...focusDelta }
+            this.mapView.animateToRegion(region, 500)
+        }
+        if (switchToDiscoverPage)
+            store.switchToDiscoverPage(true)
+        if (track) {
+            segment.trackCurrentBar('Focus Bar on Map')
+        }
+        this.setCurrentMarker(bar, track = false)
+    }
+
     /* All markers to be shown on the map.
 
     We do not reuse nearbyBarList here, as the bar list is re-arranged when
@@ -399,43 +409,6 @@ class MapStore {
         })
         return results
     }
-
-    @observable barMarkers = [
-        {
-            id: '0',
-            signedUp: false,
-            name: "Some Other Pub",
-            desc: "This is some other pub.",
-            barType: 'Pub',
-            address: {
-                lat: 52.207990,
-                lon: 0.121703,
-            },
-        },
-        {
-            id: '1',
-            signedUp: true,
-            name: "The Eagle",
-            desc: "The Eagle is a traditional English pub.",
-            barType: 'Pub',
-            address: {
-                lat: 52.204139,
-                lon: 0.118045,
-            },
-        },
-        {
-            id: '2',
-            signedUp: true,
-            name: 'Lola Lo',
-            desc: 'Polynesian-themed nightclub',
-            barType: 'Nightclub',
-            address: {
-                lat: 52.204519,
-                lon: 0.120067,
-            },
-        }
-    ]
-
 }
 
 export const mapStore = new MapStore()
@@ -454,11 +427,6 @@ _.safeAutorun(() => {
         }
     }, 100)
 })
-
-
-const isFinished = (downloadResult) => {
-    return downloadResult.state === 'Finished'
-}
 
 const getNextPageToken = (downloadResult) => {
     return downloadResult.value && downloadResult.value.nextPageToken

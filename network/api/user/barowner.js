@@ -1,17 +1,18 @@
 import { QueryDownload } from '/network/http.js'
 import { config } from './Config.js'
 
-class BarOwnerProfileDownload extends QueryDownload {
+export class BarOwnerProfileDownload extends QueryDownload {
     /* properties:
         isLoggedIn: Bool
         authToken: String
+        userID: String
     */
 
     name = 'barOwnerProfile'
     cacheInfo = config.defaultRefreshCacheInfo
 
     @computed get cacheKey() {
-        return `qd:barOwnerProfile:userID${stores.loginStore.userID}`
+        return `qd:barOwnerProfile:userID${this.props.userID}`
     }
 
     @computed get active() {

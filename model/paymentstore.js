@@ -26,6 +26,10 @@ class PaymentStore {
     @observable cards               : Array<Card> = []
     @observable selectedCardNumber  : String = null
 
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
+
     getState = () : CardState => {
         return {
             cards:              this.cards,
@@ -33,14 +37,18 @@ class PaymentStore {
         }
     }
 
-    initialize = () => {
-
-    }
-
     @action setState = (cardState : CardState) => {
         this.cards = cardState.cards
         this.selectedCardNumber = cardState.selectedCardNumber
     }
+
+    initialize = () => {
+
+    }
+
+    /*********************************************************************/
+    /* Card Actions                                                      */
+    /*********************************************************************/
 
     @action addCard = (card : Card) => {
         for (var i = 0; i < this.cards.length; i++) {
