@@ -79,6 +79,10 @@ class LoginStore {
             name:  this.name,
         })
     }
+    
+    initialize = () => {
+
+    }
 
     login = (callbackSuccess, callbackError) => {
         if (this.shouldRefreshToken()) {

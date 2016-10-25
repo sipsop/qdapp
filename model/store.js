@@ -2,19 +2,19 @@ import { observable, transaction, computed, action } from 'mobx'
 import { Alert, AsyncStorage } from 'react-native'
 
 import { emptyResult, downloadManager } from './HTTP.js'
-import { cache } from /network/cache.js'
+import { cache } from '../network/cache.js'
 import * as _ from './Curry.js'
 
 import { favStore } from './favstore.js'
 import { tabStore } from './tabstore.js'
-import { barStore } from './Bar/BarStore.js'
-import { barStatusStore } from './Bar/BarStatus.js'
-import { orderStore } from './Orders/OrderStore.js'
-import { loginStore } from './Login.js'
-import { tagStore } from './Tags.js'
-import { mapStore } from './Maps/MapStore.js'
-import { paymentStore } from './Payment/PaymentStore.js'
-import { historyStore } from './History.js'
+import { barStore } from './barstore.js'
+import { barStatusStore } from './barstatusstore.js'
+import { orderStore } from './orderstore.js'
+import { loginStore } from './loginstore.js'
+import { tagStore } from './tagstore.js'
+import { mapStore } from './mapstore.js'
+import { paymentStore } from './paymentstore.js'
+import { historyStore } from './historystore.js'
 import { segment } from './Segment.js'
 
 const log = _.logger('Store.js')
@@ -48,13 +48,22 @@ export class Store {
             _.logError(e)
         }
         this.initialized = true
-        segment.initialized()
+
+        await tabStore.initialize()
+        await barStore.initialize()
+        await mapStore.initialize()
+        await loginStore.initialize()
+        await tagStore.initialize()
+        await favStore.initialize()
+        await paymentStore.initialize()
+        await historyStore.initialize()
+
+        await segment.initialize()
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
             // url: 'url://location'
         })
-        await mapStore.initialize()
     }
 
     loadFromLocalStorage = async () => {

@@ -31,7 +31,9 @@ class BarStore {
     /* ScrollView component on the bar page */
     barScrollView = null
 
-    /*************************** State ***********************************/
+    /*********************************************************************/
+    /* Initialization */
+    /*********************************************************************/
 
     getState = () => {
         return { barID: this.barID }
@@ -45,7 +47,15 @@ class BarStore {
         await this._setBarID(barID, track = false, focusOnMap = false)
     }
 
-    /*************************** Downloads *****************************/
+    initialize = () => {
+        downloadManager.declareDownload(new BarInfoDownload(this.downloadProps))
+        downloadManager.declareDownload(new MenuDownload(this.downloadProps))
+    }
+
+
+    /*********************************************************************/
+    /* Downloads */
+    /*********************************************************************/
 
     getBarDownloadResult = () => downloadManager.getDownload('barInfo')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
@@ -61,12 +71,9 @@ class BarStore {
         }
     }
 
-    initializeDownloads = () => {
-        downloadManager.declareDownload(new BarInfoDownload())
-        downloadManager.declareDownload(new MenuDownload())
-    }
-
-    /*************************** Network *********************************/
+    /*********************************************************************/
+    /* Actions */
+    /*********************************************************************/
 
     _setBarID = async (barID, track = false, focusOnMap = true) => {
         log("Setting barID", barID)

@@ -34,7 +34,7 @@ export class Segment {
         // this.messages = segmentState.messages || []
     }
 
-    initialized = () => {
+    initialize = () => {
         this.dispatchMessages(5000)
     }
 

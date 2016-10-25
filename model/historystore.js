@@ -4,6 +4,10 @@ class History {
         this.handlers = {}
     }
 
+    initialize = () => {
+    
+    }
+
     push = (tag, value = null) => {
         this.history.push({tag: tag, value: value})
     }

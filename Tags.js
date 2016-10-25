@@ -358,11 +358,3 @@ export class TagRow extends Component {
         </ButtonRow>
     }
 }
-
-export const tagStore = new TagStore()
-
-
-autorun(() => {
-    tagStore.tagSelection
-    setTimeout(() => tagStore.asyncTagSelection = tagStore.tagSelection, 0)
-})

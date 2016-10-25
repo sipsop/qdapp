@@ -33,6 +33,10 @@ class PaymentStore {
         }
     }
 
+    initialize = () => {
+
+    }
+
     @action setState = (cardState : CardState) => {
         this.cards = cardState.cards
         this.selectedCardNumber = cardState.selectedCardNumber

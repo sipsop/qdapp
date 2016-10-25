@@ -16,19 +16,9 @@ class TabStore {
         this.initialPage = 0
     }
 
-    @action setTabView = (tabView) => {
-        this.tabView = tabView
-    }
-
-    @action setCurrentTab = (i) => {
-        if (this.currentPage !== i) {
-            historyStore.push('tab', this.currentPage)
-            this.setTab(i)
-            analytics.trackTabSwitch(i)
-        }
-    }
-
-    @action setTab = (i) => this.currentPage = i
+    /*********************************************************************/
+    /* Initialization */
+    /*********************************************************************/
 
     getState = () => {
         return { currentPage: this.currentPage }
@@ -57,6 +47,27 @@ class TabStore {
         }
     }
 
+    initialize = () => {
+
+    }
+
+    /*********************************************************************/
+    /* Actions */
+    /*********************************************************************/
+
+    @action setTabView = (tabView) => {
+        this.tabView = tabView
+    }
+
+    @action setCurrentTab = (i) => {
+        if (this.currentPage !== i) {
+            historyStore.push('tab', this.currentPage)
+            this.setTab(i)
+            analytics.trackTabSwitch(i)
+        }
+    }
+
+    @action setTab = (i) => this.currentPage = i
 }
 
 export const tabStore = new TabStore()

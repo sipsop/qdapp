@@ -136,6 +136,7 @@ class MapStore {
 
     initialize = async () => {
         mapStore.trackLocation()
+        /* TODO: Declarative downloads */
         await this.updateNearbyBars()
     }
 
@@ -462,7 +463,6 @@ const isFinished = (downloadResult) => {
 const getNextPageToken = (downloadResult) => {
     return downloadResult.value && downloadResult.value.nextPageToken
 }
-
 
 const getSearchResults = (searchResponse) => {
     if (searchResponse.value == null)

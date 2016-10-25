@@ -2,6 +2,7 @@ import { React, Component, View, TouchableOpacity, T, Mono, PureComponent } from
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { DownloadResult, DownloadResultView, emptyResult, downloadManager } from '../HTTP.js'
+import { BarStatusDownload } from '../network/api/bar/barstatus.js'
 import * as _ from '../Curry.js'
 import { segment } from '../Segment.js'
 import { barStore } from './BarStore.js'
@@ -30,6 +31,16 @@ class BarStatusStore {
     emptyState = () => {}
     getState = () => {}
     setState = async (barStatusState) => undefined
+
+    @computed get downloadProps() {
+        return {
+            barID: barStore.barID,
+        }
+    }
+
+    initialize = () => {
+        downloadManager.declareDownload(new BarStatusDownload(this.downloadProps))
+    }
 
     @computed get barStatus() : ?BarStatus {
         return downloadManager.getDownload('barStatus').barStatus
