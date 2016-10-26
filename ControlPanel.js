@@ -1,10 +1,9 @@
-import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent } from './Component.js'
+import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent, T } from './Component.js'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { TextHeader } from './Header.js'
 import { RowTextButton } from './Rows.js'
-import { T } from './AppText.js'
 import { store, loginStore, tabStore } from './Store.js'
 import { drawerStore } from './SideMenu.js'
 import { SmallOkCancelModal, SimpleModal } from './Modals.js'

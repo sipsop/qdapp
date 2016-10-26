@@ -6,10 +6,17 @@ import { downloadManager } from '/network/http.js'
 import { TagsDownload } from '/network/api/bar/tags.js'
 import { analytics } from '/network/analytics/analytics.js'
 import { config } from '/utils/config.js'
-import * as _ from './utils/curry.js'
+import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils('./model/tagstore.js')
 
+export type TagRows = {
+    rows: Array<Array<TagID>>,
+    menuItems: Array<MenuItem>,
+}
+
+/* Root tags: beer, wine, spirits, cocktails, water, ... */
+export const rootIDs = [ '#beer', '#wine', '#spirit', '#cocktail', '#water' ]
 
 export class TagStore {
     /*
@@ -130,6 +137,30 @@ export class TagStore {
         return filterMenuItems(barStore.allMenuItems, this.tagSelection)
     }
 
+    /* Get the rows of tags that should be visible to the user */
+    @computed get visibleTagRows() : TagRows {
+        /* Get all applicable tags */
+        const childRow = (parentRow) => {
+            const selected = _.intersection(parentRow, tagStore.tagSelection)
+            const childRow = _.flatten(selected.map(tagStore.getChildren))
+            return childRow.filter(tagID => isEnabled(tagID, menuItems))
+        }
+
+        var menuItems = barStore.allMenuItems
+        var parentRow = rootIDs
+        var rows = []
+        while (parentRow.length > 0) {
+            rows.push(parentRow)
+            row = childRow(parentRow)
+            /* Filter out any menu items that do not match the selected tags */
+            tagSelection = _.intersection(tagStore.tagSelection, row)
+            menuItems = filterMenuItems(menuItems, tagSelection)
+            parentRow = row
+        }
+        return { rows: rows, menuItems: menuItems }
+    }
+
+
     getExcludedTags = (tagID) => {
         /* Figure out which tags should be excluded */
         const excludes = this.getTagExcludes().get(tagID) || []
@@ -240,6 +271,29 @@ export class TagStore {
         return result
     }
 }
+
+/* Check if the given menuItem has the given tag */
+const hasTag = (menuItem, tagID) => _.includes(menuItem.tags, tagID)
+
+const filterMenuItems = (menuItems, tagSelection) => {
+    return menuItems.filter(menuItem => matchMenuItem(menuItem, tagSelection))
+}
+
+const matchMenuItem = (menuItem, tagSelection) => {
+    return _.all(
+        tagSelection.map(tagID => hasTag(menuItem, tagID))
+    )
+}
+
+/* Check if at least one but not all of the given menu items has the given tag */
+const isEnabled = (tagID, menuItems) => {
+    const haveTag = menuItems.map(menuItem => hasTag(menuItem, tagID))
+    return _.any(haveTag) && !_.all(haveTag)
+}
+
+/*********************************************************************/
+/* Setup Store                                                       */
+/*********************************************************************/
 
 export const tagStore = new TagStore()
 
