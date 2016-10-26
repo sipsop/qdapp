@@ -4,7 +4,7 @@ import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
 import { store, barStore, segment } from './store.js'
 import { DownloadResult, emptyResult } from '~/network/http.js'
-import { searchNearbyFirstPage, searchNearbyAllPages } from 'network/api/maps/nearby.js'
+import { searchNearbyFirstPage, searchNearbyAllPages } from '~/network/api/maps/nearby.js'
 import { Second } from '~/utils/time.js'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'

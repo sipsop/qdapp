@@ -1,6 +1,6 @@
 // @flow
 
-import { DownloadResult, emptyResult, downloadManager } from 'network/http.js'
+import { DownloadResult, emptyResult, downloadManager } from '~/network/http.js'
 import { buildURL } from '~/utils/urls.js'
 import { parseBar } from './place-info.js'
 import { getCacheInfo } from '~/network/cache.js'
