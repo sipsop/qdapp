@@ -1,9 +1,9 @@
 import { UIManager } from 'react-native'
 import { React, Component, PureComponent, Platform } from '~/components/Component'
+import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
-// import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { LargeButton } from '../Button'
 import { logger } from '~/utils/curry'
@@ -38,8 +38,9 @@ export class CardInput extends PureComponent {
     */
 
     componentWillMount = () => {
-        if (Platform.OS === 'ios')
+        if (Platform.OS === 'ios') {
             CardIOUtilities.preload()
+        }
     }
 
     scanCard = () => {
