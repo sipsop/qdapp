@@ -176,7 +176,7 @@ export class BarPhoto extends PureComponent {
         showMapButton: Bool
     */
     render = () => {
-        var photo = this.props.photo
+        let photo = this.props.photo
         const pictureIsGeneric = !photo
         if (!photo) {
             photo = {
@@ -394,7 +394,7 @@ export class TimeInfo extends PureComponent {
     }
 
     renderUnknownOpeningTime = () => {
-        var text
+        let text
         if (this.props.bar.openNow != null) {
             if (this.props.bar.openNow)
                 text = "open"
@@ -478,7 +478,7 @@ export class Time extends PureComponent {
     */
     render = () => {
         const time = this.props.time
-        var minute = '' + time.minute
+        let minute = '' + time.minute
         if (minute.length === 1)
             minute = '0' + minute
         return <T style={this.props.style}>

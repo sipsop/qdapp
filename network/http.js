@@ -123,7 +123,7 @@ class CombinedDownloadResult<T> {
 
     @computed get errorIndex() {
         const results = this.downloadResults
-        for (var i = 0; i < results.length; i++) {
+        for (let i = 0; i < results.length; i++) {
             if (results[i].state === 'Error')
                 return i
         }
@@ -672,7 +672,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         return await simpleFetchJSON(url, httpOptions, expiredTimeout)
     }
 
-    var result
+    let result
     try {
         if (cacheInfo && (cacheInfo.noCache || cacheInfo.getFromCache === false)) {
             result = await refreshCallback()
@@ -703,7 +703,7 @@ export const simpleFetchJSON = async /*<T>*/(
         httpOptions     : HTTPOptions,
         downloadTimeout : Float,
         ) : Promise<T> => {
-    var response : Response
+    let response : Response
     httpOptions = httpOptions || {}
     httpOptions['Accept-Encoding'] = 'gzip,deflate'
     try {

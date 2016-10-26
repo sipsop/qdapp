@@ -51,7 +51,7 @@ class PaymentStore {
     /*********************************************************************/
 
     @action addCard = (card : Card) => {
-        for (var i = 0; i < this.cards.length; i++) {
+        for (let i = 0; i < this.cards.length; i++) {
             const existingCard = this.cards[i]
             if (existingCard.cardNumber === card.cardNumber) {
                 this.cards[i] = card
@@ -76,7 +76,7 @@ class PaymentStore {
     }
 
     findCard = (cardNumber : String) : Int => {
-        for (var i = 0; i < this.cards.length; i++) {
+        for (let i = 0; i < this.cards.length; i++) {
             if (this.cards[i].cardNumber === cardNumber)
                 return i
         }

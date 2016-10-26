@@ -11,7 +11,7 @@ const { log, assert } = _.utils('~/model/loginstore.js')
 
 const clientID = 'phA8QFWKknNtcDwVefccBf82sIp4bw6c'
 
-var lock = new Auth0Lock({
+let lock = new Auth0Lock({
     clientId: clientID,
     domain: 'tuppu.eu.auth0.com',
 })
@@ -104,7 +104,7 @@ class LoginStore {
     }
 
     refreshToken = async (callbackSuccess, callbackError) => {
-        var result
+        let result
         log("Starting auth token refresh...")
         try {
             /* Try to refresh idToken */

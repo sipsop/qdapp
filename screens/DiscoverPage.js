@@ -112,7 +112,7 @@ class NearbyButton extends PureComponent {
         const currentMarker = mapStore.getCurrentMarker()
         if (!currentMarker)
             return 'Bars near Me'
-        var label = `Bars near ${currentMarker.name}`
+        let label = `Bars near ${currentMarker.name}`
         const N = 20
         if (label.length > N) {
             label = label.slice(0, N) + '...'

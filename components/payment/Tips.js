@@ -1,21 +1,21 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '../Component.js'
+} from '../Component'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Slider from 'react-native-slider'
 
-import { TextHeader } from '../Header.js'
-import { LargeButton } from '../Button.js'
-import { orderStore } from '~/model/store.js'
-import { config } from '~/utils/config.js'
-import { analytics } from '~/model/analytics.js'
-import * as _ from '~/utils/curry.js'
+import { TextHeader } from '../Header'
+import { LargeButton } from '../Button'
+import { orderStore } from '~/model/store'
+import { config } from '~/utils/config'
+import { analytics } from '~/model/analytics'
+import * as _ from '~/utils/curry'
 
-import type { String, Int } from '../Types.js'
+import type { String, Int } from '~/utils/types'
 
-const { log, assert } = _.utils('Payment/Tips.js')
+const { log, assert } = _.utils('./Tips')
 
 
 class TipStore {
@@ -121,11 +121,11 @@ export class TipRoundButton extends PureComponent {
         const max = total + 0.2 * total
 
         const totalPlusTip = orderStore.totalPlusTip
-        var r = roundingAmount(totalPlusTip)
-        var n = r * 100
-        var i = _.find(roundingAmounts, r)
+        let r = roundingAmount(totalPlusTip)
+        let n = r * 100
+        let i = _.find(roundingAmounts, r)
 
-        var rounded
+        let rounded
         while (i >= 0) {
             n = roundingAmounts[i] * 100
             rounded = Math.ceil(totalPlusTip / n) * n

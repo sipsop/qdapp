@@ -2,7 +2,7 @@
 
 // https://github.com/xcarpentier/react-native-stripe-api/
 
-import type { Card } from '~/model/paymentstore.js'
+import type { Card } from '~/model/paymentstore'
 
 const REQM = ' is required';
 const STRIPE_URL = 'https://api.stripe.com/v1/';

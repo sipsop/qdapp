@@ -48,7 +48,7 @@ extension DDLogFlag {
     }
 }
 
-public var defaultDebugLevel = DDLogLevel.Verbose
+public let defaultDebugLevel = DDLogLevel.Verbose
 
 public func resetDefaultDebugLevel() {
     defaultDebugLevel = DDLogLevel.Verbose
@@ -91,7 +91,7 @@ public func DDLogError(@autoclosure message: () -> String, level: DDLogLevel = d
 ///
 /// Analogous to the C preprocessor macro `THIS_FILE`.
 public func CurrentFileName(fileName: StaticString = #file) -> String {
-    var str = fileName.stringValue
+    let str = fileName.stringValue
     if let idx = str.rangeOfString("/", options: .BackwardsSearch)?.endIndex {
         str = str.substringFromIndex(idx)
     }

@@ -158,7 +158,7 @@ export class PickerCollection extends PureComponent {
                     /* renderHeader={this.props.renderHeader} */
                     />
         )
-        var view = ScrollView
+        let view = ScrollView
         if (this.props.useListView)
             view = View
         return <ScrollView>

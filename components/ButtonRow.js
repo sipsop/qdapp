@@ -110,9 +110,9 @@ export class SelectableButton extends Component {
     }
 
     render = () => {
-        var textDecoration = 'none'
-        var opacity = 0.85
-        var fontWeight = 'normal'
+        let textDecoration = 'none'
+        let opacity = 0.85
+        let fontWeight = 'normal'
         if (this.props.active) {
             opacity = 1.0
             // textDecoration = 'underline'
@@ -124,7 +124,7 @@ export class SelectableButton extends Component {
 
         const textColor = `rgba(255, 255, 255, ${opacity})`
 
-        var button = <T style={
+        let button = <T style={
                 { paddingLeft: 15
                 , paddingRight: 15
                 , fontSize: 16

@@ -509,7 +509,7 @@ class InfoItem extends PureComponent {
         },
     })
     render = () => {
-        var info = (
+        let info = (
             <View style={this.styles.view}>
                 <View style={this.styles.iconView}>
                     <Icon

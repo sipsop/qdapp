@@ -77,7 +77,7 @@ export class SmallOkCancelModal extends PureComponent {
         }
 
 
-        var content = <View
+        let content = <View
                 style={
                     { flex: 1
                     , justifyContent: 'center'
@@ -202,7 +202,7 @@ export class OkCancelModal extends PureComponent {
     }
 
     render = () => {
-        var cancelButton = undefined
+        let cancelButton = undefined
         if (this.props.showCancelButton) {
             cancelButton = <LargeButton
                 label={this.props.cancelLabel}
@@ -216,7 +216,7 @@ export class OkCancelModal extends PureComponent {
                 />
         }
 
-        var okButton = undefined
+        let okButton = undefined
         if (this.props.showOkButton) {
             okButton = <LargeButton
                 label={this.props.okLabel || 'Ok'}

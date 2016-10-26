@@ -74,7 +74,7 @@ export class Storage {
         const accessTimes = []
         const now = getTime()
         const chunks = _.chunking(allKeys, 100)
-        for (var i = 0; i < chunks.length; i++) {
+        for (let i = 0; i < chunks.length; i++) {
             const keys = chunks[i]
             const cacheEntries = await this.getMulti(keys)
             cacheEntries.forEach((cacheEntry, i) => {
@@ -88,7 +88,7 @@ export class Storage {
     }
 
     getKeys = async () => {
-        var keys = await this.backend.getAllKeys()
+        let keys = await this.backend.getAllKeys()
         return keys.filter(key => key.startsWith('qd:'))
     }
 
@@ -125,7 +125,7 @@ class Cache {
     }
 
     get = async (key, refreshCallback, expiredCallback, cacheInfo : CacheInfo) => {
-        var cacheEntry
+        let cacheEntry
         try {
             cacheEntry = await this.storage.get(key)
             return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback, cacheInfo)

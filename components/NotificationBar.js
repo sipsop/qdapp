@@ -46,8 +46,8 @@ export class BarStatusNotification extends DownloadResultView {
     }
 
     renderFinished = () => {
-        var message = null
-        var closeable = false
+        let message = null
+        let closeable = false
 
         if (!barStatusStore.isQDodgerBar) {
             message = 'No menu available :('
@@ -79,7 +79,7 @@ export type Message = ?{
     dismissLabel: ?String,
 }
 
-// var barInfoDownloadResult = emptyResult()
+// let barInfoDownloadResult = emptyResult()
 //
 // autorun(() => {
 //     barInfoDownloadResult = DownloadResult.combine([

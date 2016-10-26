@@ -146,9 +146,9 @@ export class TagStore {
             return childRow.filter(tagID => isEnabled(tagID, menuItems))
         }
 
-        var menuItems = barStore.allMenuItems
-        var parentRow = rootIDs
-        var rows = []
+        let menuItems = barStore.allMenuItems
+        let parentRow = rootIDs
+        let rows = []
         while (parentRow.length > 0) {
             rows.push(parentRow)
             row = childRow(parentRow)
@@ -219,7 +219,7 @@ export class TagStore {
     }
 
     getChildren = (tagID) => {
-        var result = this.tagGraph.get(tagID)
+        let result = this.tagGraph.get(tagID)
         if (!result)
             result = []
         return result

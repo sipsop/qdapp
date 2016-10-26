@@ -112,9 +112,9 @@ const copyObject = (src, dst) => {
 */
 export const chunking = (xs, n) => {
     result = []
-    for (var i = 0; i < xs.length; i+=n) {
+    for (let i = 0; i < xs.length; i+=n) {
         const chunk = []
-        for (var j = 0; j < n && i + j < xs.length; j++) {
+        for (let j = 0; j < n && i + j < xs.length; j++) {
             chunk.push(xs[i + j])
         }
         result.push(chunk)
@@ -163,8 +163,8 @@ export function zip(xs, ys) {
         throw Error("Expected two lists of the same size")
     }
 
-    var result = []
-    for (var i = 0; i < xs.length; i++) {
+    let result = []
+    for (let i = 0; i < xs.length; i++) {
         result.push([xs[i], ys[i]])
     }
     return result
@@ -179,7 +179,7 @@ export const init = xs => {
 }
 
 export const find = (xs, x, equals=_.isEqual) => {
-    for (var i = 0; i < xs.length; i++) {
+    for (let i = 0; i < xs.length; i++) {
         if (equals(xs[i], x)) {
             return i
         }
@@ -224,9 +224,9 @@ export function min(x, y) {
 }
 
 export function partition(f, xs) {
-    var left = []
-    var right = []
-    for (var i = 0; i < xs.length; i++) {
+    let left = []
+    let right = []
+    for (let i = 0; i < xs.length; i++) {
         if (f(xs[i])) {
             right.push(xs[i])
         } else {
@@ -237,7 +237,7 @@ export function partition(f, xs) {
 }
 
 export function includes(xs, x, equals = (x, y) => x === y) {
-    for (var i = 0; i < xs.length; i++) {
+    for (let i = 0; i < xs.length; i++) {
         if (equals(xs[i], x)) {
             return true
         }
@@ -254,8 +254,8 @@ export function take(n, xs) {
 }
 
 export function unique(xs) {
-    var result = []
-    for (var i = 0; i < xs.length; i++) {
+    let result = []
+    for (let i = 0; i < xs.length; i++) {
         if (!includes(result, xs[i], deepEqual)) { // quadratic...
             result.push(xs[i])
         }
@@ -304,8 +304,8 @@ export const scan = (f, z, xs) => {
 
 */
 export function intersperse(x, xs) {
-    var result = []
-    for (var i = 0; i < xs.length; i++) {
+    let result = []
+    for (let i = 0; i < xs.length; i++) {
         result.push(xs[i])
         result.push(x)
     }
@@ -317,7 +317,7 @@ export function intersperse(x, xs) {
 
 export const range = /*<T>*/(n : Int) : Array<T> => {
     const result = []
-    for (var i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         result.push(i)
     }
     return result
@@ -375,8 +375,8 @@ export const product = xs => fold((x, y) => x * y, 1, xs)
 
 
 export const uuid = () => {
-    var id = ""
-    for (var i = 0; i < 4; i++) {
+    let id = ""
+    for (let i = 0; i < 4; i++) {
         id += shortid.generate()
     }
     return id

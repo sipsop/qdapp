@@ -1,12 +1,12 @@
-import { NetworkError } from '../HTTP.js'
-import * as _ from '~/utils/curry.js'
+import { NetworkError } from '../HTTP'
+import * as _ from '~/utils/curry'
 
-const { log, assert } = _.utils('./Payment/StripeAPI.js')
+const { log, assert } = _.utils('./Payment/StripeAPI')
 
 /*********************************************************************/
 
-import type { Int, Float, String } from '../Types.js'
-import type { Card } from '~/model/paymentstore.js'
+import type { Int, Float, String } from '../Types'
+import type { Card } from '~/model/paymentstore'
 
 export type CardToken = String
 
@@ -48,7 +48,7 @@ const stripePostRequest = async (resource: string, properties: Object): Promise 
         },
         body: body,
     }
-    var response
+    let response
     try {
         response = await fetch(url, httpOptions)
     } catch (err) {

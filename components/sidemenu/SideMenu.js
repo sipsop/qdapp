@@ -46,11 +46,11 @@ export class SideMenu extends PureComponent {
 
 /* See https://github.com/root-two/react-native-drawer/blob/master/examples/RNDrawerDemo/tweens.js */
 
-var deviceScreen = require('Dimensions').get('window')
+let deviceScreen = require('Dimensions').get('window')
 
 const tweenHandlers = {
     material: (ratio) => {
-        var drawerShadow = ratio < .2 ? ratio*5*5 : 5
+        let drawerShadow = ratio < .2 ? ratio*5*5 : 5
         return {
             drawer: {
                 shadowRadius: drawerShadow,
@@ -61,9 +61,9 @@ const tweenHandlers = {
         }
     },
     rotate: (ratio) => {
-        var r0 = -ratio/8
-        var r1 = 1-ratio/2
-        var t = [
+        let r0 = -ratio/8
+        let r1 = 1-ratio/2
+        let t = [
             r1,  r0,  0,  0,
             -r0, r1,  0,  0,
             0,   0,   1,  0,
@@ -78,8 +78,8 @@ const tweenHandlers = {
             }
     },
     parallax: (ratio) => {
-        var r1 = 1
-        var t = [
+        let r1 = 1
+        let t = [
             r1,  0,  0,  0,
             0, r1,  0,  0,
             0,   0,   1,  0,

@@ -1,12 +1,12 @@
-import { React, Component, Icon } from '../Component.js'
-import * as _ from '~/utils/curry.js'
+import { React, Component, Icon } from '../Component'
+import * as _ from '~/utils/curry'
 import creditCardType from 'credit-card-type'
 
-const { log, assert } = _.utils('./Payment/CreditCardInfo.js')
+const { log, assert } = _.utils('./Payment/CreditCardInfo')
 
 export const getCreditCardIcon = (creditCardNumber : String) : Component => {
     const cardTypes = creditCardType(creditCardNumber)
-    var cardType = 'unknown'
+    let cardType = 'unknown'
     if (cardTypes && cardTypes.length > 0)
         cardType = cardTypes[0].type
 

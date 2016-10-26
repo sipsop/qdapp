@@ -1,4 +1,4 @@
-export var HOST : String
+export let HOST : String
 HOST = 'https://qdodger.com'
 // HOST = 'http://192.168.0.17:9000'
 

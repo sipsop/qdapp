@@ -1,16 +1,16 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '../Component.js'
+} from '../Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { SimpleListView, themedRefreshControl } from '../SimpleListView.js'
-import { Selector, SelectorItem } from '../Selector.js'
-import { Header, HeaderText, TextHeader } from '../Header.js'
-import { CreditCard } from './CreditCard.js'
-import { analytics } from '~/model/analytics.js'
-import { paymentStore } from '~/model/paymentstore.js'
+import { SimpleListView, themedRefreshControl } from '../SimpleListView'
+import { Selector, SelectorItem } from '../Selector'
+import { Header, HeaderText, TextHeader } from '../Header'
+import { CreditCard } from './CreditCard'
+import { analytics } from '~/model/analytics'
+import { paymentStore } from '~/model/paymentstore'
 
 export class CreditCardListDesciptor {
 

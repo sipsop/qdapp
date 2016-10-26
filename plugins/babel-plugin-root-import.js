@@ -2,7 +2,7 @@
 
 module.exports = function(babel) {
     // get the working directory
-    var cwd = process.cwd()
+    let cwd = process.cwd()
 
     return {
         visitor: {
@@ -12,7 +12,7 @@ module.exports = function(babel) {
                     return node
                 }
 
-                var ref = node.source.value
+                let ref = node.source.value
 
                 // ensure a value, make sure it's not home relative e.g. ~/foo
                 if (!ref || ref[0] !== '/') {

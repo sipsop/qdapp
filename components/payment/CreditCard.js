@@ -1,13 +1,13 @@
 import {
     React, Component, View, TouchableOpacity, T, PureComponent, StyleSheet,
-} from '../Component.js'
+} from '../Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '~/utils/curry.js'
-import { PaymentConfigModal } from '../sidemenu/ControlPanel.js'
+import * as _ from '~/utils/curry'
+import { PaymentConfigModal } from '../sidemenu/ControlPanel'
 
-const { log, assert } = _.utils('~/components/payment/Checkout.js')
+const { log, assert } = _.utils('./Checkout')
 
 @observer
 export class CreditCard extends PureComponent {

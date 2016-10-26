@@ -14,7 +14,7 @@ export class Price extends PureComponent {
         const price = this.props.price
         /* TODO: Move formatPrice into this module */
         const priceText = orderStore.formatPrice(price.price, price.currency)
-        var prefix = ""
+        let prefix = ""
         if (price.option === 'Relative') {
             if (price.price == 0) {
                 return <T />

@@ -146,7 +146,7 @@ export class SelectorRow extends PureComponent {
     }
 
     render = () => {
-        var alignItems = 'center'
+        let alignItems = 'center'
         if (this.props.align === 'left')
             alignItems = 'flex-start'
         else if (this.props.align === 'right')

@@ -87,18 +87,18 @@ if (Number.prototype.toDegrees === undefined) {
 }
 
 export const distance = (c1 : Coords, c2 : Coords) : Float => {
-    var R = 6371e3 // metres
-    var φ1 = c1.latitude.toRadians()
-    var φ2 = c2.latitude.toRadians()
-    var Δφ = (c2.latitude - c1.latitude).toRadians()
-    var Δλ = (c2.longitude - c1.longitude).toRadians()
+    let R = 6371e3 // metres
+    let φ1 = c1.latitude.toRadians()
+    let φ2 = c2.latitude.toRadians()
+    let Δφ = (c2.latitude - c1.latitude).toRadians()
+    let Δλ = (c2.longitude - c1.longitude).toRadians()
 
-    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+    let a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
             Math.cos(φ1) * Math.cos(φ2) *
             Math.sin(Δλ/2) * Math.sin(Δλ/2)
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
 
-    var d = R * c
+    let d = R * c
     return d
 }
 

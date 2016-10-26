@@ -15,7 +15,7 @@ class DrawerStore {
     }
 
     @computed get drawerStyle() {
-        var drawerStyle = {}
+        let drawerStyle = {}
         if (this.open && !this.disabled) {
             drawerStyle = {
                 shadowColor: '#000000',

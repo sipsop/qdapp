@@ -1,33 +1,33 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '../Component.js'
+} from '../Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { OrderTotal } from '../orders/Receipt.js'
-import { LargeButton } from '../Button.js'
-import { LazyBarPhoto } from '../bar/BarCard.js'
-import { SimpleListView, themedRefreshControl } from '../SimpleListView.js'
-import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
-import { config } from '~/utils/config.js'
-import { Selector, SelectorItem } from '../Selector.js'
-import { Header, HeaderText, TextHeader } from '../Header.js'
-import { barStore, orderStore, loginStore } from '../Store.js'
-import { CreditCard } from './CreditCard.js'
-import { analytics } from '~/model/analytics.js'
-import * as _ from '~/utils/curry.js'
+import { OrderTotal } from '../orders/Receipt'
+import { LargeButton } from '../Button'
+import { LazyBarPhoto } from '../bar/BarCard'
+import { SimpleListView, themedRefreshControl } from '../SimpleListView'
+import { OkCancelModal, SmallOkCancelModal } from '../Modals'
+import { config } from '~/utils/config'
+import { Selector, SelectorItem } from '../Selector'
+import { Header, HeaderText, TextHeader } from '../Header'
+import { barStore, orderStore, loginStore } from '../Store'
+import { CreditCard } from './CreditCard'
+import { analytics } from '~/model/analytics'
+import * as _ from '~/utils/curry'
 
-import { CardInput, makeAddCardButton } from './CardInput.js'
-import { paymentStore } from './PaymentStore.js'
-import { getCreditCardIcon } from './CreditCardInfo.js'
-import { PaymentConfigModal } from '../sidemenu/ControlPanel.js'
-import { TipComponent, TipRoundButton } from './Tips.js'
+import { CardInput, makeAddCardButton } from './CardInput'
+import { paymentStore } from './PaymentStore'
+import { getCreditCardIcon } from './CreditCardInfo'
+import { PaymentConfigModal } from '../sidemenu/ControlPanel'
+import { TipComponent, TipRoundButton } from './Tips'
 
-import type { String, Int } from '../Types.js'
+import type { String, Int } from '../Types'
 
-const { log, assert } = _.utils('~/components/payment/Checkout.js')
+const { log, assert } = _.utils('~/components/payment/Checkout')
 
 @observer
 export class Checkout extends PureComponent {

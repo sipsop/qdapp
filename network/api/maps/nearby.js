@@ -49,7 +49,7 @@ const searchNearby = async (
         force        = false
         ) : Promise<DownloadResult<SearchResponse>> => {
 
-    var params
+    let params
     if (pagetoken) {
         params = {
             key:        apiKey,
@@ -109,11 +109,11 @@ export const searchNearbyAllPages = async (
         includeOpenNowOnly = true,
         ) : Promise<DownloadResult<SearchResponse>> => {
 
-    var htmlAttrib = []
-    var results = []
-    var pagetoken = undefined
+    let htmlAttrib = []
+    let results = []
+    let pagetoken = undefined
 
-    for (var i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
         const jsonDownloadResult = await searchNearby(
             apiKey,
             coords,

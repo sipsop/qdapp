@@ -1,11 +1,11 @@
-import { React, Component, ScrollView, View, PureComponent, T } from './Component.js'
+import { React, Component, ScrollView, View, PureComponent, T } from './Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { TextHeader } from '../Header.js'
-import { SimpleModal } from '../Modals.js'
-import { LazyComponent } from '../LazyComponent.js'
-import { CreditCardList } from './CreditCardList.js'
+import { TextHeader } from '../Header'
+import { SimpleModal } from '../Modals'
+import { LazyComponent } from '../LazyComponent'
+import { CreditCardList } from './CreditCardList'
 
 @observer
 export class PaymentConfigModal extends PureComponent {

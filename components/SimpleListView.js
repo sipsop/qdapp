@@ -166,10 +166,10 @@ export class CombinedDescriptor extends Descriptor {
     }
 
     renderRow = (i) => {
-        var descNumber = 0
-        var x = i
+        let descNumber = 0
+        let x = i
         const descs = this.descriptors
-        var descriptor = descs[descNumber]
+        let descriptor = descs[descNumber]
         while (x >= descriptor.numberOfRows + 2) {
             x -= descriptor.numberOfRows + 2
             descNumber += 1

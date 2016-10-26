@@ -63,8 +63,8 @@ class BarStatusStore {
     }
 
     @computed get barStatusNotification() {
-        var message = null
-        var closeable = false
+        let message = null
+        let closeable = false
         if (!this.isQDodgerBar) {
             message = 'No menu available :('
         } else if (!this.takingOrders) {

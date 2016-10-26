@@ -1,18 +1,18 @@
 import { UIManager } from 'react-native'
-import { React, Component, PureComponent, Platform } from '../Component.js'
+import { React, Component, PureComponent, Platform } from '../Component'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
-import { LargeButton } from '../Button.js'
-import { logger } from '~/utils/curry.js'
-import { paymentStore } from '~/model/paymentstore.js'
-import { analytics } from '~/model/analytics.js'
-import { config } from '~/utils/config.js'
+import { LargeButton } from '../Button'
+import { logger } from '~/utils/curry'
+import { paymentStore } from '~/model/paymentstore'
+import { analytics } from '~/model/analytics'
+import { config } from '~/utils/config'
 
 
-const log = logger('Payment/CardInput.js')
+const log = logger('Payment/CardInput')
 
 // const placeHolders = { number: "xxxx xxxx xxxx xxxx", expiry: "MM/YY", cvc: "CVC" }
 
