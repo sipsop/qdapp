@@ -1,8 +1,8 @@
 import { observable, transaction, computed, action } from 'mobx'
 
-import { historyStore } from './history.js'
+import { historyStore } from './historystore.js'
 import { drawerStore } from './drawerstore.js'
-import { analytics } from '~/network/analytics.js'
+import { analytics } from './analytics.js'
 import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils('./model/tabstore.js')

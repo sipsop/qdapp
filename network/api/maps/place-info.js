@@ -1,6 +1,7 @@
 // @flow
 
 import { computed, action } from 'mobx'
+import { JSONDownload } from '~/network/http.js'
 import { config } from '~/utils/config.js'
 import * as _ from '~/utils/curry.js'
 

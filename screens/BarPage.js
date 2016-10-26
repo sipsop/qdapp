@@ -19,7 +19,6 @@ import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { phonecall, email, web } from 'react-native-communications'
 
-<<<<<<< HEAD
 import { BarMenu } from '~/components/bar/BarMenu.js'
 import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/BarCard'
 
