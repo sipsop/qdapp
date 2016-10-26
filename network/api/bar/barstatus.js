@@ -29,6 +29,6 @@ export class BarStatusDownload extends BarQueryDownload {
     }
 
     @computed get barStatus() {
-        return this.lastValue.bar_status
+        return this.lastValue && this.lastValue.bar_status
     }
 }

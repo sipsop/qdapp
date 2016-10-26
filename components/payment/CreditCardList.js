@@ -9,22 +9,17 @@ import { SimpleListView, themedRefreshControl } from '../SimpleListView'
 import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
 import { CreditCard } from './CreditCard'
+import { AddACardButton } from './AddACardButton'
 import { analytics } from '~/model/analytics'
 import { paymentStore } from '~/model/orders/paymentstore'
 
 export class CreditCardListDesciptor {
 
     @computed get numberOfRows() {
-        return paymentStore.cards.length + 1
+        return paymentStore.cards.length
     }
 
     renderRow = (i : Int) : Component => {
-        if (i < paymentStore.cards.length)
-            return this.renderCard(i)
-        return <AddACardButton />
-    }
-
-    renderCard = (i : Int) => {
         const card = paymentStore.cards[i]
         return <SelectorItem
                     isSelected={() => paymentStore.isSelected(i)}
@@ -39,6 +34,9 @@ export class CreditCardListDesciptor {
 @observer
 export class CreditCardList extends PureComponent {
     render = () => {
-        return <SimpleListView descriptor={new CreditCardListDesciptor()} />
+        return <View>
+            <SimpleListView descriptor={new CreditCardListDesciptor()} />
+            <AddACardButton />
+        </View>
     }
 }

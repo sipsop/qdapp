@@ -19,9 +19,8 @@ import { CreditCard } from './CreditCard'
 import { analytics } from '~/model/analytics'
 import * as _ from '~/utils/curry'
 
-import { CardInput, makeAddCardButton } from './CardInput'
+import { AddACardButton } from './AddACardButton'
 import { paymentStore } from '~/model/orders/paymentstore'
-import { getCreditCardIcon } from './CreditCardInfo'
 import { PaymentConfigModal } from '../sidemenu/ControlPanel'
 import { TipComponent, TipRoundButton } from './Tips'
 
@@ -190,68 +189,6 @@ export class SelectedCardInfo extends PureComponent {
                         small={true}
                         card={card}
                         />
-                </View>
-            </TouchableOpacity>
-        </View>
-    }
-}
-
-
-@observer
-export class AddACardButton extends PureComponent {
-    /* properties:
-        label: String
-        style: style object
-        trackPress: ?() => void
-    */
-    static defaultProps = {
-        label: "Add a Card",
-    }
-
-    render = () => {
-        const addCardStyle =
-            paymentStore.cards.length === 0
-                ? { marginTop: 5 }
-                : { }
-
-        return <View style={{...addCardStyle, ...this.props.style}}>
-            <CardInput
-                trackPress={this.trackPress}
-                label={this.props.label} />
-        </View>
-    }
-}
-
-
-
-@observer
-export class RemoveCardButton extends PureComponent {
-    /* properties:
-        card: Card
-    */
-
-    modal = null
-
-    removeCard = () => {
-        paymentStore.removeCard(this.props.card.cardNumber)
-    }
-
-    render = () => {
-        return <View>
-            <SmallOkCancelModal
-                ref={ref => this.modal = ref}
-                message="Are you sure you want to remove this card?"
-                onConfirm={this.removeCard}
-                />
-            <TouchableOpacity onPress={() => this.modal.show()}>
-                <View style={
-                        { justifyContent: 'center'
-                        , alignItems: 'center'
-                        , width: 55
-                        , height: 55
-                        }
-                    }>
-                    <Icon name="times" size={35} color="rgb(184, 37, 17)" />
                 </View>
             </TouchableOpacity>
         </View>

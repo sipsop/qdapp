@@ -4,8 +4,10 @@ import {
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '~/utils/curry'
 import { PaymentConfigModal } from '../sidemenu/ControlPanel'
+import { RemoveCardButton } from './RemoveCardButton'
+import { getCreditCardIcon } from './CreditCardInfo'
+import * as _ from '~/utils/curry'
 
 const { log, assert } = _.utils('./Checkout')
 
