@@ -2,9 +2,6 @@ import { React, Component, PureComponent, View, T } from '~/components/Component
 import { observer } from 'mobx-react/native'
 import { config } from '~/utils/config.js'
 
-// import { T } from './AppText.js'
-
-
 @observer
 export class Header extends PureComponent {
     /* properties:

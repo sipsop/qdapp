@@ -6,11 +6,11 @@
 //     TouchableOpacity,
 //     Dimensions,
 //     PureComponent,
+//     T,
 // } from '~/components/Component.js'
 // import LinearGradient from 'react-native-linear-gradient'
 // import { observer } from 'mobx-react/native'
 //
-// import { T } from '../AppText.js'
 // import { store, favStore, tabStore, tagStore, segment } from '~/model/store.js'
 // import { analytics } from '~/model/analytics.js'
 // import { log } from '~/utils/curry.js'

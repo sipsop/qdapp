@@ -1,4 +1,7 @@
-import { React, Component, View, ScrollView, TouchableOpacity, PureComponent } from '~/components/Component.js'
+import {
+    React, Component, View, ScrollView, TouchableOpacity,
+    PureComponent, T,
+} from '~/components/Component.js'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
@@ -9,7 +12,6 @@ import { observer } from 'mobx-react/native'
 import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
-import { T } from './AppText.js'
 import { Price } from './Price.js'
 import { TextHeader } from './Header.js'
 import { OkCancelModal } from './Modals.js'

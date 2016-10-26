@@ -6,6 +6,7 @@ import {
     ListView,
     PureComponent,
     StyleSheet,
+    T,
 } from '~/components/Component.js'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -20,7 +21,6 @@ import { DownloadResultView } from './HTTP.js'
 import { Header, TextHeader } from './Header.js'
 import { SelectableButton } from './ButtonRow.js'
 import { Descriptor, SimpleListView } from './SimpleListView.js'
-import { T } from './AppText.js'
 import { store, barStore, mapStore, historyStore, segment } from '~/model/store.js'
 import { config } from '~/utils/config.js'
 import * as _ from '~/utils/curry.js'
