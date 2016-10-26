@@ -161,8 +161,7 @@ class BarStore {
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
 
     getBar = () => {
-        const jsonResult = this.getBarDownloadResult().lastValue
-        return parseBar(this.value.result, this.value.html_attributions)
+        return this.getBarDownloadResult().lastValue
     }
 
     getDownloadProps = () => {

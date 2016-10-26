@@ -1,5 +1,6 @@
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
+import { segment } from '~/network/segment'
 import * as _ from '~/utils/curry.js'
 
 /* The './store.js' module. Bind this late so that stores can use this modules. */
