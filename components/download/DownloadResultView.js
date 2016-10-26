@@ -5,15 +5,14 @@ import {
     View,
     TouchableOpacity,
     StyleSheet,
+    PureComponent,
     T,
 } from '~/components/Component.js';
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Notification } from './Notification.js'
-import { PureComponent } from '~/components/Component.js'
-import { Loader } from './Page.js'
-import { downloadManager } from '~/network/http.js'
+import { Notification } from '../Notification.js'
+import { Loader } from '../Page.js'
 import * as _ from '~/utils/curry.js'
 
 
@@ -101,31 +100,5 @@ export class DownloadResultView<T> extends PureComponent {
                     message={errorMessage}
                     textSize="medium"
                     absolutePosition={false} />
-    }
-}
-
-
-export class DownloadComponent extends DownloadResultView {
-    downloadName = null
-
-    componentDidMount = () => {
-        const download = this.getDownload()
-        this.downloadName = download.name + '.' + _.uuid()
-        download.name = this.downloadName
-        downloadManager.declareDownload(download)
-    }
-
-    componentWillUnmount = () => {
-        downloadManager.removeDownload(this.downloadName)
-    }
-
-    refreshPage = () => {
-        downloaManager.forceRefresh(this.downloadName)
-    }
-
-    getDownloadResult = () => downloadManager.getDownload(this.downloadName)
-
-    getDownload = () => {
-        throw Error("getDownload() not implemented")
     }
 }

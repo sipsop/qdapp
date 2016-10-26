@@ -10,7 +10,7 @@ import {
     Icon,
     MaterialIcon,
     StyleSheet,
-} from '~/Component'
+} from '~/components/Component'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
 import { observable, action, computed, transaction } from 'mobx'
@@ -20,33 +20,13 @@ import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { phonecall, email, web } from 'react-native-communications'
 
 import { BarMenu } from '~/components/bar/BarMenu.js'
-import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/BarCard'
-
-import { themedRefreshControl } from '/components/SimpleListView'
+import { LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/bar/BarCard'
+import { themedRefreshControl } from '~/components/SimpleListView'
+import { DownloadResultView } from '~/components/download/DownloadResultView'
 import { TextHeader } from '~/components/Header'
 import { TextSelectorRow } from '~/components/Selector'
 import { SimpleModal } from '~/components/Modals'
 import { LazyComponent } from '~/components/LazyComponent'
-import { DownloadResultView } from '~/network/HTTP'
-
-import { PhotoImage } from '~/components/PhotoImage'
-import { Page } from '~/components/Page'
-import { ImageSwiper } from '~/components/ImageSwiper'
-import { LargeButton } from '~/Button'
-import { FavBarContainer } from '~/Fav'
-import { tabStore, barStore, timeStore, mapStore, segment } from '~/model/store'
-import { config } from '~/utils/config'
-import * as _ from '~/utils/curry'
-
-import { BarMenu } from '~/components/bar/BarMenu'
-import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/bar/BarCard'
-
-import { themedRefreshControl } from '~/components/bar/SimpleListView'
-import { TextHeader } from '~/components/bar/Header'
-import { TextSelectorRow } from '~/components/Selector'
-import { SimpleModal } from '~/components/Modals'
-import { LazyComponent } from '~/components/LazyComponent'
-import { DownloadResultView } from '~/network/HTTP'
 import { PhotoImage } from '~/components/PhotoImage'
 import { Page } from '~/components/Page'
 import { ImageSwiper } from '~/components/ImageSwiper'

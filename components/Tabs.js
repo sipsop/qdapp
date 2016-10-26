@@ -11,7 +11,7 @@ import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 
 import { historyStore, drawerStore, tabStore } from '../model/store.js'
-import { analytics } from '../network/analytics.js'
+import { analytics } from '~/model/analytics.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 

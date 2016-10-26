@@ -18,11 +18,12 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { Page } from '../Page.js'
-import { downloadManager, DownloadResultView } from '~/network/http'
-import { NotificationBar } from '../NotificationBar.js'
-import { OrderList } from '../orders/OrderList.js'
-import { LargeButton } from '../Button.js'
+import { Page } from '~/components/Page.js'
+import { downloadManager } from '~/network/http'
+import { DownloadResultView } from '~/components/download/DownloadResultView'
+import { NotificationBar } from '~/components/NotificationBar.js'
+import { OrderList } from '~/components/orders/OrderList.js'
+import { LargeButton } from '~/components/Button.js'
 import { TagView } from '~/components/TagView.js'
 
 import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '~/model/store.js'
@@ -73,6 +74,7 @@ class MenuList extends DownloadResultView {
         ])
     }
 
+    /* TODO: Get this from the bar store */
     getDownloadResult = () => downloadManager.getDownload('menu')
 
     renderFinished = () => {

@@ -7,7 +7,7 @@ import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { LargeButton } from '../Button'
 import { logger } from '~/utils/curry'
-import { paymentStore } from '~/model/paymentstore'
+import { paymentStore } from '~/model/orders/paymentstore'
 import { analytics } from '~/model/analytics'
 import { config } from '~/utils/config'
 

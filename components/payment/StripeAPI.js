@@ -6,7 +6,7 @@ const { log, assert } = _.utils('./Payment/StripeAPI')
 /*********************************************************************/
 
 import type { Int, Float, String } from '../Types'
-import type { Card } from '~/model/paymentstore'
+import type { Card } from '~/model/orders/paymentstore'
 
 export type CardToken = String
 

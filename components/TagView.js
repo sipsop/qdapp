@@ -6,12 +6,13 @@ import {
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { DownloadResultView } from './download/DownloadResultView'
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from '~/components/Component.js'
-import { DownloadResultView, downloadManager } from '~/network/http'
-import { analytics } from './model/analytics.js'
+import { downloadManager } from '~/network/http'
+import { analytics } from '~/model/analytics.js'
 import { tagstore } from '~/model/tagstore.js'
-import * as _ from './utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils('./components/tags.js')
 
@@ -23,6 +24,7 @@ export class TagView extends DownloadResultView {
 
     errorMessage = "Error downloading tags"
 
+    /* TODO: Get this directly from the tagstore */
     getDownloadResult = () => downloadManager.getDownload('tags')
     refreshPage = async () => await downloadManager.forceRefresh('tags')
     renderNotStarted = () => <View />

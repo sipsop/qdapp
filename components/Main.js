@@ -16,21 +16,21 @@ import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { DiscoverPage } from '~/screens//DiscoverPage.js'
+import { BarPage } from '~/screens/BarPage.js'
+import { MenuPage } from '~/screens/MenuPage.js'
+import { OrderPage } from '~/screens/OrderPage.js'
+
 import { handleBackButton } from './AndroidBackButton.js'
 import { SideMenu, MenuIcon } from './sidemenu/SideMenu.js'
 import { ControlPanel } from './sidemenu/ControlPanel.js'
-import { DiscoverPage } from './DiscoverPage.js'
-import { BarPage } from './bar/BarPage.js'
-import { MenuPage } from './menu/MenuPage.js'
-import { OrderPage } from './orders/OrderPage.js'
 import { TabView } from './Tabs.js'
-import { Checkout } from './Payment/Checkout.js'
+import { Checkout } from './payment/Checkout.js'
 import { ReceiptModal } from './orders/Receipt.js'
 import { Loader } from './Page.js'
 
 import { store, barStore, tabStore, segment } from '~/model/store.js'
 import * as _ from '~/utils/curry.js'
-import { downloadManager } from '~/network/http.js'
 
 const { log, assert } = _.utils('./components/Main.js')
 
@@ -115,5 +115,3 @@ export const main = async () => {
     handleBackButton()
     await store.initialize()
 }
-
-require('./Downloads.js').initialize(require('~/model/store.js'), downloadManager)

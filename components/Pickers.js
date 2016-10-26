@@ -10,7 +10,6 @@ import { observer } from 'mobx-react/native'
 
 // import { PureComponent } from '~/components/Component.js'
 import { LazyComponent, lazyWrap } from './LazyComponent.js'
-import { updateSelectionInPlace } from './Selection.js'
 import { Selector } from './Selector.js'
 import { Price } from './Price.js'
 import { TextHeader } from './Header.js'

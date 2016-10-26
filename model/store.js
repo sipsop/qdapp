@@ -16,6 +16,7 @@ import { orderStore } from './orders/orderstore.js'
 import { paymentStore } from './orders/paymentstore.js'
 import { historyStore } from './historystore.js'
 import { timeStore } from './timestore.js'
+import { drawerStore } from './drawerstore.js'
 
 const log = _.logger('./model/store.js')
 
@@ -166,4 +167,5 @@ export {
     historyStore,
     timeStore,
     segment,
+    drawerStore,
 }
