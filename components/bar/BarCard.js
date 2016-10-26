@@ -1,15 +1,11 @@
 import {
     React,
-    Component,
     View,
     TouchableOpacity,
-    MaterialIcon,
     PureComponent,
-    Dimensions,
-    StyleSheet,
-    T,
+    StyleSheet
 } from '~/components/Component.js'
-import { action, transaction, computed } from 'mobx'
+import { action, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
@@ -18,12 +14,10 @@ import { LazyComponent } from '../LazyComponent.js'
 import { SmallOkCancelModal } from '../Modals.js'
 import { BackButton } from '../BackButton.js'
 import { PhotoImage } from '../PhotoImage.js'
-import { store, tabStore, mapStore, orderStore } from '~/model/store.js'
+import { tabStore, mapStore, orderStore } from '~/model/store.js'
 import * as _ from '~/utils/curry.js'
 import { barStore, getBarOpenTime } from '~/model/barstore.js'
 import { config } from '~/utils/config.js'
-
-const { log, assert } = _.utils('./bar/BarCard.js')
 
 @observer
 export class DiscoverBarCard extends PureComponent {
@@ -35,44 +29,47 @@ export class DiscoverBarCard extends PureComponent {
         onBack: ?() => void
         showBackButton: Bool
     */
-    modal = null
+  modal = null
 
-    static defaultProps = {
-        borderRadius: 5,
+  static defaultProps = {
+    borderRadius: 5
+  }
+
+  styles = StyleSheet.create({
+    view: {
+      flex: 0,
+      height: this.props.imageHeight,
+      marginTop: 5,
+      marginLeft: 5,
+      marginRight: 5,
+      borderRadius: this.props.borderRadius
     }
+  })
 
-    styles = StyleSheet.create({
-        view: {
-            flex: 0,
-            height: this.props.imageHeight,
-            marginTop: 5,
-            marginLeft: 5,
-            marginRight: 5,
-            borderRadius: this.props.borderRadius,
-        },
-    })
-
-    handleCardPress = () => {
-        if (orderStore.orderList.length > 0 && this.props.bar.id !== barStore.barID)
-            this.modal.show()
-        else
-            this.setBar()
+  handleCardPress = () => {
+    if (orderStore.orderList.length > 0 && this.props.bar.id !== barStore.barID) {
+      this.modal.show()
+    } else {
+      this.setBar()
     }
+  }
 
     @action setBar = () => {
-        barStore.setBarID(this.props.bar.id, track = true)
-        tabStore.setCurrentTab(1)
-        if (barStore.barScrollView)
-            barStore.barScrollView.scrollTo({x: 0, y: 0})
+      barStore.setBarID(this.props.bar.id, track = true)
+      tabStore.setCurrentTab(1)
+      if (barStore.barScrollView) {
+        barStore.barScrollView.scrollTo({x: 0, y: 0})
+      }
     }
 
-    render = () => {
-        const photos = this.props.bar.photos
-        const useGenericPicture = !photos || !photos.length
+  render = () => {
+    const photos = this.props.bar.photos
+    const useGenericPicture = !photos || !photos.length
 
         // log("RENDERING BAR CARD", this.props.bar.name)
 
-        return <View style={this.styles.view}>
+    return (
+      <View style={this.styles.view}>
             <ConfirmChangeBarModal
                 ref={ref => this.modal = ref}
                 onConfirm={this.setBar}
@@ -83,8 +80,8 @@ export class DiscoverBarCard extends PureComponent {
                 onPress={this.handleCardPress}
                 showDistance={true}
                 />
-        </View>
-    }
+        </View>)
+  }
 }
 
 @observer
@@ -92,23 +89,23 @@ class ConfirmChangeBarModal extends PureComponent {
     /* properties:
         onCOnfirm: () => void
     */
-    modal = null
+  modal = null
 
-    show = () => this.modal.show()
-    close = () => this.modal.close()
+  show = () => this.modal.show()
+  close = () => this.modal.close()
 
-    @computed get currentBarName() {
-        const currentBar = barStore.getBar()
-        return currentBar ? currentBar.name : ""
+    @computed get currentBarName () {
+      const currentBar = barStore.getBar()
+      return currentBar ? currentBar.name : ''
     }
 
-    render = () => {
-        return <SmallOkCancelModal
-                    ref={ref => this.modal = ref}
+  render = () => {
+    return <SmallOkCancelModal
+        ref={ref => this.modal = ref}
                     message={`Do you want to erase your order (${orderStore.totalText}) at ${this.currentBarName}?`}
                     onConfirm={this.props.onConfirm}
                     />
-    }
+  }
 }
 
 @observer
@@ -128,38 +125,38 @@ export class BarCard extends PureComponent {
         showBackButton: Bool
     */
 
-    static defaultProps = {
-        imageHeight: 200,
-        borderRadius: 5,
-    }
+  static defaultProps = {
+    imageHeight: 200,
+    borderRadius: 5
+  }
 
-    render = () => {
-        return <View style={{flex: 1}}>
+  render = () => {
+    return (<View style={{flex: 1}}>
             <TouchableOpacity
-                    onPress={this.props.onPress}
-                    style={{flex: 2, borderRadius: this.props.borderRadius}}
+                onPress={this.props.onPress}
+                style={{flex: 2, borderRadius: this.props.borderRadius}}
                     >
                 <BarPhoto {...this.props} />
             </TouchableOpacity>
-        </View>
+        </View>)
     }
 
 }
 
 @observer
 export class LazyBarPhoto extends PureComponent {
-    static defaultProps = {
-        showMapButton: false,
-    }
+  static defaultProps = {
+    showMapButton: false
+  }
 
-    render = () => {
-        return <LazyComponent
+  render = () => {
+    return (<LazyComponent
                     timeout={this.props.timeout || 0}
                     style={{height: this.props.imageHeight}}
                     >
             <BarPhoto {...this.props} />
-        </LazyComponent>
-    }
+        </LazyComponent>)
+  }
 }
 
 @observer
@@ -175,20 +172,20 @@ export class BarPhoto extends PureComponent {
         showBarName: Bool
         showMapButton: Bool
     */
-    render = () => {
-        let photo = this.props.photo
-        const pictureIsGeneric = !photo
-        if (!photo) {
-            photo = {
-                url: '/static/GenericBarPicture.jpg',
-                htmlAttrib: [],
-            }
-        }
+  render = () => {
+    let photo = this.props.photo
+    const pictureIsGeneric = !photo
+    if (!photo) {
+      photo = {
+        url: '/static/GenericBarPicture.jpg',
+        htmlAttrib: []
+      }
+    }
 
-        return <PhotoImage
-                    key={photo.url}
-                    photo={photo}
-                    style={{flex: 0, height: this.props.imageHeight}}
+    return (<PhotoImage
+        key={photo.url}
+        photo={photo}
+        style={{flex: 0, height: this.props.imageHeight}}
                     >
             <BackButton
                 onBack={this.props.onBack}
@@ -226,8 +223,8 @@ export class BarPhoto extends PureComponent {
                         />
                 </View>
             </LinearGradient>
-        </PhotoImage>
-    }
+        </PhotoImage>)
+  }
 }
 
 @observer
@@ -236,31 +233,32 @@ export class BarCardHeader extends PureComponent {
         style: style object
         pictureIsGeneric: Bool
     */
-    render = () => {
-        if (this.props.pictureIsGeneric)
-            return this.renderGenericPictureHeader()
-        return <View style={this.props.style} />
+  render = () => {
+    if (this.props.pictureIsGeneric) {
+      return this.renderGenericPictureHeader()
     }
+    return <View style={this.props.style} />
+  }
 
-    renderGenericPictureHeader = () => {
-        return <LinearGradient
+  renderGenericPictureHeader = () => {
+    return (<LinearGradient
                     style={this.props.style}
                     colors={['rgba(0, 0, 0, 1.0)', 'rgba(0, 0, 0, 0.0)']}
                     >
             <View style={
-                    { flex: 1
-                    , flexDirection: 'row'
-                    , justifyContent: 'flex-end'
-                    , marginRight: 5
-                    , backgroundColor: 'rgba(0,0,0,0)' /* iOS */
+                    { flex: 1,
+                     flexDirection: 'row',
+                     justifyContent: 'flex-end',
+                     marginRight: 5,
+                     backgroundColor: 'rgba(0,0,0,0)' /* iOS */
                     }
                 }>
                 <T style={{fontSize: 15, color: '#fff'}}>
                     (No picture available)
                 </T>
             </View>
-        </LinearGradient>
-    }
+        </LinearGradient>)
+  }
 }
 
 @observer
@@ -273,21 +271,21 @@ export class BarCardFooter extends PureComponent {
         showMapButton: Bool
     */
 
-    static defaultProps = {
-        showDistance: false,
-        showTimeInfo: true,
-        showBarName: true,
-        showMapButton: true,
-    }
+  static defaultProps = {
+    showDistance: false,
+    showTimeInfo: true,
+    showBarName: true,
+    showMapButton: true
+  }
 
-    handleFocusBarOnMap = () => {
+  handleFocusBarOnMap = () => {
         // Update currently selected bar on map
-    }
+  }
 
-    render = () => {
-        const bar = this.props.bar
-        return <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
-            <View style={{flex : 1, marginLeft: 5, flexWrap: 'wrap'}}>
+  render = () => {
+    const bar = this.props.bar
+    return (<View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
+            <View style={{flex: 1, marginLeft: 5, flexWrap: 'wrap'}}>
                 <View style={{flexDirection: 'row'}}>
                     {this.props.showTimeInfo && <TimeInfo bar={bar} />}
                     {this.props.showDistance && <Distance bar={bar} />}
@@ -300,8 +298,8 @@ export class BarCardFooter extends PureComponent {
                           <PlaceInfo bar={bar} />
                     </View>
             }
-        </View>
-    }
+        </View>)
+  }
 }
 
 @observer
@@ -309,10 +307,9 @@ export class BarName extends PureComponent {
     /* properties:
         barName: String
     */
-    render = () => {
-        return <T style={
-                    { fontSize: 22
-                    , color: config.theme.primary.light
+  render = () => {
+    return (<T style={{ fontSize: 22,
+                     color: config.theme.primary.light
                     // , color: config.theme.primary.medium
                     // , color: '#fff'
                     // , color: '#000'
@@ -321,8 +318,8 @@ export class BarName extends PureComponent {
                     numberOfLines={2}
                     >
             {this.props.barName}
-        </T>
-    }
+        </T>)
+  }
 }
 
 @observer
@@ -331,39 +328,40 @@ export class PlaceInfo extends PureComponent {
         bar: schema.Bar
     */
 
-    styles = StyleSheet.create({
-        buttonStyle: {
-            width: 50,
-            height: 50,
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-        },
-        buttonItems: {
-            margin: 5,
-            alignItems: 'center',
-        },
-    })
+  styles = StyleSheet.create({
+    buttonStyle: {
+      width: 50,
+      height: 50,
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end'
+    },
+    buttonItems: {
+      margin: 5,
+      alignItems: 'center'
+    }
+  })
 
-    handlePress = () => {
-        tabStore.setCurrentTab(0)
-        mapStore.focusBar(this.props.bar, true, track = true)
+  handlePress = () => {
+    tabStore.setCurrentTab(0)
+    mapStore.focusBar(this.props.bar, true, track = true)
         // mapStore.currentMarker = this.props.bar
         // TODO: Scroll to top
-    }
+  }
 
-    render = () => {
-        return <View>
+  render = () => {
+    return (
+        <View>
             <TouchableOpacity onPress={this.handlePress} style={this.styles.buttonStyle}>
                 <View style={this.styles.buttonItems}>
                     <Icon name="map-marker" size={30} color="rgb(181, 42, 11)" />
                     <T style={{color: '#fff', fontSize: 14}}>
                         MAP
-                        {/*this.props.bar.address.city*/}
+                        {/* this.props.bar.address.city */}
                     </T>
                 </View>
             </TouchableOpacity>
-        </View>
-    }
+        </View>)
+  }
 }
 
 export const timeTextStyle = {fontSize: 11, color: '#fff'}
@@ -373,9 +371,10 @@ export class TimeInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
     */
-    render = () => {
-        const openingTime = getBarOpenTime(this.props.bar)
-        return <View style={{flexDirection: 'row', alignItems: 'flex-end',  marginRight: 10}}>
+  render = () => {
+    const openingTime = getBarOpenTime(this.props.bar)
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'flex-end', marginRight: 10}}>
             <Icon name="clock-o" size={15} color='#fff' />
             <View style={{marginLeft: 5, flexDirection: 'row'}}>
                 {
@@ -384,28 +383,29 @@ export class TimeInfo extends PureComponent {
                         : this.renderUnknownOpeningTime()
                 }
             </View>
-        </View>
-    }
+        </View>)
+  }
 
-    renderOpeningTime = (openingTime : OpeningTime) => {
-        return <OpeningTimeView
+  renderOpeningTime = (openingTime : OpeningTime) => {
+    return <OpeningTimeView
                     openingTime={openingTime}
                     textStyle={timeTextStyle} />
+  }
+
+  renderUnknownOpeningTime = () => {
+    let text
+    if (this.props.bar.openNow != null) {
+      if (this.props.bar.openNow) {
+        text = 'open'
+      } else {
+        text = 'closed'
+      }
+    } else {
+      text = 'unknown'
     }
 
-    renderUnknownOpeningTime = () => {
-        let text
-        if (this.props.bar.openNow != null) {
-            if (this.props.bar.openNow)
-                text = "open"
-            else
-                text = "closed"
-        } else {
-            text = "unknown"
-        }
-
-        return <T style={timeTextStyle}>{text}</T>
-    }
+    return <T style={timeTextStyle}>{text}</T>
+  }
 }
 
 @observer
@@ -415,24 +415,26 @@ export class OpeningTimeView extends PureComponent {
         textStyle: style object
     */
 
-    styles = StyleSheet.create({
-        row: {
-            flexDirection: 'row',
-            alignItems: 'center',
-        }
-    })
+  styles = StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    }
+  })
 
-    render = () => {
-        const textStyle = this.props.textStyle
-        const openingTime = this.props.openingTime
-        if (!openingTime)
-            return <T style={textStyle}>Unknown</T>
-        return <View style={this.styles.row}>
+  render = () => {
+    const textStyle = this.props.textStyle
+    const openingTime = this.props.openingTime
+    if (!openingTime) {
+      return <T style={textStyle}>Unknown</T>
+    }
+    return (
+        <View style={this.styles.row}>
             <Time style={textStyle} time={openingTime.open} />
             <T style={textStyle}> - </T>
             <Time style={textStyle} time={openingTime.close} />
-        </View>
-    }
+        </View>)
+  }
 }
 
 @observer
@@ -441,33 +443,35 @@ class Distance extends PureComponent {
         bar: Bar
     */
 
-    @computed get distance() {
-        return mapStore.distanceFromUser(this.props.bar)
+    @computed get distance () {
+      return mapStore.distanceFromUser(this.props.bar)
     }
 
-    @computed get distanceString() {
-        return formatDistance(this.distance)
+    @computed get distanceString () {
+      return formatDistance(this.distance)
     }
 
-    render = () => {
-        return <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+  render = () => {
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
             <Icon name="location-arrow" size={15} color='#fff' />
             <View style={{marginLeft: 5, flexDirection: 'row'}}>
                 <T style={timeTextStyle}>{this.distanceString}</T>
             </View>
-        </View>
-    }
+        </View>)
+  }
 }
 
 const formatDistance = (dist) => {
-    if (dist < 0)
-        return 'unknown'
-    if (dist < 1000) {
-        const meters = Math.round(dist / 100) * 100
-        return `${meters.toFixed(0)} meters`
-    }
-    const km = dist / 1000
-    return `${km.toFixed(1)}km`
+  if (dist < 0) {
+    return 'unknown'
+  }
+  if (dist < 1000) {
+    const meters = Math.round(dist / 100) * 100
+    return `${meters.toFixed(0)} meters`
+  }
+  const km = dist / 1000
+  return `${km.toFixed(1)}km`
 }
 
 @observer
@@ -476,13 +480,16 @@ export class Time extends PureComponent {
         time: Time
         style: text style
     */
-    render = () => {
-        const time = this.props.time
-        let minute = '' + time.minute
-        if (minute.length === 1)
-            minute = '0' + minute
-        return <T style={this.props.style}>
+  render = () => {
+    const time = this.props.time
+    let minute = '' + time.minute
+    if (minute.length === 1) {
+      minute = '0' + minute
+    }
+    return (
+        <T style={this.props.style}>
             {time.hour}.{minute}
         </T>
-    }
+    )
+  }
 }
