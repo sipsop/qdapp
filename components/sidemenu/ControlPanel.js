@@ -76,7 +76,6 @@ class OrderHistory extends PureComponent {
                     loginStore.login(
                         () => {
                             this.orderHistoryModal.show()
-                            // orderHistoryStore.fetchOrderHistory()
                             segment.track('Order History Viewed')
                         },
                         () => {

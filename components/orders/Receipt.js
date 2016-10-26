@@ -165,7 +165,6 @@ export class Receipt extends PureComponent {
     render = () => {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
-        log("GOT ORDER RESULT", orderResult)
 
         assert (bar.name != null)
         assert(bar.photos != null)

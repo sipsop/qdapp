@@ -15,8 +15,9 @@ import { DownloadResultView } from './DownloadResultView'
 import { downloadManager, emptyResult } from '~/network/http'
 import * as _ from '~/utils/curry'
 
+@observer
 export class DownloadComponent extends DownloadResultView {
-    downloadName = null
+    @observable downloadName = null
 
     componentDidMount = () => {
         const download = this.getDownload()

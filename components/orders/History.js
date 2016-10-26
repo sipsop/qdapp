@@ -104,10 +104,14 @@ export class OrderHistory extends DownloadComponent {
         })
     }
 
+    @computed get orderHistory() {
+        return this.getDownloadResult().orderHistory
+    }
+
     renderFinished = (_) => {
         const descriptor = new OrderHistoryDescriptor(
-            this.download,
-            this.download.orderHistory,
+            this.getDownloadResult(),
+            this.orderHistory,
         )
         return <SimpleListView descriptor={descriptor} />
     }
