@@ -1,4 +1,3 @@
-import { React, Component, View, TouchableOpacity, T, Mono, PureComponent } from '../Component.js'
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager } from '~/network/http.js'

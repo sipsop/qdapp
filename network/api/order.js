@@ -1,6 +1,6 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { QueryMutation } from '~/network/http.js'
-import { MenuItemQuery } from 'bar/menu.js'
+import { MenuItemQuery } from './bar/menu.js'
 
 export const OrderItemQuery = {
     id:                 'String',

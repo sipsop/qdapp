@@ -31,19 +31,3 @@ export class Price extends PureComponent {
     }
 
 }
-
-export const getCurrencySymbol = (symbol) => {
-    if (symbol == 'Sterling') {
-        return '£'
-    } else if (symbol == 'Euros') {
-        return '€'
-    } else if (symbol == 'Dollars') {
-        return '$'
-    } else {
-        throw Error('Unknown currency symbol:' + symbol)
-    }
-}
-
-export const sumPrices = (prices) => {
-    return _.sum(prices.map(price => price.price))
-}

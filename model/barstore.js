@@ -1,7 +1,7 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager } from '../network/http.js'
-import { BarInfoDownload } from '../network/api/maps/place-info.js'
+import { BarInfoDownload, parseBar } from '~/network/api/maps/place-info.js'
 import { MenuDownload } from '../network/api/bar/menu.js'
 import { analytics } from '~/model/analytics.js'
 import { config } from '~/utils/config.js'
@@ -10,7 +10,6 @@ import * as _ from '~/utils/curry.js'
 import { store } from './store.js'
 import { mapStore } from './mapstore.js'
 import { tagStore } from './tagstore.js'
-import { parseBar } from './maps/place-info.js'
 import type { PlaceID } from './mapstore.js'
 
 import type { Int, Float, String, URL, HTML } from '~/utils/types.js'

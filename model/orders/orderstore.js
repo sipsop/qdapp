@@ -7,7 +7,6 @@ import { StripeTokenDownload } from '~/network/api/payment.js'
 import { PlaceOrderDownload } from '~/network/api/order.js'
 import { downloadManager } from '~/network/http.js'
 /* TODO: Imports */
-import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { addToSelection } from './orderSelection.js'
 import { barStore } from '../barstore.js'
 import { paymentStore } from './paymentStore.js'
@@ -398,4 +397,24 @@ const getMenuItemDefaultOptions = (menuItemOption : MenuItemOption) : String => 
     assert(menuItemOption.defaultOption >= 0)
     const option = menuItemOption.optionList[menuItemOption.defaultOption]
     return addToSelection(menuItemOption.optionType, [], option)
+}
+
+/*********************************************************************/
+/* Utils                                                             */
+/*********************************************************************/
+
+const getCurrencySymbol = (symbol) => {
+    if (symbol == 'Sterling') {
+        return '£'
+    } else if (symbol == 'Euros') {
+        return '€'
+    } else if (symbol == 'Dollars') {
+        return '$'
+    } else {
+        throw Error('Unknown currency symbol:' + symbol)
+    }
+}
+
+const sumPrices = (prices) => {
+    return _.sum(prices.map(price => price.price))
 }

@@ -27,7 +27,7 @@ export class CreditCard extends PureComponent {
         return <View style={{flex: 1, flexDirection: 'row'}}>
             {!this.props.small && <RemoveCardButton card={this.props.card} />}
             <View style={
-                { flex: 1
+                { flex: 1,
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'center',
