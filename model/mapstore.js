@@ -166,7 +166,11 @@ class MapStore {
         }
     }
 
-    initialize = async () => {
+    initialize = () => {
+    
+    }
+
+    initialized = async () => {
         mapStore.trackLocation()
         /* TODO: Declarative downloads */
         await this.updateNearbyBars()

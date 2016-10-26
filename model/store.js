@@ -43,13 +43,7 @@ export class Store {
     }
 
     initialize = async () => {
-        try {
-            await this.loadFromLocalStorage()
-        } catch (e) {
-            _.logError(e)
-        }
-        this.initialized = true
-
+        /* First call initialize() */
         await analytics.initialize()
         await favStore.initialize()
         await tabStore.initialize()
@@ -62,8 +56,18 @@ export class Store {
         await paymentStore.initialize()
         await historyStore.initialize()
         await timeStore.initialize()
-
         await segment.initialize()
+
+        try {
+            await this.loadFromLocalStorage()
+        } catch (e) {
+            _.logError(e)
+        }
+        this.initialized = true
+
+        /* Then call initialized() */
+        await mapStore.initialized()
+        await segment.initialized()
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',

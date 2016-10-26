@@ -35,6 +35,10 @@ export class Segment {
     }
 
     initialize = () => {
+    
+    }
+
+    initialized = () => {
         this.dispatchMessages(5000)
     }
 

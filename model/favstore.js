@@ -7,19 +7,13 @@ class FavStore {
     @observable favItems = []
     @observable favBars = []
 
-    toggleFavItem = (menuItemID) => {
-        // loginStore.login(() => {
-        toggle(this.favItems, menuItemID)
-        // })
-    }
-    toggleFavBar = (barID) => {
-        // loginStore.login(() => {
-        toggle(this.favBars, barID)
-        // })
-    }
+    /*********************************************************************/
+    /* Initialization                                                    */
+    /*********************************************************************/
 
-    isFavItem = (menuItemID) => _.includes(this.favItems, menuItemID)
-    isFavBar = (barID) => _.includes(this.favBars, barID)
+    initialize = () => {
+
+    }
 
     getState = () => {
         return {
@@ -34,6 +28,25 @@ class FavStore {
         this.favItems = favourites.favItems
         this.favBars = favourites.favBars
     }
+
+    /*********************************************************************/
+    /* Actions                                                           */
+    /*********************************************************************/
+
+    toggleFavItem = (menuItemID) => {
+        // loginStore.login(() => {
+        toggle(this.favItems, menuItemID)
+        // })
+    }
+    toggleFavBar = (barID) => {
+        // loginStore.login(() => {
+        toggle(this.favBars, barID)
+        // })
+    }
+
+    isFavItem = (menuItemID) => _.includes(this.favItems, menuItemID)
+    isFavBar = (barID) => _.includes(this.favBars, barID)
+
 }
 
 const toggle = (idList, id) => {
