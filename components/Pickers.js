@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { addToSelectionInPlace } from '~/model/orders/orderSelection'
 // import { PureComponent } from '~/components/Component.js'
 import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { Selector } from './Selector.js'
@@ -190,7 +191,7 @@ class PickerItemView extends PureComponent {
 
     @action handleItemChange = (itemIndex) => {
         const pickerItem = this.props.pickerItem
-        updateSelectionInPlace(
+        addToSelectionInPlace(
             pickerItem.optionType,
             this.selectedOptions,
             itemIndex,
