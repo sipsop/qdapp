@@ -11,11 +11,7 @@ import { store } from './store.js'
 import { mapStore } from './mapstore.js'
 import { tagStore } from './tagstore.js'
 import { parseBar } from './maps/place-info.js'
-
 import type { PlaceID } from './mapstore.js'
-import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './barstore.js'
-
-const { log, assert } = _.utils('./model/barstore.js')
 
 import type { Int, Float, String, URL, HTML } from '~/utils/types.js'
 
@@ -126,6 +122,9 @@ export type Currency =
 export type PriceOption =
     | 'Absolute'
     | 'Relative'
+
+
+const { log, assert } = _.utils('./model/barstore.js')
 
 class BarStore {
     // BarID
