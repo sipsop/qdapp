@@ -7,6 +7,7 @@ import { DownloadResult, emptyResult } from '~/network/http.js'
 import { searchNearbyFirstPage, searchNearbyAllPages } from '~/network/api/maps/nearby.js'
 import { Second } from '~/utils/time.js'
 import * as _ from '~/utils/curry.js'
+import { analytics } from '~/model/analytics.js'
 import { config } from '~/utils/config.js'
 
 import type { Bar } from './barstore.js'
@@ -167,7 +168,7 @@ class MapStore {
     }
 
     initialize = () => {
-    
+
     }
 
     initialized = async () => {
