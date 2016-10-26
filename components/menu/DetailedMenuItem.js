@@ -16,11 +16,11 @@ import { MenuItemOrderList } from './MenuItemOrderList.js'
 import { MenuItemImage } from './MenuItemImage.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import { createOrderItem, orderStore } from '/model/orderstore.js'
+import { createOrderItem, orderStore } from '~/model/orderstore.js'
 import { OrderList } from '../orders/OrderList.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
-import { tagStore } from '/model/store.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
+import { tagStore } from '~/model/store.js'
 
 const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 

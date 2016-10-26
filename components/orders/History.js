@@ -8,17 +8,17 @@ import { TextHeader } from '../Header.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { DownloadResult, DownloadResultView, DownloadComponent, emptyResult, downloadManager } from '../HTTP.js'
-import { barStore, loginStore, orderStore } from '/model/store.js'
+import { barStore, loginStore, orderStore } from '~/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { Receipt } from './Receipt.js'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 import { Second } from '../Time.js'
 import { BarInfoDownload, HistoryQueryDownload } from '../Downloads.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 /***************************************************************************/
 
-import type { CacheInfo } from '/network/cache.js'
+import type { CacheInfo } from '~/network/cache.js'
 
 /***************************************************************************/
 

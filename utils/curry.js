@@ -437,7 +437,7 @@ export const timeout = async (timeout, promise) => {
     const tPromise = timeoutError(timeout)
     const result = await Promise.race([tPromise, promise])
     if (result == timedout) {
-        log('/utils/curry.js', 'download timed out...')
+        log('~/utils/curry.js', 'download timed out...')
         throw new TimeoutError()
     }
     return result

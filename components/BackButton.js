@@ -8,7 +8,7 @@ import {
 } from './Component.js'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 const { log, assert } = _.utils('./BackButton.js')
 
 

@@ -21,7 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const fontFamily = Platform.OS === 'android' ? 'Roboto' : 'Arial'
 

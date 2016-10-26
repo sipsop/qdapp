@@ -25,10 +25,10 @@ import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
-import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store.js'
-import { analytics } from '/model/analytics.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
+import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '~/model/store.js'
+import { analytics } from '~/model/analytics.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { assert, log } = _.utils('./orders/OrderPage.js')
 

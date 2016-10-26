@@ -23,11 +23,11 @@ import { downloadManager, DownloadResultView } from '../HTTP.js'
 import { NotificationBar } from '../NotificationBar.js'
 import { OrderList } from '../orders/OrderList.js'
 import { LargeButton } from '../Button.js'
-import { TagView } from '/components/TagView.js'
+import { TagView } from '~/components/TagView.js'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '/model/store.js'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '~/model/store.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 /*********************************************************************/
 

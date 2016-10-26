@@ -19,11 +19,11 @@ import { MenuItemCard } from './MenuItemCard.js'
 import { LazyComponent, lazyWrap } from '../LazyComponent.js'
 import { Price, sumPrices } from '../Price.js'
 import { PickerCollection, PickerItem } from '../Pickers.js'
-import { store, orderStore } from '/model/store.js'
-import { analytics } from '/model/analytics.js'
+import { store, orderStore } from '~/model/store.js'
+import { analytics } from '~/model/analytics.js'
 import { getMenuItemImage } from './MenuItemImage.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./menu/MenuItemOrderList.js')
 

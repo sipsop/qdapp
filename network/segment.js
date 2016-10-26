@@ -1,9 +1,9 @@
 import { NetworkError, simpleFetchJSON } from './HTTP.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const segmentURL = 'https://api.segment.io/v1/batch'
 
-const { log, assert } = _.utils('/network/segment.js')
+const { log, assert } = _.utils('~/network/segment.js')
 
 export class Segment {
 

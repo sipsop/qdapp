@@ -11,13 +11,13 @@ import { LargeButton } from '../Button.js'
 import { LazyBarPhoto } from '../bar/BarCard.js'
 import { SimpleListView, themedRefreshControl } from '../SimpleListView.js'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals.js'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Header, HeaderText, TextHeader } from '../Header.js'
 import { barStore, orderStore, loginStore } from '../Store.js'
 import { CreditCard } from './CreditCard.js'
-import { analytics } from '/model/analytics.js'
-import * as _ from '/utils/curry.js'
+import { analytics } from '~/model/analytics.js'
+import * as _ from '~/utils/curry.js'
 
 import { CardInput, makeAddCardButton } from './CardInput.js'
 import { paymentStore } from './PaymentStore.js'
@@ -27,7 +27,7 @@ import { TipComponent, TipRoundButton } from './Tips.js'
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('/components/payment/Checkout.js')
+const { log, assert } = _.utils('~/components/payment/Checkout.js')
 
 @observer
 export class Checkout extends PureComponent {

@@ -18,12 +18,12 @@ import { MenuItemCard } from './MenuItemCard.js'
 import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import { createOrderItem, orderStore } from '/model/orderstore.js'
+import { createOrderItem, orderStore } from '~/model/orderstore.js'
 import { OrderList } from '../orders/OrderList.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
-import { tagStore } from '/model/store.js'
-import { analytics } from '/model/analytics.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
+import { tagStore } from '~/model/store.js'
+import { analytics } from '~/model/analytics.js'
 
 const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 

@@ -1,13 +1,13 @@
 import Auth0Lock from 'react-native-lock'
 import { observable, action, computed } from 'mobx'
 
-import { segment } from '/network/segment.js'
-import { downloadManager } from '/network/http.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
-import { getTime, Hour, Minute } from '/utils/time.js'
+import { segment } from '~/network/segment.js'
+import { downloadManager } from '~/network/http.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
+import { getTime, Hour, Minute } from '~/utils/time.js'
 
-const { log, assert } = _.utils('/model/loginstore.js')
+const { log, assert } = _.utils('~/model/loginstore.js')
 
 const clientID = 'phA8QFWKknNtcDwVefccBf82sIp4bw6c'
 

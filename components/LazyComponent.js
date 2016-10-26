@@ -1,6 +1,6 @@
 import { React, Component, View, TouchableOpacity, PureComponent, T } from './Component.js'
 import { Loader } from './Page.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 import { observable } from 'mobx'
 import { observer } from 'mobx-react/native'

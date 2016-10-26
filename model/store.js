@@ -1,8 +1,8 @@
 import { observable, action } from 'mobx'
 
-import { cache } from '/network/cache.js'
-import { segment } from '/network/segment.js'
-import * as _ from '/utils/curry.js'
+import { cache } from '~/network/cache.js'
+import { segment } from '~/network/segment.js'
+import * as _ from '~/utils/curry.js'
 
 import { analytics } from './analytics.js'
 import { favStore } from './favstore.js'

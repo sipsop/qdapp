@@ -8,10 +8,10 @@ import Slider from 'react-native-slider'
 
 import { TextHeader } from '../Header.js'
 import { LargeButton } from '../Button.js'
-import { orderStore } from '/model/store.js'
-import { config } from '/utils/config.js'
-import { analytics } from '/model/analytics.js'
-import * as _ from '/utils/curry.js'
+import { orderStore } from '~/model/store.js'
+import { config } from '~/utils/config.js'
+import { analytics } from '~/model/analytics.js'
+import * as _ from '~/utils/curry.js'
 
 import type { String, Int } from '../Types.js'
 

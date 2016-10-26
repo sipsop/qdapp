@@ -21,9 +21,9 @@ import { Header, TextHeader } from './Header.js'
 import { SelectableButton } from './ButtonRow.js'
 import { Descriptor, SimpleListView } from './SimpleListView.js'
 import { T } from './AppText.js'
-import { store, barStore, mapStore, historyStore, segment } from '/model/store.js'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { store, barStore, mapStore, historyStore, segment } from '~/model/store.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 const log = _.logger('DiscoverPage.js')
 

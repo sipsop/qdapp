@@ -19,6 +19,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { phonecall, email, web } from 'react-native-communications'
 
+<<<<<<< HEAD
 import { BarMenu } from '~/components/bar/BarMenu.js'
 import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/BarCard'
 
@@ -37,7 +38,25 @@ import { tabStore, barStore, timeStore, mapStore, segment } from '~/model/store'
 import { config } from '~/utils/config'
 import * as _ from '~/utils/curry'
 
-const { assert, log } = _.utils('./bar/BarPage.js')
+import { BarMenu } from '~/components/bar/BarMenu'
+import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from './BarCard'
+
+import { themedRefreshControl } from '~/components/bar/SimpleListView'
+import { TextHeader } from '~/components/bar/Header'
+import { TextSelectorRow } from '~/components/Selector'
+import { SimpleModal } from '~/components/Modals'
+import { LazyComponent } from '~/components/LazyComponent'
+import { DownloadResultView } from '~/network/HTTP'
+import { PhotoImage } from '~/Maps/Photos'
+import { Page } from '~/components/Page'
+import { ImageSwiper } from '~/components/ImageSwiper'
+import { LargeButton } from '~/components/Button'
+import { FavBarContainer } from '~/components/Fav'
+import { tabStore, barStore, timeStore, mapStore, segment } from '~/model/store'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
+
+const { assert, log } = _.utils('~/components/bar/BarPage.js')
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {

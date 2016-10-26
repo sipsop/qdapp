@@ -9,8 +9,8 @@ import { SimpleListView, themedRefreshControl } from '../SimpleListView.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Header, HeaderText, TextHeader } from '../Header.js'
 import { CreditCard } from './CreditCard.js'
-import { analytics } from '/model/analytics.js'
-import { paymentStore } from '/model/paymentstore.js'
+import { analytics } from '~/model/analytics.js'
+import { paymentStore } from '~/model/paymentstore.js'
 
 export class CreditCardListDesciptor {
 

@@ -1,12 +1,12 @@
 import { React, Component, View, TouchableOpacity, T, Mono, PureComponent } from '../Component.js'
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '/network/http.js'
-import { BarStatusDownload } from '/network/api/bar/barstatus.js'
-import { segment } from '/network/segment.js'
+import { downloadManager } from '~/network/http.js'
+import { BarStatusDownload } from '~/network/api/bar/barstatus.js'
+import { segment } from '~/network/segment.js'
 import { barStore } from './barstore.js'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 const { assert, log } = _.utils('./model/barstatusstore.js')
 
