@@ -303,8 +303,6 @@ export class PlaceInfo extends PureComponent {
   }
 }
 
-export const timeTextStyle = {fontSize: 11, color: '#fff'}
-
 @observer
 export class TimeInfo extends PureComponent {
     /* properties:
@@ -374,41 +372,4 @@ export class OpeningTimeView extends PureComponent {
             <Time style={textStyle} time={openingTime.close} />
         </View>)
   }
-}
-
-@observer
-class Distance extends PureComponent {
-    /* properties:
-        bar: Bar
-    */
-
-    @computed get distance () {
-      return mapStore.distanceFromUser(this.props.bar)
-    }
-
-    @computed get distanceString () {
-      return formatDistance(this.distance)
-    }
-
-  render = () => {
-    return (
-      <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-            <Icon name="location-arrow" size={15} color='#fff' />
-            <View style={{marginLeft: 5, flexDirection: 'row'}}>
-                <T style={timeTextStyle}>{this.distanceString}</T>
-            </View>
-        </View>)
-  }
-}
-
-const formatDistance = (dist) => {
-  if (dist < 0) {
-    return 'unknown'
-  }
-  if (dist < 1000) {
-    const meters = Math.round(dist / 100) * 100
-    return `${meters.toFixed(0)} meters`
-  }
-  const km = dist / 1000
-  return `${km.toFixed(1)}km`
 }
