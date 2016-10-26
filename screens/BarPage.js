@@ -10,7 +10,7 @@ import {
     Icon,
     MaterialIcon,
     StyleSheet,
-} from '../Component.js'
+} from '~/Component'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
 import { observable, action, computed, transaction } from 'mobx'
@@ -19,23 +19,23 @@ import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { phonecall, email, web } from 'react-native-communications'
 
-import { BarMenu } from './BarMenu.js'
-import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from './BarCard.js'
+import { BarMenu } from '~/components/bar/BarMenu.js'
+import { BarPhoto, LazyBarPhoto, BarCardFooter, OpeningTimeView } from '~/components/BarCard'
 
-import { themedRefreshControl } from '../SimpleListView.js'
-import { TextHeader } from '../Header.js'
-import { TextSelectorRow } from '../Selector.js'
-import { SimpleModal } from '../Modals.js'
-import { LazyComponent } from '../LazyComponent.js'
-import { DownloadResultView } from '../HTTP.js'
-import { PhotoImage } from '../Maps/Photos.js'
-import { Page } from '../Page.js'
-import { ImageSwiper } from '../ImageSwiper.js'
-import { LargeButton } from '../Button.js'
-import { FavBarContainer } from '../Fav.js'
-import { tabStore, barStore, timeStore, mapStore, segment } from '/model/store.js'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { themedRefreshControl } from '/components/SimpleListView'
+import { TextHeader } from '~/components/Header'
+import { TextSelectorRow } from '~/components/Selector'
+import { SimpleModal } from '~/components/Modals'
+import { LazyComponent } from '~/components/LazyComponent'
+import { DownloadResultView } from '~/network/HTTP'
+import { PhotoImage } from '~/Maps/Photos'
+import { Page } from '~/components/Page'
+import { ImageSwiper } from '~/components/ImageSwiper'
+import { LargeButton } from '~/Button'
+import { FavBarContainer } from '~/Fav'
+import { tabStore, barStore, timeStore, mapStore, segment } from '~/model/store'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
 
 const { assert, log } = _.utils('./bar/BarPage.js')
 
@@ -275,7 +275,7 @@ class BarFooter extends BarInfoFetcher {
             </View>
             <View style={{alignItems: 'center'}}>
                 <Image
-                    source={require('../logos/powered_by_google_on_white.png')}
+                    source={require('~/logos/powered_by_google_on_white.png')}
                     />
                 {/* TODO: display additional attribution stuff here */}
             </View>
