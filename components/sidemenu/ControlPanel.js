@@ -1,5 +1,5 @@
 import { React, Component, ScrollView, View, TouchableOpacity, Image,
-         Icon, PureComponent, T } from '../Component.js'
+         Icon, PureComponent, T } from '~/components/Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 

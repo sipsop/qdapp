@@ -1,5 +1,5 @@
 import { UIManager } from 'react-native'
-import { React, Component, PureComponent, Platform } from '../Component'
+import { React, Component, PureComponent, Platform } from '~/components/Component'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'

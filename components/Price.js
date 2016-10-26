@@ -1,5 +1,5 @@
 import { React, Component, PureComponent, T } from '~/components/Component.js'
-import { orderStore } from '~/model/orderstore.js'
+import { orderStore } from '~/model/orders/orderstore.js'
 import * as _ from '~/utils/curry.js'
 
 import { observer } from 'mobx-react/native'

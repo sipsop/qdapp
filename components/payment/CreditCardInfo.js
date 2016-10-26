@@ -1,4 +1,4 @@
-import { React, Component, Icon } from '../Component'
+import { React, Component, Icon } from '~/components/Component'
 import * as _ from '~/utils/curry'
 import creditCardType from 'credit-card-type'
 

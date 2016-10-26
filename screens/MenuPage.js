@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { Page } from '../Page.js'
-import { downloadManager, DownloadResultView } from '../HTTP.js'
+import { downloadManager, DownloadResultView } from '~/network/http'
 import { NotificationBar } from '../NotificationBar.js'
 import { OrderList } from '../orders/OrderList.js'
 import { LargeButton } from '../Button.js'

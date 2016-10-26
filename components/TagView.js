@@ -8,7 +8,7 @@ import { observer } from 'mobx-react/native'
 
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from '~/components/Component.js'
-import { DownloadResultView, downloadManager } from './HTTP.js'
+import { DownloadResultView, downloadManager } from '~/network/http'
 import { analytics } from './model/analytics.js'
 import { tagstore } from '~/model/tagstore.js'
 import * as _ from './utils/curry.js'

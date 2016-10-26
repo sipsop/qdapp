@@ -7,7 +7,7 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { Header, TextHeader, HeaderText } from '../Header.js'
-import { DownloadResultView } from '../HTTP.js'
+import { DownloadResultView } from '~/network/http'
 import { LazyBarPhoto } from '../bar/BarCard.js'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '~/utils/config.js'

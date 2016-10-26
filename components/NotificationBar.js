@@ -11,7 +11,7 @@ import {
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { DownloadResultView, DownloadResult, emptyResult } from './HTTP.js'
+import { DownloadResultView, DownloadResult, emptyResult } from '~/network/http'
 import { Notification as _Notification } from './Notification.js'
 import { barStore, barStatusStore, tagStore } from '~/model/store.js'
 import * as _ from '~/utils/curry.js'

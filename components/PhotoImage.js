@@ -1,6 +1,6 @@
 /* Photo image wth attribution */
 import { React, Component, PureComponent, Img, View, TouchableOpacity } from '~/components/Component.js'
-import { buildURL } from '../URLs.js'
+import { buildURL } from '~/utils/urls'
 import { APIKey } from '~/model/mapstore.js'
 
 import type { Photo } from "../bar/Bar.js"

@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   T,
-} from './Component.js'
+} from '~/components/Component'
 import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'

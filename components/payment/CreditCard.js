@@ -1,6 +1,6 @@
 import {
     React, Component, View, TouchableOpacity, T, PureComponent, StyleSheet,
-} from '../Component'
+} from '~/components/Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
