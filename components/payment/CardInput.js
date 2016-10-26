@@ -3,7 +3,7 @@ import { React, Component, PureComponent, Platform } from '~/components/Componen
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
-import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
+// import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { LargeButton } from '../Button'
 import { logger } from '~/utils/curry'
