@@ -1,26 +1,26 @@
-import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent, T } from './Component.js'
+import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent, T } from './Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { TextHeader } from '../Header.js'
-import { RowTextButton } from '../Rows.js'
-import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
-import { TextSelectorRow } from '../Selector.js'
-import { LazyComponent } from '../LazyComponent.js'
-import { CreditCardList } from '../payment/Checkout.js'
-import { OrderHistoryModal } from '../orders/History.js'
+import { TextHeader } from '../Header'
+import { RowTextButton } from '../Rows'
+import { SmallOkCancelModal, SimpleModal } from '../Modals'
+import { TextSelectorRow } from '../Selector'
+import { LazyComponent } from '../LazyComponent'
+import { CreditCardList } from '../payment/Checkout'
+import { OrderHistoryModal } from '../orders/History'
 
-import { DownloadResultView, downloadManager } from '~/network/http.js'
-import { store, loginStore, tabStore, drawerStore } from '~/model/store.js'
-import { analytics } from '~/model/analytics.js'
-import { segment } from '~/network/segment.js'
-import { config } from '~/utils/config.js'
-import { cache } from '~/network/cache.js'
-import * as _ from '~/utils/curry.js'
+import { DownloadResultView, downloadManager } from '~/network/http'
+import { store, loginStore, tabStore, drawerStore } from '~/model/store'
+import { analytics } from '~/model/analytics'
+import { segment } from '~/network/segment'
+import { config } from '~/utils/config'
+import { cache } from '~/network/cache'
+import * as _ from '~/utils/curry'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 
-const { log, assert } = _.utils('./ControlPanel.js')
+const { log, assert } = _.utils('./ControlPanel')
 assert(drawerStore != null, 'drawerStore is null')
 
 @observer

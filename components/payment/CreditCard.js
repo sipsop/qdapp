@@ -28,12 +28,11 @@ export class CreditCard extends PureComponent {
             {!this.props.small && <RemoveCardButton card={this.props.card} />}
             <View style={
                 { flex: 1
-                , flexDirection: 'row'
-                , justifyContent: 'space-around'
-                , alignItems: 'center'
-                , paddingLeft: 10
-                , paddingRight: 10
-                }
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  paddingLeft: 10,
+                  paddingRight: 10, }
             }>
                 <View style={{alignItems: 'center', minWidth: 60}}>
                     {getCreditCardIcon(this.props.card.cardNumber)}
