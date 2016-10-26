@@ -1,19 +1,18 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { JSONDownload } from '~/network/http.js'
+import { JSONMutation } from '~/network/http.js'
 import { config } from '~/utils/config.js'
 
 /***********************************************************************/
 /* Order Placement                                                     */
 /***********************************************************************/
 
-export class StripeTokenDownload extends JSONDownload {
+export class StripeTokenDownload extends JSONMutation {
     /* properties:
         shouldPlaceOrderNow: Bool
         selectedCard: Card
     */
 
     name = 'stripe'
-    cacheKey = 'DO_NOT_CACHE'
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
 

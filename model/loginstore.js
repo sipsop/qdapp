@@ -3,6 +3,7 @@ import { observable, action, computed } from 'mobx'
 
 import { segment } from '~/network/segment.js'
 import { downloadManager } from '~/network/http.js'
+import { BarOwnerProfileDownload } from '~/network/api/user/barowner'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 import { getTime, Hour, Minute } from '~/utils/time.js'

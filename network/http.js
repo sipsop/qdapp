@@ -209,7 +209,7 @@ export class JSONDownload {
     }
 
     @computed get props() {
-        return getProps()
+        return this.getProps()
     }
 
     @computed get active() {
@@ -442,12 +442,27 @@ export class QueryDownload extends JSONDownload {
     }
 }
 
-export class QueryMutation extends QueryDownload {
-    cacheKey = 'DO_NOT_CACHE'
+/* TODO: Re-use properties */
+export class JSONMutation extends JSONDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
     refreshOnError = false
     restoreAfterRestart = true
+
+    @computed get cacheKey() {
+        return 'DO_NOT_CACHE'
+    }
+}
+
+export class QueryMutation extends QueryDownload {
+    cacheInfo = config.noCache
+    refreshCacheInfo = config.noCache
+    refreshOnError = false
+    restoreAfterRestart = true
+
+    @computed get cacheKey() {
+        return 'DO_NOT_CACHE'
+    }
 }
 
 export const latest = (d1, d2) => {

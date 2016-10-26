@@ -85,7 +85,7 @@ class PaymentStore {
 
     getSelectedCard = () : Card => {
         if (!this.selectedCardNumber)
-            throw Error("PaymentStore.js: No card is selected...")
+            return null
         const i = this.findCard(this.selectedCardNumber)
         return this.cards[i]
     }

@@ -166,8 +166,8 @@ export class SelectedCardInfo extends PureComponent {
     }
 
     render = () => {
-        const haveCard = paymentStore.selectedCardNumber != null
-        if (!haveCard)
+        const card = paymentStore.getSelectedCard()
+        if (!card)
             return <AddACardButton
                         style={{marginTop: 0, borderBottomWidth: this.styles.view.borderBottomWidth}}
                         trackPress={this.trackPress} />
@@ -188,7 +188,7 @@ export class SelectedCardInfo extends PureComponent {
                     </T>
                     <CreditCard
                         small={true}
-                        card={paymentStore.getSelectedCard()}
+                        card={card}
                         />
                 </View>
             </TouchableOpacity>

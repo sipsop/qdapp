@@ -23,7 +23,7 @@ class TimeStore {
     /* Update the 'day' every 5 minutes */
     @action setDay = () => {
         this.today = this.getDay()
-        setTimeout(setDay, 1000 * 60 * 5)
+        setTimeout(this.setDay, 1000 * 60 * 5)
     }
 }
 

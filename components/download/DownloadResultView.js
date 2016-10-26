@@ -15,6 +15,8 @@ import { Notification } from '../Notification.js'
 import { Loader } from '../Page.js'
 import * as _ from '~/utils/curry.js'
 
+const { log, assert } = _.utils('~/components/download/DownloadResultView')
+
 
 /* React Component for rendering a downloadResult in its different states */
 @observer
