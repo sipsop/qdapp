@@ -7,8 +7,8 @@ import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { favStore } from '../model/favstore.js'
-import { config } from '../config.js'
-import * as _ from '../curry.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 @observer
 export class Heart extends PureComponent {

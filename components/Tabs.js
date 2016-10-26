@@ -7,8 +7,8 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { PureComponent } from './Component.js'
-import * as _ from '../curry.js'
-import { config } from '../config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 import { historyStore, drawerStore, tabStore } from '../model/store.js'
 import { analytics } from '../network/analytics.js'
