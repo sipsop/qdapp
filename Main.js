@@ -16,6 +16,7 @@ import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+// Importing Pages 
 import { DiscoverPage } from '~/screens//DiscoverPage'
 import { BarPage } from '~/screens/BarPage'
 import { MenuPage } from '~/screens/MenuPage'
@@ -23,10 +24,10 @@ import { OrderPage } from '~/screens/OrderPage'
 
 import { handleBackButton } from '~/components/AndroidBackButton'
 import { SideMenu, MenuIcon } from '~/components/sidemenu/SideMenu'
-import { ControlPanel } from '~/components/sidemenu/ControlPanel'
+import { ControlPanel } from './sidemenu/ControlPanel'
 import { TabView } from '~/components/Tabs'
-import { Checkout } from '~/components/payment/Checkout'
-import { ReceiptModal } from '~/components/orders/Receipt'
+import { Checkout } from './payment/Checkout'
+import { ReceiptModal } from './orders/Receipt'
 import { Loader } from '~/components/Page'
 
 import { store, barStore, tabStore, segment } from '~/model/store'
