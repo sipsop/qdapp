@@ -1,7 +1,7 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager } from '../network/http.js'
-import { BarInfoDownload, parseBar } from '~/network/api/maps/place-info.js'
+import { BarInfoDownload } from '~/network/api/maps/place-info.js'
 import { MenuDownload } from '../network/api/bar/menu.js'
 import { analytics } from '~/model/analytics.js'
 import { config } from '~/utils/config.js'

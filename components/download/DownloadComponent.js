@@ -12,7 +12,7 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { DownloadResultView } from './DownloadResultView'
-import { downloadManager } from '~/network/http'
+import { downloadManager, emptyResult } from '~/network/http'
 import * as _ from '~/utils/curry'
 
 export class DownloadComponent extends DownloadResultView {
@@ -33,7 +33,11 @@ export class DownloadComponent extends DownloadResultView {
         downloaManager.forceRefresh(this.downloadName)
     }
 
-    getDownloadResult = () => downloadManager.getDownload(this.downloadName)
+    getDownloadResult = () => {
+        if (!this.downloadName)
+            return emptyResult()
+        return downloadManager.getDownload(this.downloadName)
+    }
 
     getDownload = () => {
         throw Error("getDownload() not implemented")

@@ -10,9 +10,12 @@ import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { barStore, loginStore, orderStore } from '~/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { Receipt } from './Receipt.js'
+import { DownloadComponent } from '../download/DownloadComponent'
+import { HistoryQueryDownload } from '~/network/api/history'
+import { BarInfoDownload } from '~/network/api/maps/place-info.js'
+
 import { config } from '~/utils/config.js'
 import { Second } from '~/utils/time.js'
-import { DownloadComponent } from '../download/DownloadComponent'
 import * as _ from '~/utils/curry.js'
 
 /***************************************************************************/
@@ -90,9 +93,17 @@ class OrderHistoryDescriptor extends Descriptor {
 @observer
 export class OrderHistory extends DownloadComponent {
     errorMessage = "Error downloading order history..."
+
     getDownload = () => {
-        return new HistoryQueryDownload()
+        return new HistoryQueryDownload(() => {
+            return {
+                isLoggedIn: loginStore.isLoggedIn,
+                authToken:  loginStore.getAuthToken(),
+                userID:     loginStore.userID,
+            }
+        })
     }
+
     renderFinished = (_) => {
         const descriptor = new OrderHistoryDescriptor(
             this.download,
@@ -112,7 +123,11 @@ class HistoryBarCard extends DownloadComponent {
     errorMessage = "Error downloading bar info"
 
     getDownload = () => {
-        return new BarInfoDownload(this.barID)
+        return new BarInfoDownload(() => {
+            return {
+                barID: this.barID,
+            }
+        })
     }
 
     get orderResult() {

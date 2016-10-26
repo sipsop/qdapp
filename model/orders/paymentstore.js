@@ -19,7 +19,6 @@ export type CardState = {
     cards:              Array<Card>,
 }
 
-
 const { log, assert } = _.utils('Payment/PaymentStore.sj')
 
 class PaymentStore {

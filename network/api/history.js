@@ -22,7 +22,7 @@ export class HistoryQueryDownload extends QueryDownload {
         return {
             OrderHistory: {
                 args: {
-                    authToken: authToken,
+                    authToken: this.props.authToken,
                     n: 100,
                 },
                 result: {

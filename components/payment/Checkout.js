@@ -21,7 +21,7 @@ import * as _ from '~/utils/curry'
 
 import { AddACardButton } from './AddACardButton'
 import { paymentStore } from '~/model/orders/paymentstore'
-import { PaymentConfigModal } from '../sidemenu/ControlPanel'
+import { PaymentConfigModal } from './PaymentConfigModal'
 import { TipComponent, TipRoundButton } from './Tips'
 
 import type { String, Int } from '../Types'
@@ -141,7 +141,7 @@ const dataSource = new ListView.DataSource({
 })
 
 @observer
-export class SelectedCardInfo extends PureComponent {
+class SelectedCardInfo extends PureComponent {
     paymentConfigModal = null
 
     styles = StyleSheet.create({
