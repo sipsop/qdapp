@@ -1,4 +1,4 @@
-import { React, Component, View, TouchableOpacity, PureComponent, T } from './Component.js'
+import { React, Component, View, TouchableOpacity, PureComponent, T } from '~/components/Component.js'
 import { config } from '~/utils/config.js'
 import { merge } from '~/utils/curry.js'
 

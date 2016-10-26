@@ -5,7 +5,7 @@ import {
     PureComponent,
     Img,
     T,
-} from '../Component.js'
+} from '~/components/Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import * as _ from '~/utils/curry.js'

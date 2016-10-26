@@ -8,7 +8,7 @@ import {
     Platform,
     T,
     PureComponent,
-} from '../Component.js'
+} from '~/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 

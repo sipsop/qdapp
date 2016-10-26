@@ -1,4 +1,4 @@
-import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent, T } from './Component.js'
+import { React, Component, ScrollView, View, TouchableOpacity, Image, Icon, PureComponent, T } from '~/components/Component.js'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 

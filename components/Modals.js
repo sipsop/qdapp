@@ -1,4 +1,4 @@
-import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from './Component.js'
+import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from '~/components/Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
 import * as _ from '~/utils/curry.js'
 

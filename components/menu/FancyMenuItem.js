@@ -7,7 +7,7 @@ import {
     Img,
     StyleSheet,
     T,
-} from '../Component.js'
+} from '~/components/Component.js'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'

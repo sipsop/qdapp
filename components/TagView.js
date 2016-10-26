@@ -7,7 +7,7 @@ import { observable, computed, transaction, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
-import { T } from './Component.js'
+import { T } from '~/components/Component.js'
 import { DownloadResultView, downloadManager } from './HTTP.js'
 import { analytics } from './model/analytics.js'
 import { tagstore } from '~/model/tagstore.js'

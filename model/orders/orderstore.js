@@ -9,7 +9,7 @@ import { downloadManager } from '~/network/http.js'
 /* TODO: Imports */
 import { addToSelection } from './orderSelection.js'
 import { barStore } from '../barstore.js'
-import { paymentStore } from './paymentStore.js'
+import { paymentStore } from './paymentstore.js'
 import { loginStore } from '../loginstore.js'
 import * as _ from '~/utils/curry.js'
 

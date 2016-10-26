@@ -6,7 +6,7 @@ import {
     ListView,
     RefreshControl,
     T,
-} from './Component.js'
+} from '~/components/Component.js'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 

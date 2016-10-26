@@ -1,3 +1,5 @@
+import { observable, action } from 'mobx'
+
 class TimeStore {
     @observable today = this.getDay()
 

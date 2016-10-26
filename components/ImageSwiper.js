@@ -4,7 +4,7 @@ import {
   T,
   Text,
   View,
-} from './Component.js'
+} from '~/components/Component.js'
 import Swiper from 'react-native-swiper'
 import { config } from '~/utils/config.js'
 

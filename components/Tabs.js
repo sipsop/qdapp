@@ -6,7 +6,7 @@ import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { PureComponent } from './Component.js'
+import { PureComponent } from '~/components/Component.js'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 

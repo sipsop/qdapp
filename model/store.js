@@ -9,11 +9,11 @@ import { favStore } from './favstore.js'
 import { tabStore } from './tabstore.js'
 import { barStore } from './barstore.js'
 import { barStatusStore } from './barstatusstore.js'
-import { orderStore } from './orders/orderstore.js'
 import { loginStore } from './loginstore.js'
 import { tagStore } from './tagstore.js'
 import { mapStore } from './mapstore.js'
-import { paymentStore } from './paymentstore.js'
+import { orderStore } from './orders/orderstore.js'
+import { paymentStore } from './orders/paymentstore.js'
 import { historyStore } from './historystore.js'
 import { timeStore } from './timestore.js'
 
@@ -54,10 +54,10 @@ export class Store {
         await tabStore.initialize()
         await barStore.initialize()
         await barStatusStore.initialize()
-        await orderStore.initialize()
         await loginStore.initialize()
         await tagStore.initialize()
         await mapStore.initialize()
+        await orderStore.initialize()
         await paymentStore.initialize()
         await historyStore.initialize()
         await timeStore.initialize()
@@ -158,10 +158,10 @@ export {
     tabStore,
     barStore,
     barStatusStore,
-    orderStore,
     loginStore,
     tagStore,
     mapStore,
+    orderStore,
     paymentStore,
     historyStore,
     timeStore,

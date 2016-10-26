@@ -14,7 +14,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { PureComponent } from './Component.js'
+import { PureComponent } from '~/components/Component.js'
 import { T } from './AppText.js'
 import { Button } from './Button.js'
 import { config } from '~/utils/config.js'

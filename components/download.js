@@ -6,12 +6,12 @@ import {
     TouchableOpacity,
     StyleSheet,
     T,
-} from './Component.js';
+} from '~/components/Component.js';
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Notification } from './Notification.js'
-import { PureComponent } from './Component.js'
+import { PureComponent } from '~/components/Component.js'
 import { Loader } from './Page.js'
 import { downloadManager } from '~/network/http.js'
 import * as _ from '~/utils/curry.js'

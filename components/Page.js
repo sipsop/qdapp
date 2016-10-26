@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, ActivityIndicator, InteractionManager } from 'react-native'
 
-import { PureComponent } from './Component.js'
+import { PureComponent } from '~/components/Component.js'
 import { LazyComponent } from './LazyComponent.js'
 import { config } from '~/utils/config.js'
 

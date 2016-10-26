@@ -8,7 +8,7 @@ import {
     Dimensions,
     StyleSheet,
     T,
-} from '../Component.js'
+} from '~/components/Component.js'
 import { action, transaction, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'

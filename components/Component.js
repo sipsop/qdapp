@@ -25,8 +25,8 @@ import * as _ from '~/utils/curry.js'
 
 const fontFamily = Platform.OS === 'android' ? 'Roboto' : 'Arial'
 
-import { HOST } from './Host.js'
-const { log, assert } = _.utils('./Component.js')
+import { HOST } from '~/network/host.js'
+const { log, assert } = _.utils('~/components/Component.js')
 
 class PureComponent extends Component {
     constructor(props) {

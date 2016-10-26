@@ -6,7 +6,7 @@ import {
     ListView,
     PureComponent,
     StyleSheet,
-} from './Component.js'
+} from '~/components/Component.js'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import InfiniteScrollView from 'react-native-infinite-scroll-view'

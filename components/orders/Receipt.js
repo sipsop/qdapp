@@ -1,7 +1,7 @@
 import {
     React, Component, Platform, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent
-} from '../Component.js'
+} from '~/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'

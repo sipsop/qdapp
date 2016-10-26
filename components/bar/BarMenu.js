@@ -6,7 +6,7 @@
 //     TouchableOpacity,
 //     Dimensions,
 //     PureComponent,
-// } from '../Component.js'
+// } from '~/components/Component.js'
 // import LinearGradient from 'react-native-linear-gradient'
 // import { observer } from 'mobx-react/native'
 //

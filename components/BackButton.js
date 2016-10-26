@@ -5,7 +5,7 @@ import {
     TouchableOpacity,
     MaterialIcon,
     PureComponent,
-} from './Component.js'
+} from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 
 import * as _ from '~/utils/curry.js'

@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
     T,
-} from './Component.js'
+} from '~/components/Component.js'
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
