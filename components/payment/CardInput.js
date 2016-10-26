@@ -6,10 +6,10 @@ import { observer } from 'mobx-react/native'
 import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { LargeButton } from '../Button.js'
-import { logger } from '../Curry.js'
+import { logger } from '/utils/curry.js'
 import { paymentStore } from './PaymentStore.js'
-import { analytics } from '../Analytics.js'
-import { config } from '../Config.js'
+import { analytics } from '/model/analytics.js'
+import { config } from '/utils/config.js'
 
 
 const log = logger('Payment/CardInput.js')

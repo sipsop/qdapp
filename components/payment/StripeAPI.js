@@ -1,5 +1,5 @@
 import { NetworkError } from '../HTTP.js'
-import * as _ from '../Curry.js'
+import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils('./Payment/StripeAPI.js')
 

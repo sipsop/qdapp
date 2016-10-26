@@ -1,5 +1,5 @@
 import Map from 'es6-map'
-import { equals } from './Curry.js'
+import { equals } from '/utils/curry.js'
 
 export { Map }
 

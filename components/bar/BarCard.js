@@ -18,12 +18,12 @@ import { LazyComponent } from '../LazyComponent.js'
 import { SmallOkCancelModal } from '../Modals.js'
 import { BackButton } from '../BackButton.js'
 import { PhotoImage } from '../Maps/Photos.js'
-import { store, tabStore, mapStore, orderStore } from '../Store.js'
-import * as _ from '../Curry.js'
+import { store, tabStore, mapStore, orderStore } from '/model/store.js'
+import * as _ from '/utils/curry.js'
 import { barStore, getBarOpenTime } from './BarStore.js'
-import { config } from '../Config.js'
+import { config } from '/utils/config.js'
 
-const { log, assert } = _.utils('./Bar/BarCard.js')
+const { log, assert } = _.utils('./bar/BarCard.js')
 
 @observer
 export class DiscoverBarCard extends PureComponent {

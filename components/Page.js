@@ -3,7 +3,7 @@ import { View, ActivityIndicator, InteractionManager } from 'react-native'
 
 import { PureComponent } from './Component.js'
 import { LazyComponent } from './LazyComponent.js'
-import { config } from './Config.js'
+import { config } from '/utils/config.js'
 
 // export class Page extends PureComponent {
 //     constructor(props) {

@@ -14,12 +14,12 @@ import { observer } from 'mobx-react/native'
 
 import NativeMapView from 'react-native-maps'
 
-import { merge, logger } from '../Curry.js'
-import { store, tabStore, barStore } from '../Store.js'
-import { config } from '../Config.js'
+import { merge, logger } from '/utils/curry.js'
+import { store, tabStore, barStore } from '/model/store.js'
+import { config } from '/utils/config.js'
 import { mapStore, getBarCoords } from './MapStore.js'
 import { DownloadResultView } from '../HTTP.js'
-import * as _ from '../Curry.js'
+import * as _ from '/utils/curry.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light

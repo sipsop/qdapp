@@ -14,7 +14,7 @@ import { paymentStore } from './paymentStore.js'
 import { loginStore } from '../loginstore.js'
 import * as _ from '/utils/curry.js'
 
-import type { BarID, MenuItemID, DateType, Time } from '../Bar/Bar.js'
+import type { BarID, MenuItemID, DateType, Time } from '../bar/Bar.js'
 import type { Int, String } from '../Types.js'
 
 const { log, assert } = _.utils('./model/orders/orderstore.js')

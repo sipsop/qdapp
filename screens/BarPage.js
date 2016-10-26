@@ -33,11 +33,11 @@ import { Page } from '../Page.js'
 import { ImageSwiper } from '../ImageSwiper.js'
 import { LargeButton } from '../Button.js'
 import { FavBarContainer } from '../Fav.js'
-import { tabStore, barStore, timeStore, mapStore, segment } from '../Store.js'
-import { config } from '../Config.js'
-import * as _ from '../Curry.js'
+import { tabStore, barStore, timeStore, mapStore, segment } from '/model/store.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
-const { assert, log } = _.utils('./Bar/BarPage.js')
+const { assert, log } = _.utils('./bar/BarPage.js')
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {

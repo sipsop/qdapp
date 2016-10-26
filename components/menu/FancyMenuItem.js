@@ -18,14 +18,14 @@ import { MenuItemCard } from './MenuItemCard.js'
 import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import { createOrderItem, orderStore } from '../Orders/OrderStore.js'
-import { OrderList } from '../Orders/OrderList.js'
-import * as _ from '../Curry.js'
-import { config } from '../Config.js'
-import { tagStore } from '../Store.js'
-import { analytics } from '../Analytics.js'
+import { createOrderItem, orderStore } from '../orders/OrderStore.js'
+import { OrderList } from '../orders/OrderList.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
+import { tagStore } from '/model/store.js'
+import { analytics } from '/model/analytics.js'
 
-const { log, assert } = _.utils('./Menu/DetailedMenuItem.js')
+const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 
 @observer
 export class FancyMenuItem extends PureComponent {

@@ -14,9 +14,9 @@ import { Price } from './Price.js'
 import { TextHeader } from './Header.js'
 import { OkCancelModal } from './Modals.js'
 import { TextButton, Button } from './Button.js'
-import { store } from './Store.js'
-import { config } from './Config.js'
-import * as _ from './Curry.js'
+import { store } from '/model/store.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
 const rowHeight = 55
 

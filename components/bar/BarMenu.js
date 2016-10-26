@@ -11,9 +11,9 @@ import LinearGradient from 'react-native-linear-gradient'
 import { observer } from 'mobx-react/native'
 
 import { T } from '../AppText.js'
-import { store, favStore, tabStore, tagStore, segment } from '../Store.js'
-import { analytics } from '../Analytics.js'
-import { log } from '../Curry.js'
+import { store, favStore, tabStore, tagStore, segment } from '/model/store.js'
+import { analytics } from '/model/analytics.js'
+import { log } from '/utils/curry.js'
 
 import type { String, URL } from '../Types.js'
 

@@ -21,7 +21,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { Page } from '../Page.js'
 import { downloadManager, DownloadResultView } from '../HTTP.js'
 import { NotificationBar } from '../NotificationBar.js'
-import { OrderList } from '../Orders/OrderList.js'
+import { OrderList } from '../orders/OrderList.js'
 import { LargeButton } from '../Button.js'
 import { TagView } from '/components/TagView.js'
 
@@ -32,11 +32,11 @@ import * as _ from '/utils/curry.js'
 /*********************************************************************/
 
 import type { Int, String } from '../Types.js'
-import type { OrderItem } from './Orders/OrderStore.js'
+import type { OrderItem } from './orders/OrderStore.js'
 
 /*********************************************************************/
 
-const { log, assert } = _.utils('./Menu/MenuPage.js')
+const { log, assert } = _.utils('./menu/MenuPage.js')
 
 const rowHeight = 55
 

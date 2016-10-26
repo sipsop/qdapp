@@ -17,11 +17,11 @@ import { MenuItemImage, getMenuItemImage } from './MenuItemImage.js'
 import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import * as _ from '../Curry.js'
-import { config } from '../Config.js'
-import { tagStore } from '../Store.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
+import { tagStore } from '/model/store.js'
 
-const { log, assert } = _.utils('./Menu/DetailedMenuItem.js')
+const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 
 @observer
 export class MenuItemCard extends PureComponent {

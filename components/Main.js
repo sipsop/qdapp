@@ -17,15 +17,15 @@ import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { handleBackButton } from './AndroidBackButton.js'
-import { SideMenu, MenuIcon } from './menu/SideMenu.js'
-import { ControlPanel } from './menu/ControlPanel.js'
+import { SideMenu, MenuIcon } from './sidemenu/SideMenu.js'
+import { ControlPanel } from './sidemenu/ControlPanel.js'
 import { DiscoverPage } from './DiscoverPage.js'
-import { BarPage } from './Bar/BarPage.js'
-import { MenuPage } from './Menu/MenuPage.js'
-import { OrderPage } from './Orders/OrderPage.js'
+import { BarPage } from './bar/BarPage.js'
+import { MenuPage } from './menu/MenuPage.js'
+import { OrderPage } from './orders/OrderPage.js'
 import { TabView } from './Tabs.js'
 import { Checkout } from './Payment/Checkout.js'
-import { ReceiptModal } from './Orders/Receipt.js'
+import { ReceiptModal } from './orders/Receipt.js'
 import { Loader } from './Page.js'
 
 import { store, barStore, tabStore, segment } from '/model/store.js'
@@ -116,4 +116,4 @@ export const main = async () => {
     await store.initialize()
 }
 
-require('./Downloads.js').initialize(require('./Store.js'), downloadManager)
+require('./Downloads.js').initialize(require('/model/store.js'), downloadManager)

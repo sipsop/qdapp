@@ -1,6 +1,6 @@
 import { Platform, BackAndroid } from 'react-native'
 
-import { tabStore, historyStore } from './Store.js'
+import { tabStore, historyStore } from '/model/store.js'
 // import { historyStore } from './History.js'
 
 export const handleBackButton = () => {

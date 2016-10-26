@@ -11,8 +11,8 @@ import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
-import * as _ from './Curry.js'
-import { config } from './Config.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
 
 const { log, assert } = _.utils('./SimpleListView.js')
 

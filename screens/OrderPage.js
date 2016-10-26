@@ -17,7 +17,7 @@ import { observer } from 'mobx-react/native'
 import { Page } from '../Page.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '../SimpleListView.js'
 import { BarInfoNotification } from '../NotificationBar.js'
-import { MenuItem, createMenuItem } from '../Menu/MenuPage.js'
+import { MenuItem, createMenuItem } from '../menu/MenuPage.js'
 import { LargeButton } from '../Button.js'
 import { SelectableButton } from '../ButtonRow.js'
 import { Checkout, SelectedCardInfo } from '../Payment/Checkout.js'
@@ -25,12 +25,12 @@ import { Header, TextHeader } from '../Header.js'
 import { OrderList, OrderListDescriptor } from './OrderList.js'
 import { Message, SmallOkCancelModal } from '../Modals.js'
 import { ReceiptModal } from './Receipt.js'
-import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '../Store.js'
-import { analytics } from '../Analytics.js'
-import * as _ from '../Curry.js'
-import { config } from '../Config.js'
+import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store.js'
+import { analytics } from '/model/analytics.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
 
-const { assert, log } = _.utils('./Orders/OrderPage.js')
+const { assert, log } = _.utils('./orders/OrderPage.js')
 
 const largeButtonStyle = {
     height: 55,

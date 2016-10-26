@@ -1,6 +1,6 @@
 import { React, Component, View, TouchableOpacity, PureComponent, T } from './Component.js'
-import { config } from './Config.js'
-import { merge } from './Curry.js'
+import { config } from '/utils/config.js'
+import { merge } from '/utils/curry.js'
 
 export class PrimaryButton extends PureComponent {
     render = () => {
