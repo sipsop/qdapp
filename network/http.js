@@ -167,9 +167,9 @@ export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
 /* Class for declarating an JSON API request */
 export class JSONDownload {
 
-    @observable state   : DownloadState = 'NotStarted'
-    @observable message : ?string       = undefined
-    @observable value   : ?T            = null
+    @observable downloadState  : DownloadState = 'NotStarted'
+    @observable _message : ?string             = null
+    @observable value   : ?T                   = null
 
     /*  The last 'value' result of this download. This is useful during the
         'refresh period' (state = 'InProgress'), where we clear 'value' but
@@ -242,19 +242,19 @@ export class JSONDownload {
 
     getState = () => {
         return {
-            state:      this.state,
-            message:    this.message,
+            state:      this.downloadState,
+            message:    this._message,
             value:      this.value,
         }
     }
 
     @action setState = (downloadState) => {
-        this.state   = downloadState.state
-        this.message = downloadState.message
+        this.downloadState  = downloadState.state
+        this._message = downloadState.message
         this.value   = downloadState.value
         if (downloadState.state === 'InProgress') {
-            this.state = 'Error'
-            this.message = 'Please try again'
+            this.downloadState  = 'Error'
+            this._message = 'Please try again'
         }
     }
 
@@ -283,10 +283,14 @@ export class JSONDownload {
         )
     }
 
+    @computed get dependencies() {
+        return this.depends.map(downloadManager.getDownload)
+    }
+
     /* Have all download dependencies finished? */
     @computed get dependenciesFinished() {
-        return _.all(this.depends.map(
-            downloadName => downloadManager.getDownload(downloadName).finished
+        return _.all(this.dependencies.map(
+            download => download.finished
         ))
     }
 
@@ -307,8 +311,8 @@ export class JSONDownload {
     }
 
     /* Method to force a refresh (e.g. on UI pull downs) */
-    forceRefresh = async (restartDownload = true) => {
-        await this.refresh(this.refreshCacheInfo, restartDownload)
+    forceRefresh = async () => {
+        await this.refresh(this.refreshCacheInfo)
     }
 
     refresh = async (cacheInfo) => {
@@ -317,7 +321,6 @@ export class JSONDownload {
 
         // Update timestamp
         transaction(() => {
-            // if (this.state === 'NotStarted')
             this.downloadStarted()
             this.timestamp = getTime()
             if (this.refreshStateChanged) {
@@ -371,8 +374,8 @@ export class JSONDownload {
     /***********************************************************************/
 
     @action reset = (state = 'NotStarted') : DownloadResult<T> => {
-        this.state   = state
-        this.message = null
+        this.downloadState  = state
+        this._message = null
         this.value   = null
         this.resetErrorAttempts()
         return this
@@ -388,9 +391,9 @@ export class JSONDownload {
 
     @action downloadError = (message : string) : DownloadResult<T> => {
         this.errorAttempts += 1
-        this.state = 'Error'
-        this.value = null
-        this.message = message
+        this.downloadState  = 'Error'
+        this.value   = null
+        this._message = message
         return this
     }
 
@@ -399,6 +402,31 @@ export class JSONDownload {
         this.value = value
         this.lastValue = value
         return this
+    }
+
+    @computed get state() {
+        if (this.downloadState === 'NotStarted' && this.active) {
+            if (_.any(this.dependencies.map(result => result.state === 'Error')))
+                return 'Error'
+            if (_.any(this.dependencies.map(result => result.state === 'InProgress')))
+                return 'InProgress'
+        }
+        return this.downloadState
+    }
+
+    @computed get errorIndex() {
+        const results = this.dependencies
+        for (let i = 0; i < results.length; i++) {
+            if (results[i].state === 'Error')
+                return i
+        }
+        return -1
+    }
+
+    @computed get message() {
+        if (this._state === 'NotStarted' || this.errorIndex >= 0)
+            return this.dependencies[this.errorIndex].message
+        return this._message
     }
 
     @computed get finished() {
@@ -511,14 +539,19 @@ const getTimeoutInfo = (timeoutDesc) => {
 class DownloadManager {
 
     constructor() {
+        this._initialized = false
         this.downloads = {}
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
     }
 
+    /*********************************************************************/
+    /* State                                                             */
+    /*********************************************************************/
+
     @computed get downloadStates() {
         const downloadStatesToRestore = {}
-        this.downloads.forEach(download => {
+        Object.values(this.downloads).forEach(download => {
             if (download.restoreAfterRestart) {
                 downloadStatesToRestore[download.name] = download.getState()
             }
@@ -542,6 +575,15 @@ class DownloadManager {
         this.downloadStatesToRestore = downloadManagerState.downloadStates
     }
 
+    initialized = () => {
+        Object.values(this.downloads).forEach(this.autoDownload)
+        this._initialized = true
+    }
+
+    /*********************************************************************/
+    /* Download Management                                               */
+    /*********************************************************************/
+
     declareDownload = (download) => {
         assert(download.name != null,
                `Download.name is null (${download.name})`)
@@ -559,10 +601,17 @@ class DownloadManager {
             download.setState(downloadState)
         }
 
+        if (this._initialized)
+            this.autoDownload(download)
+    }
+
+    autoDownload = (download) => {
         /* Refresh download when necessary */
         this.disposeHandlers[download.name] = autorun(() => {
             if (download.shouldRefreshNow) {
-                download.refresh()
+                if (download.refreshOnError || download.state === 'NotStarted') {
+                    download.refresh()
+                }
             }
         })
     }
@@ -574,8 +623,8 @@ class DownloadManager {
         delete this.disposeHandlers[name]
     }
 
-    forceRefresh = async (name, restartDownload = true) => {
-        await this.getDownload(name).forceRefresh(restartDownload)
+    forceRefresh = async (name) => {
+        await this.getDownload(name).forceRefresh()
     }
 
     getDownload = (name) => {

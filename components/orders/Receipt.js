@@ -6,6 +6,7 @@ import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import { downloadManager } from '~/network/http'
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../download/DownloadResultView'
 import { LazyBarPhoto } from '../bar/BarCard.js'
@@ -61,7 +62,7 @@ export class ReceiptModal extends PureComponent {
     }
 
     @action close = () => {
-        orderStore.clearAllOrderData()
+        orderStore.closeReceiptAndResetCart()
         tabStore.setCurrentTab(2)
         this.closeModal()
         segment.track('Receipt Closed')
@@ -119,7 +120,7 @@ export class PlaceOrderDownloadView extends DownloadResultView {
 
     refreshPage = () => {
         loginStore.login(() => {
-            orderStore.placeActiveOrder()
+            downloadManager.refreshDownloads()
         })
     }
 

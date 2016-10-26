@@ -1,11 +1,11 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '~/network/http.js'
-import { BarStatusDownload } from '~/network/api/bar/barstatus.js'
-import { segment } from '~/network/segment.js'
-import { barStore } from './barstore.js'
-import { config } from '~/utils/config.js'
-import * as _ from '~/utils/curry.js'
+import { downloadManager } from '~/network/http'
+import { BarStatusDownload } from '~/network/api/bar/barstatus'
+import { segment } from '~/network/segment'
+import { barStore } from './barstore'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
 
 const { assert, log } = _.utils('./model/barstatusstore.js')
 
@@ -41,8 +41,11 @@ class BarStatusStore {
         downloadManager.declareDownload(new BarStatusDownload(this.getDownloadProps))
     }
 
+    getBarStatusDownload = () => downloadManager.getDownload('barStatus')
+    refreshBarStatus = () => downloadManager.forceRefresh('barStatus')
+
     @computed get barStatus() : ?BarStatus {
-        return downloadManager.getDownload('barStatus').barStatus
+        return this.getBarStatusDownload().barStatus
     }
 
     @computed get isQDodgerBar() : Bool {

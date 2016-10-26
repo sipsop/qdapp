@@ -1,5 +1,6 @@
 import { observable, action } from 'mobx'
 
+import { downloadManager } from '~/network/http'
 import { cache } from '~/network/cache.js'
 import { segment } from '~/network/segment.js'
 import * as _ from '~/utils/curry.js'
@@ -68,6 +69,7 @@ export class Store {
         /* Then call initialized() */
         await mapStore.initialized()
         await segment.initialized()
+        await downloadManager.initialized()
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
@@ -102,34 +104,38 @@ export class Store {
             tagStore.setState(state.tagState)
         if (state.segment)
             segment.setState(state.segment)
+        if (state.downloadManagerState)
+            downloadManager.setState(state.downloadManagerState)
     })
 
     getState = () => {
         return _.asData({
-            payState:       paymentStore.getState(),
-            barState:       barStore.getState(),
-            barStatusState: barStatusStore.getState(),
-            tabState:       tabStore.getState(),
-            loginState:     loginStore.getState(),
-            orderState:     orderStore.getState(),
-            mapState:       mapStore.getState(),
-            tagState:       tagStore.getState(),
-            segment:        segment.getState(),
+            payState:               paymentStore.getState(),
+            barState:               barStore.getState(),
+            barStatusState:         barStatusStore.getState(),
+            tabState:               tabStore.getState(),
+            loginState:             loginStore.getState(),
+            orderState:             orderStore.getState(),
+            mapState:               mapStore.getState(),
+            tagState:               tagStore.getState(),
+            segment:                segment.getState(),
+            downloadManagerState:   downloadManager.getState(),
         })
     }
 
     emptyState = () => {
         return {
-            payState:       paymentStore.getState(),
-            loginState:     loginStore.getState(),
+            payState:               paymentStore.getState(),
+            loginState:             loginStore.getState(),
 
-            barState:       barStore.emptyState(),
-            barStatusState: barStatusStore.emptyState(),
-            tabState:       tabStore.emptyState(),
-            orderState:     orderStore.emptyState(),
-            mapState:       mapStore.emptyState(),
-            tagState:       tagStore.emptyState(),
-            segment:        segment.emptyState(),
+            barState:               barStore.emptyState(),
+            barStatusState:         barStatusStore.emptyState(),
+            tabState:               tabStore.emptyState(),
+            orderState:             orderStore.emptyState(),
+            mapState:               mapStore.emptyState(),
+            tagState:               tagStore.emptyState(),
+            segment:                segment.emptyState(),
+            downloadManagerState:   downloadManagerState.emptyState(),
         }
     }
 

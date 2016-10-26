@@ -19,6 +19,7 @@ import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '~/compo
 import { BarInfoNotification } from '~/components/NotificationBar.js'
 import { LargeButton } from '~/components/Button.js'
 import { SelectableButton } from '~/components/ButtonRow.js'
+import { DownloadResultView } from '~/components/download/DownloadResultView'
 import { Checkout, SelectedCardInfo } from '~/components/payment/Checkout.js'
 import { Header, TextHeader } from '~/components/Header.js'
 import { OrderList, OrderListDescriptor } from '~/components/orders/OrderList.js'
@@ -126,12 +127,13 @@ export class OrderPage extends Page {
 }
 
 @observer
-class DeliveryMethod extends PureComponent {
+class DeliveryMethod extends DownloadResultView {
     /* properties:
         primary: Bool
         style: style obj
     */
     @observable value = false
+    errorMessage = "Error downloading bar status"
 
     styles = StyleSheet.create({
         rowStyle: {
@@ -154,6 +156,9 @@ class DeliveryMethod extends PureComponent {
             width: 150,
         },
     })
+
+    getDownloadResult = () => barStatusStore.getBarStatusDownload()
+    refreshPage = () => barStatusStore.refreshBarStatus()
 
     @action tableDelivery = () => {
         orderStore.delivery = 'Table'
@@ -183,7 +188,7 @@ class DeliveryMethod extends PureComponent {
         return 'Pickup'
     }
 
-    render = () => {
+    renderFinished = () => {
         const tableService =
             orderStore.delivery === 'Table' &&
             barStatusStore.tableService
