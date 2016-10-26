@@ -1,5 +1,5 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
-import { Map, mapCreate } from '../Map.js'
+import { Map, mapCreate } from '/utils/map.js'
 
 import { barStore } from './barstore.js'
 import { downloadManager } from '/network/http.js'

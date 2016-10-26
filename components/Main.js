@@ -17,21 +17,22 @@ import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { handleBackButton } from './AndroidBackButton.js'
-import { SideMenu, MenuIcon } from './SideMenu.js'
-import { ControlPanel } from './ControlPanel.js'
+import { SideMenu, MenuIcon } from './menu/SideMenu.js'
+import { ControlPanel } from './menu/ControlPanel.js'
 import { DiscoverPage } from './DiscoverPage.js'
 import { BarPage } from './Bar/BarPage.js'
 import { MenuPage } from './Menu/MenuPage.js'
 import { OrderPage } from './Orders/OrderPage.js'
 import { TabView } from './Tabs.js'
-import { store, barStore, tabStore, segment } from './Store.js'
-import * as _ from './curry.js'
 import { Checkout } from './Payment/Checkout.js'
 import { ReceiptModal } from './Orders/Receipt.js'
 import { Loader } from './Page.js'
-import { downloadManager } from './HTTP.js'
 
-const { log, assert } = _.utils('./Main.js')
+import { store, barStore, tabStore, segment } from '/model/store.js'
+import * as _ from '/utils/curry.js'
+import { downloadManager } from '/network/http.js'
+
+const { log, assert } = _.utils('./components/Main.js')
 
 /* Do not allow font scaling */
 Text.defaultProps.allowFontScaling = false

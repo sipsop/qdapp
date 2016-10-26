@@ -14,7 +14,6 @@ import { observer } from 'mobx-react/native'
 
 import NativeMapView from 'react-native-maps'
 
-import { Map } from '../Map.js'
 import { merge, logger } from '../Curry.js'
 import { store, tabStore, barStore } from '../Store.js'
 import { config } from '../Config.js'

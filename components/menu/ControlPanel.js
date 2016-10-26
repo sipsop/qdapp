@@ -4,19 +4,19 @@ import { observer } from 'mobx-react/native'
 
 import { TextHeader } from './Header.js'
 import { RowTextButton } from './Rows.js'
-import { store, loginStore, tabStore } from './Store.js'
-import { drawerStore } from './SideMenu.js'
 import { SmallOkCancelModal, SimpleModal } from './Modals.js'
 import { TextSelectorRow } from './Selector.js'
 import { CreditCardList } from './Payment/Checkout.js'
 import { LazyComponent } from './LazyComponent.js'
 import { OrderHistoryModal } from './Orders/History.js'
-import { DownloadResultView, downloadManager } from './HTTP.js'
-import { analytics } from './Analytics.js'
-import { segment } from './Segment.js'
+
+import { DownloadResultView, downloadManager } from '/network/http.js'
+import { store, loginStore, tabStore, drawerStore } from '/model/store.js'
+import { analytics } from '/model/analytics.js'
+import { segment } from '/network/segment.js'
 import { config } from './Config.js'
-import { cache } from /network/cache.js'
-import * as _ from './Curry.js'
+import { cache } from '/network/cache.js'
+import * as _ from '/utils/curry.js'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 
