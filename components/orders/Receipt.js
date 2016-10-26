@@ -36,7 +36,7 @@ export class ReceiptModal extends PureComponent {
     }
 
     @computed get downloadState() {
-        return downloadManager.getDownload('placeOrder').state
+        return orderStore.getPlaceOrderDownload().state
     }
 
     @computed get showCloseButton() {
@@ -61,7 +61,7 @@ export class ReceiptModal extends PureComponent {
     }
 
     @action close = () => {
-        orderStore.clearOrderList()
+        orderStore.clearAllOrderData()
         tabStore.setCurrentTab(2)
         this.closeModal()
         segment.track('Receipt Closed')
@@ -114,7 +114,7 @@ export class PlaceOrderDownloadView extends DownloadResultView {
     errorMessage      = "There was an error processing your order"
 
     getDownloadResult = () => {
-        return downloadManager.getDownload('placeOrder')
+        return orderStore.getPlaceOrderDownload()
     }
 
     refreshPage = () => {
@@ -127,7 +127,8 @@ export class PlaceOrderDownloadView extends DownloadResultView {
         return <View />
     }
 
-    renderFinished = (orderResult : OrderResult) => {
+    renderFinished = (_) => {
+        const orderResult = this.getDownloadResult().orderResult
         return <Receipt
                     bar={barStore.getBar()}
                     orderResult={orderResult}
@@ -164,6 +165,7 @@ export class Receipt extends PureComponent {
     render = () => {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
+        log("GOT ORDER RESULT", orderResult)
 
         assert (bar.name != null)
         assert(bar.photos != null)

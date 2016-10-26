@@ -17,7 +17,7 @@ export const MenuItemOptionQuery = {
 }
 
 /* qdserver.model.MenuItemDef */
-const MenuItemQuery = {
+export const MenuItemQuery = {
     id:         'String',
     name:       'String',
     desc:       'String',

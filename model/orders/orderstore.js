@@ -319,6 +319,10 @@ class OrderStore {
         return downloadManager.getDownload('stripe').stripeToken
     }
 
+    getPlaceOrderDownload = () => {
+        return downloadManager.getDownload('placeOrder')
+    }
+
     getActiveOrderToken = () => this.activeOrderID
 
     /* Decide whether to place the order now */
