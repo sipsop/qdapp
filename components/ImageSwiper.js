@@ -6,7 +6,7 @@ import {
   View,
 } from './Component.js'
 import Swiper from 'react-native-swiper'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 
 // TODO: Check out this one:
 //

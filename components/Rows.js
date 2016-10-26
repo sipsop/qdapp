@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native'
 
 import { T } from './AppText.js'
 import { PureComponent } from './Component.js'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 
 const rowHeight = 55
 

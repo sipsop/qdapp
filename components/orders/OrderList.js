@@ -10,15 +10,15 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { barStore, orderStore } from '/model/store.js'
+import { barStore, orderStore } from '~/model/store.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem } from '../menu/DetailedMenuItem.js'
 import { MenuItemImage } from '../menu/MenuItemImage.js'
 import { FancyMenuItem } from '../menu/FancyMenuItem.js'
 import { Header, HeaderText } from '../Header.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./orders/OrderList.js')
 

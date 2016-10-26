@@ -8,8 +8,8 @@ import {
 } from '../Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./menu/MenuItemImage.js')
 

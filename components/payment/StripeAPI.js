@@ -1,12 +1,12 @@
 import { NetworkError } from '../HTTP.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils('./Payment/StripeAPI.js')
 
 /*********************************************************************/
 
 import type { Int, Float, String } from '../Types.js'
-import type { Card } from '/model/paymentstore.js'
+import type { Card } from '~/model/paymentstore.js'
 
 export type CardToken = String
 

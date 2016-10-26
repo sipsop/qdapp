@@ -4,10 +4,10 @@ import {
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 import { PaymentConfigModal } from '../sidemenu/ControlPanel.js'
 
-const { log, assert } = _.utils('/components/payment/Checkout.js')
+const { log, assert } = _.utils('~/components/payment/Checkout.js')
 
 @observer
 export class CreditCard extends PureComponent {

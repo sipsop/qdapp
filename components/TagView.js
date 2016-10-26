@@ -10,7 +10,7 @@ import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from './Component.js'
 import { DownloadResultView, downloadManager } from './HTTP.js'
 import { analytics } from './model/analytics.js'
-import { tagstore } from '/model/tagstore.js'
+import { tagstore } from '~/model/tagstore.js'
 import * as _ from './utils/curry.js'
 
 const { log, assert } = _.utils('./components/tags.js')

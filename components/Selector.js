@@ -17,9 +17,9 @@ import { observer } from 'mobx-react/native'
 import { PureComponent } from './Component.js'
 import { T } from './AppText.js'
 import { Button } from './Button.js'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 import { SmallOkCancelModal } from './Modals.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils('./Selector.js')
 

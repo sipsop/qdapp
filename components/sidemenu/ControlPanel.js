@@ -10,13 +10,13 @@ import { LazyComponent } from '../LazyComponent.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
 
-import { DownloadResultView, downloadManager } from '/network/http.js'
-import { store, loginStore, tabStore, drawerStore } from '/model/store.js'
-import { analytics } from '/model/analytics.js'
-import { segment } from '/network/segment.js'
-import { config } from '/utils/config.js'
-import { cache } from '/network/cache.js'
-import * as _ from '/utils/curry.js'
+import { DownloadResultView, downloadManager } from '~/network/http.js'
+import { store, loginStore, tabStore, drawerStore } from '~/model/store.js'
+import { analytics } from '~/model/analytics.js'
+import { segment } from '~/network/segment.js'
+import { config } from '~/utils/config.js'
+import { cache } from '~/network/cache.js'
+import * as _ from '~/utils/curry.js'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 

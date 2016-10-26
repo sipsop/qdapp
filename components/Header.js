@@ -1,6 +1,6 @@
 import { React, Component, PureComponent, View, T } from './Component.js'
 import { observer } from 'mobx-react/native'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 
 // import { T } from './AppText.js'
 

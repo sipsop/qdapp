@@ -1,6 +1,6 @@
 import { React, Component, PureComponent, T } from './Component.js'
-import { orderStore } from '/model/orderstore.js'
-import * as _ from '/utils/curry.js'
+import { orderStore } from '~/model/orderstore.js'
+import * as _ from '~/utils/curry.js'
 
 import { observer } from 'mobx-react/native'
 

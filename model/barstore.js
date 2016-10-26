@@ -17,7 +17,7 @@ import type { Bar, Menu, MenuItem, BarID, MenuItemID } from './barstore.js'
 
 const { log, assert } = _.utils('./model/barstore.js')
 
-import type { Int, Float, String, URL, HTML } from '/utils/types.js'
+import type { Int, Float, String, URL, HTML } from '~/utils/types.js'
 
 export type ID = String
 export type BarID = ID

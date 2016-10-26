@@ -3,16 +3,16 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { StripeTokenDownload } from '/network/api/payment.js'
-import { PlaceOrderDownload } from '/network/api/order.js'
-import { downloadManager } from '/network/http.js'
+import { StripeTokenDownload } from '~/network/api/payment.js'
+import { PlaceOrderDownload } from '~/network/api/order.js'
+import { downloadManager } from '~/network/http.js'
 /* TODO: Imports */
 import { Price, getCurrencySymbol, sumPrices } from '../Price.js'
 import { addToSelection } from './orderSelection.js'
 import { barStore } from '../barstore.js'
 import { paymentStore } from './paymentStore.js'
 import { loginStore } from '../loginstore.js'
-import * as _ from '/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 import type { BarID, MenuItemID, DateType, Time } from '../bar/Bar.js'
 import type { Int, String } from '../Types.js'

@@ -1,12 +1,12 @@
 // @flow
 
 import { computed, action } from 'mobx'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
-import type { Int, Float, URL, HTML } from '/utils/types.js'
-import type { Key, Coords } from '/model/mapstore.js'
-import type { Bar, BarType, Photo, TagID } from '/model/barstore.js'
+import type { Int, Float, URL, HTML } from '~/utils/types.js'
+import type { Key, Coords } from '~/model/mapstore.js'
+import type { Bar, BarType, Photo, TagID } from '~/model/barstore.js'
 
 const { log, assert } = _.utils('./network/api/maps/place-info.js')
 

@@ -13,8 +13,8 @@ import { observer } from 'mobx-react/native'
 import { Notification } from './Notification.js'
 import { PureComponent } from './Component.js'
 import { Loader } from './Page.js'
-import { downloadManager } from '/network/http.js'
-import * as _ from '/utils/curry.js'
+import { downloadManager } from '~/network/http.js'
+import * as _ from '~/utils/curry.js'
 
 
 /* React Component for rendering a downloadResult in its different states */

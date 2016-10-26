@@ -25,7 +25,7 @@ import * as _ from '../curry.js'
 
 import type { Int, Float, String, URL } from './Types.js'
 
-const { log, assert } = _.utils('/network/http.js')
+const { log, assert } = _.utils('~/network/http.js')
 
 export type HTTPOptions = RequestOptions
 

@@ -10,16 +10,16 @@ import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../HTTP.js'
 import { LazyBarPhoto } from '../bar/BarCard.js'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
-import { config } from '/utils/config.js'
+import { config } from '~/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore, loginStore, segment } from '/model/store.js'
+import { store, tabStore, loginStore, segment } from '~/model/store.js'
 
-import { barStore, orderStore } from '/model/store.js'
-import * as _ from '/utils/curry.js'
+import { barStore, orderStore } from '~/model/store.js'
+import * as _ from '~/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
-import { paymentStore } from '/model/paymentstore.js'
+import { paymentStore } from '~/model/paymentstore.js'
 
 import type { String, Int } from '../Types.js'
 

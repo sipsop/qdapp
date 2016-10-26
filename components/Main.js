@@ -28,9 +28,9 @@ import { Checkout } from './Payment/Checkout.js'
 import { ReceiptModal } from './orders/Receipt.js'
 import { Loader } from './Page.js'
 
-import { store, barStore, tabStore, segment } from '/model/store.js'
-import * as _ from '/utils/curry.js'
-import { downloadManager } from '/network/http.js'
+import { store, barStore, tabStore, segment } from '~/model/store.js'
+import * as _ from '~/utils/curry.js'
+import { downloadManager } from '~/network/http.js'
 
 const { log, assert } = _.utils('./components/Main.js')
 
@@ -116,4 +116,4 @@ export const main = async () => {
     await store.initialize()
 }
 
-require('./Downloads.js').initialize(require('/model/store.js'), downloadManager)
+require('./Downloads.js').initialize(require('~/model/store.js'), downloadManager)
