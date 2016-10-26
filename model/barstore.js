@@ -10,6 +10,7 @@ import * as _ from '~/utils/curry.js'
 import { store } from './store.js'
 import { mapStore } from './mapstore.js'
 import { tagStore } from './tagstore.js'
+import { timeStore } from './timestore.js'
 import type { PlaceID } from './mapstore.js'
 
 import type { Int, Float, String, URL, HTML } from '~/utils/types.js'
@@ -268,12 +269,6 @@ class BarStore {
     })
 
 }
-
-/************************** MONEKY PATCH SEGMENT *********************/
-
-
-
-/************************** END HACKERY *********************/
 
 export const getBarOpenTime = (bar : Bar) : ?OpeningTime => {
     if (!bar.openingTimes)
