@@ -17,7 +17,7 @@ import NativeMapView from 'react-native-maps'
 import { merge, logger } from '/utils/curry.js'
 import { store, tabStore, barStore } from '/model/store.js'
 import { config } from '/utils/config.js'
-import { mapStore, getBarCoords } from './MapStore.js'
+import { mapStore, getBarCoords } from '/model/mapstore.js'
 import { DownloadResultView } from '../HTTP.js'
 import * as _ from '/utils/curry.js'
 

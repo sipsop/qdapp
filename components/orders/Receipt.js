@@ -19,7 +19,7 @@ import { barStore, orderStore } from '/model/store.js'
 import * as _ from '/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
-import { paymentStore } from '../Payment/PaymentStore.js'
+import { paymentStore } from '/model/paymentstore.js'
 
 import type { String, Int } from '../Types.js'
 

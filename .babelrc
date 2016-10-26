@@ -7,7 +7,9 @@
    "transform-decorators-legacy",
    "transform-flow-strip-types",
    "syntax-flow",
-   "./plugins/babel-plugin-root-import.js"
+   "babel-root-import"
+
+   // "./plugins/babel-plugin-root-import.js"
 
    // "transform-class-properties",
    // "transform-es2015-classes",
