@@ -1,5 +1,3 @@
-// flow
-
 import {
     React,
     Component,
@@ -219,13 +217,13 @@ export class JSONDownload {
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
 
-    constructor(getProps {
+    constructor(getProps) {
         /* function returning props derived from a (observable) model state */
         this.getProps = getProps
     }
 
     @computed get props() {
-        return getProps())
+        return getProps()
     }
 
     @computed get active() {

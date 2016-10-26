@@ -84,7 +84,7 @@ export const config = {
     },
     noCache: {
         noCache:        true,
-    }
+    },
     auth: {
         /* Auth token refresh params */
         /* TODO: UPDATE THESE FOR PRODUCTION */
