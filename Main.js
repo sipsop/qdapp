@@ -16,23 +16,23 @@ import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { DiscoverPage } from '~/screens//DiscoverPage.js'
-import { BarPage } from '~/screens/BarPage.js'
-import { MenuPage } from '~/screens/MenuPage.js'
-import { OrderPage } from '~/screens/OrderPage.js'
+import { DiscoverPage } from '~/screens//DiscoverPage'
+import { BarPage } from '~/screens/BarPage'
+import { MenuPage } from '~/screens/MenuPage'
+import { OrderPage } from '~/screens/OrderPage'
 
-import { handleBackButton } from './AndroidBackButton.js'
-import { SideMenu, MenuIcon } from './sidemenu/SideMenu.js'
-import { ControlPanel } from './sidemenu/ControlPanel.js'
-import { TabView } from './Tabs.js'
-import { Checkout } from './payment/Checkout.js'
-import { ReceiptModal } from './orders/Receipt.js'
-import { Loader } from './Page.js'
+import { handleBackButton } from '~/components/AndroidBackButton'
+import { SideMenu, MenuIcon } from '~/components/sidemenu/SideMenu'
+import { ControlPanel } from './sidemenu/ControlPanel'
+import { TabView } from '~/components/Tabs'
+import { Checkout } from './payment/Checkout'
+import { ReceiptModal } from './orders/Receipt'
+import { Loader } from '~/components/Page'
 
-import { store, barStore, tabStore, segment } from '~/model/store.js'
-import * as _ from '~/utils/curry.js'
+import { store, barStore, tabStore, segment } from '~/model/store'
+import * as _ from '~/utils/curry'
 
-const { log, assert } = _.utils('./components/Main.js')
+const { log, assert } = _.utils('~/Main')
 
 /* Do not allow font scaling */
 Text.defaultProps.allowFontScaling = false
