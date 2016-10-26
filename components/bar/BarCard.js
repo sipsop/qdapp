@@ -262,26 +262,6 @@ export class BarCardHeader extends PureComponent {
 }
 
 @observer
-export class BarName extends PureComponent {
-    /* properties:
-        barName: String
-    */
-  render = () => {
-    return (<T style={{ fontSize: 22,
-                     color: config.theme.primary.light
-                    // , color: config.theme.primary.medium
-                    // , color: '#fff'
-                    // , color: '#000'
-                    }}
-                    ellipsizeMode='clip'
-                    numberOfLines={2}
-                    >
-            {this.props.barName}
-        </T>)
-  }
-}
-
-@observer
 export class PlaceInfo extends PureComponent {
     /* properties:
         bar: schema.Bar
@@ -431,24 +411,4 @@ const formatDistance = (dist) => {
   }
   const km = dist / 1000
   return `${km.toFixed(1)}km`
-}
-
-@observer
-export class Time extends PureComponent {
-    /* properties:
-        time: Time
-        style: text style
-    */
-  render = () => {
-    const time = this.props.time
-    let minute = '' + time.minute
-    if (minute.length === 1) {
-      minute = '0' + minute
-    }
-    return (
-        <T style={this.props.style}>
-            {time.hour}.{minute}
-        </T>
-    )
-  }
 }

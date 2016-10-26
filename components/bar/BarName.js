@@ -1,0 +1,26 @@
+import React from 'react'
+import { observer } from 'mobx-react/native'
+
+import { PureComponent, T } from '~/components/Component'
+import { config } from '~/utils/config.js'
+
+@observer
+export class BarName extends PureComponent {
+    /* properties:
+        barName: String
+    */
+  render = () => {
+    return (
+        <T style={{ fontSize: 22,
+                     color: config.theme.primary.light
+                    // , color: config.theme.primary.medium
+                    // , color: '#fff'
+                    // , color: '#000'
+                    }}
+                    ellipsizeMode='clip'
+                    numberOfLines={2}
+                    >
+            {this.props.barName}
+        </T>)
+  }
+}
