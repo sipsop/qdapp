@@ -135,7 +135,7 @@ export class Store {
             mapState:               mapStore.emptyState(),
             tagState:               tagStore.emptyState(),
             segment:                segment.emptyState(),
-            downloadManagerState:   downloadManagerState.emptyState(),
+            downloadManagerState:   downloadManager.emptyState(),
         }
     }
 
