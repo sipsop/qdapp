@@ -46,18 +46,20 @@ class T extends PureComponent {
         ellipsizeMode
     */
     render = () => {
-        const style = {fontFamily: fontFamily, ...this.props.style}
+        const style = {
+            fontFamily: fontFamily,
+        }
         const children = this.props.children
         // if (Array.isArray(children))
         //     assert(_.all(children.map(isString)), "" + children)
         // else
         //     assert(isString(children), "" + children)
         return <Text
-            style={style}
-            numberOfLines={this.props.numberOfLines}
-            /* ellipsizeMode={this.props.ellipsizeMode} */
-            lineBreakMode={this.props.ellipsizeMode}
-            >
+                    style={[style, this.props.style]}
+                    numberOfLines={this.props.numberOfLines}
+                    /* ellipsizeMode={this.props.ellipsizeMode} */
+                    lineBreakMode={this.props.ellipsizeMode}
+                    >
             {this.props.children}
         </Text>
     }

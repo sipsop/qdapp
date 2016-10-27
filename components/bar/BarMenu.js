@@ -1,4 +1,5 @@
 import {
+    React,
     View,
     Dimensions,
     PureComponent,

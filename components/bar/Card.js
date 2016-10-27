@@ -6,9 +6,11 @@ import {
     Image,
     PureComponent,
     T,
-} from 'react'
+} from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
+
+import { analytics, tabStore, tagStore } from '~/model/store.js'
 
 @observer
 export class Card extends PureComponent {
@@ -20,14 +22,12 @@ export class Card extends PureComponent {
         submenu: SubMenu
         style: style object
     */
-  render = () => {
-    const submenu = this.props.submenu
-    const radius = 20
-    const style = {borderRadius: radius, ...this.props.style}
+    render = () => {
+        const submenu = this.props.submenu
+        const radius = 20
+        const style = {borderRadius: radius, ...this.props.style}
 
-        // log("LOADING IMAGE", submenu.image)
-
-    return (<TouchableOpacity onPress={this.handleCardPress}>
+        return <TouchableOpacity onPress={this.handleCardPress}>
             <Image source={{uri: submenu.image}} style={style}>
                 {/* Push footer to bottom */}
                 <View style={{flex: 1, borderRadius: radius}} />
@@ -50,13 +50,13 @@ export class Card extends PureComponent {
                     </View>
                 </LinearGradient>
             </Image>
-        </TouchableOpacity>)
-  }
+        </TouchableOpacity>
+    }
 
-  handleCardPress = () => {
-    analytics.trackMenuCardClick(this.props.tag)
-    tabStore.setCurrentTab(2)
-    tagStore.pushTag(this.props.tag)
-  }
+    handleCardPress = () => {
+        analytics.trackMenuCardClick(this.props.tag)
+        tabStore.setCurrentTab(2)
+        tagStore.pushTag(this.props.tag)
+    }
 
 }

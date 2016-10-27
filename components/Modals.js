@@ -20,8 +20,7 @@ export class Message extends PureComponent {
                     showOkButton={false}
                     showCancelButton={false}
                     closeOnTouch={true}
-                    {...this.props}
-                    />
+                    {...this.props} />
     }
 }
 
