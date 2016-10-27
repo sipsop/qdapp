@@ -47,7 +47,7 @@ export class DownloadResultView<T> extends PureComponent {
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
         if (res.state == 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state == 'Finished' || (res.lastValue != null && res.refreshOnError)) {
+        } else if (res.state == 'Finished' || (res.autoDownload && res.lastValue != null)) {
             return this.renderFinished(res.lastValue)
         } else if (res.state == 'InProgress') {
             return this.renderInProgress()

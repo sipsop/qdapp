@@ -8,17 +8,12 @@ import { config } from '~/utils/config.js'
 
 export class StripeTokenDownload extends JSONMutation {
     /* properties:
-        shouldPlaceOrderNow: Bool
         selectedCard: Card
     */
 
     name = 'stripe'
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
-
-    @computed get active() {
-        return this.props.shouldPlaceOrderNow
-    }
 
     @computed get url() {
         return 'https://api.stripe.com/v1/tokens'

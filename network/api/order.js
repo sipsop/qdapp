@@ -34,7 +34,6 @@ export const OrderResultQuery = {
 export class PlaceOrderDownload extends QueryMutation {
     /* properties:
         barID:                  String
-        shouldPlaceOrderNow:    Bool
         stripeToken:            String
         authToken:              String
         userName:               String
@@ -50,10 +49,6 @@ export class PlaceOrderDownload extends QueryMutation {
 
     /* Start this download only after the 'stripe' download has finished */
     depends = ['stripe']
-
-    @computed get active() {
-        return this.props.shouldPlaceOrderNow
-    }
 
     @computed get query() {
         const orderList = this.props.orderList.map(orderItem => {

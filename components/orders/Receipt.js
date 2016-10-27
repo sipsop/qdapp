@@ -120,7 +120,7 @@ export class PlaceOrderDownloadView extends DownloadResultView {
 
     refreshPage = () => {
         loginStore.login(() => {
-            downloadManager.refreshDownloads()
+            orderStore.placeActiveOrder()
         })
     }
 

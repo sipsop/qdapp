@@ -53,6 +53,7 @@ export class Checkout extends PureComponent {
             () => {
                 // success
                 analytics.trackCheckoutFinish()
+                orderStore.freshOrderToken()
                 orderStore.placeActiveOrder()
                 this.close()
             },

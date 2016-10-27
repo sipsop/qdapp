@@ -186,13 +186,13 @@ export class JSONDownload {
     @observable periodicRefresh : ?Int = null           /* refresh every N seconds */
     @observable depends         : Array<String> = []  /* Download dependency names */
 
-    /* Refresh downloads that had an error when connectivity resumes /
-       user presses refresh
-    */
-    @observable refreshOnError  = true
-
     /* Restore download state after a restart */
     @observable restoreAfterRestart = false
+
+    /* Whether to trigger this download automatically whenever it's active and
+       its refreshState changes
+    */
+    @observable autoDownload = true
 
     /* How long results should be cached for */
     @observable cacheInfo = config.defaultCacheInfo
@@ -474,8 +474,8 @@ export class QueryDownload extends JSONDownload {
 export class JSONMutation extends JSONDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
-    refreshOnError = false
     restoreAfterRestart = true
+    autoDownload = false
 
     @computed get cacheKey() {
         return 'DO_NOT_CACHE'
@@ -485,8 +485,8 @@ export class JSONMutation extends JSONDownload {
 export class QueryMutation extends QueryDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
-    refreshOnError = false
     restoreAfterRestart = true
+    autoDownload = false
 
     @computed get cacheKey() {
         return 'DO_NOT_CACHE'
@@ -607,11 +607,12 @@ class DownloadManager {
 
     autoDownload = (download) => {
         /* Refresh download when necessary */
+        if (!download.autoDownload)
+            return
+
         this.disposeHandlers[download.name] = autorun(() => {
             if (download.shouldRefreshNow) {
-                if (download.refreshOnError || download.state === 'NotStarted') {
-                    download.refresh()
-                }
+                download.refresh()
             }
         })
     }

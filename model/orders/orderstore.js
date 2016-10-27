@@ -60,7 +60,7 @@ export type OrderResult = {
 
 class OrderStore {
 
-    @observable orderList : Array<OrderItem> = []
+    @observable orderList      : Array<OrderItem> = []
     @observable tipFactor      : Float = 0.0
     @observable tipAmount      : Int = 0
     @observable delivery       : String = 'Table'
@@ -292,14 +292,12 @@ class OrderStore {
     initialize = () => {
         downloadManager.declareDownload(new StripeTokenDownload(() => {
             return {
-                shouldPlaceOrderNow: this.shouldPlaceOrderNow,
                 selectedCard:        paymentStore.getSelectedCard(),
             }
         }))
         downloadManager.declareDownload(new PlaceOrderDownload(() => {
             return {
                 barID:               barStore.barID,
-                shouldPlaceOrderNow: this.shouldPlaceOrderNow,
                 stripeToken:         this.stripeToken,
                 authToken:           loginStore.getAuthToken(),
                 userName:            loginStore.userName,
@@ -315,28 +313,36 @@ class OrderStore {
         }))
     }
 
-    @computed get stripeToken() {
-        return downloadManager.getDownload('stripe').stripeToken
-    }
-
-    getPlaceOrderDownload = () => {
-        return downloadManager.getDownload('placeOrder')
-    }
-
+    getPaymentTokenDownload = () => downloadManager.getDownload('stripe')
+    getPlaceOrderDownload = () => downloadManager.getDownload('placeOrder')
     getActiveOrderToken = () => this.activeOrderID
 
-    /* Decide whether to place the order now */
-    @computed get shouldPlaceOrderNow() {
-        return this.getActiveOrderToken() != null
+    @computed get stripeToken() {
+        return this.getPaymentTokenDownload().stripeToken
     }
+
+    @computed get orderResult() {
+        return this.getPlaceOrderDownload().orderResult
+    }
+
+    /* Order Actions */
 
     @action freshCheckoutID = () => {
         this.checkoutID = _.uuid()
     }
 
+    @action freshOrderToken = () => {
+        this.activeOrderID = _.uuid()
+    }
+
     /* Submit order to server */
     _placeActiveOrder = async () => {
-        this.activeOrderID = _.uuid()
+        /* Get a fresh payment authorization token from stripe */
+        await this.getPaymentTokenDownload().forceRefresh()
+        if (this.stripeToken) {
+            /* Submit order to server along with stripe token */
+            await this.getPlaceOrderDownload().forceRefresh()
+        }
     }
 
     placeActiveOrder = _.logErrors(async () => {
