@@ -1,11 +1,11 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 
-import { Cache, cache } from './cache.js'
-import { config } from '~/utils/config.js'
-import { store } from '~/model/store.js'
-import { HOST } from './host.js'
-import { getTime, Second, Minute } from '~/utils/time.js'
-import * as _ from '~/utils/curry.js'
+import { Cache, cache } from './cache'
+import { notificationStore, NotificationLevels } from '~/model/notificationstore'
+import { HOST } from './host'
+import { getTime, Second, Minute } from '~/utils/time'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
 
 import type { Int, Float, String, URL } from '~/utils/types.js'
 
@@ -425,9 +425,15 @@ export class JSONDownload {
     }
 
     @computed get message() {
+        let message
         if (this._state === 'NotStarted' || this.errorIndex >= 0)
-            return this.dependencies[this.errorIndex].message
-        return this._message
+            message = this.dependencies[this.errorIndex].message
+        else
+            message = this._message
+
+        const errorMessage = this.errorMessage || `Error downloading ${this.name}`
+        message = message && message + '\n' + message.strip()
+        return errorMessage + (message ? ':\n' + message : '')
     }
 
     @computed get finished() {
@@ -539,9 +545,11 @@ const getTimeoutInfo = (timeoutDesc) => {
 
 class DownloadManager {
 
+    @observable downloadNames = []
+    @observable downloads = {}
+
     constructor() {
         this._initialized = false
-        this.downloads = {}
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
     }
@@ -552,7 +560,7 @@ class DownloadManager {
 
     @computed get downloadStates() {
         const downloadStatesToRestore = {}
-        Object.values(this.downloads).forEach(download => {
+        this.downloadList.forEach(download => {
             if (download.restoreAfterRestart) {
                 downloadStatesToRestore[download.name] = download.getState()
             }
@@ -577,13 +585,17 @@ class DownloadManager {
     }
 
     initialized = () => {
-        Object.values(this.downloads).forEach(this.initializeDownload)
+        this.downloadList.forEach(this.initializeDownload)
         this._initialized = true
     }
 
     /*********************************************************************/
     /* Download Management                                               */
     /*********************************************************************/
+
+    @computed get downloadList() {
+        return this.downloadNames.map(name => this.downloads[name])
+    }
 
     declareDownload = (download) => {
         assert(download.name != null,
@@ -642,12 +654,34 @@ class DownloadManager {
         return download
     }
 
+    /*********************************************************************/
+    /* Notifications                                                     */
+    /*********************************************************************/
+
+    @computed get downloadErrorMessage() {
+        for (var i = 0; i < this.downloadList.length; i++) {
+            if (this.downloadList[i].state === 'Error') {
+                log("FOUND A downloAD ERRORR!!!!!!!", this.downloadList[i])
+                return this.downloadList[i].message
+            }
+        }
+        return null
+    }
+
+    /*********************************************************************/
+    /* Actions                                                           */
+    /*********************************************************************/
+
     /* Refresh errored downloads, e.g. after re-gaining connectivity */
     @action refreshDownloads = () => {
-        Object.values(this.downloads).forEach(download => {
+        this.downloadList.forEach(download => {
             download.resetErrorAttempts()
         })
     }
+
+    /*********************************************************************/
+    /* Helper functions                                                  */
+    /*********************************************************************/
 
     queryMutate = async (query) => {
         return await this.query(
@@ -722,6 +756,18 @@ class DownloadManager {
 }
 
 export const downloadManager = new DownloadManager()
+
+autorun(() => {
+    if (downloadManager.downloadErrorMessage) {
+        notificationStore.notify({
+            id: 'downloadErrorMessage',
+            message: downloadManager.downloadErrorMessage,
+            buttonLabel: 'REFRESH',
+            onDismiss: (_) => downloadManager.refreshDownloads(),
+            priority: NotificationLevels.ERROR,
+        })
+    }
+})
 
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError

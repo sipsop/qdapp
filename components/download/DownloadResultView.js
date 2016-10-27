@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
 @observer
 export class DownloadResultView<T> extends PureComponent {
     inProgressMessage = null
-    errorMessage = null
 
     render = () => {
         const res = this.getDownloadResult()
@@ -99,14 +98,7 @@ export class DownloadResultView<T> extends PureComponent {
         </View>
     }
 
-    formatErrorMessage = (message : String) => {
-        const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
-        message = message && '\n' + message.strip()
-        return errorMessage + (message ? ':\n' + message : '')
-    }
-
-    renderError = (message : string) => {
-        const errorMessage = this.formatErrorMessage(message)
+    renderError = (errorMessage : string) => {
         return (
             <View style={styles.error}>
                 <T style={styles.errorText}>

@@ -21,11 +21,14 @@ const { assert, log } = _.utils(__filename)
 
 const styles = StyleSheet.create({
     notification: {
-        flex: 1,
+        flex: 0,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         height: 55,
+        margin: 5,
+        padding: 5,
+        borderRadius: 10,
     },
     notificationText: {
         color: '#fff',
@@ -86,7 +89,7 @@ export class NotificationBar extends PureComponent {
     }
 }
 
-notificationStore.notify({
-    id: 'hello',
-    message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
-})
+// notificationStore.notify({
+//     id: 'hello',
+//     message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
+// })

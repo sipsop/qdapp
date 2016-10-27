@@ -173,8 +173,8 @@ class MapStore {
 
     initialized = async () => {
         // setTimeout(this.trackLocation, 2000)
-    
-        // mapStore.trackLocation()
+
+        mapStore.trackLocation()
         /* TODO: Declarative downloads */
         await this.updateNearbyBars()
     }

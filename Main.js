@@ -59,12 +59,11 @@ export class App extends Component {
     }
 
     renderApp = () => {
-        console.log("BAR SELECTED?", this.barSelected)
         if (!store.initialized)
             return <Loader />
 
         return (
-            <View>
+            <View style={{flex: 1}}>
                 <NotificationBar />
                 {
                     this.barSelected
