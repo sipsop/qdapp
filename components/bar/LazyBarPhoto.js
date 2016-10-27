@@ -3,6 +3,7 @@ import { observer } from 'mobx-react/native'
 
 import { PureComponent } from '~/components/Component'
 import { LazyComponent } from '~/components/LazyComponent'
+import BarPhoto from './BarPhoto'
 
 @observer
 export class LazyBarPhoto extends PureComponent {
@@ -12,8 +13,8 @@ export class LazyBarPhoto extends PureComponent {
 
   render = () => {
     return (<LazyComponent
-                    timeout={this.props.timeout || 0}
-                    style={{height: this.props.imageHeight}}
+        timeout={this.props.timeout || 0}
+        style={{height: this.props.imageHeight}}
                     >
             <BarPhoto {...this.props} />
         </LazyComponent>)

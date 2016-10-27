@@ -15,9 +15,7 @@ import { SmallOkCancelModal } from '../Modals.js'
 import { BackButton } from '../BackButton.js'
 import { PhotoImage } from '../PhotoImage.js'
 import { tabStore, mapStore, orderStore } from '~/model/store.js'
-import * as _ from '~/utils/curry.js'
 import { barStore, getBarOpenTime } from '~/model/barstore.js'
-import { config } from '~/utils/config.js'
 
 @observer
 export class DiscoverBarCard extends PureComponent {
@@ -140,125 +138,6 @@ export class BarCard extends PureComponent {
             </TouchableOpacity>
         </View>)
     }
-
-}
-
-@observer
-export class LazyBarPhoto extends PureComponent {
-  static defaultProps = {
-    showMapButton: false
-  }
-
-  render = () => {
-    return (<LazyComponent
-                    timeout={this.props.timeout || 0}
-                    style={{height: this.props.imageHeight}}
-                    >
-            <BarPhoto {...this.props} />
-        </LazyComponent>)
-  }
-}
-
-@observer
-export class BarPhoto extends PureComponent {
-    /* properties:
-        photo: Photo
-        bar: Bar
-        imageHeight: Int
-        showBackButton: Bool
-        onBack: () => void
-        showDistance: Bool
-        showTimeInfo: Bool
-        showBarName: Bool
-        showMapButton: Bool
-    */
-  render = () => {
-    let photo = this.props.photo
-    const pictureIsGeneric = !photo
-    if (!photo) {
-      photo = {
-        url: '/static/GenericBarPicture.jpg',
-        htmlAttrib: []
-      }
-    }
-
-    return (<PhotoImage
-        key={photo.url}
-        photo={photo}
-        style={{flex: 0, height: this.props.imageHeight}}
-                    >
-            <BackButton
-                onBack={this.props.onBack}
-                enabled={this.props.showBackButton}
-                />
-            {
-                /*
-                this.props.showBackButton
-                    ? <TouchableOpacity onPress={this.props.onBack}>
-                        <View style={
-                                { width: 55
-                                , height: 55
-                                , justifyContent: 'center'
-                                , alignItems: 'center'
-                                , backgroundColor: 'rgba(0,0,0,0)'
-                                }
-                            }>
-                            <MaterialIcon name="arrow-back" size={30} color='#fff' />
-                        </View>
-                      </TouchableOpacity>
-                    : <View style={{flex: 1}} />
-                */
-            }
-            <BarCardHeader
-                pictureIsGeneric={pictureIsGeneric}
-                style={{flex: 3}} />
-            <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
-                <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
-                    <BarCardFooter
-                        bar={this.props.bar}
-                        showDistance={this.props.showDistance}
-                        showTimeInfo={this.props.showTimeInfo}
-                        showBarName={this.props.showBarName}
-                        showMapButton={this.props.showMapButton}
-                        />
-                </View>
-            </LinearGradient>
-        </PhotoImage>)
-  }
-}
-
-@observer
-export class BarCardHeader extends PureComponent {
-    /* properties:
-        style: style object
-        pictureIsGeneric: Bool
-    */
-  render = () => {
-    if (this.props.pictureIsGeneric) {
-      return this.renderGenericPictureHeader()
-    }
-    return <View style={this.props.style} />
-  }
-
-  renderGenericPictureHeader = () => {
-    return (<LinearGradient
-                    style={this.props.style}
-                    colors={['rgba(0, 0, 0, 1.0)', 'rgba(0, 0, 0, 0.0)']}
-                    >
-            <View style={
-                    { flex: 1,
-                     flexDirection: 'row',
-                     justifyContent: 'flex-end',
-                     marginRight: 5,
-                     backgroundColor: 'rgba(0,0,0,0)' /* iOS */
-                    }
-                }>
-                <T style={{fontSize: 15, color: '#fff'}}>
-                    (No picture available)
-                </T>
-            </View>
-        </LinearGradient>)
-  }
 }
 
 @observer
