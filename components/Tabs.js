@@ -1,12 +1,16 @@
-import React, { Component } from 'react'
-import { Text, View, TouchableOpacity } from 'react-native'
+import {
+    React,
+    Component,
+    PureComponent,
+    View,
+    TouchableOpacity,
+    Icon,
+} from '~/components/Component.js'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { PureComponent } from '~/components/Component.js'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 

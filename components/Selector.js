@@ -2,19 +2,20 @@
    so that we only have to re-render the changed items (useful for large lists).
 */
 
-import React, { Component } from 'react';
 import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  ListView,
-} from 'react-native'
+    React,
+    View,
+    ScrollView,
+    TouchableOpacity,
+    ListView,
+    PureComponent,
+    T,
+} from '~/components/Component.js'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { PureComponent, T } from '~/components/Component.js'
 import { Button } from './Button.js'
 import { config } from '~/utils/config.js'
 import { SmallOkCancelModal } from './Modals.js'

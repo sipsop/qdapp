@@ -1,10 +1,7 @@
-import React, {
-  View
-} from 'react'
+import { React, View, PureComponent } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { PureComponent } from '~/components/Component'
 import { PhotoImage } from '~/components/PhotoImage'
 import { BackButton } from '~/components/BackButton'
 import { BarCardHeader } from './BarCardHeader'

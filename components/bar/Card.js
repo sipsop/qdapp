@@ -1,11 +1,14 @@
-import React, {
-  TouchableOpacity,
-  View,
-  Image
+import {
+    React,
+    Component,
+    TouchableOpacity,
+    View,
+    Image,
+    PureComponent,
+    T,
 } from 'react'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
-import { PureComponent, T } from '~/components/Component'
 
 @observer
 export class Card extends PureComponent {

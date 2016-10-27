@@ -1,7 +1,11 @@
-import React, { Component } from 'react'
-import { View, TouchableOpacity } from 'react-native'
-
-import { PureComponent, T } from '~/components/Component.js'
+import {
+    React,
+    Component,
+    PureComponent,
+    T,
+    View,
+    TouchableOpacity,
+ } from '~/components/Component.js'
 import { config } from '~/utils/config.js'
 
 const rowHeight = 55

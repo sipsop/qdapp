@@ -1,7 +1,5 @@
-import React from 'react'
+import { React, Component, PureComponent, T } from '~/components/Component'
 import { observer } from 'mobx-react/native'
-
-import { PureComponent, T } from '~/components/Component'
 import { config } from '~/utils/config.js'
 
 @observer

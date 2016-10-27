@@ -1,7 +1,7 @@
-import React, {
+import {
     View,
     Dimensions,
-    PureComponent
+    PureComponent,
 } from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 

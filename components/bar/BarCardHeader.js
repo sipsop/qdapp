@@ -1,10 +1,9 @@
-import React, {
-  View
-} from 'react'
+import { React, View, PureComponent, T } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
+import * as _ from '~/utils/curry.js'
 
-import { PureComponent, T } from '~/components/Component'
+const { log, assert } = _.utils(__filename)
 
 const styles = {
   container: {

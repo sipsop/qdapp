@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import { React, Component, PureComponent } from '~/components/Component.js'
 import { View, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { PureComponent } from '~/components/Component.js'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 

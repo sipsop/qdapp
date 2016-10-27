@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
 import {
-  StyleSheet,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  T,
+    React,
+    Component,
+    StyleSheet,
+    View,
+    ScrollView,
+    TouchableOpacity,
+    T,
 } from '~/components/Component'
 import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'

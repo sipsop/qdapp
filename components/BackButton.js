@@ -1,4 +1,5 @@
-import React, {
+import {
+    React,
     View,
     TouchableOpacity,
     PureComponent,
@@ -23,6 +24,7 @@ export class BackButton extends PureComponent {
     }
 
     render = () => {
+        debugger
         if (!this.props.enabled) {
             return <View />
         }

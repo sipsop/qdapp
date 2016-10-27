@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
 import {
+    React,
+    Component,
+    PureComponent,
     View,
     TouchableOpacity,
-} from 'react-native'
+    Icon,
+} from '~/components/Component.js'
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 

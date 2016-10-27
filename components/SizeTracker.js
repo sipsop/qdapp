@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
-import Dimensions from 'Dimensions';
+import {
+    React,
+    PureComponent,
+    Dimensions,
+} from '~/components/Component'
 
 /* Class to track the size of a view:
 

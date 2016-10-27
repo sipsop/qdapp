@@ -7,7 +7,8 @@
    "transform-decorators-legacy",
    "transform-flow-strip-types",
    "syntax-flow",
-   "babel-root-import"
+   "babel-root-import",
+   "babel-plugin-transform-dirname-filename"
 
    // "./plugins/babel-plugin-root-import.js"
 

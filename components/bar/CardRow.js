@@ -1,6 +1,5 @@
-import React from 'react'
 import { observer } from 'mobx-react/native'
-import { PureComponent } from '~/components/Component'
+import { React, PureComponent } from '~/components/Component'
 import { Card } from './Card'
 
 @observer
