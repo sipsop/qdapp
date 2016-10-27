@@ -1,8 +1,9 @@
 /* Photo image wth attribution */
-import React from 'react'
-import { PureComponent, Img } from '~/components/Component.js'
+import { React, PureComponent, Img } from '~/components/Component.js'
+import { observer } from 'mobx-react/native'
 
-class PhotoImage extends PureComponent {
+@observer
+export class PhotoImage extends PureComponent {
     /* properties:
         photo: Photo
         style: style object (height, width, etc)
@@ -19,5 +20,3 @@ class PhotoImage extends PureComponent {
         </Img>)
   }
 }
-
-export default PhotoImage

@@ -7,7 +7,8 @@ import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import { PureComponent, T } from '~/components/Component'
 
-@observer class Card extends PureComponent {
+@observer
+export class Card extends PureComponent {
     /* properties:
         name: str
             e.g. "Beer", "Wine"
@@ -56,5 +57,3 @@ import { PureComponent, T } from '~/components/Component'
   }
 
 }
-
-export default Card

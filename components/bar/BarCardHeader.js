@@ -20,7 +20,7 @@ const styles = {
 }
 
 @observer
-class BarCardHeader extends PureComponent {
+export class BarCardHeader extends PureComponent {
     /* properties:
         style: style object
         pictureIsGeneric: Bool
@@ -37,7 +37,7 @@ class BarCardHeader extends PureComponent {
               </View>
           </LinearGradient>)
   }
-  
+
   render = () => {
     if (this.props.pictureIsGeneric) {
       return this.renderGenericPictureHeader()
@@ -46,5 +46,3 @@ class BarCardHeader extends PureComponent {
   }
 
 }
-
-export default BarCardHeader

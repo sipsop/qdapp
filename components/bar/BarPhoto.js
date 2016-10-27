@@ -5,13 +5,13 @@ import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { PureComponent } from '~/components/Component'
-import PhotoImage from '~/components/PhotoImage'
-import BackButton from '~/components/BackButton'
-import BarCardHeader from './BarCardHeader'
-import BarCardFooter from './BarCardFooter'
+import { PhotoImage } from '~/components/PhotoImage'
+import { BackButton } from '~/components/BackButton'
+import { BarCardHeader } from './BarCardHeader'
+import { BarCardFooter } from './BarCardFooter'
 
 @observer
-class BarPhoto extends PureComponent {
+export class BarPhoto extends PureComponent {
     /* properties:
         photo: Photo
         bar: Bar
@@ -77,5 +77,3 @@ class BarPhoto extends PureComponent {
         </PhotoImage>)
   }
 }
-
-export default BarPhoto

@@ -142,7 +142,7 @@ const dataSource = new ListView.DataSource({
 })
 
 @observer
-class SelectedCardInfo extends PureComponent {
+export class SelectedCardInfo extends PureComponent {
     paymentConfigModal = null
 
     styles = StyleSheet.create({

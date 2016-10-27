@@ -4,13 +4,13 @@ import React, {
 import { PureComponent } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 
-import PlaceInfo from '../PlaceInfo'
-import BarName from './BarName'
-import TimeInfo from '../TimeInfo'
-import Distance from '../Distance'
+import { PlaceInfo } from '../PlaceInfo'
+import { BarName } from './BarName'
+import { TimeInfo } from '../TimeInfo'
+import { Distance } from '../Distance'
 
 @observer
-class BarCardFooter extends PureComponent {
+export class BarCardFooter extends PureComponent {
     /* properties:
         bar: schema.Bar
         showDistance: Bool
@@ -49,5 +49,3 @@ class BarCardFooter extends PureComponent {
         </View>)
   }
 }
-
-export default BarCardFooter

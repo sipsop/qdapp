@@ -8,7 +8,7 @@ import { observer } from 'mobx-react/native'
 const { log, assert } = _.utils('./LazyComponent.js')
 
 @observer
-class LazyComponent extends PureComponent {
+export class LazyComponent extends PureComponent {
     /* properties:
         style: style object
         timeout: Int
@@ -63,5 +63,3 @@ export const lazyWrap = (lazy : bool, component : Component) : Component => {
         return <LazyComponent>{component}</LazyComponent>
     return component
 }
-
-export default LazyComponent

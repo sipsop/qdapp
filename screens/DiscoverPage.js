@@ -25,7 +25,30 @@ import { store, barStore, mapStore, historyStore, segment } from '~/model/store.
 import { config } from '~/utils/config.js'
 import * as _ from '~/utils/curry.js'
 
-const log = _.logger('DiscoverPage.js')
+const { log, assert } = _.utils('~/screens/DiscoverPage.js')
+
+assert(Page)
+assert(Loader)
+assert(LargeButton)
+assert(BackButton)
+assert(MapView)
+assert(DiscoverBarCard)
+assert(DownloadResultView)
+assert(Header)
+assert(TextHeader)
+assert(SelectableButton)
+assert(Descriptor)
+assert(SimpleListView)
+// assert()
+// assert()
+// assert()
+// assert()
+// assert()
+// assert()
+// assert()
+// assert()
+
+
 
 @observer
 export class DiscoverPage extends DownloadResultView {

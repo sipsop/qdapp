@@ -5,7 +5,7 @@ import { PureComponent, T } from '~/components/Component'
 import { config } from '~/utils/config.js'
 
 @observer
-class BarName extends PureComponent {
+export class BarName extends PureComponent {
     /* properties:
         barName: String
     */
@@ -24,5 +24,3 @@ class BarName extends PureComponent {
         </T>)
   }
 }
-
-export default BarName

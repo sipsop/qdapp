@@ -33,6 +33,22 @@ import { config } from '~/utils/config.js'
 
 const { assert, log } = _.utils('./orders/OrderPage.js')
 
+assert(Page)
+assert(SimpleListView)
+assert(BarInfoNotification)
+assert(LargeButton)
+assert(SelectableButton)
+assert(DownloadResultView)
+assert(Checkout)
+assert(SelectedCardInfo)
+assert(Header)
+assert(TextHeader)
+assert(OrderList)
+assert(OrderListDescriptor)
+assert(Message)
+assert(SmallOkCancelModal)
+assert(ReceiptModal)
+
 const largeButtonStyle = {
     height: 55,
     margin: 5,
@@ -287,12 +303,12 @@ class OrderButton extends PureComponent {
                 onConfirm={this.props.onPress}
                 />
             <LargeButton
-                    label={`Checkout`}
-                    style={largeButtonStyle}
-                    onPress={this.handlePress}
-                    /* backgroundColor={config.theme.primary.light} */
-                    /* borderColor='rgba(0, 0, 0, 1.0)' */
-                    />
+                label={`Checkout`}
+                style={largeButtonStyle}
+                onPress={this.handlePress}
+                /* backgroundColor={config.theme.primary.light} */
+                /* borderColor='rgba(0, 0, 0, 1.0)' */
+                />
         </View>
     }
 }

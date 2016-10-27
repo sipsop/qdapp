@@ -4,18 +4,19 @@ import {
     TouchableOpacity,
     PureComponent,
     StyleSheet
-} from '~/components/Component.js'
+} from '~/components/Component'
 import { action, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { LazyComponent } from '../LazyComponent.js'
-import { SmallOkCancelModal } from '../Modals.js'
-import { BackButton } from '../BackButton.js'
-import { PhotoImage } from '../PhotoImage.js'
-import { tabStore, mapStore, orderStore } from '~/model/store.js'
-import { barStore, getBarOpenTime } from '~/model/barstore.js'
+import { LazyComponent } from '../LazyComponent'
+import { SmallOkCancelModal } from '../Modals'
+import { BarPhoto } from './BarPhoto'
+import { BackButton } from '../BackButton'
+import { PhotoImage } from '../PhotoImage'
+import { tabStore, mapStore, orderStore } from '~/model/store'
+import { barStore, getBarOpenTime } from '~/model/barstore'
 
 @observer
 export class DiscoverBarCard extends PureComponent {

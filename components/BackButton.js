@@ -1,10 +1,8 @@
 import React, {
-  View,
-  TouchableOpacity
- } from 'react'
-import {
-  PureComponent,
-  MaterialIcon
+    View,
+    TouchableOpacity,
+    PureComponent,
+    MaterialIcon,
 } from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 
@@ -12,7 +10,7 @@ import * as _ from '~/utils/curry.js'
 const { log, assert } = _.utils('./BackButton.js')
 
 @observer
-class BackButton extends PureComponent {
+export class BackButton extends PureComponent {
     /* properties:
         enabled: Bool
         onBack: ?() => void
@@ -24,31 +22,30 @@ class BackButton extends PureComponent {
         iconSize: 30,
     }
 
-  render = () => {
-    if (!this.props.enabled) {
-      return <View />
+    render = () => {
+        if (!this.props.enabled) {
+            return <View />
+        }
+        return (
+            <TouchableOpacity
+                onPress={this.props.onBack}
+                style={this.props.style}
+                >
+                <View style={{ width: 55,
+                         height: 55,
+                         justifyContent: 'center',
+                         alignItems: 'center',
+                         backgroundColor: 'rgba(0,0,0,0)',
+                         ...this.props.buttonStyle
+                        }
+                    }>
+                    <MaterialIcon
+                        name="arrow-back"
+                        size={this.props.iconSize}
+                        color={this.props.color}
+                        />
+                </View>
+            </TouchableOpacity>
+        )
     }
-
-    return (<TouchableOpacity
-        onPress={this.props.onBack}
-        style={this.props.style}
-                    >
-            <View style={{ width: 55,
-                     height: 55,
-                     justifyContent: 'center',
-                     alignItems: 'center',
-                     backgroundColor: 'rgba(0,0,0,0)',
-                     ...this.props.buttonStyle
-                    }
-                }>
-                <MaterialIcon
-                    name="arrow-back"
-                    size={this.props.iconSize}
-                    color={this.props.color}
-                    />
-            </View>
-          </TouchableOpacity>)
-  }
 }
-
-export default BackButton
