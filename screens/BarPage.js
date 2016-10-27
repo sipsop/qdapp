@@ -40,13 +40,13 @@ const { assert, log } = _.utils('~/components/bar/BarPage.js')
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {
-    errorMessage = "Error downloading bar info"
+  errorMessage = 'Error downloading bar info'
 
-    refreshPage = () => {
-        barStore.updateBarInfo(barStore.barID, force = true)
-    }
+  refreshPage = () => {
+    barStore.updateBarInfo(barStore.barID, force = true)
+  }
 
-    getDownloadResult = () => barStore.getBarDownloadResult()
+  getDownloadResult = () => barStore.getBarDownloadResult()
 }
 
 const headerHeight = 250
@@ -59,17 +59,17 @@ export class BarPage extends Page {
         height: int
     */
 
-    styles = StyleSheet.create({
-        bottomBorder: {
-            borderBottomWidth: 0.5,
-            minHeight: 300,
-            borderColor: 'rgba(0, 0, 0, 0.2)',
-        },
-    })
-
-    renderBarHeader = (height : Int) => {
-        return <BarHeader imageHeight={height} />
+  styles = StyleSheet.create({
+    bottomBorder: {
+      borderBottomWidth: 0.5,
+      minHeight: 300,
+      borderColor: 'rgba(0, 0, 0, 0.2)'
     }
+  })
+
+  renderBarHeader = (height : Int) => {
+    return <BarHeader imageHeight={height} />
+  }
 
     renderStickyHeader = () => {
         return <BarStickyHeader />

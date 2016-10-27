@@ -25,9 +25,9 @@ export class BarCardHeader extends PureComponent {
         pictureIsGeneric: Bool
     */
   renderGenericPictureHeader = () => {
-      return (<LinearGradient
-          style={this.props.style}
-          colors={['rgba(0, 0, 0, 1.0)', 'rgba(0, 0, 0, 0.0)']}
+    return (<LinearGradient
+        style={this.props.style}
+        colors={['rgba(0, 0, 0, 1.0)', 'rgba(0, 0, 0, 0.0)']}
                       >
               <View style={styles.container}>
                   <T style={styles.text}>
