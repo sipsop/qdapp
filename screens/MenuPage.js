@@ -69,7 +69,6 @@ class MenuList extends DownloadResultView {
     refreshPage = async () => {
         await Promise.all([
             barStore.updateMenuInfo(barStore.barID, force = true),
-            // tagStore.fetchTags(restartDownload = false, force = true),
             downloadManager.forceRefresh('tags'),
         ])
     }
