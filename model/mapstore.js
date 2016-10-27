@@ -143,7 +143,7 @@ class MapStore {
         return {
             currentMarker:      this.currentMarker,
             currentLocation:    this.currentLocation,
-            region:             this.region,
+            // region:             this.region,
         }
     }
 
@@ -151,7 +151,7 @@ class MapStore {
         return {
             currentMarker:      null,
             currentLocation:    this.currentLocation,
-            region:             this.region,
+            // region:             this.region,
         }
     }
 
@@ -172,7 +172,9 @@ class MapStore {
     }
 
     initialized = async () => {
-        mapStore.trackLocation()
+        // setTimeout(this.trackLocation, 2000)
+    
+        // mapStore.trackLocation()
         /* TODO: Declarative downloads */
         await this.updateNearbyBars()
     }

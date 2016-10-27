@@ -65,7 +65,7 @@ export class MapView extends DownloadResultView {
                     style={style}
                     /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
                     showsUserLocation={true}
-                    region={mapStore.region}
+                    /* region={mapStore.region} */
                     onRegionChange={this.handleRegionChange}
                     loadingEnabled={true}
                     loadingIndicatorColor={config.theme.primary.medium}

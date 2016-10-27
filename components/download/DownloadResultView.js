@@ -14,8 +14,37 @@ import { observer } from 'mobx-react/native'
 import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
 import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('~/components/download/DownloadResultView')
+
+const styles = StyleSheet.create({
+    inProgress: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    error: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        margin: 5,
+        borderRadius: 10,
+        padding: 5,
+    },
+    errorRefresh: {
+        padding: 5,
+    },
+    errorText: {
+        color: '#fff',
+        fontSize: 20,
+        textAlign: 'center',
+    },
+    errorRefreshText: {
+        fontSize: 22,
+        color: config.theme.primary.medium,
+    },
+})
 
 
 /* React Component for rendering a downloadResult in its different states */
@@ -23,24 +52,6 @@ const { log, assert } = _.utils('~/components/download/DownloadResultView')
 export class DownloadResultView<T> extends PureComponent {
     inProgressMessage = null
     errorMessage = null
-
-    styles = StyleSheet.create({
-        inProgress: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        error: {
-            // flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            margin: 10,
-            borderRadius: 5,
-            padding: 5,
-            // maxHeight: 150,
-        },
-    })
 
     render = () => {
         const res = this.getDownloadResult()
@@ -74,7 +85,7 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderInProgress = () => {
-        return <View style={this.styles.inProgress}>
+        return <View style={styles.inProgress}>
             {
                 this.inProgressMessage
                     ? <T style={{fontSize: 20, color: '#000'}}>
@@ -96,11 +107,19 @@ export class DownloadResultView<T> extends PureComponent {
 
     renderError = (message : string) => {
         const errorMessage = this.formatErrorMessage(message)
-        return <Notification
-                    dismissLabel="REFRESH"
-                    onPress={this.refreshPage}
-                    message={errorMessage}
-                    textSize="medium"
-                    absolutePosition={false} />
+        return (
+            <View style={styles.error}>
+                <T style={styles.errorText}>
+                    {errorMessage}
+                </T>
+                <TouchableOpacity onPress={this.props.onPress || this.close}>
+                    <View style={styles.errorRefresh}>
+                        <T style={styles.errorRefreshText}>
+                            REFRESH
+                        </T>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        )
     }
 }

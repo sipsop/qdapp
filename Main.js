@@ -23,6 +23,7 @@ import { MenuPage } from '~/screens/MenuPage'
 import { OrderPage } from '~/screens/OrderPage'
 
 import { handleBackButton } from '~/components/AndroidBackButton'
+import { NotificationBar } from '~/components/notification/NotificationBar'
 import { SideMenu, MenuIcon } from '~/components/sidemenu/SideMenu'
 import { ControlPanel } from '~/components/sidemenu/ControlPanel'
 import { TabView } from '~/components/Tabs'
@@ -58,11 +59,20 @@ export class App extends Component {
     }
 
     renderApp = () => {
+        console.log("BAR SELECTED?", this.barSelected)
         if (!store.initialized)
             return <Loader />
-        if (!this.barSelected)
-            return <DiscoverPage />
-        return <Main />
+
+        return (
+            <View>
+                <NotificationBar />
+                {
+                    this.barSelected
+                        ? <Main />
+                        : <DiscoverPage />
+                }
+            </View>
+        )
     }
 }
 

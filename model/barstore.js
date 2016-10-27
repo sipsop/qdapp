@@ -182,11 +182,11 @@ class BarStore {
             analytics.trackSelectBar(this.barID, this.barName)
         await this.getBarDownloadResult().wait()
         /* Update the selected marker on the map */
-        if (focusOnMap && this.getBar() != null) {
-            setTimeout(() => {
-                mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
-            }, 1000)
-        }
+        // if (focusOnMap && this.getBar() != null) {
+        //     setTimeout(() => {
+        //         mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
+        //     }, 1000)
+        // }
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {

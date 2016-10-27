@@ -19,21 +19,58 @@ export type Message = {
     priority: Int,
 }
 
+export const NotificationLevels = {
+    INFO: 0,
+    WARNING: 1,
+    ERROR: 2,
+    IMPORTANT: 3,
+}
+
+const defaultMessage : Message = {
+    closeable: true,
+    buttonLabel: null,
+    priority: NotificationLevels.INFO,
+}
+
 class NotificationStore {
     @observable notifications = []
+    @observable flashed = {}
     idToMessage = {}
 
-    const defaultMessage = {
-        closeable: true,
-        buttonLabel: null,
-        priority: 0,
+    /*********************************************************************/
+    /* Derivations                                                       */
+    /*********************************************************************/
+
+    @computed get prioritizedNotifications() {
+        return _.sortBy(notificationStore.notifications, 'priority')
     }
+
+    /* Flash notification to show */
+    @computed get flashMessage() {
+        const currentID = this.currentNotification && this.currentNotification.id
+        /* Find a message that hasn't been flashed yet */
+        for (var i = 0; i < notificationStore.notifications.length; i++) {
+            const message = notificationStore.notifications[i]
+            if (message.id !== currentID && !this.flashed[message.id]) {
+                return message
+            }
+        }
+    }
+
+    @computed get currentNotification() {
+        const ns = notificationStore.prioritizedNotifications
+        return ns.length && ns[ns.length - 1]
+    }
+
+    /*********************************************************************/
+    /* Actions                                                           */
+    /*********************************************************************/
 
     /* Notify the user with a message */
     @action notify = (message) => {
         assert(message.id != null, 'message.id != null')
         assert(message.message != null, 'message.message != null')
-        this.notifications.push(message)
+        this.notifications.push({...defaultMessage, ...message})
         this.idToMessage[message.id] = message
     }
 
@@ -51,4 +88,4 @@ class NotificationStore {
     }
 }
 
-export notificationStore = new NotificationStore()
+export const notificationStore = new NotificationStore()
