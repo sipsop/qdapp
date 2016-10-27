@@ -11,7 +11,7 @@ import {
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Notification } from '../Notification.js'
+import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
 import * as _ from '~/utils/curry.js'
 

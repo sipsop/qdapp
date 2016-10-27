@@ -9,9 +9,6 @@ import * as _ from '~/utils/curry'
 
 const { assert, log } = _.utils('./model/barstatusstore.js')
 
-/*********************************************************************/
-/* Bar Status */
-
 export type TableService =
     | 'Disabled'
     | 'Food'

@@ -12,8 +12,8 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { DownloadResult, emptyResult } from '~/network/http'
-import { DownloadResultView } from './download/DownloadResultView'
-import { Notification as _Notification } from './Notification.js'
+import { DownloadResultView } from '../download/DownloadResultView'
+import { Notification as _Notification } from './Notification'
 import { barStore, barStatusStore, tagStore } from '~/model/store.js'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
@@ -78,31 +78,6 @@ export type Message = ?{
     message: String,
     closeable: ?Bool,
     dismissLabel: ?String,
-}
-
-// let barInfoDownloadResult = emptyResult()
-//
-// autorun(() => {
-//     barInfoDownloadResult = DownloadResult.combine([
-//         barStore.barDownloadResult,
-//         barStore.menuDownloadResult,
-//         tagStore.tagDownloadResult,
-//         barStatusStore.barStatusDownload,
-//     ])
-// })
-
-@observer
-export class BarInfoNotification extends DownloadResultView {
-    @computed get barInfoDownloadResult() {
-        return DownloadResult.combine([
-            barStore.barDownloadResult,
-            barStore.menuDownloadResult,
-            tagStore.tagDownloadResult,
-            barStatusStore.barStatusDownload,
-        ])
-    }
-    getDownloadResult = () => this.barInfoDownloadResult
-    renderFinished = () => null
 }
 
 @observer

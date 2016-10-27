@@ -14,7 +14,7 @@ import { observer } from 'mobx-react/native'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 
-const { assert, log } = _.utils('./Notification.js')
+const { assert, log } = _.utils(__filename)
 
 export type Position =
     | 'TopLeft'

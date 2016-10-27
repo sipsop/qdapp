@@ -16,7 +16,6 @@ import { observer } from 'mobx-react/native'
 
 import { Page } from '~/components/Page.js'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '~/components/SimpleListView.js'
-import { BarInfoNotification } from '~/components/NotificationBar.js'
 import { LargeButton } from '~/components/Button.js'
 import { SelectableButton } from '~/components/ButtonRow.js'
 import { DownloadResultView } from '~/components/download/DownloadResultView'
@@ -35,7 +34,6 @@ const { assert, log } = _.utils('./orders/OrderPage.js')
 
 assert(Page)
 assert(SimpleListView)
-assert(BarInfoNotification)
 assert(LargeButton)
 assert(SelectableButton)
 assert(DownloadResultView)
@@ -91,8 +89,6 @@ export class OrderPage extends Page {
     }
 
     renderView = () => {
-        // if (!barStatusStore.takingOrders)
-        //     return <BarInfoNotification />
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()
