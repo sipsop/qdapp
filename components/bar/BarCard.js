@@ -17,18 +17,9 @@ import { BackButton } from '../BackButton'
 import { PhotoImage } from '../PhotoImage'
 import { tabStore, mapStore, orderStore } from '~/model/store'
 import { barStore, getBarOpenTime } from '~/model/barstore'
-=======
-import React, {
-  TouchableOpacity,
-  View
-} from 'react'
-import { PureComponent } from '~/components/Component.js'
-import { observer } from 'mobx-react/native'
-import BarPhoto from './BarPhoto'
->>>>>>> Stashed changes
 
 @observer
-class BarCard extends PureComponent {
+export class BarCard extends PureComponent {
     /* properties:
         bar: Bar
         borderRadius: Int
@@ -61,5 +52,3 @@ class BarCard extends PureComponent {
         </View>)
   }
 }
-
-export default BarCard

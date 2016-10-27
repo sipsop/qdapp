@@ -71,9 +71,11 @@ class Mono extends PureComponent {
         ellipsizeMode
     */
     render = () => {
-        const style = {fontFamily: "robotomono", ...this.props.style}
+        const style = {
+            fontFamily: "robotomono",
+        }
         return <Text
-            style={style}
+            style={[style, this.props.style]}
             numberOfLines={this.props.numberOfLines}
             /* ellipsizeMode={this.props.ellipsizeMode} */
             >
