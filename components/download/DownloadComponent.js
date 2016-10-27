@@ -31,7 +31,7 @@ export class DownloadComponent extends DownloadResultView {
     }
 
     refreshPage = () => {
-        downloaManager.forceRefresh(this.downloadName)
+        downloadManager.forceRefresh(this.downloadName)
     }
 
     getDownloadResult = () => {

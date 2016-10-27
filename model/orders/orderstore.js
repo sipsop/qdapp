@@ -332,6 +332,8 @@ class OrderStore {
     }
 
     @action freshOrderToken = () => {
+        this.getPaymentTokenDownload().reset()
+        this.getPlaceOrderDownload().reset()
         this.activeOrderID = _.uuid()
     }
 

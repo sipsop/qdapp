@@ -93,6 +93,6 @@ export class PlaceOrderDownload extends QueryMutation {
     }
 
     @computed get orderResult() {
-        return this.lastValue && this.lastValue.orderResult
+        return this.value && this.value.orderResult
     }
 }

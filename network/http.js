@@ -248,11 +248,11 @@ export class JSONDownload {
         }
     }
 
-    @action setState = (downloadState) => {
-        this.downloadState  = downloadState.state
-        this._message = downloadState.message
-        this.value   = downloadState.value
-        if (downloadState.state === 'InProgress') {
+    @action setState = (savedState) => {
+        this.downloadState = savedState.state
+        this._message      = savedState.message
+        this.value         = savedState.value
+        if (savedState.state === 'InProgress') {
             this.downloadState  = 'Error'
             this._message = 'Please try again'
         }
@@ -390,6 +390,7 @@ export class JSONDownload {
     }
 
     @action downloadError = (message : string) : DownloadResult<T> => {
+        log("GOT A DOWNLOAD ERROR IN", this.name, message)
         this.errorAttempts += 1
         this.downloadState  = 'Error'
         this.value   = null
@@ -576,7 +577,7 @@ class DownloadManager {
     }
 
     initialized = () => {
-        Object.values(this.downloads).forEach(this.autoDownload)
+        Object.values(this.downloads).forEach(this.initializeDownload)
         this._initialized = true
     }
 
@@ -590,19 +591,25 @@ class DownloadManager {
         assert(this.downloads[download.name] == undefined,
                `Download.name already defined (${download.name})`)
 
-        /* Save the download */
+        /* Save and initialize the download */
         this.downloads[download.name] = download
+        if (this._initialized)
+            this.initializeDownload(download)
+    }
 
-        /* Restore the download state after e.g. an app restart
-           (useful for query mutations that shouldn't be restarted automatically)
-        */
+    initializeDownload = (download) => {
+        this.restoreDownload(download)
+        this.autoDownload(download)
+    }
+
+    /* Restore the download state after e.g. an app restart.
+       This is useful for http post/mutations that bypass the cache.
+     */
+    restoreDownload = (download) => {
         const downloadState = this.downloadStatesToRestore[download.name]
         if (downloadState != undefined && download.restoreAfterRestart) {
             download.setState(downloadState)
         }
-
-        if (this._initialized)
-            this.autoDownload(download)
     }
 
     autoDownload = (download) => {
