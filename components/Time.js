@@ -4,7 +4,7 @@ import { observer } from 'mobx-react/native'
 import { PureComponent, T } from '~/components/Component'
 
 @observer
-export class Time extends PureComponent {
+class Time extends PureComponent {
     /* properties:
         time: Time
         style: text style
@@ -22,3 +22,5 @@ export class Time extends PureComponent {
     )
   }
 }
+
+export default
