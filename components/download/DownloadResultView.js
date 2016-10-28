@@ -110,9 +110,9 @@ export class DownloadResultView<T> extends PureComponent {
         return (
             <View style={styles.error}>
                 <T style={styles.errorText}>
-                    {this.errorMessage || errorMessage}
+                    {errorMessage || this.errorMessage}
                 </T>
-                <TouchableOpacity onPress={this.props.onPress || this.close}>
+                <TouchableOpacity onPress={this.refreshPage}>
                     <View style={styles.errorRefresh}>
                         <T style={styles.errorRefreshText}>
                             REFRESH

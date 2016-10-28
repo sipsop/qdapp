@@ -173,7 +173,6 @@ class MapStore {
 
     initialized = async () => {
         // setTimeout(this.trackLocation, 2000)
-
         mapStore.trackLocation()
         /* TODO: Declarative downloads */
         await this.updateNearbyBars()
@@ -298,6 +297,7 @@ class MapStore {
         // this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby(
             'bar', pagetoken = undefined, force = force)
+        log("GOT SEARCH RESPONSE", this.searchResponse)
         this.enableMoreButton()
     }
 

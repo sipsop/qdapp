@@ -191,21 +191,11 @@ class BarStore {
 
     @action updateBarAndMenu = async (barID, force = false) => {
         await Promise.all([
-            this.updateBarInfo(barID, force = force),
-            this.updateMenuInfo(barID, force = force),
+            this.getBarDownloadResult().forceRefresh(),
+            this.getMenuDownloadResult().forceRefresh(),
         ])
     }
-
-    @action updateBarInfo = async (barID, force = false) => {
-        if (force)
-            await downloadManager.forceRefresh('barInfo')
-    }
-
-    @action updateMenuInfo = async (barID, force = false) => {
-        if (force)
-            await downloadManager.forceRefresh('menu')
-    }
-
+    
     /***********************************************************************/
     /* Menu */
 

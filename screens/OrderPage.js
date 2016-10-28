@@ -85,7 +85,7 @@ export class OrderPage extends Page {
     }
 
     handleRefresh = async () => {
-        await barStore.updateMenuInfo(barStore.barID, force = true)
+        await barStore.getMenuDownloadResult().forceRefresh()
     }
 
     renderView = () => {

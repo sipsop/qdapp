@@ -39,27 +39,14 @@ assert(TextHeader)
 assert(SelectableButton)
 assert(Descriptor)
 assert(SimpleListView)
-// assert()
-// assert()
-// assert()
-// assert()
-// assert()
-// assert()
-// assert()
-// assert()
-
-
 
 @observer
 export class DiscoverPage extends DownloadResultView {
     errorMessage      = "Error downloading list of bars"
-    refreshPage       = mapStore.updateNearbyBars
+    refreshPage       = () => mapStore.updateNearbyBars(force = true)
     getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
-    renderNotStarted  = () => <View />
-
-    renderFinished = searchResponse => {
-        return <DiscoverView />
-    }
+    renderNotStarted  = () => null
+    renderFinished    = (searchResponse) => <DiscoverView />
 }
 
 class DiscoverViewDescriptor extends Descriptor {
