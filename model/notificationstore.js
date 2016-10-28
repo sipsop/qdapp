@@ -78,6 +78,10 @@ class NotificationStore {
     @action dismiss = (id : String) => {
         /* call message.onDismiss() */
         const message = this.idToMessage[id]
+        if (!message) {
+            /* Message is not an active notification */
+            return
+        }
         message.onDismiss && message.onDismiss(id)
 
         /* Clear notification from notification list */

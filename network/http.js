@@ -757,6 +757,7 @@ class DownloadManager {
 
 export const downloadManager = new DownloadManager()
 
+/* Notify the user about download errors */
 autorun(() => {
     if (downloadManager.downloadErrorMessage) {
         notificationStore.notify({
@@ -766,6 +767,8 @@ autorun(() => {
             onDismiss: (_) => downloadManager.refreshDownloads(),
             priority: NotificationLevels.ERROR,
         })
+    } else {
+        notificationStore.dismiss('downloadErrorMessage')
     }
 })
 
