@@ -439,7 +439,7 @@ export class JSONDownload {
     }
 
     @computed get lastMessage() {
-        if (this.state === 'Error' || (this.state === 'InProgress' && this.message != null))
+        if (this.state === 'Error' || (this.state === 'InProgress' && this._message != null))
             return this.message
         return null
     }
