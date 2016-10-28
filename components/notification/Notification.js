@@ -14,7 +14,7 @@ import { observer } from 'mobx-react/native'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 
-const { assert, log } = _.utils('./Notification.js')
+const { assert, log } = _.utils(__filename)
 
 export type Position =
     | 'TopLeft'
@@ -43,8 +43,6 @@ export class Notification extends PureComponent {
             margin: Int,
             ...
         }
-        absolutePosition: Bool
-            absolute positioning for notification?
         textSize: 'small' | 'medium'
         numberOfLines: Int
             number of lines to clip message at
@@ -55,38 +53,11 @@ export class Notification extends PureComponent {
     static defaultProps = {
         closeable: true,
         dismissLabel: 'DISMISS',
-        absolutePosition: true,
         textSize: 'medium',
         dismissDirection: 'column',
     }
 
     styles = {
-        TopLeft: {
-            top: 5,
-            left: 5,
-        },
-        TopRight: {
-            top: 5,
-            right: 5,
-        },
-        TopCenter: {
-            top: 5,
-            // left set in render() method
-        },
-        Center: {
-            // left and top set in render()
-        },
-        BottomLeft: {
-            bottom: 5,
-            left: 5,
-        },
-        BottomRight: {
-            bottom: 5,
-            right: 5,
-        },
-        BottomCenter: {
-            // bottom and left set in render()
-        },
         notification: {
             flex: 1,
             justifyContent: 'center',
@@ -131,44 +102,30 @@ export class Notification extends PureComponent {
         if (!this.visible || this.props.visible === false)
             return null
 
-        const absolute = this.props.absolutePosition
         const position = this.props.position
         const style = {
-            ...absolute && this.styles[position] || undefined,
-            ...this.styles.notification,
-            ...this.props.style,
             flexDirection: this.props.dismissDirection,
+            borderRadius: 10,
         }
-
-        if (absolute) {
-            style.position = 'absolute'
-            if (!style.width && !style.minWidth)
-                style.width = width - 10
-            if (!style.height && !style.minHeight)
-                style.height = height - 10
-
-            if (position.includes('Center')) {
-                style.left = _.max(0, (width - style.width) / 2)
-                if (position === 'Center')
-                    style.top = _.max(0, (height - style.height) / 2)
-            }
-        } else if (!style.margin) {
+        if (!style.margin)
             style.margin = 5
-        }
-
         if (!style.borderRadius)
             style.borderRadius = 10
 
+        const styles = [this.styles.notification, this.props.style, style]
+
         const textSize = this.props.textSize
-        const textStyle = this.styles.textStyle[textSize]
+        const textStyles = [this.styles.textStyle[textSize]]
         if (this.props.dismissDirection === 'row') {
-            textStyle.numberOfLines = this.props.numberOfLines
+            // textStyles.push({numberOfLines: this.props.numberOfLines})
         }
 
-        return <View style={style}>
-            <T style={textStyle}>
-                {this.props.message}
-            </T>
+        return <View style={styles}>
+            <View style={{flex: 1}}>
+                <T style={textStyles}>
+                    {this.props.message}
+                </T>
+            </View>
             { this.props.closeable &&
                 <TouchableOpacity onPress={this.props.onPress || this.close}>
                     <View style={this.styles.dismiss}>

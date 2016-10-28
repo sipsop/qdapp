@@ -112,6 +112,7 @@ export class ReceiptModal extends PureComponent {
 @observer
 export class PlaceOrderDownloadView extends DownloadResultView {
     inProgressMessage = "Processing order..."
+    finishOnLastValue = false
     errorMessage      = "There was an error processing your order"
 
     getDownloadResult = () => {

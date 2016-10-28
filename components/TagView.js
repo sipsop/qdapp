@@ -20,23 +20,12 @@ import * as _ from '~/utils/curry.js'
 const { log, assert } = _.utils('./components/tags.js')
 
 @observer
-export class TagView extends DownloadResultView {
+export class TagView extends PureComponent {
     /* properties:
         children: [Component]
     */
 
-    errorMessage = "Error downloading tags"
-
-    /* TODO: Get this directly from the tagstore */
-    getDownloadResult = () => downloadManager.getDownload('tags')
-    refreshPage = async () => await downloadManager.forceRefresh('tags')
-    renderNotStarted = () => <View />
-
-    renderFinished = (tags) => {
-        // const menuItems = tagStore.getAllMenuItems()
-        // return <View>
-        //     {menuItems.map((menuItem, i) => <T key={i}>{menuItem.name + ": " + menuItem.tags}</T>)}
-        // </View>
+    render = () => {
         const { rows, menuItems } = tagStore.visibleTagRows
 
         return <View>

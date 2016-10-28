@@ -21,7 +21,6 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { Page } from '~/components/Page.js'
 import { downloadManager } from '~/network/http'
 import { DownloadResultView } from '~/components/download/DownloadResultView'
-import { NotificationBar } from '~/components/NotificationBar.js'
 import { OrderList } from '~/components/orders/OrderList.js'
 import { LargeButton } from '~/components/Button.js'
 import { TagView } from '~/components/TagView.js'
@@ -64,17 +63,7 @@ export class MenuView extends PureComponent {
 @observer
 class MenuList extends DownloadResultView {
 
-    errorMessage = "Error downloading menu"
-
-    refreshPage = async () => {
-        await Promise.all([
-            barStore.updateMenuInfo(barStore.barID, force = true),
-            downloadManager.forceRefresh('tags'),
-        ])
-    }
-
-    /* TODO: Get this from the bar store */
-    getDownloadResult = () => downloadManager.getDownload('menu')
+    getDownloadResult = () => barStore.getMenuDownloadResult()
 
     renderFinished = () => {
         {/*

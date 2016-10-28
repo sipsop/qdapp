@@ -1,25 +1,26 @@
 import { observable, action } from 'mobx'
 
 import { downloadManager } from '~/network/http'
-import { cache } from '~/network/cache.js'
-import { segment } from '~/network/segment.js'
-import * as _ from '~/utils/curry.js'
+import { cache } from '~/network/cache'
+import { segment } from '~/network/segment'
+import * as _ from '~/utils/curry'
 
-import { analytics } from './analytics.js'
-import { favStore } from './favstore.js'
-import { tabStore } from './tabstore.js'
-import { barStore } from './barstore.js'
-import { barStatusStore } from './barstatusstore.js'
-import { loginStore } from './loginstore.js'
-import { tagStore } from './tagstore.js'
-import { mapStore } from './mapstore.js'
-import { orderStore } from './orders/orderstore.js'
-import { paymentStore } from './orders/paymentstore.js'
-import { historyStore } from './historystore.js'
-import { timeStore } from './timestore.js'
-import { drawerStore } from './drawerstore.js'
+import { analytics } from './analytics'
+import { favStore } from './favstore'
+import { tabStore } from './tabstore'
+import { barStore } from './barstore'
+import { barStatusStore } from './barstatusstore'
+import { loginStore } from './loginstore'
+import { tagStore } from './tagstore'
+import { mapStore } from './mapstore'
+import { orderStore } from './orders/orderstore'
+import { paymentStore } from './orders/paymentstore'
+import { historyStore } from './historystore'
+import { timeStore } from './timestore'
+import { drawerStore } from './drawerstore'
+import { notificationStore } from './notificationstore'
 
-const log = _.logger('./model/store.js')
+const log = _.logger('./model/store')
 
 export class Store {
 
@@ -178,4 +179,5 @@ export {
     timeStore,
     segment,
     drawerStore,
+    notificationStore,
 }

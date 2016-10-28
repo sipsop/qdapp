@@ -11,48 +11,68 @@ import {
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Notification } from '../Notification.js'
+import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
+import { downloadManager } from '~/network/http'
 import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('~/components/download/DownloadResultView')
+
+const styles = StyleSheet.create({
+    inProgress: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    error: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        margin: 5,
+        borderRadius: 10,
+        padding: 5,
+    },
+    errorRefresh: {
+        padding: 5,
+    },
+    errorText: {
+        color: '#fff',
+        fontSize: 20,
+        textAlign: 'center',
+    },
+    errorRefreshText: {
+        fontSize: 22,
+        color: config.theme.primary.medium,
+    },
+})
 
 
 /* React Component for rendering a downloadResult in its different states */
 @observer
 export class DownloadResultView<T> extends PureComponent {
     inProgressMessage = null
-    errorMessage = null
 
-    styles = StyleSheet.create({
-        inProgress: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        error: {
-            // flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            margin: 10,
-            borderRadius: 5,
-            padding: 5,
-            // maxHeight: 150,
-        },
-    })
+    /* If true (default), then whenever getDownloadResult().lastValue != null,
+       we call renderFinished() even if the download is in an error state or
+       is in progress.
+    */
+    finishOnLastValue = true
+
+    /* Override default error message */
+    errorMessage      = null
 
     render = () => {
         const res = this.getDownloadResult()
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
-        if (res.state == 'NotStarted') {
+        if (res.state === 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state == 'Finished' || (res.autoDownload && res.lastValue != null)) {
+        } else if (res.state === 'Finished' || (this.finishOnLastValue && res.lastValue != null)) {
             return this.renderFinished(res.lastValue)
-        } else if (res.state == 'InProgress') {
-            return this.renderInProgress()
-        } else if (res.state == 'Error') {
+        } else if (res.state === 'Error' || (res.state === 'InProgress' && res.message)) {
             return this.renderError(res.message)
+        } else if (res.state === 'InProgress') {
+            return this.renderInProgress()
         } else {
             throw Error('unreachable')
         }
@@ -62,19 +82,18 @@ export class DownloadResultView<T> extends PureComponent {
         throw Error('NotImplemented')
     }
 
-    refreshPage = () => {
-        const downloadResult = this.getDownloadResult()
-        if (downloadResult.refresh)
-            downloadResult.refresh()
+    refreshPage = async () => {
+        await downloadManager.refreshDownloads()
     }
 
     renderNotStarted = () => null
+
     renderFinished = (value : T) => {
         throw Error('NotImplemented')
     }
 
     renderInProgress = () => {
-        return <View style={this.styles.inProgress}>
+        return <View style={styles.inProgress}>
             {
                 this.inProgressMessage
                     ? <T style={{fontSize: 20, color: '#000'}}>
@@ -88,19 +107,24 @@ export class DownloadResultView<T> extends PureComponent {
         </View>
     }
 
-    formatErrorMessage = (message : String) => {
-        const errorMessage = this.errorMessage || this.getDownloadResult().errorMessage
-        message = message && '\n' + message.strip()
-        return errorMessage + (message ? ':\n' + message : '')
-    }
-
-    renderError = (message : string) => {
-        const errorMessage = this.formatErrorMessage(message)
-        return <Notification
-                    dismissLabel="REFRESH"
-                    onPress={this.refreshPage}
-                    message={errorMessage}
-                    textSize="medium"
-                    absolutePosition={false} />
+    renderError = (errorMessage : string) => {
+        return (
+            <View style={styles.error}>
+                <T style={styles.errorText}>
+                    {errorMessage || this.errorMessage}
+                </T>
+                {
+                    this.getDownloadResult().state === 'InProgress'
+                        ? <Loader />
+                        : <TouchableOpacity onPress={this.refreshPage}>
+                            <View style={styles.errorRefresh}>
+                                <T style={styles.errorRefreshText}>
+                                    REFRESH
+                                </T>
+                            </View>
+                        </TouchableOpacity>
+                }
+            </View>
+        )
     }
 }

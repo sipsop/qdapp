@@ -1,11 +1,10 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 
-import { Cache, cache } from './cache.js'
-import { config } from '~/utils/config.js'
-import { store } from '~/model/store.js'
-import { HOST } from './host.js'
-import { getTime, Second, Minute } from '~/utils/time.js'
-import * as _ from '~/utils/curry.js'
+import { Cache, cache } from './cache'
+import { HOST } from './host'
+import { getTime, Second, Minute } from '~/utils/time'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
 
 import type { Int, Float, String, URL } from '~/utils/types.js'
 
@@ -312,11 +311,12 @@ export class JSONDownload {
 
     /* Method to force a refresh (e.g. on UI pull downs) */
     forceRefresh = async () => {
-        await this.refresh(this.refreshCacheInfo)
+        if (this.state !== 'InProgress')
+            await this.refresh(this.refreshCacheInfo)
     }
 
     refresh = async (cacheInfo) => {
-        log("Refreshing download:", this.name)
+        log("REFRESHING.............", this.name, this.errorAttempts)
         const refreshState = this.refreshState
 
         // Update timestamp
@@ -324,8 +324,9 @@ export class JSONDownload {
             this.downloadStarted()
             this.timestamp = getTime()
             if (this.refreshStateChanged) {
-                /* lastValue has become stale, clear it */
+                /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
+                this._message  = null
             }
             this.lastRefreshState = refreshState
         })
@@ -377,7 +378,6 @@ export class JSONDownload {
         this.downloadState  = state
         this._message = null
         this.value   = null
-        this.resetErrorAttempts()
         return this
     }
 
@@ -386,11 +386,13 @@ export class JSONDownload {
     }
 
     @action downloadStarted = () : DownloadResult<T> => {
-        return this.reset('InProgress')
+        this.downloadState = 'InProgress'
+        this.value = null
+        /* NOTE: Don't reset _message, as we need it for 'lastMessage' */
+        return this
     }
 
     @action downloadError = (message : string) : DownloadResult<T> => {
-        log("GOT A DOWNLOAD ERROR IN", this.name, message)
         this.errorAttempts += 1
         this.downloadState  = 'Error'
         this.value   = null
@@ -400,6 +402,7 @@ export class JSONDownload {
 
     @action downloadFinished = (value : T) : DownloadResult<T> => {
         this.reset('Finished')
+        this.resetErrorAttempts()
         this.value = value
         this.lastValue = value
         return this
@@ -425,9 +428,21 @@ export class JSONDownload {
     }
 
     @computed get message() {
+        let message
         if (this._state === 'NotStarted' || this.errorIndex >= 0)
-            return this.dependencies[this.errorIndex].message
-        return this._message
+            message = this.dependencies[this.errorIndex].message
+        else
+            message = this._message
+
+        const errorMessage = this.errorMessage || `Error downloading ${this.name}`
+        message = message && message + '\n' + message.strip()
+        return errorMessage + (message ? ':\n' + message : '')
+    }
+
+    @computed get lastMessage() {
+        if (this.state === 'Error' || (this.state === 'InProgress' && this._message != null))
+            return this.message
+        return null
     }
 
     @computed get finished() {
@@ -539,9 +554,12 @@ const getTimeoutInfo = (timeoutDesc) => {
 
 class DownloadManager {
 
+    @observable downloadNames = []
+    @observable downloads = {}
+    @observable refreshing = false
+
     constructor() {
         this._initialized = false
-        this.downloads = {}
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
     }
@@ -552,7 +570,7 @@ class DownloadManager {
 
     @computed get downloadStates() {
         const downloadStatesToRestore = {}
-        Object.values(this.downloads).forEach(download => {
+        this.downloadList.forEach(download => {
             if (download.restoreAfterRestart) {
                 downloadStatesToRestore[download.name] = download.getState()
             }
@@ -577,13 +595,17 @@ class DownloadManager {
     }
 
     initialized = () => {
-        Object.values(this.downloads).forEach(this.initializeDownload)
+        this.downloadList.forEach(this.initializeDownload)
         this._initialized = true
     }
 
     /*********************************************************************/
     /* Download Management                                               */
     /*********************************************************************/
+
+    @computed get downloadList() {
+        return this.downloadNames.map(name => this.downloads[name])
+    }
 
     declareDownload = (download) => {
         assert(download.name != null,
@@ -593,6 +615,7 @@ class DownloadManager {
 
         /* Save and initialize the download */
         this.downloads[download.name] = download
+        this.downloadNames.push(download.name)
         if (this._initialized)
             this.initializeDownload(download)
     }
@@ -626,6 +649,7 @@ class DownloadManager {
 
     removeDownload = (name) => {
         delete this.downloads[name]
+        this.downloadNames = this.downloadNames.filter(n => n != name)
         /* Dispose of autorun that re-triggers download */
         this.disposeHandlers[name]()
         delete this.disposeHandlers[name]
@@ -642,12 +666,27 @@ class DownloadManager {
         return download
     }
 
+    /*********************************************************************/
+    /* Actions                                                           */
+    /*********************************************************************/
+
     /* Refresh errored downloads, e.g. after re-gaining connectivity */
-    @action refreshDownloads = () => {
-        Object.values(this.downloads).forEach(download => {
-            download.resetErrorAttempts()
-        })
+    refreshDownloads = async () => {
+        this.refreshing = true
+        await Promise.all(
+            this.downloadList.map(async (download) => {
+                if (download.state === 'Error') {
+                    await download.forceRefresh()
+                }
+                download.resetErrorAttempts()
+            })
+        )
+        this.refreshing = false
     }
+
+    /*********************************************************************/
+    /* Helper functions                                                  */
+    /*********************************************************************/
 
     queryMutate = async (query) => {
         return await this.query(
@@ -667,7 +706,6 @@ class DownloadManager {
             timeoutDesc = 'normal',
             ) => {
         assert(typeof(query) == 'object', typeof(query))
-        // log("SENDING QUERY", JSON.stringify(query))
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -737,7 +775,6 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        // log("Fetching new data....", key, url)
         return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
@@ -788,12 +825,9 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
-    // log("HTTP RESPONSE HEADERS", response.headers)
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
     const jsonData = await response.text()
-    // log("parsing json...")
     const result = JSON.parse(jsonData.replace( /\\u2028|\\u2029/g, ''))
-    // log("done parsing json...")
     return result
     // return await response.json()
 }
