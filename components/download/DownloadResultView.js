@@ -69,10 +69,10 @@ export class DownloadResultView<T> extends PureComponent {
             return this.renderNotStarted()
         } else if (res.state === 'Finished' || (this.finishOnLastValue && res.lastValue != null)) {
             return this.renderFinished(res.lastValue)
+        } else if (res.state === 'Error' || (res.state === 'InProgress' && res.message)) {
+            return this.renderError(res.message)
         } else if (res.state === 'InProgress') {
             return this.renderInProgress()
-        } else if (res.state === 'Error') {
-            return this.renderError(res.message)
         } else {
             throw Error('unreachable')
         }
@@ -87,6 +87,7 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     renderNotStarted = () => null
+
     renderFinished = (value : T) => {
         throw Error('NotImplemented')
     }
@@ -112,13 +113,17 @@ export class DownloadResultView<T> extends PureComponent {
                 <T style={styles.errorText}>
                     {errorMessage || this.errorMessage}
                 </T>
-                <TouchableOpacity onPress={this.refreshPage}>
-                    <View style={styles.errorRefresh}>
-                        <T style={styles.errorRefreshText}>
-                            REFRESH
-                        </T>
-                    </View>
-                </TouchableOpacity>
+                {
+                    this.getDownloadResult().state === 'InProgress'
+                        ? <Loader />
+                        : <TouchableOpacity onPress={this.refreshPage}>
+                            <View style={styles.errorRefresh}>
+                                <T style={styles.errorRefreshText}>
+                                    REFRESH
+                                </T>
+                            </View>
+                        </TouchableOpacity>
+                }
             </View>
         )
     }
