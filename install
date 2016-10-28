@@ -10,6 +10,7 @@ cat >package.json <<EOF
 EOF
 
 npm install --save \
+    eslint \
     es6-map \
     lodash \
     shortid \
@@ -35,7 +36,8 @@ npm install --save \
     react-native-slider \
     react-native-swiper \
     react-native-vector-icons \
-    babel-plugin-root-import \
+    babel-root-import \
+    babel-plugin-transform-dirname-filename \
     babel-plugin-transform-decorators-legacy \
     babel-preset-react-native \
     babel-preset-react-native-stage-0 \
