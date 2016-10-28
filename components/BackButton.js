@@ -24,7 +24,6 @@ export class BackButton extends PureComponent {
     }
 
     render = () => {
-        debugger
         if (!this.props.enabled) {
             return <View />
         }

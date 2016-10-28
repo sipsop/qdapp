@@ -111,7 +111,6 @@ autorun(() => {
         var button = null
         var buttonLabel = null
         if (downloadManager.refreshing) {
-            log("SHOWING LOADER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             button = <Loader />
         } else {
             buttonLabel = 'REFRESH'

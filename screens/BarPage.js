@@ -102,7 +102,7 @@ class BarHeader extends BarInfoFetcher {
     renderInProgress = () => null
     renderFinished = (bar) => {
         return <LazyBarImages
-                    bar={barStore.getBar()}
+                    bar={bar}
                     imageHeight={this.props.imageHeight}
                     showBackButton={false} />
     }

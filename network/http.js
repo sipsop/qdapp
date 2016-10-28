@@ -385,7 +385,7 @@ export class JSONDownload {
     }
 
     @action downloadStarted = () : DownloadResult<T> => {
-        this._state = 'InProgress'
+        this.downloadState = 'InProgress'
         this.value = null
         /* NOTE: Do not reset _message, as we need it for 'lastMessage' */
         return this
