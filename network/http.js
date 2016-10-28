@@ -324,8 +324,9 @@ export class JSONDownload {
             this.downloadStarted()
             this.timestamp = getTime()
             if (this.refreshStateChanged) {
-                /* lastValue has become stale, clear it */
+                /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
+                this._message  = null
             }
             this.lastRefreshState = refreshState
         })
@@ -387,7 +388,7 @@ export class JSONDownload {
     @action downloadStarted = () : DownloadResult<T> => {
         this.downloadState = 'InProgress'
         this.value = null
-        /* NOTE: Do not reset _message, as we need it for 'lastMessage' */
+        /* NOTE: Don't reset _message, as we need it for 'lastMessage' */
         return this
     }
 
@@ -663,20 +664,6 @@ class DownloadManager {
         if (download == null)
             throw Error(`No download with name ${name}`)
         return download
-    }
-
-    /*********************************************************************/
-    /* Notifications                                                     */
-    /*********************************************************************/
-
-    @computed get downloadsWithErrors() {
-        return this.downloadList.filter(download => download.lastMessage)
-    }
-
-    @computed get downloadErrorMessage() {
-        if (this.downloadsWithErrors.length)
-            return this.downloadsWithErrors[0].lastMessage
-        return null
     }
 
     /*********************************************************************/

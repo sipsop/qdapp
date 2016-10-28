@@ -104,10 +104,35 @@ export class NotificationBar extends PureComponent {
 //     message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
 // })
 
+/*********************************************************************/
+/* Download Error Notifications                                      */
+/*********************************************************************/
+
+/* Notify the user about downloads that have previously finished successfully,
+   but have since errored (e.g. bar status updates)
+*/
+class DownloadNotifications {
+    @computed get downloadsWithErrors() {
+        return downloadManager.downloadList.filter(
+            download => download.lastMessage && download.lastValue
+        )
+    }
+
+    @computed get downloadErrorMessage() {
+        if (this.downloadsWithErrors.length)
+            return this.downloadsWithErrors[0].lastMessage
+        return null
+    }
+}
+
+const downloadNotifications = new DownloadNotifications()
 
 /* Notify the user about download errors */
+/*
 autorun(() => {
-    if (downloadManager.downloadErrorMessage) {
+    const errorMessage = downloadNotifications.downloadErrorMessage
+    const d = downloadManager.downloads['bar status']
+    if (errorMessage) {
         var button = null
         var buttonLabel = null
         if (downloadManager.refreshing) {
@@ -117,7 +142,7 @@ autorun(() => {
         }
         notificationStore.notify({
             id: 'downloadErrorMessage',
-            message: downloadManager.downloadErrorMessage,
+            message: errorMessage,
             button: button,
             buttonLabel: buttonLabel,
             onDismiss: (_) => downloadManager.refreshDownloads(),
@@ -127,3 +152,4 @@ autorun(() => {
         notificationStore.dismiss('downloadErrorMessage')
     }
 })
+*/
