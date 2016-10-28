@@ -377,7 +377,6 @@ export class JSONDownload {
         this.downloadState  = state
         this._message = null
         this.value   = null
-        this.resetErrorAttempts()
         return this
     }
 
@@ -400,6 +399,7 @@ export class JSONDownload {
 
     @action downloadFinished = (value : T) : DownloadResult<T> => {
         this.reset('Finished')
+        this.resetErrorAttempts()
         this.value = value
         this.lastValue = value
         return this
@@ -605,6 +605,7 @@ class DownloadManager {
 
         /* Save and initialize the download */
         this.downloads[download.name] = download
+        this.downloadNames.push(download.name)
         if (this._initialized)
             this.initializeDownload(download)
     }
@@ -638,6 +639,7 @@ class DownloadManager {
 
     removeDownload = (name) => {
         delete this.downloads[name]
+        this.downloadNames = this.downloadNames.filter(n => n != name)
         /* Dispose of autorun that re-triggers download */
         this.disposeHandlers[name]()
         delete this.disposeHandlers[name]
@@ -658,13 +660,19 @@ class DownloadManager {
     /* Notifications                                                     */
     /*********************************************************************/
 
+    @computed get downloadsWithErrors() {
+        return this.downloadList.filter(
+            download => download.state === 'Error'
+        )
+    }
+
+    @computed get haveErrors() {
+        return this.downloadsWithErrors.length > 0
+    }
+
     @computed get downloadErrorMessage() {
-        for (var i = 0; i < this.downloadList.length; i++) {
-            if (this.downloadList[i].state === 'Error') {
-                log("FOUND A downloAD ERRORR!!!!!!!", this.downloadList[i])
-                return this.downloadList[i].message
-            }
-        }
+        if (this.haveErrors)
+            return this.downloadsWithErrors[0].message
         return null
     }
 
@@ -673,10 +681,15 @@ class DownloadManager {
     /*********************************************************************/
 
     /* Refresh errored downloads, e.g. after re-gaining connectivity */
-    @action refreshDownloads = () => {
-        this.downloadList.forEach(download => {
-            download.resetErrorAttempts()
-        })
+    @action refreshDownloads = async () => {
+        Promise.all(
+            this.downloadList.map(async (download) => {
+                if (download.state === 'Error') {
+                    await download.forceRefresh()
+                }
+                download.resetErrorAttempts()
+            })
+        )
     }
 
     /*********************************************************************/
