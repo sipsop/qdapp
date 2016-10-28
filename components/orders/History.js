@@ -124,7 +124,6 @@ class HistoryBarCard extends DownloadComponent {
         orderResult: OrderResult
     */
     receiptModal = null
-    errorMessage = "Error downloading bar info"
 
     getDownload = () => {
         return new BarInfoDownload(() => {

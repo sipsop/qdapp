@@ -53,12 +53,21 @@ const styles = StyleSheet.create({
 export class DownloadResultView<T> extends PureComponent {
     inProgressMessage = null
 
+    /* If true (default), then whenever getDownloadResult().lastValue != null,
+       we call renderFinished() even if the download is in an error state or
+       is in progress.
+    */
+    finishOnLastValue = true
+
+    /* Override default error message */
+    errorMessage      = null
+
     render = () => {
         const res = this.getDownloadResult()
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
         if (res.state === 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state === 'Finished' || (res.autoDownload && res.lastValue != null)) {
+        } else if (res.state === 'Finished' || (this.finishOnLastValue && res.lastValue != null)) {
             return this.renderFinished(res.lastValue)
         } else if (res.state === 'InProgress') {
             return this.renderInProgress()
@@ -101,7 +110,7 @@ export class DownloadResultView<T> extends PureComponent {
         return (
             <View style={styles.error}>
                 <T style={styles.errorText}>
-                    {errorMessage}
+                    {this.errorMessage || errorMessage}
                 </T>
                 <TouchableOpacity onPress={this.props.onPress || this.close}>
                     <View style={styles.errorRefresh}>
