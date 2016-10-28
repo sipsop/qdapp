@@ -1,7 +1,6 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 
 import { Cache, cache } from './cache'
-import { notificationStore, NotificationLevels } from '~/model/notificationstore'
 import { HOST } from './host'
 import { getTime, Second, Minute } from '~/utils/time'
 import { config } from '~/utils/config'
@@ -312,11 +311,12 @@ export class JSONDownload {
 
     /* Method to force a refresh (e.g. on UI pull downs) */
     forceRefresh = async () => {
-        await this.refresh(this.refreshCacheInfo)
+        if (this.state !== 'InProgress')
+            await this.refresh(this.refreshCacheInfo)
     }
 
     refresh = async (cacheInfo) => {
-        log("Refreshing download:", this.name)
+        log("REFRESHING.............", this.name, this.errorAttempts)
         const refreshState = this.refreshState
 
         // Update timestamp
@@ -385,11 +385,13 @@ export class JSONDownload {
     }
 
     @action downloadStarted = () : DownloadResult<T> => {
-        return this.reset('InProgress')
+        this._state = 'InProgress'
+        this.value = null
+        /* NOTE: Do not reset _message, as we need it for 'lastMessage' */
+        return this
     }
 
     @action downloadError = (message : string) : DownloadResult<T> => {
-        log("GOT A DOWNLOAD ERROR IN", this.name, message)
         this.errorAttempts += 1
         this.downloadState  = 'Error'
         this.value   = null
@@ -434,6 +436,12 @@ export class JSONDownload {
         const errorMessage = this.errorMessage || `Error downloading ${this.name}`
         message = message && message + '\n' + message.strip()
         return errorMessage + (message ? ':\n' + message : '')
+    }
+
+    @computed get lastMessage() {
+        if (this.state === 'Error' || (this.state === 'InProgress' && this.message != null))
+            return this.message
+        return null
     }
 
     @computed get finished() {
@@ -547,6 +555,7 @@ class DownloadManager {
 
     @observable downloadNames = []
     @observable downloads = {}
+    @observable refreshing = false
 
     constructor() {
         this._initialized = false
@@ -661,18 +670,12 @@ class DownloadManager {
     /*********************************************************************/
 
     @computed get downloadsWithErrors() {
-        return this.downloadList.filter(
-            download => download.state === 'Error'
-        )
-    }
-
-    @computed get haveErrors() {
-        return this.downloadsWithErrors.length > 0
+        return this.downloadList.filter(download => download.lastMessage)
     }
 
     @computed get downloadErrorMessage() {
-        if (this.haveErrors)
-            return this.downloadsWithErrors[0].message
+        if (this.downloadsWithErrors.length)
+            return this.downloadsWithErrors[0].lastMessage
         return null
     }
 
@@ -681,8 +684,9 @@ class DownloadManager {
     /*********************************************************************/
 
     /* Refresh errored downloads, e.g. after re-gaining connectivity */
-    @action refreshDownloads = async () => {
-        Promise.all(
+    refreshDownloads = async () => {
+        this.refreshing = true
+        await Promise.all(
             this.downloadList.map(async (download) => {
                 if (download.state === 'Error') {
                     await download.forceRefresh()
@@ -690,6 +694,7 @@ class DownloadManager {
                 download.resetErrorAttempts()
             })
         )
+        this.refreshing = false
     }
 
     /*********************************************************************/
@@ -714,7 +719,6 @@ class DownloadManager {
             timeoutDesc = 'normal',
             ) => {
         assert(typeof(query) == 'object', typeof(query))
-        // log("SENDING QUERY", JSON.stringify(query))
         const httpOptions = {
             method: 'POST',
             headers: {
@@ -770,21 +774,6 @@ class DownloadManager {
 
 export const downloadManager = new DownloadManager()
 
-/* Notify the user about download errors */
-autorun(() => {
-    if (downloadManager.downloadErrorMessage) {
-        notificationStore.notify({
-            id: 'downloadErrorMessage',
-            message: downloadManager.downloadErrorMessage,
-            buttonLabel: 'REFRESH',
-            onDismiss: (_) => downloadManager.refreshDownloads(),
-            priority: NotificationLevels.ERROR,
-        })
-    } else {
-        notificationStore.dismiss('downloadErrorMessage')
-    }
-})
-
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError
 
@@ -799,7 +788,6 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        // log("Fetching new data....", key, url)
         return await simpleFetchJSON(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
@@ -850,12 +838,9 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
-    // log("HTTP RESPONSE HEADERS", response.headers)
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
     const jsonData = await response.text()
-    // log("parsing json...")
     const result = JSON.parse(jsonData.replace( /\\u2028|\\u2029/g, ''))
-    // log("done parsing json...")
     return result
     // return await response.json()
 }

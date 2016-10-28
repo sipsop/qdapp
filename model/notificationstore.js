@@ -12,6 +12,7 @@ export type Message = {
     reappearTimeout: Int,
 
     closeable: Bool,
+    button: Component,
     buttonLabel: String,
     onDismiss: (id : String) => void,
 
@@ -28,6 +29,7 @@ export const NotificationLevels = {
 
 const defaultMessage : Message = {
     closeable: true,
+    button: null,
     buttonLabel: null,
     priority: NotificationLevels.INFO,
 }

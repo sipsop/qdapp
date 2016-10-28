@@ -229,10 +229,7 @@ class BarIcons extends BarInfoFetcher {
 
 @observer
 class MenuView extends DownloadResultView {
-    errorMessage = "Error downloading menu"
-    refreshPage = () => barStore.updateMenuInfo(barStore.barID, force = true)
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    // renderError = () => null
     renderFinished = (menu) => <BarMenu menu={menu} />
 }
 

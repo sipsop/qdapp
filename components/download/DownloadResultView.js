@@ -13,6 +13,7 @@ import { observer } from 'mobx-react/native'
 
 import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
+import { downloadManager } from '~/network/http'
 import * as _ from '~/utils/curry.js'
 import { config } from '~/utils/config.js'
 
@@ -55,13 +56,13 @@ export class DownloadResultView<T> extends PureComponent {
     render = () => {
         const res = this.getDownloadResult()
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
-        if (res.state == 'NotStarted') {
+        if (res.state === 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state == 'Finished' || (res.autoDownload && res.lastValue != null)) {
+        } else if (res.state === 'Finished' || (res.autoDownload && res.lastValue != null)) {
             return this.renderFinished(res.lastValue)
-        } else if (res.state == 'InProgress') {
+        } else if (res.state === 'InProgress') {
             return this.renderInProgress()
-        } else if (res.state == 'Error') {
+        } else if (res.state === 'Error') {
             return this.renderError(res.message)
         } else {
             throw Error('unreachable')
@@ -72,10 +73,8 @@ export class DownloadResultView<T> extends PureComponent {
         throw Error('NotImplemented')
     }
 
-    refreshPage = () => {
-        const downloadResult = this.getDownloadResult()
-        if (downloadResult.refresh)
-            downloadResult.refresh()
+    refreshPage = async () => {
+        await downloadManager.refreshDownloads()
     }
 
     renderNotStarted = () => null

@@ -12,8 +12,11 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { DownloadResultView } from '../download/DownloadResultView'
+import { Loader } from '../Page'
 import { Notification } from './Notification'
-import { notificationStore } from '~/model/notificationstore'
+
+import { notificationStore, NotificationLevels } from '~/model/notificationstore'
+import { downloadManager } from '~/network/http'
 import * as _ from '~/utils/curry'
 import { config } from '~/utils/config'
 
@@ -26,7 +29,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         height: 55,
-        margin: 5,
+        marginTop: 2,
+        marginLeft: 5,
+        marginRight: 5,
+        marginBottom: -3,
         padding: 5,
         borderRadius: 10,
     },
@@ -78,9 +84,13 @@ export class NotificationBar extends PureComponent {
                 { message.closeable &&
                     <TouchableOpacity onPress={dismiss}>
                         <View style={styles.dismissButton}>
-                            <T style={styles.dismissText}>
-                                {message.buttonLabel || 'DISMISS'}
-                            </T>
+                            {
+                                message.button
+                                    ? message.button
+                                    : <T style={styles.dismissText}>
+                                        {message.buttonLabel || 'DISMISS'}
+                                      </T>
+                            }
                         </View>
                     </TouchableOpacity>
                 }
@@ -93,3 +103,28 @@ export class NotificationBar extends PureComponent {
 //     id: 'hello',
 //     message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
 // })
+
+
+/* Notify the user about download errors */
+autorun(() => {
+    if (downloadManager.downloadErrorMessage) {
+        var button = null
+        var buttonLabel = null
+        if (downloadManager.refreshing) {
+            log("SHOWING LOADER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            button = <Loader />
+        } else {
+            buttonLabel = 'REFRESH'
+        }
+        notificationStore.notify({
+            id: 'downloadErrorMessage',
+            message: downloadManager.downloadErrorMessage,
+            button: button,
+            buttonLabel: buttonLabel,
+            onDismiss: (_) => downloadManager.refreshDownloads(),
+            priority: NotificationLevels.ERROR,
+        })
+    } else {
+        notificationStore.dismiss('downloadErrorMessage')
+    }
+})

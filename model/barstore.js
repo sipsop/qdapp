@@ -158,7 +158,7 @@ class BarStore {
     /* Downloads */
     /*********************************************************************/
 
-    getBarDownloadResult = () => downloadManager.getDownload('barInfo')
+    getBarDownloadResult = () => downloadManager.getDownload('bar details')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
 
     getBar = () => {
