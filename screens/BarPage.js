@@ -434,7 +434,6 @@ export class BarImages extends PureComponent {
 
     render = () => {
         const bar = this.props.bar
-
         const imageHeight = this.props.imageHeight
 
         return (
@@ -445,7 +444,7 @@ export class BarImages extends PureComponent {
                 showButtons={true}
                 >
                 {
-                    bar.photos.map((photo, i) =>
+                    bar.photos && bar.photos.map((photo, i) =>
                         <LazyBarPhoto
                             key={photo.url}
                             bar={bar}
