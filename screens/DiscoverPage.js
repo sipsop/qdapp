@@ -211,6 +211,7 @@ class MapPage extends PureComponent {
                         bar={bar}
                         imageHeight={150}
                         showMapButton={false}
+                        showBorder={true}
                         />
                 </View>
             }

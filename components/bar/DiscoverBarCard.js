@@ -19,6 +19,10 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
+    border: {
+        borderColor: '#000',
+        borderWidth: 0.5,
+    },
 })
 
 @observer
@@ -30,11 +34,14 @@ export class DiscoverBarCard extends PureComponent {
             bar info
         onBack: ?() => void
         showBackButton: Bool
+        showBorder: Bool
+            show a border around the bar card
     */
     modal = null
 
     static defaultProps = {
         borderRadius: 5,
+        showBorder: false,
     }
 
     handleCardPress = () => {
@@ -58,11 +65,13 @@ export class DiscoverBarCard extends PureComponent {
 
         const viewStyle = {
             height: this.props.imageHeight,
-            borderRadius: this.props.borderRadius,
+            // borderRadius: this.props.borderRadius,
         }
 
+        const borderStyle = this.props.showBorder && styles.border
+
         return (
-            <View style={[styles.view, viewStyle]}>
+            <View style={[styles.view, viewStyle, borderStyle]}>
                 <ConfirmChangeBarModal
                     ref={ref => this.modal = ref}
                     onConfirm={this.setBar}
