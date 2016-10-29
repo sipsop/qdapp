@@ -15,6 +15,7 @@ import { tagStore } from './tagstore'
 import { mapStore } from './mapstore'
 import { orderStore } from './orders/orderstore'
 import { paymentStore } from './orders/paymentstore'
+import { orderStatusStore } from './orders/orderstatusstore'
 import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
@@ -56,6 +57,7 @@ export class Store {
         await mapStore.initialize()
         await orderStore.initialize()
         await paymentStore.initialize()
+        await orderStatusStore.initialize()
         await historyStore.initialize()
         await timeStore.initialize()
         await segment.initialize()
@@ -99,6 +101,8 @@ export class Store {
             loginStore.setState(state.loginState)
         if (state.orderState)
             orderStore.setState(state.orderState)
+        if (state.orderStatusState)
+            orderStatusStore.setState(state.orderStatusState)
         if (state.mapState)
             mapStore.setState(state.mapState)
         if (state.tagState)
@@ -117,6 +121,7 @@ export class Store {
             tabState:               tabStore.getState(),
             loginState:             loginStore.getState(),
             orderState:             orderStore.getState(),
+            orderStatusState:       orderStatusStore.getState(),
             mapState:               mapStore.getState(),
             tagState:               tagStore.getState(),
             segment:                segment.getState(),
@@ -175,6 +180,7 @@ export {
     mapStore,
     orderStore,
     paymentStore,
+    orderStatusStore,
     historyStore,
     timeStore,
     segment,

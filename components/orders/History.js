@@ -11,7 +11,7 @@ import { barStore, loginStore, orderStore } from '~/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { Receipt } from './Receipt.js'
 import { DownloadComponent } from '../download/DownloadComponent'
-import { HistoryQueryDownload } from '~/network/api/history'
+import { HistoryQueryDownload } from '~/network/api/orders/history'
 import { BarInfoDownload } from '~/network/api/maps/place-info.js'
 
 import { config } from '~/utils/config.js'

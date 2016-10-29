@@ -3,14 +3,15 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { StripeTokenDownload } from '~/network/api/payment.js'
-import { PlaceOrderDownload } from '~/network/api/order.js'
+import { StripeTokenDownload } from '~/network/api/orders/payment'
+import { PlaceOrderDownload } from '~/network/api/orders/order'
 import { downloadManager } from '~/network/http.js'
 /* TODO: Imports */
 import { addToSelection } from './orderSelection.js'
 import { barStore } from '../barstore.js'
 import { paymentStore } from './paymentstore.js'
 import { loginStore } from '../loginstore.js'
+import { orderStatusStore } from './orderstatusstore'
 import * as _ from '~/utils/curry.js'
 
 import type { BarID, MenuItemID, DateType, Time } from '../bar/Bar.js'
@@ -297,6 +298,7 @@ class OrderStore {
         }))
         downloadManager.declareDownload(new PlaceOrderDownload(() => {
             return {
+                orderID:             this.getActiveOrderToken(),
                 barID:               barStore.barID,
                 stripeToken:         this.stripeToken,
                 authToken:           loginStore.getAuthToken(),
@@ -344,6 +346,8 @@ class OrderStore {
         if (this.stripeToken) {
             /* Submit order to server along with stripe token */
             await this.getPlaceOrderDownload().forceRefresh()
+            if (this.orderResult)
+                orderStatusStore.setOrderID(this.getActiveOrderToken())
         }
     }
 

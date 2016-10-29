@@ -1,5 +1,5 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { QueryDownload } from '../http.js'
+import { QueryDownload } from '~/network/http.js'
 import { OrderResultQuery } from './order.js'
 
 export class HistoryQueryDownload extends QueryDownload {
@@ -11,7 +11,7 @@ export class HistoryQueryDownload extends QueryDownload {
     name = 'history'
 
     @computed get cacheKey() {
-        return `qd:history:userID${this.props.userID}`
+        return `qd:history:userID=${this.props.userID}`
     }
 
     @computed get active() {

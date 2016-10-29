@@ -1,6 +1,6 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { QueryMutation } from '~/network/http.js'
-import { MenuItemQuery } from './bar/menu.js'
+import { MenuItemQuery } from '../bar/menu.js'
 
 export const OrderItemQuery = {
     id:                 'String',
@@ -33,6 +33,7 @@ export const OrderResultQuery = {
 
 export class PlaceOrderDownload extends QueryMutation {
     /* properties:
+        orderID:                String
         barID:                  String
         stripeToken:            String
         authToken:              String
@@ -73,6 +74,7 @@ export class PlaceOrderDownload extends QueryMutation {
         return {
             PlaceOrder: {
                 args: {
+                    orderID:        this.props.orderID,
                     barID:          this.props.barID,
                     authToken:      this.props.authToken,
                     userName:       this.props.userName,

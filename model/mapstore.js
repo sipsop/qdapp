@@ -297,7 +297,7 @@ class MapStore {
         // this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby(
             'bar', pagetoken = undefined, force = force)
-        log("GOT SEARCH RESPONSE", this.searchResponse)
+        // log("GOT SEARCH RESPONSE", this.searchResponse)
         this.enableMoreButton()
     }
 

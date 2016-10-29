@@ -15,6 +15,7 @@ import { DownloadResultView } from '../download/DownloadResultView'
 import { Loader } from '../Page'
 import { Notification } from './Notification'
 
+import { store, orderStatusStore } from '~/model/store'
 import { notificationStore, NotificationLevels } from '~/model/notificationstore'
 import { downloadManager } from '~/network/http'
 import * as _ from '~/utils/curry'
@@ -103,6 +104,25 @@ export class NotificationBar extends PureComponent {
 //     id: 'hello',
 //     message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
 // })
+
+/*********************************************************************/
+/* Order Status Notifications                                        */
+/*********************************************************************/
+
+/* Notify the user about the order status */
+autorun(() => {
+    if (orderStatusStore.haveUncompletedOrder) {
+        log("MESSAGE!", orderStatusStore.orderStatusMessage)
+        notificationStore.notify({
+            id:       'order status',
+            message:  orderStatusStore.orderStatusMessage,
+            priority: NotificationLevels.IMPORTANT,
+        })
+    } else {
+        log("DIMISSING ORDER STATUS")
+        notificationStore.dismiss('order status')
+    }
+})
 
 /*********************************************************************/
 /* Download Error Notifications                                      */
