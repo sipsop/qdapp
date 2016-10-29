@@ -427,6 +427,10 @@ export class JSONDownload {
         return -1
     }
 
+    @computed get haveErrorMessage() {
+        return this._message != null
+    }
+
     @computed get message() {
         let message
         if (this._state === 'NotStarted' || this.errorIndex >= 0)
