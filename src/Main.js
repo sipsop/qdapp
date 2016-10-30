@@ -20,10 +20,10 @@ import { ControlPanel } from './components/sidemenu/ControlPanel'
 import { TabView } from './components/Tabs'
 import { Loader } from './components/Page'
 
-import { store, barStore, tabStore } from '~/src/model/store'
+import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
 
-const { log, assert } = _.utils('~/Main')
+const { log, assert } = _.utils('~/src/Main')
 
 /* Do not allow font scaling */
 Text.defaultProps.allowFontScaling = false
@@ -45,7 +45,7 @@ export class Main extends Component {
         }
     }
     @computed get barSelected () {
-        return !barStore.barID || tabStore.currentPage !== 0
+        return !!barStore.barID || tabStore.currentPage !== 0
     }
     render = () => {
         if (!store.initialized) {
