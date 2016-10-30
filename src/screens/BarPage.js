@@ -10,7 +10,7 @@ import {
     Icon,
     MaterialIcon,
     StyleSheet,
-} from '~/src/components/Component'
+} from '/components/Component'
 import Dimensions from 'Dimensions'
 import Swiper from 'react-native-swiper'
 import { observable, action, computed, transaction } from 'mobx'
@@ -19,26 +19,26 @@ import LinearGradient from 'react-native-linear-gradient'
 import ParallaxScrollView from 'react-native-parallax-scroll-view'
 import { phonecall, email, web } from 'react-native-communications'
 
-import { BarMenu } from '~/src/components/bar/BarMenu'
-import { BarCardFooter } from '~/src/components/bar/BarCardFooter'
-import { LazyBarPhoto } from '~/src/components/bar/LazyBarPhoto'
-import { OpeningTimeView } from '~/src/components/OpeningTimeView'
-import { themedRefreshControl } from '~/src/components/SimpleListView'
-import { DownloadResultView } from '~/src/components/download/DownloadResultView'
-import { TextHeader } from '~/src/components/Header'
-import { TextSelectorRow } from '~/src/components/Selector'
-import { SimpleModal } from '~/src/components/Modals'
-import { LazyComponent } from '~/src/components/LazyComponent'
-import { PhotoImage } from '~/src/components/PhotoImage'
-import { Page } from '~/src/components/Page'
-import { ImageSwiper } from '~/src/components/ImageSwiper'
-import { LargeButton } from '~/src/components/Button'
-import { FavBarContainer } from '~/src/components/Fav'
-import { tabStore, barStore, timeStore, mapStore, segment } from '~/src/model/store'
-import { config } from '~/src/utils/config'
-import * as _ from '~/src/utils/curry'
+import { BarMenu } from '/components/bar/BarMenu'
+import { BarCardFooter } from '/components/bar/BarCardFooter'
+import { LazyBarPhoto } from '/components/bar/LazyBarPhoto'
+import { OpeningTimeView } from '/components/OpeningTimeView'
+import { themedRefreshControl } from '/components/SimpleListView'
+import { DownloadResultView } from '/components/download/DownloadResultView'
+import { TextHeader } from '/components/Header'
+import { TextSelectorRow } from '/components/Selector'
+import { SimpleModal } from '/components/Modals'
+import { LazyComponent } from '/components/LazyComponent'
+import { PhotoImage } from '/components/PhotoImage'
+import { Page } from '/components/Page'
+import { ImageSwiper } from '/components/ImageSwiper'
+import { LargeButton } from '/components/Button'
+import { FavBarContainer } from '/components/Fav'
+import { tabStore, barStore, timeStore, mapStore, segment } from '/model/store'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
-const { assert, log } = _.utils('~/src/components/bar/BarPage')
+const { assert, log } = _.utils('/components/bar/BarPage')
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {
@@ -267,7 +267,7 @@ class BarFooter extends BarInfoFetcher {
             </View>
             <View style={{alignItems: 'center'}}>
                 <Image
-                    source={require('~/logos/powered_by_google_on_white.png')}
+                    source={require('../../logos/powered_by_google_on_white.png')}
                     />
                 {/* TODO: display additional attribution stuff here */}
             </View>

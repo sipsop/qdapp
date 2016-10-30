@@ -9,7 +9,7 @@ import {
     Img,
     StyleSheet,
     T,
-} from '~/src/components/Component'
+} from '/components/Component'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -18,17 +18,17 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { Page } from '~/src/components/Page'
-import { downloadManager } from '~/src/network/http'
-import { DownloadResultView } from '~/src/components/download/DownloadResultView'
-import { NotificationBar } from '~/src/components/notification/NotificationBar'
-import { OrderList } from '~/src/components/orders/OrderList'
-import { LargeButton } from '~/src/components/Button'
-import { TagView } from '~/src/components/TagView'
+import { Page } from '/components/Page'
+import { downloadManager } from '/network/http'
+import { DownloadResultView } from '/components/download/DownloadResultView'
+import { NotificationBar } from '/components/notification/NotificationBar'
+import { OrderList } from '/components/orders/OrderList'
+import { LargeButton } from '/components/Button'
+import { TagView } from '/components/TagView'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '~/src/model/store'
-import { config } from '~/src/utils/config'
-import * as _ from '~/src/utils/curry'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '/model/store'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
 /*********************************************************************/
 

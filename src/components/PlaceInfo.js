@@ -5,9 +5,9 @@ import {
     StyleSheet,
     PureComponent,
     T,
-} from '~/src/components/Component'
+} from '/components/Component'
 import { observer } from 'mobx-react/native'
-import { tabStore, mapStore } from '~/src/model/store.js'
+import { tabStore, mapStore } from '/model/store.js'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 

@@ -2,11 +2,11 @@ import React from 'react'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { barStore } from '~/src/model/barstore.js'
-import { orderStore } from '~/src/model/store.js'
+import { barStore } from '/model/barstore.js'
+import { orderStore } from '/model/store.js'
 import { SmallOkCancelModal } from '../Modals.js'
 
-import { PureComponent } from '~/src/components/Component'
+import { PureComponent } from '/components/Component'
 
 @observer
 export class ConfirmChangeBarModal extends PureComponent {

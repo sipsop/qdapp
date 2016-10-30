@@ -1,4 +1,4 @@
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '/utils/curry.js'
 
 export const addToSelection = (optionType : OptionType, selection : [String], option : String) => {
     newSelection = selection.slice()

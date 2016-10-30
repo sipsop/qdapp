@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -15,11 +15,11 @@ import { DownloadResultView } from '../download/DownloadResultView'
 import { Loader } from '../Page'
 import { Notification } from './Notification'
 
-import { store, orderStatusStore } from '~/src/model/store'
-import { notificationStore, NotificationLevels } from '~/src/model/notificationstore'
-import { downloadManager } from '~/src/network/http'
-import * as _ from '~/src/utils/curry'
-import { config } from '~/src/utils/config'
+import { store, orderStatusStore } from '/model/store'
+import { notificationStore, NotificationLevels } from '/model/notificationstore'
+import { downloadManager } from '/network/http'
+import * as _ from '/utils/curry'
+import { config } from '/utils/config'
 
 const { assert, log } = _.utils(__filename)
 

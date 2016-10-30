@@ -1,7 +1,7 @@
 import { computed } from 'mobx'
-import { QueryDownload } from '~/src/network/http'
+import { QueryDownload } from '/network/http'
 import { OrderResultQuery } from './order'
-import { config } from '~/src/utils/config'
+import { config } from '/utils/config'
 
 export class OrderStatusDownload extends QueryDownload {
     /* properties:

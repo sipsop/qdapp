@@ -1,11 +1,11 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '~/src/network/http'
-import { BarStatusDownload } from '~/src/network/api/bar/barstatus'
-import { segment } from '~/src/network/segment'
+import { downloadManager } from '/network/http'
+import { BarStatusDownload } from '/network/api/bar/barstatus'
+import { segment } from '/network/segment'
 import { barStore } from './barstore'
-import { config } from '~/src/utils/config'
-import * as _ from '~/src/utils/curry'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
 const { assert, log } = _.utils('./model/barstatusstore.js')
 

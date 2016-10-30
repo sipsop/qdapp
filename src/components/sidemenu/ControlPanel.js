@@ -1,5 +1,5 @@
 import { React, Component, ScrollView, View, TouchableOpacity, Image,
-         Icon, PureComponent, T } from '~/src/components/Component'
+         Icon, PureComponent, T } from '/components/Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -12,18 +12,18 @@ import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
 
-import { downloadManager } from '~/src/network/http.js'
+import { downloadManager } from '/network/http.js'
 import { DownloadResultView } from '../download/DownloadResultView'
-import { store, loginStore, tabStore, drawerStore } from '~/src/model/store.js'
-import { analytics } from '~/src/model/analytics.js'
-import { segment } from '~/src/network/segment.js'
-import { config } from '~/src/utils/config.js'
-import { cache } from '~/src/network/cache.js'
-import * as _ from '~/src/utils/curry.js'
+import { store, loginStore, tabStore, drawerStore } from '/model/store.js'
+import { analytics } from '/model/analytics.js'
+import { segment } from '/network/segment.js'
+import { config } from '/utils/config.js'
+import { cache } from '/network/cache.js'
+import * as _ from '/utils/curry.js'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 
-const { log, assert } = _.utils('~/src/components/sidemenu/ControlPanel.js')
+const { log, assert } = _.utils('/components/sidemenu/ControlPanel.js')
 assert(drawerStore != null, 'drawerStore is null')
 
 @observer

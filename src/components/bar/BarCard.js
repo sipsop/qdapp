@@ -4,7 +4,7 @@ import {
     TouchableOpacity,
     PureComponent,
     StyleSheet
-} from '~/src/components/Component'
+} from '/components/Component'
 import { action, computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -15,8 +15,8 @@ import { SmallOkCancelModal } from '../Modals'
 import { BarPhoto } from './BarPhoto'
 import { BackButton } from '../BackButton'
 import { PhotoImage } from '../PhotoImage'
-import { tabStore, mapStore, orderStore } from '~/src/model/store'
-import { barStore, getBarOpenTime } from '~/src/model/barstore'
+import { tabStore, mapStore, orderStore } from '/model/store'
+import { barStore, getBarOpenTime } from '/model/barstore'
 
 @observer
 export class BarCard extends PureComponent {

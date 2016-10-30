@@ -14,7 +14,7 @@ module.exports = function(babel) {
 
                 let ref = node.source.value
 
-                // ensure a value, make sure it's not home relative e.g. ~/foo
+                // ensure a value, make sure it's not home relative e.g. /foo
                 if (!ref || ref[0] !== '/') {
                     return node
                 }

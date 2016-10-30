@@ -1,5 +1,5 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { QueryDownload } from '~/src/network/http.js'
+import { QueryDownload } from '/network/http.js'
 import { OrderResultQuery } from './order.js'
 
 export class HistoryQueryDownload extends QueryDownload {

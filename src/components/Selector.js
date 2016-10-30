@@ -10,16 +10,16 @@ import {
     ListView,
     PureComponent,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Button } from './Button.js'
-import { config } from '~/src/utils/config.js'
+import { config } from '/utils/config.js'
 import { SmallOkCancelModal } from './Modals.js'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils('./Selector.js')
 

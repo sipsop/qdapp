@@ -1,5 +1,5 @@
-import { React, Component, Icon } from '~/src/components/Component'
-import * as _ from '~/src/utils/curry'
+import { React, Component, Icon } from '/components/Component'
+import * as _ from '/utils/curry'
 import creditCardType from 'credit-card-type'
 
 const { log, assert } = _.utils('./Payment/CreditCardInfo')

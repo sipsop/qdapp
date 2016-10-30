@@ -1,10 +1,10 @@
 import { observable, computed, action, asMap } from 'mobx'
 import shortid from 'shortid'
 
-import { OrderStatusDownload } from '~/src/network/api/orders/orderstatus'
-import { downloadManager } from '~/src/network/http'
+import { OrderStatusDownload } from '/network/api/orders/orderstatus'
+import { downloadManager } from '/network/http'
 import { loginStore } from '../loginstore'
-import * as _ from '~/src/utils/curry'
+import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils(__filename)
 

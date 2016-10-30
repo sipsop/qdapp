@@ -1,15 +1,15 @@
 import { UIManager } from 'react-native'
-import { React, Component, PureComponent, Platform } from '~/src/components/Component'
+import { React, Component, PureComponent, Platform } from '/components/Component'
 import { CardIOModule, CardIOUtilities } from 'react-native-awesome-card-io'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { LargeButton } from '../Button'
-import { logger } from '~/src/utils/curry'
-import { paymentStore } from '~/src/model/orders/paymentstore'
-import { analytics } from '~/src/model/analytics'
-import { config } from '~/src/utils/config'
+import { logger } from '/utils/curry'
+import { paymentStore } from '/model/orders/paymentstore'
+import { analytics } from '/model/analytics'
+import { config } from '/utils/config'
 
 
 const log = logger('Payment/CardInput')

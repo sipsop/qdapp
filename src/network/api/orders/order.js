@@ -1,5 +1,5 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
-import { QueryMutation } from '~/src/network/http'
+import { QueryMutation } from '/network/http'
 import { MenuItemQuery } from '../bar/menu'
 
 export const OrderItemQuery = {

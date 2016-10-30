@@ -6,8 +6,8 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Drawer from 'react-native-drawer'
 
-import { PureComponent, T } from '~/src/components/Component.js'
-import { drawerStore } from '~/src/model/drawerstore.js'
+import { PureComponent, T } from '/components/Component.js'
+import { drawerStore } from '/model/drawerstore.js'
 
 @observer
 export class SideMenu extends PureComponent {
