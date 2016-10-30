@@ -1,9 +1,7 @@
 # OSX
-#
 .DS_Store
 
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -33,12 +31,10 @@ local.properties
 ios/Pods
 
 # node.js
-#
 node_modules/
 npm-debug.log
 
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-android/keystores/debug.keystore
+# Project
+assets/build/
+android/app/src/main/res/drawable-*
+.env.js

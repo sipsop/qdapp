@@ -1,7 +1,6 @@
 {
  "presets": [
-    // {"plugins": ["./plugins/babelRelayPlugin"]},
-    "react-native"
+   "react-native-stage-0/decorator-support"
   ],
  "plugins": [
    "transform-decorators-legacy",
@@ -9,15 +8,5 @@
    "syntax-flow",
    "babel-root-import",
    "babel-plugin-transform-dirname-filename"
-
-   // "./plugins/babel-plugin-root-import.js"
-
-   // "transform-class-properties",
-   // "transform-es2015-classes",
-   // [ "transform-async-to-module-method", {
-   //     "module": "bluebird",
-   //     "method": "coroutine"
-   //   }
-   // ]
  ]
 }

@@ -1,0 +1,105 @@
+import React, { Component } from 'react'
+import { View, TouchableOpacity, Platform } from 'react-native'
+import { observable, transaction, computed, action } from 'mobx'
+import { observer } from 'mobx-react/native'
+
+import Icon from 'react-native-vector-icons/FontAwesome'
+import Drawer from 'react-native-drawer'
+
+import { PureComponent, T } from '~/src/components/Component.js'
+import { drawerStore } from '~/src/model/drawerstore.js'
+
+@observer
+export class SideMenu extends PureComponent {
+    /* properties:
+        content: Component or [Component]
+    */
+    render = () => {
+        //Parallax Effect (slack style)
+        const open = drawerStore.open
+        const content = open ? this.props.content : undefined
+        return <Drawer
+                    ref={ref => { this.drawer = ref}}
+                    open={drawerStore.open}
+                    onOpen={drawerStore.setOpen}
+                    onClose={drawerStore.setClosed}
+                    /*type="static"*/
+                    type="overlay"
+                    content={content}
+                    openDrawerOffset={0.25}
+                    panCloseMask={0.25}
+                    styles={drawerStore.drawerStyle}
+                    disabled={drawerStore.disabled}
+                    tweenHandler={tweenHandlers.material}
+                    tapToClose={true}
+                    /*elevation={2}*/
+                    styles={{
+                        drawer: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        },
+                    }}
+                    >
+                {this.props.children}
+            </Drawer>
+    }
+}
+
+/* See https://github.com/root-two/react-native-drawer/blob/master/examples/RNDrawerDemo/tweens.js */
+
+let deviceScreen = require('Dimensions').get('window')
+
+const tweenHandlers = {
+    material: (ratio) => {
+        let drawerShadow = ratio < .2 ? ratio*5*5 : 5
+        return {
+            drawer: {
+                shadowRadius: drawerShadow,
+            },
+            main: {
+                opacity:(2-ratio)/2,
+            },
+        }
+    },
+    rotate: (ratio) => {
+        let r0 = -ratio/8
+        let r1 = 1-ratio/2
+        let t = [
+            r1,  r0,  0,  0,
+            -r0, r1,  0,  0,
+            0,   0,   1,  0,
+            0,   0,   0,  1,
+            ]
+
+            return {
+                main: {
+                    transformMatrix:t,
+                    left: ratio*300,
+                },
+            }
+    },
+    parallax: (ratio) => {
+        let r1 = 1
+        let t = [
+            r1,  0,  0,  0,
+            0, r1,  0,  0,
+            0,   0,   1,  0,
+            0,   0,   0,  1,
+            ]
+            return {
+                main: {
+                    left:deviceScreen.width*ratio/2,
+                    transformMatrix: t,
+                    opacity: 1-ratio*.3
+                },
+            }
+    },
+}
+
+@observer
+export class MenuIcon extends PureComponent {
+    render = () => {
+        return <TouchableOpacity onPress={drawerStore.toggleOpenClose}>
+            <Icon name="bars" size={30} color="#000" />
+        </TouchableOpacity>
+    }
+}
