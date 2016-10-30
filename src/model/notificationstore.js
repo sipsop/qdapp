@@ -1,6 +1,6 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
-import * as _ from '~/utils/curry.js'
-import type { Int, Float, String, URL } from '~/utils/types.js'
+import * as _ from '~/src/utils/curry.js'
+import type { Int, Float, String, URL } from '~/src/utils/types.js'
 
 const { log, assert } = _.utils(__filename)
 

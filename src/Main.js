@@ -19,6 +19,8 @@ import { SideMenu } from './components/sidemenu/SideMenu'
 import { ControlPanel } from './components/sidemenu/ControlPanel'
 import { TabView } from './components/Tabs'
 import { Loader } from './components/Page'
+import { NotificationBar } from './components/notification/NotificationBar'
+
 
 import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
@@ -56,28 +58,33 @@ export class Main extends Component {
         }
         return (
             <View style={{flex: 1}}>
-              <SideMenu content={<ControlPanel />}>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                      {/*
-                      <Checkout />
-                      <ReceiptModal />
-                      */}
-                      <TabView>
-                          <View tabLabel='Discover' style={{flex: 1}}>
-                              <DiscoverPage />
-                          </View>
-                          <View tabLabel='Bar' style={{flex: 1}}>
-                              <BarPage />
-                          </View>
-                          <View tabLabel='Menu' style={{flex: 1}}>
-                              <MenuPage />
-                          </View>
-                          <View tabLabel='Order' style={{flex: 1}}>
-                              <OrderPage />
-                          </View>
-                      </TabView>
-                  </View>
-              </SideMenu>
+              <NotificationBar />
+              {
+                this.barSelected ?
+                  <SideMenu content={<ControlPanel />}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                          {/*
+                          <Checkout />
+                          <ReceiptModal />
+                          */}
+                          <TabView>
+                              <View tabLabel='Discover' style={{flex: 1}}>
+                                  <DiscoverPage />
+                              </View>
+                              <View tabLabel='Bar' style={{flex: 1}}>
+                                  <BarPage />
+                              </View>
+                              <View tabLabel='Menu' style={{flex: 1}}>
+                                  <MenuPage />
+                              </View>
+                              <View tabLabel='Order' style={{flex: 1}}>
+                                  <OrderPage />
+                              </View>
+                          </TabView>
+                      </View>
+                  </SideMenu> :
+                  <DiscoverPage />
+              }
           </View>
       )
     }

@@ -7,12 +7,12 @@ import {
     TouchableOpacity,
     View,
     T,
-} from '~/components/Component.js'
+} from '~/src/components/Component.js'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '~/utils/curry.js'
-import { config } from '~/utils/config.js'
+import * as _ from '~/src/utils/curry.js'
+import { config } from '~/src/utils/config.js'
 
 const { assert, log } = _.utils(__filename)
 
