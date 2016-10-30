@@ -158,7 +158,7 @@ class BarStore {
     /* Downloads */
     /*********************************************************************/
 
-    getBarDownloadResult = () => downloadManager.getDownload('barInfo')
+    getBarDownloadResult = () => downloadManager.getDownload('bar details')
     getMenuDownloadResult = () => downloadManager.getDownload('menu')
 
     getBar = () => {
@@ -182,30 +182,20 @@ class BarStore {
             analytics.trackSelectBar(this.barID, this.barName)
         await this.getBarDownloadResult().wait()
         /* Update the selected marker on the map */
-        if (focusOnMap && this.getBar() != null) {
-            setTimeout(() => {
-                mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
-            }, 1000)
-        }
+        // if (focusOnMap && this.getBar() != null) {
+        //     setTimeout(() => {
+        //         mapStore.focusBar(this.getBar(), switchToDiscoverPage=false)
+        //     }, 1000)
+        // }
     }
 
     @action updateBarAndMenu = async (barID, force = false) => {
         await Promise.all([
-            this.updateBarInfo(barID, force = force),
-            this.updateMenuInfo(barID, force = force),
+            this.getBarDownloadResult().forceRefresh(),
+            this.getMenuDownloadResult().forceRefresh(),
         ])
     }
-
-    @action updateBarInfo = async (barID, force = false) => {
-        if (force)
-            await downloadManager.forceRefresh('barInfo')
-    }
-
-    @action updateMenuInfo = async (barID, force = false) => {
-        if (force)
-            await downloadManager.forceRefresh('menu')
-    }
-
+    
     /***********************************************************************/
     /* Menu */
 

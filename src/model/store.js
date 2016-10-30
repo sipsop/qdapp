@@ -4,6 +4,10 @@ import { downloadManager } from '~/src/network/http'
 import { cache } from '~/src/network/cache'
 import { segment } from '~/src/network/segment'
 import * as _ from '~/src/utils/curry'
+import { downloadManager } from '~/src/network/http'
+import { cache } from '~/src/network/cache'
+import { segment } from '~/src/network/segment'
+import * as _ from '~/src/utils/curry'
 
 import { analytics } from './analytics'
 import { favStore } from './favstore'
@@ -18,6 +22,8 @@ import { paymentStore } from './orders/paymentstore'
 import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
+
+import { notificationStore } from './notificationstore'
 
 const log = _.logger('./model/store')
 
@@ -178,4 +184,5 @@ export {
     timeStore,
     segment,
     drawerStore,
+    notificationStore,
 }

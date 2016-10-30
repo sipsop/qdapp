@@ -43,11 +43,6 @@ const { assert, log } = _.utils('~/src/components/bar/BarPage')
 @observer
 export class BarInfoFetcher extends DownloadResultView {
     errorMessage = 'Error downloading bar info'
-
-    refreshPage = () => {
-        barStore.updateBarInfo(barStore.barID, force = true)
-    }
-
     getDownloadResult = () => barStore.getBarDownloadResult()
 }
 
@@ -102,13 +97,12 @@ class BarHeader extends BarInfoFetcher {
     /* properties:
         imageHeight: Int
     */
-
     renderNotStarted = () => <View style={{height: this.props.imageHeight}} />
-    renderError = () => <View />
-    renderInProgress = () => <View />
-    renderFinished = () => {
+    renderError = () => null
+    renderInProgress = () => null
+    renderFinished = (bar) => {
         return <LazyBarImages
-                    bar={barStore.getBar()}
+                    bar={bar}
                     imageHeight={this.props.imageHeight}
                     showBackButton={false} />
     }
@@ -229,10 +223,7 @@ class BarIcons extends BarInfoFetcher {
 
 @observer
 class MenuView extends DownloadResultView {
-    errorMessage = "Error downloading menu"
-    refreshPage = () => barStore.updateMenuInfo(barStore.barID, force = true)
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    // renderError = () => null
     renderFinished = (menu) => <BarMenu menu={menu} />
 }
 
@@ -437,7 +428,6 @@ export class BarImages extends PureComponent {
 
     render = () => {
         const bar = this.props.bar
-
         const imageHeight = this.props.imageHeight
 
         return (

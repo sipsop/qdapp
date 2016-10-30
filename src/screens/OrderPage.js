@@ -35,7 +35,6 @@ const { assert, log } = _.utils('./orders/OrderPage')
 
 assert(Page)
 assert(SimpleListView)
-assert(BarInfoNotification)
 assert(LargeButton)
 assert(SelectableButton)
 assert(DownloadResultView)
@@ -87,12 +86,10 @@ export class OrderPage extends Page {
     }
 
     handleRefresh = async () => {
-        await barStore.updateMenuInfo(barStore.barID, force = true)
+        await barStore.getMenuDownloadResult().forceRefresh()
     }
 
     renderView = () => {
-        // if (!barStatusStore.takingOrders)
-        //     return <BarInfoNotification />
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()

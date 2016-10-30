@@ -366,6 +366,7 @@ export const utils = (modname : String) => {
     }
 }
 
+export const sortBy = _.sortBy
 export const deepEqual = _.isEqual
 export const intersection = _.intersection
 export const union = _.union

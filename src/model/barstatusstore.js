@@ -9,9 +9,6 @@ import * as _ from '~/src/utils/curry'
 
 const { assert, log } = _.utils('./model/barstatusstore.js')
 
-/*********************************************************************/
-/* Bar Status */
-
 export type TableService =
     | 'Disabled'
     | 'Food'
@@ -41,8 +38,8 @@ class BarStatusStore {
         downloadManager.declareDownload(new BarStatusDownload(this.getDownloadProps))
     }
 
-    getBarStatusDownload = () => downloadManager.getDownload('barStatus')
-    refreshBarStatus = () => downloadManager.forceRefresh('barStatus')
+    getBarStatusDownload = () => downloadManager.getDownload('bar status')
+    refreshBarStatus = () => downloadManager.forceRefresh('bar status')
 
     @computed get barStatus() : ?BarStatus {
         return this.getBarStatusDownload().barStatus

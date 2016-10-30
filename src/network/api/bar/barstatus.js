@@ -3,7 +3,7 @@ import { BarQueryDownload } from './barquery.js'
 import { config } from '~/src/utils/config.js'
 
 export class BarStatusDownload extends BarQueryDownload {
-    name = 'barStatus'
+    name = 'bar status'
 
     // update bar status every 30s
     cacheInfo = config.defaultRefreshCacheInfo

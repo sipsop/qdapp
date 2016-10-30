@@ -17,7 +17,7 @@ export class BarInfoDownload extends JSONDownload {
         barID: String
     */
 
-    name = 'barInfo'
+    name = 'bar details'
 
     @computed get active() {
         return this.props.barID != null
