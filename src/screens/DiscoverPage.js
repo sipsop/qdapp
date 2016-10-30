@@ -7,25 +7,25 @@ import {
     PureComponent,
     StyleSheet,
     T,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import InfiniteScrollView from 'react-native-infinite-scroll-view'
 
-import { Page, Loader } from '~/src/components/Page'
-import { LargeButton } from '~/src/components/Button'
-import { BackButton } from '~/src/components/BackButton'
-import { MapView } from '~/src/components/MapView'
-import { DiscoverBarCard } from '~/src/components/bar/DiscoverBarCard'
-import { DownloadResultView } from '~/src/components/download/DownloadResultView'
-import { Header, TextHeader } from '~/src/components/Header'
-import { SelectableButton } from '~/src/components/ButtonRow'
-import { Descriptor, SimpleListView } from '~/src/components/SimpleListView'
-import { store, barStore, mapStore, historyStore, segment } from '~/src/model/store'
-import { config } from '~/src/utils/config'
-import * as _ from '~/src/utils/curry'
+import { Page, Loader } from '~/components/Page'
+import { LargeButton } from '~/components/Button'
+import { BackButton } from '~/components/BackButton'
+import { MapView } from '~/components/MapView'
+import { DiscoverBarCard } from '~/components/bar/DiscoverBarCard'
+import { DownloadResultView } from '~/components/download/DownloadResultView'
+import { Header, TextHeader } from '~/components/Header'
+import { SelectableButton } from '~/components/ButtonRow'
+import { Descriptor, SimpleListView } from '~/components/SimpleListView'
+import { store, barStore, mapStore, historyStore, segment } from '~/model/store'
+import { config } from '~/utils/config'
+import * as _ from '~/utils/curry'
 
-const { log, assert } = _.utils('~/src/screens/DiscoverPage')
+const { log, assert } = _.utils('~/screens/DiscoverPage')
 
 assert(Page)
 assert(Loader)

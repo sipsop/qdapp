@@ -10,26 +10,26 @@ import {
     StyleSheet,
     Picker,
     Dimensions,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from '~/src/components/Page'
-import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '~/src/components/SimpleListView'
-import { BarInfoNotification } from '~/src/components/NotificationBar'
-import { LargeButton } from '~/src/components/Button'
-import { SelectableButton } from '~/src/components/ButtonRow'
-import { DownloadResultView } from '~/src/components/download/DownloadResultView'
-import { Checkout, SelectedCardInfo } from '~/src/components/payment/Checkout'
-import { Header, TextHeader } from '~/src/components/Header'
-import { OrderList, OrderListDescriptor } from '~/src/components/orders/OrderList'
-import { Message, SmallOkCancelModal } from '~/src/components/Modals'
-import { ReceiptModal } from '~/src/components/orders/Receipt'
+import { Page } from '~/components/Page'
+import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '~/components/SimpleListView'
+import { BarInfoNotification } from '~/components/NotificationBar'
+import { LargeButton } from '~/components/Button'
+import { SelectableButton } from '~/components/ButtonRow'
+import { DownloadResultView } from '~/components/download/DownloadResultView'
+import { Checkout, SelectedCardInfo } from '~/components/payment/Checkout'
+import { Header, TextHeader } from '~/components/Header'
+import { OrderList, OrderListDescriptor } from '~/components/orders/OrderList'
+import { Message, SmallOkCancelModal } from '~/components/Modals'
+import { ReceiptModal } from '~/components/orders/Receipt'
 
-import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '~/src/model/store'
-import { analytics } from '~/src/model/analytics'
-import * as _ from '~/src/utils/curry'
-import { config } from '~/src/utils/config'
+import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '~/model/store'
+import { analytics } from '~/model/analytics'
+import * as _ from '~/utils/curry'
+import { config } from '~/utils/config'
 
 const { assert, log } = _.utils('./orders/OrderPage')
 

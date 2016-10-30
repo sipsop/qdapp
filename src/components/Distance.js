@@ -1,11 +1,11 @@
-import { React, View, PureComponent, T } from '~/src/components/Component'
+import { React, View, PureComponent, T } from '~/components/Component'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { mapStore } from '~/src/model/store'
-import * as _ from '~/src/utils/curry'
+import { mapStore } from '~/model/store'
+import * as _ from '~/utils/curry'
 
-const { log, assert } = _.utils('~/src/components.Distance')
+const { log, assert } = _.utils('~/components.Distance')
 const timeTextStyle = {fontSize: 11, color: '#fff'}
 
 const formatDistance = (dist) => {

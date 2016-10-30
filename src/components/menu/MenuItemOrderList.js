@@ -11,18 +11,18 @@ import {
     T,
     Icon,
     EvilIcon,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { MenuItemCard } from './MenuItemCard.js'
 import { LazyComponent, lazyWrap } from '../LazyComponent.js'
 import { PickerCollection, PickerItem } from '../Pickers.js'
-import { store, orderStore } from '~/src/model/store.js'
-import { analytics } from '~/src/model/analytics.js'
+import { store, orderStore } from '~/model/store.js'
+import { analytics } from '~/model/analytics.js'
 import { getMenuItemImage } from './MenuItemImage.js'
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./menu/MenuItemOrderList.js')
 

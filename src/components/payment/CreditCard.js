@@ -1,13 +1,13 @@
 import {
     React, Component, View, TouchableOpacity, T, PureComponent, StyleSheet,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { PaymentConfigModal } from '../sidemenu/ControlPanel'
 import { RemoveCardButton } from './RemoveCardButton'
 import { getCreditCardIcon } from './CreditCardInfo'
-import * as _ from '~/src/utils/curry'
+import * as _ from '~/utils/curry'
 
 const { log, assert } = _.utils('./Checkout')
 

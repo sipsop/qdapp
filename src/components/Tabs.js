@@ -5,17 +5,17 @@ import {
     View,
     TouchableOpacity,
     Icon,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 import { historyStore, drawerStore, tabStore } from '../model/store.js'
-import { analytics } from '~/src/model/analytics.js'
+import { analytics } from '~/model/analytics.js'
 
 const { log, assert } = _.utils('./Tabs.js')
 

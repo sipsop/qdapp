@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react/native'
-import { React, View, PureComponent } from '~/src/components/Component'
+import { React, View, PureComponent } from '~/components/Component'
 import { Card } from './Card'
 
 @observer

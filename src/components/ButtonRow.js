@@ -6,14 +6,14 @@ import {
     ScrollView,
     TouchableOpacity,
     T,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { observable, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
-import { config } from '~/src/utils/config.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./ButtonRow.js')
 

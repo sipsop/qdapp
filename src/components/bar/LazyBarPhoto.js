@@ -1,7 +1,7 @@
-import { React, PureComponent } from '~/src/components/Component'
+import { React, PureComponent } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 
-import { LazyComponent } from '~/src/components/LazyComponent'
+import { LazyComponent } from '~/components/LazyComponent'
 import { BarPhoto } from './BarPhoto'
 
 @observer

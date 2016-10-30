@@ -1,6 +1,6 @@
-import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from '~/src/components/Component.js'
+import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from '~/components/Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'

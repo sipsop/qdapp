@@ -7,17 +7,17 @@ import {
     StyleSheet,
     PureComponent,
     T,
-} from '~/src/components/Component.js';
+} from '~/components/Component.js';
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
-import * as _ from '~/src/utils/curry.js'
-import { downloadManager } from '~/src/network/http'
-import { config } from '~/src/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { downloadManager } from '~/network/http'
+import { config } from '~/utils/config.js'
 
-const { log, assert } = _.utils('~/src/components/download/DownloadResultView')
+const { log, assert } = _.utils('~/components/download/DownloadResultView')
 
 const styles = StyleSheet.create({
     inProgress: {

@@ -1,4 +1,4 @@
 # http://stackoverflow.com/questions/34329715/how-to-make-react-native-app-icon
 # http://makeappicon.com/
 
-cp -r logo/android/* android/app/src/main/res/
+cp -r logo/android/* android/app/main/res/

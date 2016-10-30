@@ -1,5 +1,5 @@
 /* Photo image wth attribution */
-import { React, PureComponent, Img } from '~/src/components/Component.js'
+import { React, PureComponent, Img } from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 
 @observer

@@ -5,8 +5,8 @@ import {
     T,
     View,
     TouchableOpacity,
- } from '~/src/components/Component.js'
-import { config } from '~/src/utils/config.js'
+ } from '~/components/Component.js'
+import { config } from '~/utils/config.js'
 
 const rowHeight = 55
 

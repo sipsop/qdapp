@@ -1,7 +1,7 @@
 import { observable, action, autorun, computed } from 'mobx'
 
 import { loginStore } from './store.js'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 class FavStore {
     @observable favItems = []

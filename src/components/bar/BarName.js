@@ -1,6 +1,6 @@
-import { React, Component, PureComponent, T } from '~/src/components/Component'
+import { React, Component, PureComponent, T } from '~/components/Component'
 import { observer } from 'mobx-react/native'
-import { config } from '~/src/utils/config.js'
+import { config } from '~/utils/config.js'
 
 @observer
 export class BarName extends PureComponent {

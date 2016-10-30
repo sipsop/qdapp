@@ -1,26 +1,26 @@
 import {
     React, Component, Platform, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { downloadManager } from '~/src/network/http'
+import { downloadManager } from '~/network/http'
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../download/DownloadResultView'
 import { LazyBarPhoto } from '../bar/LazyBarPhoto'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
-import { config } from '~/src/utils/config.js'
+import { config } from '~/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore, loginStore, segment } from '~/src/model/store.js'
+import { store, tabStore, loginStore, segment } from '~/model/store.js'
 
-import { barStore, orderStore } from '~/src/model/store.js'
-import * as _ from '~/src/utils/curry.js'
+import { barStore, orderStore } from '~/model/store.js'
+import * as _ from '~/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
-import { paymentStore } from '~/src/model/orders/paymentstore.js'
+import { paymentStore } from '~/model/orders/paymentstore.js'
 
 import type { String, Int } from '../Types.js'
 

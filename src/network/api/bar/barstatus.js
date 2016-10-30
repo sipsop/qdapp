@@ -1,6 +1,6 @@
 import { computed, transaction, action, autorun } from 'mobx'
 import { BarQueryDownload } from './barquery.js'
-import { config } from '~/src/utils/config.js'
+import { config } from '~/utils/config.js'
 
 export class BarStatusDownload extends BarQueryDownload {
     name = 'bar status'

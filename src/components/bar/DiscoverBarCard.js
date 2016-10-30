@@ -3,11 +3,11 @@ import {
     StyleSheet,
     View,
     PureComponent
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import { tabStore, orderStore } from '~/src/model/store.js'
-import { barStore } from '~/src/model/barstore.js'
+import { tabStore, orderStore } from '~/model/store.js'
+import { barStore } from '~/model/barstore.js'
 
 import { ConfirmChangeBarModal } from './ConfirmChangeBarModal'
 import { BarCard } from './BarCard'

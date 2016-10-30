@@ -1,19 +1,19 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Slider from 'react-native-slider'
 
 import { TextHeader } from '../Header'
 import { LargeButton } from '../Button'
-import { orderStore } from '~/src/model/store'
-import { config } from '~/src/utils/config'
-import { analytics } from '~/src/model/analytics'
-import * as _ from '~/src/utils/curry'
+import { orderStore } from '~/model/store'
+import { config } from '~/utils/config'
+import { analytics } from '~/model/analytics'
+import * as _ from '~/utils/curry'
 
-import type { String, Int } from '~/src/utils/types'
+import type { String, Int } from '~/utils/types'
 
 const { log, assert } = _.utils('./Tips')
 

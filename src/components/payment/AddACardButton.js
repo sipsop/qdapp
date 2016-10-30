@@ -1,10 +1,10 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     PureComponent, T,
-} from '~/src/components/Component'
+} from '~/components/Component'
 import { observer } from 'mobx-react/native'
 
-import { paymentStore } from '~/src/model/orders/paymentstore'
+import { paymentStore } from '~/model/orders/paymentstore'
 import { CardInput } from './CardInput'
 
 @observer

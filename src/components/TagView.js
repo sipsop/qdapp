@@ -5,17 +5,17 @@ import {
     View,
     TouchableOpacity,
     Icon,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { observable, computed, transaction, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { DownloadResultView } from './download/DownloadResultView'
 import { ButtonRow, ButtonGroup } from './ButtonRow.js'
-import { T } from '~/src/components/Component.js'
-import { downloadManager } from '~/src/network/http'
-import { analytics } from '~/src/model/analytics.js'
-import { tagStore } from '~/src/model/tagstore.js'
-import * as _ from '~/src/utils/curry.js'
+import { T } from '~/components/Component.js'
+import { downloadManager } from '~/network/http'
+import { analytics } from '~/model/analytics.js'
+import { tagStore } from '~/model/tagstore.js'
+import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils('./components/tags.js')
 

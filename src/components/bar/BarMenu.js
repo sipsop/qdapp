@@ -3,7 +3,7 @@ import {
     View,
     Dimensions,
     PureComponent,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { observer } from 'mobx-react/native'
 
 import type { String, URL } from '../Types.js'

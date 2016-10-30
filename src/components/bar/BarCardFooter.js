@@ -1,11 +1,11 @@
-import { React, View, PureComponent } from '~/src/components/Component'
+import { React, View, PureComponent } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 
 import { PlaceInfo } from '../PlaceInfo'
 import { BarName } from './BarName'
 import { TimeInfo } from '../TimeInfo'
 import { Distance } from '../Distance'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '~/utils/curry.js'
 
 const { log, assert } = _.utils(__filename)
 

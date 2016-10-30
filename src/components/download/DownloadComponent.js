@@ -7,13 +7,13 @@ import {
     StyleSheet,
     PureComponent,
     T,
-} from '~/src/components/Component';
+} from '~/components/Component';
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { DownloadResultView } from './DownloadResultView'
-import { downloadManager, emptyResult } from '~/src/network/http'
-import * as _ from '~/src/utils/curry'
+import { downloadManager, emptyResult } from '~/network/http'
+import * as _ from '~/utils/curry'
 
 @observer
 export class DownloadComponent extends DownloadResultView {

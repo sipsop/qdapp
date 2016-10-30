@@ -1,6 +1,6 @@
 import { computed } from 'mobx'
-import { QueryDownload } from '~/src/network/http.js'
-import { config } from '~/src/utils/config.js'
+import { QueryDownload } from '~/network/http.js'
+import { config } from '~/utils/config.js'
 
 export class BarOwnerProfileDownload extends QueryDownload {
     /* properties:

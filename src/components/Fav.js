@@ -1,4 +1,4 @@
-import { React, Component, PureComponent } from '~/src/components/Component.js'
+import { React, Component, PureComponent } from '~/components/Component.js'
 import { View, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
@@ -6,8 +6,8 @@ import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { favStore } from '../model/favstore.js'
-import { config } from '~/src/utils/config.js'
-import * as _ from '~/src/utils/curry.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 @observer
 export class Heart extends PureComponent {

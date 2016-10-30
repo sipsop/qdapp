@@ -6,7 +6,9 @@
    "transform-decorators-legacy",
    "transform-flow-strip-types",
    "syntax-flow",
-   "babel-root-import",
+   ["babel-root-import", {
+    "rootPathSuffix": "src/"
+   }],
    "babel-plugin-transform-dirname-filename"
  ]
 }

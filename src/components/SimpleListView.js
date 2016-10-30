@@ -6,13 +6,13 @@ import {
     ListView,
     RefreshControl,
     T,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from './Page.js'
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 const { log, assert } = _.utils('./SimpleListView.js')
 

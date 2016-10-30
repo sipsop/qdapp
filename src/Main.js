@@ -25,7 +25,7 @@ import { NotificationBar } from './components/notification/NotificationBar'
 import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
 
-const { log, assert } = _.utils('~/src/Main')
+const { log, assert } = _.utils('~/Main')
 
 /* Do not allow font scaling */
 Text.defaultProps.allowFontScaling = false

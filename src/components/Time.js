@@ -1,4 +1,4 @@
-import { React, PureComponent, T } from '~/src/components/Component'
+import { React, PureComponent, T } from '~/components/Component'
 import { observer } from 'mobx-react/native'
 
 @observer

@@ -1,9 +1,9 @@
 import { observable, action } from 'mobx'
 
-import { downloadManager } from '~/src/network/http'
-import { cache } from '~/src/network/cache'
-import { segment } from '~/src/network/segment'
-import * as _ from '~/src/utils/curry'
+import { downloadManager } from '~/network/http'
+import { cache } from '~/network/cache'
+import { segment } from '~/network/segment'
+import * as _ from '~/utils/curry'
 
 import { analytics } from './analytics'
 import { favStore } from './favstore'

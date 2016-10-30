@@ -7,16 +7,16 @@ import {
     TouchableOpacity,
     View,
     T,
-} from '~/src/components/Component.js'
+} from '~/components/Component.js'
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { DownloadResult, emptyResult } from '~/src/network/http'
+import { DownloadResult, emptyResult } from '~/network/http'
 import { DownloadResultView } from './download/DownloadResultView'
 import { Notification as _Notification } from './Notification.js'
-import { barStore, barStatusStore, tagStore } from '~/src/model/store.js'
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
+import { barStore, barStatusStore, tagStore } from '~/model/store.js'
+import * as _ from '~/utils/curry.js'
+import { config } from '~/utils/config.js'
 
 export const Notification = _Notification
 

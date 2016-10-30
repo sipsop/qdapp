@@ -1,14 +1,14 @@
 // @flow
 
 import { computed, action } from 'mobx'
-import { JSONDownload } from '~/src/network/http.js'
-import { buildURL } from '~/src/utils/urls.js'
-import { config } from '~/src/utils/config.js'
-import * as _ from '~/src/utils/curry.js'
+import { JSONDownload } from '~/network/http.js'
+import { buildURL } from '~/utils/urls.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
-import type { Int, Float, URL, HTML } from '~/src/utils/types.js'
-import type { Key, Coords } from '~/src/model/mapstore.js'
-import type { Bar, BarType, Photo, TagID } from '~/src/model/barstore.js'
+import type { Int, Float, URL, HTML } from '~/utils/types.js'
+import type { Key, Coords } from '~/model/mapstore.js'
+import type { Bar, BarType, Photo, TagID } from '~/model/barstore.js'
 
 const { log, assert } = _.utils('./network/api/maps/place-info.js')
 

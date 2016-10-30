@@ -1,11 +1,11 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager } from '../network/http.js'
-import { BarInfoDownload } from '~/src/network/api/maps/place-info.js'
+import { BarInfoDownload } from '~/network/api/maps/place-info.js'
 import { MenuDownload } from '../network/api/bar/menu.js'
-import { analytics } from '~/src/model/analytics.js'
-import { config } from '~/src/utils/config.js'
-import * as _ from '~/src/utils/curry.js'
+import { analytics } from '~/model/analytics.js'
+import { config } from '~/utils/config.js'
+import * as _ from '~/utils/curry.js'
 
 import { store } from './store.js'
 import { mapStore } from './mapstore.js'
@@ -13,7 +13,7 @@ import { tagStore } from './tagstore.js'
 import { timeStore } from './timestore.js'
 import type { PlaceID } from './mapstore.js'
 
-import type { Int, Float, String, URL, HTML } from '~/src/utils/types.js'
+import type { Int, Float, String, URL, HTML } from '~/utils/types.js'
 
 export type ID = String
 export type BarID = ID
