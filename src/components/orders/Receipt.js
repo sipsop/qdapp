@@ -48,20 +48,6 @@ export class ReceiptModal extends PureComponent {
 
     handleClose = () => {
         this.close()
-
-        // if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
-        //     /* Error submitting, allow closing */
-        //     this.closeModal()
-        // } else if (this.downloadState === 'Finished') {
-        //     if (Platform.OS === 'android') {
-        //         this.confirmCloseModal.show()
-        //     } else {
-        //         if (this.showConfirmText)
-        //             this.close() // close double tapped
-        //         else
-        //             this.showConfirmText = true
-        //     }
-        // }
     }
 
     @action close = () => {

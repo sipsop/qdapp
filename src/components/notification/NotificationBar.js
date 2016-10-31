@@ -82,7 +82,9 @@ export class NotificationBar extends PureComponent {
                         {message.message}
                     </T>
                 </View>
-                <View style={styles.verticalBar} />
+                { message.closeable &&
+                    <View style={styles.verticalBar} />
+                }
                 { message.closeable &&
                     <TouchableOpacity onPress={dismiss}>
                         <View style={styles.dismissButton}>
@@ -127,15 +129,17 @@ const getOrderStatusMessage = () => {
 
 /* Notify the user about the order status */
 autorun(() => {
+    const orderResult = orderStatusStore.orderResult
+    const messageID = 'order status' + (orderResult && orderResult.receipt)
     if (orderStatusStore.haveUncompletedOrder) {
         notificationStore.notify({
-            id:       'order status',
-            message:  getOrderStatusMessage(),
-            priority: NotificationLevels.IMPORTANT,
+            id:         messageID,
+            closeable:  !!orderResult,
+            message:    getOrderStatusMessage(),
+            priority:   NotificationLevels.IMPORTANT,
         })
     } else {
-        log("DIMISSING ORDER STATUS")
-        notificationStore.dismiss('order status')
+        notificationStore.dismiss(messageID)
     }
 })
 

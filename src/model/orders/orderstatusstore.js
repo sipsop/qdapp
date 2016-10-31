@@ -10,6 +10,7 @@ const { log, assert } = _.utils(__filename)
 
 class OrderStatusStore {
     @observable orderID = null
+    @observable _initialized = false
 
     /*********************************************************************/
     /* State                                                             */
@@ -48,10 +49,14 @@ class OrderStatusStore {
         }))
     }
 
+    initialized = () => {
+        this._initialized = true
+    }
+
     getOrderStatusDownload = () => downloadManager.getDownload('order status')
 
     @computed get orderResult() {
-        return this.getOrderStatusDownload().orderResult
+        return this._initialized && this.getOrderStatusDownload().orderResult
     }
 
     @computed get orderCompleted() {

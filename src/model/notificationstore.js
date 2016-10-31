@@ -37,6 +37,7 @@ const defaultMessage : Message = {
 class NotificationStore {
     @observable notifications = []
     @observable flashed = {}
+    dismissed = {}
     idToMessage = {}
 
     /*********************************************************************/
@@ -72,8 +73,10 @@ class NotificationStore {
     @action notify = (message) => {
         assert(message.id != null, 'message.id != null')
         assert(message.message != null, 'message.message != null')
-        this.notifications.push({...defaultMessage, ...message})
-        this.idToMessage[message.id] = message
+        if (!this.dismissed[message.id]) {
+            this.notifications.push({...defaultMessage, ...message})
+            this.idToMessage[message.id] = message
+        }
     }
 
     /* Dismiss notification by messsage ID */
@@ -91,6 +94,7 @@ class NotificationStore {
         this.notifications = this.notifications.filter(
             message => message.id !== id
         )
+        this.dismissed[id] = true
     }
 }
 
