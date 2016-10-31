@@ -14,7 +14,7 @@ import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore, loginStore, segment } from '/model/store.js'
+import { store, tabStore, loginStore, orderStatusStore, segment } from '/model/store.js'
 
 import { barStore, orderStore } from '/model/store.js'
 import { formatDuration } from '/utils/time'
@@ -171,9 +171,6 @@ export class Receipt extends PureComponent {
 
         // this.updateEstimate()
 
-        const timeEstimate = this.props.showEstimate &&
-                             formatDuration(orderResult.estimatedTime)
-
         return <ScrollView>
             <LazyBarPhoto
                 bar={bar}
@@ -190,13 +187,9 @@ export class Receipt extends PureComponent {
                     {headerText(deliveryInfo, 20)}
                 </View>
             </Header>
-            { timeEstimate &&
-                <Header rowHeight={55}>
-                    <View style={{flexDirection: 'row'}}>
-                        {headerText('Estimated Time:', 20)}
-                        {headerText(timeEstimate, 25)}
-                    </View>
-                </Header>
+            {
+                this.props.showEstimate &&
+                    <TimeEstimate orderResult={orderResult}/>
             }
             <Info orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
@@ -208,9 +201,35 @@ export class Receipt extends PureComponent {
             <OrderTotal
                 total={orderResult.totalPrice}
                 tip={orderResult.tip}
-                showTipOnly={timeEstimate && orderStore.getAmount(orderResult.orderList) === 1}
+                showTipOnly={this.props.showEstimate && orderStore.getAmount(orderResult.orderList) === 1}
                 />
         </ScrollView>
+    }
+}
+
+@observer
+class TimeEstimate extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+
+    @computed get orderResult() {
+        const orderResult = orderStatusStore.orderResult
+        if (orderResult != null &&
+                orderResult.orderID === this.props.orderResult.orderID) {
+            return orderResult
+        }
+        return this.props.orderResult
+    }
+
+    render = () => {
+        const timeEstimate = formatDuration(this.orderResult.estimatedTime)
+        return <Header rowHeight={55}>
+            <View style={{flexDirection: 'row'}}>
+                {headerText('Estimated Time:', 20)}
+                {headerText(timeEstimate, 25)}
+            </View>
+        </Header>
     }
 }
 
