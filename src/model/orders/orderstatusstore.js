@@ -65,19 +65,6 @@ class OrderStatusStore {
                this.orderID != null &&
                !this.orderCompleted
     }
-
-    @computed get orderStatusMessage() {
-        const d = this.getOrderStatusDownload()
-        if (this.orderResult != null) {
-            if (this.orderResult.errorMessage)
-                return this.orderResult.errorMessage
-            return `Order ${this.orderResult.receipt} will be ready in approx. ${this.orderResult.estimatedTime}`
-        } else if (d.lastMessage) {
-            return d.lastMessage
-        } else {
-            return 'Getting your order status...'
-        }
-    }
 }
 
 export const orderStatusStore = new OrderStatusStore()

@@ -18,6 +18,7 @@ import { Notification } from './Notification'
 import { store, orderStatusStore } from '/model/store'
 import { notificationStore, NotificationLevels } from '/model/notificationstore'
 import { downloadManager } from '/network/http'
+import { formatDuration } from '/utils/time'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
@@ -30,10 +31,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         height: 55,
-        marginTop: 2,
+        marginTop: 5,
         marginLeft: 5,
         marginRight: 5,
-        marginBottom: -3,
+        marginBottom: 5,
         padding: 5,
         borderRadius: 10,
     },
@@ -109,13 +110,27 @@ export class NotificationBar extends PureComponent {
 /* Order Status Notifications                                        */
 /*********************************************************************/
 
+const getOrderStatusMessage = () => {
+    const d = orderStatusStore.getOrderStatusDownload()
+    const orderResult = orderStatusStore.orderResult
+    if (orderResult != null) {
+        if (orderResult.errorMessage)
+            return orderResult.errorMessage
+        const estimatedTime = formatDuration(orderResult.estimatedTime)
+        return `Order no. #${orderResult.receipt} will be ready in approx. ${estimatedTime}`
+    } else if (d.lastMessage) {
+        return d.lastMessage
+    } else {
+        return 'Getting your order status...'
+    }
+}
+
 /* Notify the user about the order status */
 autorun(() => {
     if (orderStatusStore.haveUncompletedOrder) {
-        log("MESSAGE!", orderStatusStore.orderStatusMessage)
         notificationStore.notify({
             id:       'order status',
-            message:  orderStatusStore.orderStatusMessage,
+            message:  getOrderStatusMessage(),
             priority: NotificationLevels.IMPORTANT,
         })
     } else {

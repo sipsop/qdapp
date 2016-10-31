@@ -17,6 +17,7 @@ import { Loader } from '../Page.js'
 import { store, tabStore, loginStore, segment } from '/model/store.js'
 
 import { barStore, orderStore } from '/model/store.js'
+import { formatDuration } from '/utils/time'
 import * as _ from '/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
@@ -46,19 +47,21 @@ export class ReceiptModal extends PureComponent {
 
 
     handleClose = () => {
-        if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
-            /* Error submitting, allow closing */
-            this.closeModal()
-        } else if (this.downloadState === 'Finished') {
-            if (Platform.OS === 'android') {
-                this.confirmCloseModal.show()
-            } else {
-                if (this.showConfirmText)
-                    this.close() // close double tapped
-                else
-                    this.showConfirmText = true
-            }
-        }
+        this.close()
+
+        // if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
+        //     /* Error submitting, allow closing */
+        //     this.closeModal()
+        // } else if (this.downloadState === 'Finished') {
+        //     if (Platform.OS === 'android') {
+        //         this.confirmCloseModal.show()
+        //     } else {
+        //         if (this.showConfirmText)
+        //             this.close() // close double tapped
+        //         else
+        //             this.showConfirmText = true
+        //     }
+        // }
     }
 
     @action close = () => {
@@ -183,7 +186,7 @@ export class Receipt extends PureComponent {
         // this.updateEstimate()
 
         const timeEstimate = this.props.showEstimate &&
-                             renderTime(orderResult.estimatedTime)
+                             formatDuration(orderResult.estimatedTime)
 
         return <ScrollView>
             <LazyBarPhoto
@@ -326,23 +329,4 @@ export class OrderTotal extends PureComponent {
             }
         </View>
     }
-}
-
-const renderTime = (time : Float) => {
-    if (time < 10)
-        return "Any time now..."
-    const seconds = renderNumber(time % 60)
-    const minutes = renderNumber(Math.floor(time / 60))
-    const hours   = renderNumber(Math.floor(time / 3600))
-    if (hours)
-        return `${hours}:${minutes}:${seconds}`
-    if (minutes)
-        return `${minutes}:${seconds}`
-    return `${seconds}s`
-}
-
-const renderNumber = (n : Int) => {
-    if (n < 10)
-        return '0' + n
-    return '' + n
 }
