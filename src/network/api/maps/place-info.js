@@ -36,7 +36,8 @@ export class BarInfoDownload extends JSONDownload {
         )
     }
 
-    @action finish = () => {
+    finish() {
+        super.finish()
         if (this.value && this.value.status === 'OK') {
             const bar = parseBar(this.value.result, this.value.html_attributions)
             this.downloadFinished(bar)

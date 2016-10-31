@@ -353,7 +353,6 @@ export class Download {
             // Update state
             if (downloadResult.state === 'Finished') {
                 this.downloadFinished(downloadResult.value)
-                this._finish()
                 this.finish()
             } else if (downloadResult.state === 'Error') {
                 this.downloadError(downloadResult.message)
@@ -363,12 +362,14 @@ export class Download {
         })
     }
 
-    @action _finish = () => {
-        /* Update the download state here for any finished download. Internal use only. */
-    }
-
-    @action finish = () => {
+    finish() {
         /* Update the download state here for any finished download */
+        /*
+            Must use non-lambda functions, otherwise overriding and super()
+            do not work. Broken stupid shit.
+        */
+        throw Error("The finish() should be overridden. " +
+                    "NOTE: Make sure to not use lambda functions here")
     }
 
     wait = async () => {
@@ -465,8 +466,9 @@ export class Download {
 }
 
 export class JSONDownload extends Download {
-    @action _finish = () => {
-        if (this.value) {
+    finish() {
+        super.finish()
+        if (this.value != null) {
             this.value = parseJSON(this.value)
         }
     }
@@ -495,8 +497,9 @@ export class QueryDownload extends JSONDownload {
         return value.result && !value.error
     }
 
-    @action finish = () => {
+    finish() {
         /* Unpack the queries result value or error message */
+        super.finish()
         if (this.value && this.value.error)
             this.downloadError(this.value.error)
         else if (this.value)
@@ -770,7 +773,10 @@ class DownloadManager {
             timeoutDesc,
             acceptValueFromCache,
         )
-        return downloadResult.update(parseJSON)
+        if (downloadResult.value) {
+            downloadResult.update(parseJSON)
+        }
+        return downloadResult
     }
 
     /* HTTP GET/POST/etc to a URL */
