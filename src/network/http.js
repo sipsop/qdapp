@@ -363,13 +363,12 @@ export class Download {
     }
 
     finish() {
-        /* Update the download state here for any finished download */
         /*
+        Update the download state here for any finished download
+    
             Must use non-lambda functions, otherwise overriding and super()
             do not work. Broken stupid shit.
         */
-        throw Error("The finish() should be overridden. " +
-                    "NOTE: Make sure to not use lambda functions here")
     }
 
     wait = async () => {

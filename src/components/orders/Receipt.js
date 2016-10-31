@@ -191,10 +191,10 @@ export class Receipt extends PureComponent {
                 </View>
             </Header>
             { timeEstimate &&
-                <Header rowHeight={40}>
+                <Header rowHeight={55}>
                     <View style={{flexDirection: 'row'}}>
                         {headerText('Estimated Time:', 20)}
-                        {headerText(timeEstimate, 20)}
+                        {headerText(timeEstimate, 25)}
                     </View>
                 </Header>
             }
@@ -250,7 +250,8 @@ class ReceiptHeader extends PureComponent {
                         style={{flex: 1}}
                         onPress={() => this.receiptModal.show()}>
                     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        {headerText(orderResult.userName, 20)}
+                        {/*headerText(orderResult.userName, 20)*/}
+                        {headerText('Receipt No.', 20)}
                         {headerText('#' + orderResult.receipt)}
                     </View>
                 </TouchableOpacity>

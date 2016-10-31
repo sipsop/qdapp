@@ -18,7 +18,13 @@ class OrderStatusStore {
 
     getState = () => {
         return {
-            orderID: this.haveUncompletedOrder && this.orderID,
+            orderID: this.haveUncompletedOrder ? this.orderID : null,
+        }
+    }
+
+    emptyState = () => {
+        return {
+            orderID: null,
         }
     }
 
@@ -56,7 +62,9 @@ class OrderStatusStore {
     getOrderStatusDownload = () => downloadManager.getDownload('order status')
 
     @computed get orderResult() {
-        return this._initialized && this.getOrderStatusDownload().orderResult
+        if (this._initialized)
+            return this.getOrderStatusDownload().orderResult
+        return null
     }
 
     @computed get orderCompleted() {
@@ -66,9 +74,12 @@ class OrderStatusStore {
     }
 
     @computed get haveUncompletedOrder() {
-        return loginStore.isLoggedIn &&
-               this.orderID != null &&
-               !this.orderCompleted
+        return !!(
+            loginStore.isLoggedIn &&
+            this.orderID &&
+            this.orderResult &&
+            !this.orderCompleted
+        )
     }
 }
 

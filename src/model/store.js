@@ -74,6 +74,7 @@ export class Store {
         await mapStore.initialized()
         await segment.initialized()
         await downloadManager.initialized()
+        await orderStatusStore.initialized()
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
@@ -139,6 +140,7 @@ export class Store {
             barStatusState:         barStatusStore.emptyState(),
             tabState:               tabStore.emptyState(),
             orderState:             orderStore.emptyState(),
+            orderStatusState:       orderStatusStore.emptyState(),
             mapState:               mapStore.emptyState(),
             tagState:               tagStore.emptyState(),
             segment:                segment.emptyState(),
