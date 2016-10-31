@@ -1,7 +1,7 @@
-import { React, Component, View, PureComponent, T, Icon } from '~/src/components/Component'
+import { React, Component, View, PureComponent, T, Icon } from '/components/Component'
 import { observer } from 'mobx-react/native'
 
-import { getBarOpenTime } from '~/src/model/barstore.js'
+import { getBarOpenTime } from '/model/barstore.js'
 import { OpeningTimeView } from './OpeningTimeView'
 
 const timeTextStyle = {fontSize: 11, color: '#fff'}

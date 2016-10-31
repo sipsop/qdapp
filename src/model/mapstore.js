@@ -3,15 +3,15 @@
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
 import { store, barStore, segment } from './store.js'
-import { DownloadResult, emptyResult } from '~/src/network/http.js'
-import { searchNearbyFirstPage, searchNearbyAllPages } from '~/src/network/api/maps/nearby.js'
-import { Second } from '~/src/utils/time.js'
-import * as _ from '~/src/utils/curry.js'
-import { analytics } from '~/src/model/analytics.js'
-import { config } from '~/src/utils/config.js'
+import { DownloadResult, emptyResult } from '/network/http.js'
+import { searchNearbyFirstPage, searchNearbyAllPages } from '/network/api/maps/nearby.js'
+import { Second } from '/utils/time.js'
+import * as _ from '/utils/curry.js'
+import { analytics } from '/model/analytics.js'
+import { config } from '/utils/config.js'
 
 import type { Bar } from './barstore.js'
-import type { SearchResponse } from '~/src/network/api/maps/nearby.js'
+import type { SearchResponse } from '/network/api/maps/nearby.js'
 
 const { log, assert } = _.utils("model/mapstore.js")
 
@@ -297,7 +297,7 @@ class MapStore {
         // this.searchResponse.downloadStarted()
         this.searchResponse = await this.searchNearby(
             'bar', pagetoken = undefined, force = force)
-        log("GOT SEARCH RESPONSE", this.searchResponse)
+        // log("GOT SEARCH RESPONSE", this.searchResponse)
         this.enableMoreButton()
     }
 

@@ -1,6 +1,6 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { JSONMutation } from '~/src/network/http.js'
-import { config } from '~/src/utils/config.js'
+import { JSONMutation } from '/network/http.js'
+import { config } from '/utils/config.js'
 
 /***********************************************************************/
 /* Order Placement                                                     */

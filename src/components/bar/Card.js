@@ -6,11 +6,11 @@ import {
     Image,
     PureComponent,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { analytics, tabStore, tagStore } from '~/src/model/store.js'
+import { analytics, tabStore, tagStore } from '/model/store.js'
 
 @observer
 export class Card extends PureComponent {

@@ -2,7 +2,7 @@ import {
     React,
     PureComponent,
     Dimensions,
-} from '~/src/components/Component'
+} from '/components/Component'
 
 /* Class to track the size of a view:
 

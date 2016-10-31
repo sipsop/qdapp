@@ -1,7 +1,7 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '~/src/components/Component'
+} from '/components/Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -10,8 +10,8 @@ import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
 import { CreditCard } from './CreditCard'
 import { AddACardButton } from './AddACardButton'
-import { analytics } from '~/src/model/analytics'
-import { paymentStore } from '~/src/model/orders/paymentstore'
+import { analytics } from '/model/analytics'
+import { paymentStore } from '/model/orders/paymentstore'
 
 export class CreditCardListDesciptor {
 

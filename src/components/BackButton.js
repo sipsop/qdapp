@@ -4,10 +4,10 @@ import {
     TouchableOpacity,
     PureComponent,
     MaterialIcon,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import { observer } from 'mobx-react/native'
 
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '/utils/curry.js'
 const { log, assert } = _.utils('./BackButton.js')
 
 @observer

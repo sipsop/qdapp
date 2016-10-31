@@ -1,7 +1,7 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '~/src/components/Component'
+} from '/components/Component'
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -13,20 +13,20 @@ import { SimpleListView, themedRefreshControl } from '../SimpleListView'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
-import { barStore, orderStore, loginStore } from '~/src/model/store'
+import { barStore, orderStore, loginStore } from '/model/store'
 import { CreditCard } from './CreditCard'
-import { analytics } from '~/src/model/analytics'
-import { config } from '~/src/utils/config'
-import * as _ from '~/src/utils/curry'
+import { analytics } from '/model/analytics'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
 import { AddACardButton } from './AddACardButton'
-import { paymentStore } from '~/src/model/orders/paymentstore'
+import { paymentStore } from '/model/orders/paymentstore'
 import { PaymentConfigModal } from './PaymentConfigModal'
 import { TipComponent, TipRoundButton } from './Tips'
 
 import type { String, Int } from '../Types'
 
-const { log, assert } = _.utils('~/src/components/payment/Checkout')
+const { log, assert } = _.utils('/components/payment/Checkout')
 
 @observer
 export class Checkout extends PureComponent {

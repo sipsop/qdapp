@@ -1,15 +1,15 @@
 import {
     React, Component, View, TouchableOpacity, ScrollView, ListView,
     T, Mono, PureComponent, StyleSheet,
-} from '~/src/components/Component'
+} from '/components/Component'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
 
-import { paymentStore } from '~/src/model/orders/paymentstore'
-import * as _ from '~/src/utils/curry'
+import { paymentStore } from '/model/orders/paymentstore'
+import * as _ from '/utils/curry'
 
 
 @observer

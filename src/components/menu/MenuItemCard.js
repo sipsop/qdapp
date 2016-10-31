@@ -7,7 +7,7 @@ import {
     Img,
     StyleSheet,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -17,9 +17,9 @@ import { MenuItemImage, getMenuItemImage } from './MenuItemImage.js'
 import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
-import { tagStore } from '~/src/model/store.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
+import { tagStore } from '/model/store.js'
 
 const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 

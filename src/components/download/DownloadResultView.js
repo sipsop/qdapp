@@ -7,17 +7,17 @@ import {
     StyleSheet,
     PureComponent,
     T,
-} from '~/src/components/Component.js';
+} from '/components/Component.js';
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Notification } from '../notification/Notification'
 import { Loader } from '../Page.js'
-import * as _ from '~/src/utils/curry.js'
-import { downloadManager } from '~/src/network/http'
-import { config } from '~/src/utils/config.js'
+import * as _ from '/utils/curry.js'
+import { downloadManager } from '/network/http'
+import { config } from '/utils/config.js'
 
-const { log, assert } = _.utils('~/src/components/download/DownloadResultView')
+const { log, assert } = _.utils('/components/download/DownloadResultView')
 
 const styles = StyleSheet.create({
     inProgress: {
@@ -59,17 +59,28 @@ export class DownloadResultView<T> extends PureComponent {
     */
     finishOnLastValue = true
 
+    /* If true (default), show the last error message for the download while
+       the download is in progress.
+    */
+    showLastErrorMessage = true
+
     /* Override default error message */
     errorMessage      = null
 
     render = () => {
         const res = this.getDownloadResult()
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
+        const finished = this.finishOnLastValue && res.lastValue != null
+        const haveError =
+            this.showLastErrorMessage &&
+            res.state === 'InProgress' &&
+            res.haveErrorMessage
+
         if (res.state === 'NotStarted') {
             return this.renderNotStarted()
-        } else if (res.state === 'Finished' || (this.finishOnLastValue && res.lastValue != null)) {
+        } else if (res.state === 'Finished' || finished) {
             return this.renderFinished(res.lastValue)
-        } else if (res.state === 'Error' || (res.state === 'InProgress' && res.message)) {
+        } else if (res.state === 'Error' || haveError) {
             return this.renderError(res.message)
         } else if (res.state === 'InProgress') {
             return this.renderInProgress()

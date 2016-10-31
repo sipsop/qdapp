@@ -2,11 +2,11 @@ import {
     React,
     PureComponent,
     View
- } from '~/src/components/Component'
+ } from '/components/Component'
 import { ActivityIndicator } from 'react-native'
 
 import { LazyComponent } from './LazyComponent'
-import { config } from '~/src/utils/config'
+import { config } from '/utils/config'
 
 // export class Page extends PureComponent {
 //     constructor(props) {

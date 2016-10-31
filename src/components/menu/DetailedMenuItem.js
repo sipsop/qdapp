@@ -7,7 +7,7 @@ import {
     Img,
     StyleSheet,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import shortid from 'shortid'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -16,11 +16,11 @@ import { MenuItemOrderList } from './MenuItemOrderList.js'
 import { MenuItemImage } from './MenuItemImage.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'
-import { createOrderItem, orderStore } from '~/src/model/orders/orderstore.js'
+import { createOrderItem, orderStore } from '/model/orders/orderstore.js'
 import { OrderList } from '../orders/OrderList.js'
-import * as _ from '~/src/utils/curry.js'
-import { config } from '~/src/utils/config.js'
-import { tagStore } from '~/src/model/store.js'
+import * as _ from '/utils/curry.js'
+import { config } from '/utils/config.js'
+import { tagStore } from '/model/store.js'
 
 const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
 

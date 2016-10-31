@@ -4,7 +4,7 @@ import {
     PureComponent,
     StyleSheet,
     T,
-} from '~/src/components/Component'
+} from '/components/Component'
 import { observer } from 'mobx-react/native'
 import { Time } from './Time'
 

@@ -1,12 +1,12 @@
 import { observable, computed, transaction, action, autorun } from 'mobx'
-import { Map, mapCreate } from '~/src/utils/map.js'
+import { Map, mapCreate } from '/utils/map.js'
 
 import { barStore } from './barstore.js'
-import { downloadManager } from '~/src/network/http.js'
-import { TagsDownload } from '~/src/network/api/bar/tags.js'
-import { analytics } from '~/src/model/analytics.js'
-import { config } from '~/src/utils/config.js'
-import * as _ from '~/src/utils/curry.js'
+import { downloadManager } from '/network/http.js'
+import { TagsDownload } from '/network/api/bar/tags.js'
+import { analytics } from '/model/analytics.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils('./model/tagstore.js')
 

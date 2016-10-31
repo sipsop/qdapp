@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
     T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -15,10 +15,11 @@ import { DownloadResultView } from '../download/DownloadResultView'
 import { Loader } from '../Page'
 import { Notification } from './Notification'
 
-import { notificationStore, NotificationLevels } from '~/src/model/notificationstore'
-import { downloadManager } from '~/src/network/http'
-import * as _ from '~/src/utils/curry'
-import { config } from '~/src/utils/config'
+import { store, orderStatusStore } from '/model/store'
+import { notificationStore, NotificationLevels } from '/model/notificationstore'
+import { downloadManager } from '/network/http'
+import * as _ from '/utils/curry'
+import { config } from '/utils/config'
 
 const { assert, log } = _.utils(__filename)
 
@@ -103,6 +104,25 @@ export class NotificationBar extends PureComponent {
 //     id: 'hello',
 //     message: 'Hello World! here is a  lot of text lbha fdjkfk;ajfi fehia;efh iaew feihao;e fi;oej fi;ae hfeahf e;of e ;eafh;fhei;a fh;eawhfea8;hfeaw;',
 // })
+
+/*********************************************************************/
+/* Order Status Notifications                                        */
+/*********************************************************************/
+
+/* Notify the user about the order status */
+autorun(() => {
+    if (orderStatusStore.haveUncompletedOrder) {
+        log("MESSAGE!", orderStatusStore.orderStatusMessage)
+        notificationStore.notify({
+            id:       'order status',
+            message:  orderStatusStore.orderStatusMessage,
+            priority: NotificationLevels.IMPORTANT,
+        })
+    } else {
+        log("DIMISSING ORDER STATUS")
+        notificationStore.dismiss('order status')
+    }
+})
 
 /*********************************************************************/
 /* Download Error Notifications                                      */

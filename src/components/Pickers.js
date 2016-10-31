@@ -1,24 +1,24 @@
 import {
     React, Component, View, ScrollView, TouchableOpacity,
     PureComponent, T,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 // import PickerAndroid from 'react-native-picker-android';
 import { observable, computed, autorun, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { addToSelectionInPlace } from '~/src/model/orders/orderSelection'
-// import { PureComponent } from '~/src/components/Component.js'
+import { addToSelectionInPlace } from '/model/orders/orderSelection'
+// import { PureComponent } from '/components/Component.js'
 import { LazyComponent, lazyWrap } from './LazyComponent.js'
 import { Selector } from './Selector.js'
 import { Price } from './Price.js'
 import { TextHeader } from './Header.js'
 import { OkCancelModal } from './Modals.js'
 import { TextButton, Button } from './Button.js'
-import { store } from '~/src/model/store.js'
-import { config } from '~/src/utils/config.js'
-import * as _ from '~/src/utils/curry.js'
+import { store } from '/model/store.js'
+import { config } from '/utils/config.js'
+import * as _ from '/utils/curry.js'
 
 const rowHeight = 55
 

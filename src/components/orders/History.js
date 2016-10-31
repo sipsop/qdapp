@@ -1,4 +1,4 @@
-import { React, Component, View, TouchableOpacity, PureComponent, T } from '~/src/components/Component.js'
+import { React, Component, View, TouchableOpacity, PureComponent, T } from '/components/Component.js'
 import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -7,20 +7,21 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { TextHeader } from '../Header.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
-import { barStore, loginStore, orderStore } from '~/src/model/store.js'
+import { barStore, loginStore, orderStore } from '/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { Receipt } from './Receipt.js'
 import { DownloadComponent } from '../download/DownloadComponent'
-import { HistoryQueryDownload } from '~/src/network/api/history'
-import { BarInfoDownload } from '~/src/network/api/maps/place-info.js'
 
-import { config } from '~/src/utils/config.js'
-import { Second } from '~/src/utils/time.js'
-import * as _ from '~/src/utils/curry.js'
+import { HistoryQueryDownload } from '/network/api/orders/history'
+import { BarInfoDownload } from '/network/api/maps/place-info.js'
+
+import { config } from '/utils/config.js'
+import { Second } from '/utils/time.js'
+import * as _ from '/utils/curry.js'
 
 /***************************************************************************/
 
-import type { CacheInfo } from '~/src/network/cache.js'
+import type { CacheInfo } from '/network/cache.js'
 
 /***************************************************************************/
 

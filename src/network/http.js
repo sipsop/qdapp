@@ -1,15 +1,15 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 
 import { Cache, cache } from './cache.js'
-import { config } from '~/src/utils/config.js'
-import { store } from '~/src/model/store.js'
+import { config } from '/utils/config.js'
+import { store } from '/model/store.js'
 import { HOST } from './host.js'
-import { getTime, Second, Minute } from '~/src/utils/time.js'
-import * as _ from '~/src/utils/curry.js'
+import { getTime, Second, Minute } from '/utils/time.js'
+import * as _ from '/utils/curry.js'
 
-import type { Int, Float, String, URL } from '~/src/utils/types.js'
+import type { Int, Float, String, URL } from '/utils/types.js'
 
-const { log, assert } = _.utils('~/src/network/http.js')
+const { log, assert } = _.utils('/network/http.js')
 
 export type HTTPOptions = RequestOptions
 
@@ -426,6 +426,10 @@ export class JSONDownload {
                 return i
         }
         return -1
+    }
+
+    @computed get haveErrorMessage() {
+        return this._message != null
     }
 
     @computed get message() {

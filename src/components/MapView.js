@@ -8,18 +8,18 @@ import {
     Platform,
     T,
     PureComponent,
-} from '~/src/components/Component.js'
+} from '/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import NativeMapView from 'react-native-maps'
 
-import { merge, logger } from '~/src/utils/curry.js'
-import { store, tabStore, barStore } from '~/src/model/store.js'
-import { config } from '~/src/utils/config.js'
-import { mapStore, getBarCoords } from '~/src/model/mapstore.js'
+import { merge, logger } from '/utils/curry.js'
+import { store, tabStore, barStore } from '/model/store.js'
+import { config } from '/utils/config.js'
+import { mapStore, getBarCoords } from '/model/mapstore.js'
 import { DownloadResultView } from './download/DownloadResultView'
-import * as _ from '~/src/utils/curry.js'
+import * as _ from '/utils/curry.js'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
