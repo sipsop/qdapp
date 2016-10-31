@@ -1,5 +1,7 @@
 import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from '/components/Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
+import { TextHeader } from './Header.js'
+import { MarkdownLoader } from './markdown/MarkdownLoader'
 import * as _ from '/utils/curry.js'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
@@ -142,6 +144,30 @@ export class SmallOkCancelModal extends PureComponent {
 }
 
 @observer
+export class MarkdownModal extends PureComponent {
+    /* properties:
+        header: String
+        url: String
+    */
+    modal = null
+    show = () => this.modal.show()
+    render = () => {
+        return <SimpleModal ref={ref => this.modal = ref}>
+            <View style={{flex: 1}}>
+                <TextHeader
+                    label={this.props.header}
+                    rowHeight={55}
+                    />
+                <MarkdownLoader
+                    name={this.props.header}
+                    url={this.props.url}
+                    />
+            </View>
+        </SimpleModal>
+    }
+}
+
+@observer
 export class SimpleModal extends PureComponent {
     /*
         <SimpleModal ref={ref => this.modal = ref}>
@@ -160,16 +186,17 @@ export class SimpleModal extends PureComponent {
     }
 
     render = () => {
-        return <OkCancelModal
+        return (<OkCancelModal
                     visible={this.visible}
                     cancelModal={this.close}
                     showOkButton={false}
                     cancelLabel="Close"
                     {...this.props}
-                    />
+                    />)
     }
 }
 
+@observer
 export class OkCancelModal extends PureComponent {
     /* properties:
         visible: bool
@@ -211,8 +238,7 @@ export class OkCancelModal extends PureComponent {
                 disabled={this.props.cancelDisabled}
                 disabledColor={this.props.cancelDisabledColor || this.props.disabledColor}
                 backgroundColor={this.props.cancelBackgroundColor}
-                borderColor={this.props.cancelBorderColor}
-                />
+                borderColor={this.props.cancelBorderColor} />
         }
 
         let okButton = undefined
@@ -224,8 +250,7 @@ export class OkCancelModal extends PureComponent {
                 disabled={this.props.okDisabled}
                 disabledColor={this.props.okDisabledColor || this.props.disabledColor}
                 backgroundColor={this.props.okBackgroundColor}
-                borderColor={this.props.okBorderColor}
-                />
+                borderColor={this.props.okBorderColor} />
         }
 
         return <Modal visible={this.props.visible}

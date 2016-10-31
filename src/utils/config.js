@@ -1,4 +1,5 @@
-import { Second, Minute, Hour, Day, Week, Month } from './time.js'
+import { appVersion } from '../../version'
+import { Second, Minute, Hour, Day, Week, Month } from './time'
 
 const pink200 = '#F48FB1'
 const pink300 = '#F06292'
@@ -49,6 +50,7 @@ export const makeConfig = (primaryPalette, secondaryPalette) => {
 }
 
 export const config = {
+    appVersion: appVersion,
     theme: {
         primary:        pinkPalette,
         secondary:      purplePalette,

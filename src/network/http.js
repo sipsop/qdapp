@@ -165,7 +165,7 @@ export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
 }
 
 /* Class for declarating an JSON API request */
-export class JSONDownload {
+export class Download {
 
     @observable downloadState  : DownloadState = 'NotStarted'
     @observable _message : ?string             = null
@@ -334,7 +334,7 @@ export class JSONDownload {
 
         // Download
         cacheInfo = cacheInfo || this.cacheInfo
-        const promise = downloadManager.fetchJSON(
+        const promise = downloadManager.fetch(
             this.cacheKey,
             this.url,
             this.httpOptions,
@@ -353,6 +353,7 @@ export class JSONDownload {
             // Update state
             if (downloadResult.state === 'Finished') {
                 this.downloadFinished(downloadResult.value)
+                this._finish()
                 this.finish()
             } else if (downloadResult.state === 'Error') {
                 this.downloadError(downloadResult.message)
@@ -360,6 +361,10 @@ export class JSONDownload {
                 throw Error(`Invalid download state: ${downloadResult.state}`)
             }
         })
+    }
+
+    @action _finish = () => {
+        /* Update the download state here for any finished download. Internal use only. */
     }
 
     @action finish = () => {
@@ -456,6 +461,14 @@ export class JSONDownload {
 
     @computed get inProgress() {
         return this.state === 'InProgress'
+    }
+}
+
+export class JSONDownload extends Download {
+    @action _finish = () => {
+        if (this.value) {
+            this.value = parseJSON(this.value)
+        }
     }
 }
 
@@ -738,8 +751,30 @@ class DownloadManager {
         return downloadResult.update(value => value.result)
     }
 
+    fetchJSON = async (
+            /* key used for caching responses */
+            key : string,
+            /* URL to fetch */
+            url : URL,
+            /* HTTP options to pass to fetch() */
+            httpOptions : HTTPOptions,
+            cacheInfo : CacheInfo,
+            timeoutDesc = 'normal',
+            acceptValueFromCache = (value) => true,
+            ) => {
+        const downloadResult : DownloadResult<String> = await this.fetch(
+            key,
+            url,
+            httpOptions,
+            cacheInfo,
+            timeoutDesc,
+            acceptValueFromCache,
+        )
+        return downloadResult.update(parseJSON)
+    }
+
     /* HTTP GET/POST/etc to a URL */
-    fetchJSON = async /*<T>*/(
+    fetch = async /*<T>*/(
             /* key used for caching responses */
             key : string,
             /* URL to fetch */
@@ -753,7 +788,7 @@ class DownloadManager {
         assert(url)
         /* Try a fresh download... */
         const timeoutInfo = getTimeoutInfo(timeoutDesc)
-        return await fetchJSONWithTimeouts(
+        return await fetchWithTimeouts(
             key, url, httpOptions,
             timeoutInfo.refreshTimeout,
             timeoutInfo.expiryTimeout,
@@ -769,7 +804,7 @@ export const downloadManager = new DownloadManager()
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError
 
-const fetchJSONWithTimeouts = async /*<T>*/(
+const fetchWithTimeouts = async /*<T>*/(
         key             : string,
         url             : URL,
         httpOptions     : HTTPOptions,
@@ -780,10 +815,10 @@ const fetchJSONWithTimeouts = async /*<T>*/(
         ) : Promise<DownloadResult<T>> => {
 
     const refreshCallback = async () => {
-        return await simpleFetchJSON(url, httpOptions, refreshTimeout)
+        return await simpleFetch(url, httpOptions, refreshTimeout)
     }
     const expiredCallback = async () => {
-        return await simpleFetchJSON(url, httpOptions, expiredTimeout)
+        return await simpleFetch(url, httpOptions, expiredTimeout)
     }
 
     let result
@@ -812,7 +847,7 @@ const fetchJSONWithTimeouts = async /*<T>*/(
     }
 }
 
-export const simpleFetchJSON = async /*<T>*/(
+export const simpleFetch = async /*<T>*/(
         url             : URL,
         httpOptions     : HTTPOptions,
         downloadTimeout : Float,
@@ -830,9 +865,10 @@ export const simpleFetchJSON = async /*<T>*/(
     if (response.status !== 200) {
         throw new NetworkError("Network Error", response.status)
     }
+    return await response.text()
+}
+
+const parseJSON = (text) => {
     // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
-    const jsonData = await response.text()
-    const result = JSON.parse(jsonData.replace( /\\u2028|\\u2029/g, ''))
-    return result
-    // return await response.json()
+    return JSON.parse(text.replace( /\\u2028|\\u2029/g, ''))
 }

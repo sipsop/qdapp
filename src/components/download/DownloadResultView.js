@@ -122,7 +122,7 @@ export class DownloadResultView<T> extends PureComponent {
         return (
             <View style={styles.error}>
                 <T style={styles.errorText}>
-                    {errorMessage || this.errorMessage}
+                    {this.errorMessage || errorMessage}
                 </T>
                 {
                     this.getDownloadResult().state === 'InProgress'

@@ -181,7 +181,6 @@ export class TextSelectorRow extends PureComponent {
         const textStyle = {
             fontSize: 20,
             color: '#000',
-            ...style
         }
 
         const confirmModal =
@@ -199,7 +198,7 @@ export class TextSelectorRow extends PureComponent {
                 : this.props.onPress
 
         return <SelectorRow onPress={onPress} align={this.props.align}>
-            <T style={textStyle}>
+            <T style={[textStyle, style]}>
                 {this.props.label}
             </T>
             {confirmModal}
