@@ -311,7 +311,6 @@ class OrderStore {
                 delivery:            this.delivery,
                 tableNumber:         this.tableNumber,
                 pickupLocation:      this.pickupLocation,
-
             }
         }))
     }

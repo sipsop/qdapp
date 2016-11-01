@@ -46,9 +46,16 @@ export class Main extends Component {
             titleStyle: style.title
         }
     }
+
     @computed get barSelected () {
         return !!barStore.barID || tabStore.currentPage !== 0
     }
+
+    componentDidMount = async () => {
+        handleBackButton()
+        await store.initialize()
+    }
+
     render = () => {
         if (!store.initialized) {
             return <Loader />
@@ -105,8 +112,3 @@ require('promise/setimmediate/rejection-tracking').enable({
         console.error(error)
     }
 })
-
-export const main = async () => {
-    handleBackButton()
-    await store.initialize()
-}
