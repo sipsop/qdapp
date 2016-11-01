@@ -63,12 +63,11 @@ class TabBarWithMenu extends PureComponent {
                     <Icon name="bars" size={30} color="#000" />
                 </View>
             </TouchableOpacity>
-
             <View style={{flex: 1}}>
                 <DefaultTabBar
                     {...this.props}
                     containerWidth={containerWidth}
-                    />
+                />
             </View>
         </View>
     }
