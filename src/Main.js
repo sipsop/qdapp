@@ -58,35 +58,34 @@ export class Main extends Component {
         }
         return (
             <View style={{flex: 1}}>
-              <NotificationBar />
-              {
-                this.barSelected ?
-                  <SideMenu content={<ControlPanel />}>
-                      <View style={{flex: 1, flexDirection: 'row'}}>
-                          {/*
-                          <Checkout />
-                          <ReceiptModal />
-                          */}
-                          <TabView>
-                              <View tabLabel='Discover' style={{flex: 1}}>
-                                  <DiscoverPage />
-                              </View>
-                              <View tabLabel='Bar' style={{flex: 1}}>
-                                  <BarPage />
-                              </View>
-                              <View tabLabel='Menu' style={{flex: 1}}>
-                                  <MenuPage />
-                              </View>
-                              <View tabLabel='Order' style={{flex: 1}}>
-                                  <OrderPage />
-                              </View>
-                          </TabView>
-                      </View>
-                  </SideMenu> :
-                  <DiscoverPage />
-              }
-          </View>
-      )
+                <NotificationBar />
+                { this.barSelected ?
+                    <SideMenu content={<ControlPanel />}>
+                        <View style={{flex: 1, flexDirection: 'row'}}>
+                            {/*
+                            <Checkout />
+                            <ReceiptModal />
+                            */}
+                            <TabView>
+                                <View tabLabel='Discover' style={{flex: 1}}>
+                                    <DiscoverPage />
+                                </View>
+                                <View tabLabel='Bar' style={{flex: 1}}>
+                                    <BarPage />
+                                </View>
+                                <View tabLabel='Menu' style={{flex: 1}}>
+                                    <MenuPage />
+                                </View>
+                                <View tabLabel='Order' style={{flex: 1}}>
+                                    <OrderPage />
+                                </View>
+                            </TabView>
+                        </View>
+                    </SideMenu> :
+                    <DiscoverPage />
+                }
+            </View>
+        )
     }
 
     // renderTabBar = () => <DefaultTabBar />

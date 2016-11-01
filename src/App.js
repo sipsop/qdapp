@@ -10,9 +10,9 @@ import { Router } from './Router'
 export class App extends Component {
     render = () => {
         return (
-          <NavigationProvider router={Router}>
-            <StackNavigation initialRoute={Router.getRoute('main')} />
-          </NavigationProvider>
+            <NavigationProvider router={Router}>
+                <StackNavigation initialRoute={Router.getRoute('main')} />
+            </NavigationProvider>
         )
     }
 }
