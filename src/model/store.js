@@ -75,6 +75,8 @@ export class Store {
         await segment.initialized()
         await downloadManager.initialized()
         await orderStatusStore.initialized()
+        await loginStore.initialized()
+
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',

@@ -85,6 +85,10 @@ class LoginStore {
         })
     }
 
+    initialized = async () => {
+        await periodicallyRefreshToken()
+    }
+
     /*********************************************************************/
     /* Auth & Token Refresh                                              */
     /*********************************************************************/
@@ -237,7 +241,6 @@ class LoginStore {
     @computed get ownedBars() : Array<BarID> {
         return this.barOwnerProfile && this.barOwnerProfile.bars || []
     }
-
 }
 
 export const loginStore = new LoginStore()
@@ -246,3 +249,14 @@ export const loginStore = new LoginStore()
 _.safeAutorun(() => {
     segment.setUserID(loginStore.userOrDeviceID)
 })
+
+
+const periodicallyRefreshToken = async () => {
+    if (loginStore.isLoggedIn && loginStore.shouldRefreshToken()) {
+        await loginStore.refreshToken(
+            () => null, /* callbackSuccess */
+            () => null, /* callbackError */
+        )
+    }
+    setTimeout(periodicallyRefreshToken, 60000)
+}
