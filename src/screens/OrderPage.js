@@ -15,7 +15,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page, Loader } from '/components/Page'
-import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '/components/SimpleListView'
+import { SimpleListView } from '/components/SimpleListView'
 import { LargeButton } from '/components/Button'
 import { SelectableButton } from '/components/ButtonRow'
 import { DownloadResultView } from '/components/download/DownloadResultView'
@@ -44,15 +44,16 @@ export class OrderPage extends DownloadResultView {
 
     styles = {
         deliveryMethodView: {
-            position: 'absolute',
+            // position: 'absolute',
             width: width - 10,
-            top: 5,
-            left: 5,
+            // top: 5,
+            // left: 5,
         },
         deliveryMethod: {
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderRadius: 10,
             height: 120,
+            margin: 5,
             padding: 10,
             borderWidth: 0.5,
             borderColor: config.theme.primary.medium,
@@ -65,7 +66,6 @@ export class OrderPage extends DownloadResultView {
 
     inProgressMessage = "Loading menu..."
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    refreshPage = () => barStore.updateBarAndMenu(barStore.barID, force = true)
 
     handleOrderPress = () => {
         orderStore.setCheckoutVisibility(true)
@@ -74,7 +74,10 @@ export class OrderPage extends DownloadResultView {
     }
 
     handleRefresh = async () => {
-        await barStore.getMenuDownloadResult().forceRefresh()
+        await Promise.all([
+            barStore.getMenuDownloadResult().forceRefresh(),
+            barStatusStore.getBarStatusDownload().forceRefresh(),
+        ])
     }
 
     renderFinished = () => {
@@ -85,9 +88,6 @@ export class OrderPage extends DownloadResultView {
 
     /*** EMPTY ***/
     renderEmptyOrder = () => {
-        log("RENDERING EMPTY ORDER LIST")
-        log("menu items on order", orderStore.menuItemsOnOrder)
-        log("orderList", orderStore.orderList)
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
                 label="Add Items"
@@ -100,7 +100,11 @@ export class OrderPage extends DownloadResultView {
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            renderHeader:   () => <View style={this.styles.emptyView} />,
+            renderHeader:   () =>
+                <DeliveryMethod
+                    style={this.styles.deliveryMethod}
+                    primary={true}
+                    />,
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
             menuItems:      orderStore.menuItemsOnOrder,
@@ -117,15 +121,6 @@ export class OrderPage extends DownloadResultView {
             {/* Order stuff */}
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
-            {/* Delivery Method. This needs to be at the end to give it a
-                higher elevation than the preceding elements.
-            */}
-            <View style={this.styles.deliveryMethodView}>
-                <DeliveryMethod
-                    style={this.styles.deliveryMethod}
-                    primary={true}
-                    />
-            </View>
         </View>
     }
 }
@@ -162,7 +157,7 @@ class DeliveryMethod extends DownloadResultView {
     })
 
     getDownloadResult = () => barStatusStore.getBarStatusDownload()
-    refreshPage = () => barStatusStore.refreshBarStatus()
+    refreshPage = () => barStatusStore.getBarStatusDownload().forceRefresh()
 
     @action tableDelivery = () => {
         orderStore.delivery = 'Table'

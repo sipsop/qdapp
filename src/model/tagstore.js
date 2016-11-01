@@ -105,8 +105,10 @@ export class TagStore {
         }
     }
 
+    getTagDownloadResult = () => downloadManager.getDownload('tags')
+
     @computed get tags() {
-        return downloadManager.getDownload('tags').tags
+        return this.getTagDownloadResult().tags
     }
 
     /*********************************************************************/

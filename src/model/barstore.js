@@ -189,7 +189,7 @@ class BarStore {
         // }
     }
 
-    @action updateBarAndMenu = async (barID, force = false) => {
+    @action updateBarAndMenu = async () => {
         await Promise.all([
             this.getBarDownloadResult().forceRefresh(),
             this.getMenuDownloadResult().forceRefresh(),

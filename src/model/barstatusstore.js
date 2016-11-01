@@ -39,7 +39,6 @@ class BarStatusStore {
     }
 
     getBarStatusDownload = () => downloadManager.getDownload('bar status')
-    refreshBarStatus = () => downloadManager.forceRefresh('bar status')
 
     @computed get barStatus() : ?BarStatus {
         return this.getBarStatusDownload().barStatus

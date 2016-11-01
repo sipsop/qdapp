@@ -107,9 +107,13 @@ export class OrderList extends PureComponent {
     simpleListView = null
 
     render = () => {
+        const orderListDesc = new OrderListDescriptor(
+            this.props,
+            () => this.simpleListView,
+        )
         return <SimpleListView
                     ref={ref => this.simpleListView = ref}
-                    descriptor={new OrderListDescriptor(this.props, () => this.simpleListView)}
+                    descriptor={orderListDesc}
                     initialListSize={2}
                     pageSize={1} />
     }

@@ -44,7 +44,6 @@ const rowHeight = 55
 export class MenuPage extends DownloadResultView {
     inProgressMessage = "Loading menu..."
     getDownloadResult = () => barStore.getMenuDownloadResult()
-    refreshPage = () => barStore.updateBarAndMenu(barStore.barID, force = true)
     renderFinished = () => <MenuView />
 }
 
@@ -64,6 +63,13 @@ export class MenuView extends PureComponent {
 @observer
 class MenuList extends PureComponent {
 
+    handleRefresh = async () => {
+        await Promise.all([
+            barStore.getMenuDownloadResult().forceRefresh(),
+            tagStore.getTagDownloadResult().forceRefresh(),
+        ])
+    }
+
     render = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
@@ -79,7 +85,7 @@ class MenuList extends PureComponent {
                     menuItems={tagStore.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => <TagView />}
-                    onRefresh={this.refreshPage}
+                    onRefresh={this.handleRefresh}
                     visible={this.menuItemVisible} />
     }
 

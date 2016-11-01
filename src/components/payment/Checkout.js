@@ -75,7 +75,7 @@ export class Checkout extends PureComponent {
     handleRefresh = async () => {
         this.refreshing = true
         transaction(async () => {
-            await barStore.updateBarAndMenu(barStore.barID, force = true)
+            await barStore.updateBarAndMenu()
             this.refreshing = false
         })
     }

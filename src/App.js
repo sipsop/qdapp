@@ -5,6 +5,7 @@ import {
   StackNavigation
 } from '@exponent/ex-navigation'
 import { Router } from './Router'
+import { Main } from './Main'
 
 @observer
 export class App extends Component {
