@@ -10,20 +10,26 @@ export const Month = 30 * Day
 export const getTime = () => new Date().getTime() / 1000
 
 export const formatDuration = (time : Float) => {
-    if (time < 10)
+    if (time < 60)
         return "Any time now..."
     const seconds = time % 60
     const minutes = Math.floor(time / 60)
     const hours   = Math.floor(time / 3600)
     if (hours)
-        return `${renderNumber(hours)}:${renderNumber(minutes)}:${renderNumber(seconds)}h`
+        return `${renderTime('hour', hours)} and ${renderTime('minute', minutes)}`
     if (minutes)
-        return `${renderNumber(minutes)}:${renderNumber(seconds)}m`
-    return `${renderNumber(seconds)}s`
+        return renderTime('minute', minutes)
+    return renderTime('second', seconds)
 }
 
 const renderNumber = (n : Int) => {
     if (n < 10)
         return '0' + n
     return '' + n
+}
+
+const renderTime = (unit, value) => {
+    if (value > 1)
+        unit += 's'
+    return `${value} ${unit}`
 }
