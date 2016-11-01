@@ -86,7 +86,7 @@ class LoginStore {
     }
 
     initialized = async () => {
-        await periodicallyRefreshToken()
+        setTimeout(periodicallyRefreshToken, 10000)
     }
 
     /*********************************************************************/

@@ -14,7 +14,7 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from '/components/Page'
+import { Page, Loader } from '/components/Page'
 import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '/components/SimpleListView'
 import { LargeButton } from '/components/Button'
 import { SelectableButton } from '/components/ButtonRow'
@@ -32,21 +32,6 @@ import { config } from '/utils/config'
 
 const { assert, log } = _.utils('./orders/OrderPage')
 
-assert(Page)
-assert(SimpleListView)
-assert(LargeButton)
-assert(SelectableButton)
-assert(DownloadResultView)
-assert(Checkout)
-assert(SelectedCardInfo)
-assert(Header)
-assert(TextHeader)
-assert(OrderList)
-assert(OrderListDescriptor)
-assert(Message)
-assert(SmallOkCancelModal)
-assert(ReceiptModal)
-
 const largeButtonStyle = {
     height: 55,
     margin: 5,
@@ -55,7 +40,7 @@ const largeButtonStyle = {
 const { width } = Dimensions.get('window')
 
 @observer
-export class OrderPage extends Page {
+export class OrderPage extends DownloadResultView {
 
     styles = {
         deliveryMethodView: {
@@ -78,6 +63,10 @@ export class OrderPage extends Page {
         },
     }
 
+    inProgressMessage = "Loading menu..."
+    getDownloadResult = () => barStore.getMenuDownloadResult()
+    refreshPage = () => barStore.updateBarAndMenu(barStore.barID, force = true)
+
     handleOrderPress = () => {
         orderStore.setCheckoutVisibility(true)
         orderStore.freshCheckoutID()
@@ -88,7 +77,7 @@ export class OrderPage extends Page {
         await barStore.getMenuDownloadResult().forceRefresh()
     }
 
-    renderView = () => {
+    renderFinished = () => {
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()
@@ -96,6 +85,9 @@ export class OrderPage extends Page {
 
     /*** EMPTY ***/
     renderEmptyOrder = () => {
+        log("RENDERING EMPTY ORDER LIST")
+        log("menu items on order", orderStore.menuItemsOnOrder)
+        log("orderList", orderStore.orderList)
         return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <LargeButton
                 label="Add Items"

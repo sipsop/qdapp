@@ -18,7 +18,6 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { Page } from '/components/Page'
 import { downloadManager } from '/network/http'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { NotificationBar } from '/components/notification/NotificationBar'
@@ -42,10 +41,11 @@ const { log, assert } = _.utils('./menu/MenuPage')
 const rowHeight = 55
 
 @observer
-export class MenuPage extends Page {
-    renderView = () => {
-        return <MenuView />
-    }
+export class MenuPage extends DownloadResultView {
+    inProgressMessage = "Loading menu..."
+    getDownloadResult = () => barStore.getMenuDownloadResult()
+    refreshPage = () => barStore.updateBarAndMenu(barStore.barID, force = true)
+    renderFinished = () => <MenuView />
 }
 
 @observer
@@ -62,11 +62,9 @@ export class MenuView extends PureComponent {
 }
 
 @observer
-class MenuList extends DownloadResultView {
+class MenuList extends PureComponent {
 
-    getDownloadResult = () => barStore.getMenuDownloadResult()
-
-    renderFinished = () => {
+    render = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
                   reuse state. This has the effect of "reloading"

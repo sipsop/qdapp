@@ -70,7 +70,6 @@ export class Store {
         } catch (e) {
             _.logError(e)
         }
-        this.initialized = true
 
         /* Then call initialized() */
         await Promise.all([
@@ -80,12 +79,14 @@ export class Store {
             orderStatusStore.initialized(),
             loginStore.initialized(),
         ])
-
+    
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
             // url: 'url://location'
         })
+
+        this.initialized = true
     }
 
     loadFromLocalStorage = async () => {

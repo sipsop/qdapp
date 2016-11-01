@@ -195,7 +195,7 @@ class BarStore {
             this.getMenuDownloadResult().forceRefresh(),
         ])
     }
-    
+
     /***********************************************************************/
     /* Menu */
 
