@@ -49,11 +49,11 @@ export class Checkout extends PureComponent {
     payNow = () => {
         // orderStore.setFreshOrderToken()
         analytics.trackCheckoutStep(3)
+        orderStore.freshOrderToken()
         loginStore.login(
             () => {
                 // success
                 analytics.trackCheckoutFinish()
-                orderStore.freshOrderToken()
                 orderStore.placeActiveOrder()
                 this.close()
             },
@@ -103,8 +103,8 @@ export class Checkout extends PureComponent {
                     cancelModal={this.close}
                     okModal={this.payNow}
                     okLabel={`Buy Now`}
-                    /* okDisabled={!this.haveCardNumber}
-                    okDisabledColor='rgba(0, 0, 0, 0.5)' */
+                    okDisabled={orderStore.getActiveOrderToken() != null}
+                    okDisabledColor='rgba(0, 0, 0, 0.5)'
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
                     >
