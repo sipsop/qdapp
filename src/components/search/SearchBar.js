@@ -1,7 +1,9 @@
 import React from 'react'
 import {
   TextInput,
-  View
+  View,
+  TouchableOpacity,
+  Image
 } from 'react-native'
 import {
     PureComponent
@@ -11,12 +13,21 @@ import { action } from 'mobx'
 
 const styles = {
     input: {
-        height: 30,
-        textAlign: 'center'
+        height: 25,
+        textAlign: 'center',
+        flex: 1
     },
     seperator: {
         height: 1,
         backgroundColor: '#cecece'
+    },
+    searchBtn: {
+        height: 30,
+        width: 30
+    },
+    searchBarContainer: {
+        flexDirection: 'row',
+        margin: 4
     }
 }
 
@@ -31,18 +42,25 @@ export class SearchBar extends PureComponent {
         }
     }
 
-    @action _onChangeSearchString = (text) => {
+    @action _onSearchPress = (text) => {
       // fire search query here
     }
     render = () => {
         return (
             <View>
+              <View style={styles.searchBarContainer}>
                 <TextInput
-                    placeholder='Search for bars, drinks, events,...'
-                    value={this.state.searchString}
+                    placeholder={this.props.placeholder}
                     style={styles.input}
                 />
-                <View style={styles.seperator} />
+                <TouchableOpacity onPress={this._onSearchPress}>
+                  <Image
+                      style={styles.searchBtn}
+                      source={require('../../../logos/search.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.seperator} />
             </View>
         )
     }

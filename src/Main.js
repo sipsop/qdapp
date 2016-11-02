@@ -14,7 +14,6 @@ import { DiscoverPage } from './screens//DiscoverPage'
 import { BarPage } from './screens/BarPage'
 import { MenuPage } from './screens/MenuPage'
 import { OrderPage } from './screens/OrderPage'
-import { SearchPage } from './screens/SearchPage'
 
 import { handleBackButton } from './components/AndroidBackButton'
 import { SideMenu } from './components/sidemenu/SideMenu'
@@ -84,9 +83,6 @@ export class Main extends Component {
                               </View>
                               <View tabLabel='Order' style={{flex: 1}}>
                                   <OrderPage />
-                              </View>
-                              <View tabLabel='Search' style={{flex: 1}}>
-                                  <SearchPage />
                               </View>
                           </TabView>
                       </View>

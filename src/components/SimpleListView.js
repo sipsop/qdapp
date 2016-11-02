@@ -1,20 +1,18 @@
 import {
     React,
-    Component,
     View,
     PureComponent,
     ListView,
     RefreshControl,
-    T,
+    TextInput,
+    Image,
+    TouchableOpacity
 } from '/components/Component.js'
-import { computed, observable, action } from 'mobx'
+import { observable } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from './Page.js'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
-
-const { log, assert } = _.utils('./SimpleListView.js')
 
 @observer
 export class SimpleListView extends PureComponent {
@@ -87,18 +85,21 @@ export class SimpleListView extends PureComponent {
     }
 
     render = () => {
-        return <ListView
-                    ref={this.saveRef}
-                    dataSource={this.dataSource}
-                    removeClippedSubviews={true}
-                    enableEmptySections={true}
-                    renderRow={this.props.descriptor.renderRow}
-                    refreshControl={this.getRefreshControl()}
-                    renderHeader={this.props.descriptor.renderHeader}
-                    renderFooter={this.props.descriptor.renderFooter}
-                    {...this.props}
-                    onContentSizeChange={this.handleContentSizeChange}
-                    onScroll={this.handleScroll} />
+        return (
+            <ListView
+                ref={this.saveRef}
+                dataSource={this.dataSource}
+                removeClippedSubviews={true}
+                enableEmptySections={true}
+                renderRow={this.props.descriptor.renderRow}
+                refreshControl={this.getRefreshControl()}
+                renderHeader={this.props.descriptor.renderHeader}
+                renderFooter={this.props.descriptor.renderFooter}
+                {...this.props}
+                onContentSizeChange={this.handleContentSizeChange}
+                onScroll={this.handleScroll}
+              />
+          )
     }
 }
 

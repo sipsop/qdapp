@@ -25,6 +25,7 @@ import { NotificationBar } from '/components/notification/NotificationBar'
 import { OrderList } from '/components/orders/OrderList'
 import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
+import { SearchBar } from '/components/search/SearchBar'
 
 import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '/model/store'
 import { config } from '/utils/config'
@@ -80,7 +81,14 @@ class MenuList extends DownloadResultView {
                     orderStore={orderStore}
                     menuItems={tagStore.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
-                    renderHeader={() => <TagView />}
+                    renderHeader={() => {
+                        return (
+                          <View>
+                            <SearchBar placeholder='Search for drinks...'/>
+                            <TagView />
+                          </View>
+                        )
+                    }}
                     onRefresh={this.refreshPage}
                     visible={this.menuItemVisible} />
     }
