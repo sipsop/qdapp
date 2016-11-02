@@ -9,7 +9,7 @@ import {
     PureComponent
 } from '/components/Component'
 import { observer } from 'mobx-react/native'
-import { action } from 'mobx'
+import { searchStore } from '/model/store'
 
 const styles = {
     input: {
@@ -35,15 +35,13 @@ const styles = {
 @observer
 export class SearchBar extends PureComponent {
 
-    constructor (props) {
-        super(props)
-        this.state = {
-            searchString: ''
-        }
-    }
-
-    @action _onSearchPress = (text) => {
+    _onSearchChanged = (text) => {
       // fire search query here
+      if (this.props.type === 'menu') {
+          searchStore.setMenuSearch(text)
+      } else if (this.props.type === 'bar') {
+          searchStore.setBarSearch(text)
+      }
     }
     render = () => {
         return (
@@ -52,13 +50,8 @@ export class SearchBar extends PureComponent {
                 <TextInput
                     placeholder={this.props.placeholder}
                     style={styles.input}
+                    onChangeText={this._onSearchChanged}
                 />
-                <TouchableOpacity onPress={this._onSearchPress}>
-                  <Image
-                      style={styles.searchBtn}
-                      source={require('../../../logos/search.png')}
-                  />
-                </TouchableOpacity>
               </View>
               <View style={styles.seperator} />
             </View>
