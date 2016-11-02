@@ -365,7 +365,7 @@ export class Download {
     finish() {
         /*
         Update the download state here for any finished download
-    
+
             Must use non-lambda functions, otherwise overriding and super()
             do not work. Broken stupid shit.
         */

@@ -98,8 +98,6 @@ class BarHeader extends BarInfoFetcher {
     /* properties:
         imageHeight: Int
     */
-    renderNotStarted = () => <View style={{height: this.props.imageHeight}} />
-    renderError = () => null
     renderInProgress = () => null
     renderFinished = (bar) => {
         return <LazyBarImages
@@ -120,12 +118,12 @@ class BarStickyHeader extends BarInfoFetcher {
         },
     })
 
-    renderError = () => <View />
-    renderInProgress = () => <View />
-    renderFinished = () => {
+    renderError = () => null
+    renderInProgress = () => null
+    renderFinished = (bar) => {
         return <View style={this.styles.stickyHeader}>
             <BarCardFooter
-                bar={barStore.getBar()}
+                bar={bar}
                 showDistance={false}
                 showTimeInfo={true}
                 showBarName={true}
@@ -189,8 +187,8 @@ class BarIcons extends BarInfoFetcher {
         })
     }
 
-    renderError = () => <View />
-    renderInProgress = () => <View />
+    renderError = () => null
+    renderInProgress = () => null
     renderFinished = (bar) => {
         return <View style={this.styles.view}>
             <OpeningTimesModal
