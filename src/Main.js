@@ -51,11 +51,6 @@ export class Main extends Component {
         return !!barStore.barID || tabStore.currentPage !== 0
     }
 
-    componentDidMount = async () => {
-        handleBackButton()
-        await store.initialize()
-    }
-
     render = () => {
         if (!store.initialized) {
             return <Loader />
@@ -112,3 +107,10 @@ require('promise/setimmediate/rejection-tracking').enable({
         console.error(error)
     }
 })
+
+/* Initialize
+
+Note: Do not initialize in componentDidMount, as it may be called multiple times.
+*/
+handleBackButton()
+store.initialize()
