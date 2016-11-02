@@ -21,7 +21,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
-import { store, barStore, mapStore, historyStore, segment } from '/model/store'
+import { store, barStore, mapStore, historyStore, segment, searchStore } from '/model/store'
 import { config } from '/utils/config'
 import { SearchBar } from '/components/search/SearchBar'
 import * as _ from '/utils/curry'
@@ -70,16 +70,19 @@ class DiscoverViewDescriptor extends Descriptor {
 
     renderRow = (i) => {
       // SORT HERE
-
         const bar = mapStore.nearbyBarList[i]
-        return <DiscoverBarCard
-                    key={bar.id}
-                    bar={bar}
-                    /*
-                    onBack={this.handleBack}
-                    showBackButton={i === 0}
-                    */
-                    imageHeight={190} />
+        if (bar.name.includes(searchStore.getState().barSearch)) {
+            return (<DiscoverBarCard
+                key={bar.id}
+                bar={bar}
+                        /*
+                        onBack={this.handleBack}
+                        showBackButton={i === 0}
+                        */
+                        imageHeight={190} />)
+        } else {
+            return null
+        }
     }
 }
 
@@ -269,7 +272,7 @@ class BarListPage extends Page {
             onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
         }
         return  <View style={this.styles.view}>
-                <SearchBar placeholder='Search for bars...' />
+                <SearchBar placeholder='Search for bars...' type='bar' />
                 <BackButton
                     onBack={this.showMap}
                     enabled={true}

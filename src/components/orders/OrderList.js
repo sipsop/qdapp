@@ -10,7 +10,7 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { barStore, orderStore } from '/model/store.js'
+import { barStore, orderStore, searchStore } from '/model/store.js'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { Page } from '../Page.js'
 import { MenuItem } from '../menu/DetailedMenuItem.js'
@@ -73,17 +73,22 @@ export class OrderListDescriptor extends Descriptor {
         const style = i === this.numberOfRows - 1 // && orderStore.menuItemsOnOrder.length === 0
             ? this.styles.lastMenuItem
             : undefined
-        return <FancyMenuItem
-                    key={menuItem.id}
-                    style={style}
-                    rowNumber={i}
-                    menuItem={menuItem}
-                    orderStore={this.props.orderStore}
-                    /* visible={() => this.props.visible(i)} */
-                    showTitle={this.props.showTitle}
-                    showPrice={this.props.showPrice}
-                    showHeart={this.props.showHeart}
-                    scrollRelative={this.scrollRelative} />
+
+        if (menuItem.name.includes(searchStore.getState().menuSearch)) {
+            return (<FancyMenuItem
+                key={menuItem.id}
+                style={style}
+                rowNumber={i}
+                menuItem={menuItem}
+                orderStore={this.props.orderStore}
+                      /* visible={() => this.props.visible(i)} */
+                showTitle={this.props.showTitle}
+                showPrice={this.props.showPrice}
+                showHeart={this.props.showHeart}
+                scrollRelative={this.scrollRelative} />)
+        } else {
+            return null
+        }
     }
 }
 

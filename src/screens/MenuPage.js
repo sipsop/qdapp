@@ -84,7 +84,7 @@ class MenuList extends DownloadResultView {
                     renderHeader={() => {
                         return (
                           <View>
-                            <SearchBar placeholder='Search for drinks...'/>
+                            <SearchBar placeholder='Search for drinks...' type='menu'/>
                             <TagView />
                           </View>
                         )
