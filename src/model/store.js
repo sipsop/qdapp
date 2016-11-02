@@ -19,6 +19,7 @@ import { orderStatusStore } from './orders/orderstatusstore'
 import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
+import { searchStore } from './searchstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -187,4 +188,5 @@ export {
     segment,
     drawerStore,
     notificationStore,
+    searchStore
 }
