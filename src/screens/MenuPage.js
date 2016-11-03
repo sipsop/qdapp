@@ -24,8 +24,9 @@ import { NotificationBar } from '/components/notification/NotificationBar'
 import { OrderList } from '/components/orders/OrderList'
 import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
+import { SearchBar } from '/components/search/SearchBar'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, searchStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -70,6 +71,10 @@ class MenuList extends PureComponent {
         ])
     }
 
+    @computed get activeMenuItems() {
+        return searchStore.searchMenuItems(tagStore.activeMenuItems)
+    }
+
     render = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
@@ -82,10 +87,17 @@ class MenuList extends PureComponent {
         return <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={tagStore.activeMenuItems}
+                    menuItems={this.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
-                    renderHeader={() => <TagView />}
                     onRefresh={this.handleRefresh}
+                    renderHeader={() => {
+                        return (
+                          <View>
+                            <SearchBar placeholder='Search for drinks...' type='menu'/>
+                            <TagView />
+                          </View>
+                        )
+                    }}
                     visible={this.menuItemVisible} />
     }
 

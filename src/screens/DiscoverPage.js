@@ -1,16 +1,11 @@
 import {
     React,
-    Component,
     View,
-    ScrollView,
-    ListView,
     PureComponent,
-    StyleSheet,
-    T,
+    StyleSheet
 } from '/components/Component'
-import { computed, observable, action } from 'mobx'
+import { computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import InfiniteScrollView from 'react-native-infinite-scroll-view'
 
 import { Page, Loader } from '/components/Page'
 import { LargeButton } from '/components/Button'
@@ -21,8 +16,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
-import { store, barStore, mapStore, historyStore, segment } from '/model/store'
-import { config } from '/utils/config'
+import { store, mapStore, historyStore, segment, searchStore } from '/model/store'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
@@ -68,15 +62,20 @@ class DiscoverViewDescriptor extends Descriptor {
     }
 
     renderRow = (i) => {
+      // SORT HERE
         const bar = mapStore.nearbyBarList[i]
-        return <DiscoverBarCard
-                    key={bar.id}
-                    bar={bar}
-                    /*
-                    onBack={this.handleBack}
-                    showBackButton={i === 0}
-                    */
-                    imageHeight={190} />
+        if (bar.name.includes(searchStore.getState().barSearch)) {
+            return (<DiscoverBarCard
+                key={bar.id}
+                bar={bar}
+                        /*
+                        onBack={this.handleBack}
+                        showBackButton={i === 0}
+                        */
+                        imageHeight={190} />)
+        } else {
+            return null
+        }
     }
 }
 
@@ -229,7 +228,7 @@ class BarListPage extends Page {
         },
         outerButtonStyle: {
             position: 'absolute',
-            top: 10,
+            top: 50,
             left: 10,
             width: 60,
             height: 60,
@@ -266,20 +265,20 @@ class BarListPage extends Page {
             onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
         }
         return  <View style={this.styles.view}>
-            <BackButton
-                onBack={this.showMap}
-                enabled={true}
-                style={this.styles.outerButtonStyle}
-                buttonStyle={this.styles.innerButtonStyle}
-                /* color='#000' */
-                iconSize={35}
-                />
-            <SimpleListView
-                descriptor={discoverViewDescriptor}
-                initialListSize={2}
-                pageSize={1}
-                /* renderScrollComponent={props => <InfiniteScrollView {...infiniteScrollProps} />} */
-                />
+                <BackButton
+                    onBack={this.showMap}
+                    enabled={true}
+                    style={this.styles.outerButtonStyle}
+                    buttonStyle={this.styles.innerButtonStyle}
+                    /* color='#000' */
+                    iconSize={35}
+                    />
+                <SimpleListView
+                    descriptor={discoverViewDescriptor}
+                    initialListSize={2}
+                    pageSize={1}
+                    /* renderScrollComponent={props => <InfiniteScrollView {...infiniteScrollProps} />} */
+                    />
         </View>
     }
 }
