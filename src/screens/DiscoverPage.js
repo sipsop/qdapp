@@ -1,16 +1,11 @@
 import {
     React,
-    Component,
     View,
-    ScrollView,
-    ListView,
     PureComponent,
-    StyleSheet,
-    T,
+    StyleSheet
 } from '/components/Component'
-import { computed, observable, action } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import InfiniteScrollView from 'react-native-infinite-scroll-view'
 
 import { Page, Loader } from '/components/Page'
 import { LargeButton } from '/components/Button'
@@ -21,8 +16,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
-import { store, barStore, mapStore, historyStore, segment } from '/model/store'
-import { config } from '/utils/config'
+import { store, mapStore, historyStore, segment, searchStore } from '/model/store'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
@@ -77,6 +71,7 @@ class DiscoverViewDescriptor extends Descriptor {
     // }
 
     renderRow = (i) => {
+      // SORT HERE
         const bar = mapStore.nearbyBarList[i]
         log("RENDERING BAR CARD", i)
         return <DiscoverBarCard
@@ -236,7 +231,7 @@ class BarListPage extends Page {
         },
         outerButtonStyle: {
             position: 'absolute',
-            top: 10,
+            top: 50,
             left: 10,
             width: 60,
             height: 60,

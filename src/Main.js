@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import {
     Text,
-    View
+    View,
+    Image
 } from 'react-native'
 import { ScrollableTabBar }
        from 'react-native-scrollable-tab-view'
@@ -21,7 +22,6 @@ import { TabView } from './components/Tabs'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
 
-
 import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
 
@@ -30,10 +30,14 @@ const { log, assert } = _.utils('/Main')
 /* Do not allow font scaling */
 Text.defaultProps.allowFontScaling = false
 
-const style = {
+const styles = {
     title: {
         color: '#E72D6B',
         fontWeight: 'bold'
+    },
+    searchIcon: {
+        width: 30,
+        height: 30
     }
 }
 
@@ -43,7 +47,7 @@ export class Main extends Component {
         navigationBar: {
             title: 'QDodger',
             backgroundColor: '#fff',
-            titleStyle: style.title
+            titleStyle: styles.title
         }
     }
 
