@@ -29,19 +29,40 @@ const { log, assert } = _.utils('/screens/DiscoverPage')
 
 @observer
 export class DiscoverPage extends DownloadResultView {
+    @observable barListVisible = false
+
     errorMessage      = "Error downloading list of bars"
     refreshPage       = () => mapStore.updateNearbyBars(force = true)
     getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
-    renderNotStarted  = () => null
-    renderFinished    = (searchResponse) => <DiscoverView />
+
+    renderFinished = (searchResponse) => {
+        return <View style={{flex: 1}}>
+            <SimpleListView
+                ref={ref => store.discoverScrollView = ref}
+                descriptor={discoverViewDescriptor}
+                initialListSize={2}
+                pageSize={1}
+                />
+        </View>
+    }
 }
 
+const mapHeight = 280
+
 class DiscoverViewDescriptor extends Descriptor {
+
+    progressViewOffset = mapHeight
+
     get numberOfRows() {
         return mapStore.nearbyBarList.length
     }
 
-    // renderHeader = () => <MapView key='mapview' />
+    renderHeader = () => {
+        return <View style={{flex: 1, height: mapHeight}}>
+            <MapView key='mapview' />
+        </View>
+    }
+
     renderFooter = () => {
         return <MoreButton canReorderBarList={false} />
     }
@@ -50,12 +71,14 @@ class DiscoverViewDescriptor extends Descriptor {
         store.setMapVisible(true)
     }
 
-    refresh = async () => {
-        await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
-    }
+    /* NOTE: This breaks the map movements :( */
+    // refresh = async () => {
+    //     await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
+    // }
 
     renderRow = (i) => {
         const bar = mapStore.nearbyBarList[i]
+        log("RENDERING BAR CARD", i)
         return <DiscoverBarCard
                     key={bar.id}
                     bar={bar}
@@ -71,18 +94,12 @@ const discoverViewDescriptor = new DiscoverViewDescriptor()
 
 @observer
 export class DiscoverView extends Page {
-// export class DiscoverView extends PureComponent {
-
-    @computed get key() {
-        const key = mapStore.getCurrentMarker() && mapStore.getCurrentMarker().id
-        return key || 'barCardList'
-    }
-
     renderView = () => {
         return <View style={{flex: 1}}>
             { /*<MapNearbyToggle />*/}
-            {store.mapVisible && <MapPage />}
-            {!store.mapVisible && <BarListPage />}
+            <BarList />
+            {/*store.mapVisible && <MapPage />*/}
+            {/*!store.mapVisible && <BarListPage />*/}
         </View>
     }
 }
@@ -133,7 +150,7 @@ class NearbyButton extends PureComponent {
             <LargeButton
                 label={this.nearbyLabel}
                 style={this.styles.buttonStyle}
-                fontSize={16}
+                fonrSize={16}
                 onPress={this.showNearby} />
         </View>
     }
@@ -208,6 +225,9 @@ class MapPage extends PureComponent {
 
 @observer
 class BarListPage extends Page {
+    /* properties:
+        showBackButton: Bool
+    */
 
     styles = {
         view: {
@@ -253,14 +273,16 @@ class BarListPage extends Page {
             onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
         }
         return  <View style={this.styles.view}>
-            <BackButton
-                onBack={this.showMap}
-                enabled={true}
-                style={this.styles.outerButtonStyle}
-                buttonStyle={this.styles.innerButtonStyle}
-                /* color='#000' */
-                iconSize={35}
-                />
+            { this.props.showBackButton &&
+                <BackButton
+                    onBack={this.showMap}
+                    enabled={true}
+                    style={this.styles.outerButtonStyle}
+                    buttonStyle={this.styles.innerButtonStyle}
+                    /* color='#000' */
+                    iconSize={35}
+                    />
+            }
             <SimpleListView
                 descriptor={discoverViewDescriptor}
                 initialListSize={2}

@@ -80,7 +80,6 @@ export class DiscoverBarCard extends PureComponent {
                     {...this.props}
                     photo={photos && photos.length && photos[0]}
                     onPress={this.handleCardPress}
-                    showDistance
                     />
             </View>
         )

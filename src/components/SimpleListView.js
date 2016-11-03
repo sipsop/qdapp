@@ -70,6 +70,7 @@ export class SimpleListView extends PureComponent {
         return themedRefreshControl({
             refreshing: this.props.descriptor.refreshing,
             onRefresh: this.props.descriptor.refresh,
+            progressViewOffset: this.props.descriptor.progressViewOffset,
         })
     }
 
@@ -98,15 +99,18 @@ export class SimpleListView extends PureComponent {
                     renderFooter={this.props.descriptor.renderFooter}
                     {...this.props}
                     onContentSizeChange={this.handleContentSizeChange}
+                    scrollRenderAheadDistance={500}
                     onScroll={this.handleScroll} />
     }
 }
 
-export const themedRefreshControl = ({refreshing, onRefresh}) => {
+export const themedRefreshControl = ({refreshing, onRefresh, progressViewOffset}) => {
+    log("USING PROGRESS VIEW OFFSET", progressViewOffset)
     return <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 tintColor={config.theme.primary.medium}
+                progressViewOffset={progressViewOffset}
                 title="Loading..."
                 titleColor="#000"
                 colors={[config.theme.primary.medium, config.theme.primary.dark, '#000']}

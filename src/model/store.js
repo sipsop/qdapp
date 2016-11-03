@@ -30,7 +30,7 @@ export class Store {
     @observable mapVisible = true
 
     constructor() {
-        // this.discoverScrollView = null
+        this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
@@ -38,8 +38,8 @@ export class Store {
     @action switchToDiscoverPage = (scrollToTop) => {
         tabStore.setCurrentTab(0)
         this.mapVisible = true
-        // if (scrollToTop && this.discoverScrollView)
-        //     this.discoverScrollView.scrollTo({x: 0, y: 0})
+        if (scrollToTop && this.discoverScrollView)
+            this.discoverScrollView.scrollToTop()
     }
 
     @action setMapVisible = (visible) => {
@@ -79,7 +79,7 @@ export class Store {
             orderStatusStore.initialized(),
             loginStore.initialized(),
         ])
-    
+
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
