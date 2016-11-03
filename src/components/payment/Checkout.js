@@ -29,23 +29,22 @@ import type { String, Int } from '../Types'
 
 const { log, assert } = _.utils('/components/payment/Checkout')
 
+const styles = StyleSheet.create({
+    cardInfo: {
+        marginLeft: 5,
+        marginRight: 5,
+    }
+})
+
+
 @observer
 export class Checkout extends DownloadResultView {
     /* properties:
     */
 
-    @observable refreshing = false
-
     @computed get haveCardNumber() {
         return paymentStore.selectedCardNumber != null
     }
-
-    styles = StyleSheet.create({
-        cardInfo: {
-            marginLeft: 5,
-            marginRight: 5,
-        }
-    })
 
     payNow = () => {
         // orderStore.setFreshOrderToken()
@@ -73,17 +72,21 @@ export class Checkout extends DownloadResultView {
         analytics.trackCheckoutCancel()
     }
 
+    @computed get disableBuyButton() {
+        return !barStore.getBar()
+    }
+
     render = () => {
         if (!orderStore.checkoutVisible)
             null
         return <OkCancelModal
                     visible={orderStore.checkoutVisible}
                     showOkButton={this.haveCardNumber}
-                    showCancelButton={false}
+                    showCancelButton={this.disableBuyButton}
                     cancelModal={this.close}
                     okModal={this.payNow}
                     okLabel={`Buy Now`}
-                    okDisabled={orderStore.getActiveOrderToken() != null || !barStore.getBar()}
+                    okDisabled={orderStore.getActiveOrderToken() != null || this.disableBuyButton}
                     okDisabledColor='rgba(0, 0, 0, 0.5)'
                     okBackgroundColor='#000'
                     okBorderColor='rgba(0, 0, 0, 0.8)'
@@ -93,10 +96,11 @@ export class Checkout extends DownloadResultView {
     }
 }
 
-class CheckoutView extends DownloadResultView {
+class CheckoutView extends PureComponent {
     /* properties:
         onBack: () => void
     */
+    @observable refreshing = false
 
     getDownloadResult = () => barStore.getBarDownloadResult()
 
@@ -115,17 +119,22 @@ class CheckoutView extends DownloadResultView {
         })
     }
 
-    renderFinished = (bar) => {
+    render = () => {
         return <ScrollView refreshControl={this.getRefreshControl()}>
-            <LazyBarPhoto
-                bar={bar}
-                photo={bar.photos[0]}
-                imageHeight={150}
-                showBackButton={true}
-                onBack={this.onBack}
+            <DownloadResultView
+                getDownloadResult={barStore.getBarDownloadResult}
+                renderFinished={(bar) =>
+                    <LazyBarPhoto
+                        bar={bar}
+                        photo={bar.photos[0]}
+                        imageHeight={150}
+                        showBackButton={true}
+                        onBack={this.props.onBack}
+                        />
+                }
                 />
             {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
-            <View style={this.styles.cardInfo}>
+            <View style={styles.cardInfo}>
                 <SelectedCardInfo />
             </View>
             <TipComponent />

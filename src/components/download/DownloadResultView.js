@@ -51,6 +51,12 @@ const styles = StyleSheet.create({
 /* React Component for rendering a downloadResult in its different states */
 @observer
 export class DownloadResultView<T> extends PureComponent {
+    /* properties:
+        getDownloadResult: ?() => DownloadResult<T>
+        refreshPage: ?() => void
+        renderFinished: ?(T) => Component
+    */
+
     inProgressMessage = null
 
     /* If true (default), then whenever getDownloadResult().lastValue != null,
@@ -90,16 +96,23 @@ export class DownloadResultView<T> extends PureComponent {
     }
 
     getDownloadResult = () => {
+        if (this.props.getDownloadResult)
+            return this.props.getDownloadResult()
         throw Error('NotImplemented')
     }
 
     refreshPage = async () => {
-        await downloadManager.refreshDownloads()
+        if (this.props.refreshPage)
+            this.props.refreshPage()
+        else
+            await downloadManager.refreshDownloads()
     }
 
     renderNotStarted = () => null
 
     renderFinished = (value : T) => {
+        if (this.props.renderFinished)
+            return this.props.renderFinished(value)
         throw Error('NotImplemented')
     }
 

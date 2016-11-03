@@ -238,7 +238,6 @@ class BarFooter extends BarInfoFetcher {
     renderError = () => null
     renderInProgress = () => null
     renderFinished = (bar) => {
-        const d = this.getDownloadResult()
         return (<View>
             <View style={this.styles.infoView}>
                 <InfoItem

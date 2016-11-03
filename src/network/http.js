@@ -445,7 +445,6 @@ export class Download {
             message = this._message
 
         const errorMessage = this.errorMessage || `Error downloading ${this.name}`
-        message = message && message + '\n' + message.strip()
         return errorMessage + (message ? ':\n' + message : '')
     }
 
