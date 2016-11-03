@@ -35,7 +35,7 @@ class SearchStore {
 
     searchMenuItems = (menuItems : Array<MenuItem>) : Array<MenuItem> => {
         return menuItems.filter(
-            menuItem => menuItem.name.toLowerCase().includes(this.menuSearch)
+            menuItem => menuItem.name.toLowerCase().includes(this.menuSearch.toLowerCase())
         )
     }
 
