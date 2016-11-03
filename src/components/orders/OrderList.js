@@ -74,8 +74,8 @@ export class OrderListDescriptor extends Descriptor {
             ? this.styles.lastMenuItem
             : undefined
 
-        if (menuItem.name.includes(searchStore.getState().menuSearch)) {
-            return (<FancyMenuItem
+        return (
+            <FancyMenuItem
                 key={menuItem.id}
                 style={style}
                 rowNumber={i}
@@ -86,9 +86,6 @@ export class OrderListDescriptor extends Descriptor {
                 showPrice={this.props.showPrice}
                 showHeart={this.props.showHeart}
                 scrollRelative={this.scrollRelative} />)
-        } else {
-            return null
-        }
     }
 }
 
