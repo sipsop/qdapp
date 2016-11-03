@@ -113,6 +113,8 @@ export class Store {
             segment.setState(state.segment)
         if (state.downloadManagerState)
             downloadManager.setState(state.downloadManagerState)
+        if (state.searchState)
+            searchStore.setState(state.searchState)
     })
 
     getState = () => {
@@ -128,6 +130,7 @@ export class Store {
             tagState:               tagStore.getState(),
             segment:                segment.getState(),
             downloadManagerState:   downloadManager.getState(),
+            searchState:            searchStore.getState(),
         })
     }
 

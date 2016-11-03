@@ -13,6 +13,7 @@ class SearchStore {
             barSearch: this.barSearch
         }
     }
+
     emptyState = () => {
         return {
             menuSearch: '',
@@ -20,18 +21,30 @@ class SearchStore {
         }
     }
 
-  @computed get currentMenuSearch () {
-      return this.menuSearch
-  }
-  @computed get currentBarSearch () {
-      return this.barSearch
-  }
-  @action setMenuSearch = (searchString) => {
-      this.menuSearch = searchString
-  }
-  @action setBarSearch = (searchString) => {
-      this.barSearch = searchString
-  }
+    @action setState = (state) => {
+        this.menuSearch = state.menuSearch
+        this.barSearch  = state.barSearch
+    }
+
+    @computed get currentMenuSearch () {
+        return this.menuSearch
+    }
+    @computed get currentBarSearch () {
+        return this.barSearch
+    }
+
+    searchMenuItems = (menuItems : Array<MenuItem>) : Array<MenuItem> => {
+        return menuItems.filter(
+            menuItem => menuItem.name.toLowerCase().includes(this.menuSearch)
+        )
+    }
+
+    @action setMenuSearch = (searchString) => {
+        this.menuSearch = searchString
+    }
+    @action setBarSearch = (searchString) => {
+        this.barSearch = searchString
+    }
 
 }
 

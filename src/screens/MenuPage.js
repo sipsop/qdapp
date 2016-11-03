@@ -27,7 +27,7 @@ import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
 import { SearchBar } from '/components/search/SearchBar'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, searchStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -67,6 +67,10 @@ class MenuList extends DownloadResultView {
 
     getDownloadResult = () => barStore.getMenuDownloadResult()
 
+    @computed get activeMenuItems() {
+        return searchStore.searchMenuItems(tagStore.activeMenuItems)
+    }
+
     renderFinished = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
@@ -79,7 +83,7 @@ class MenuList extends DownloadResultView {
         return <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={tagStore.activeMenuItems}
+                    menuItems={this.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     renderHeader={() => {
                         return (
