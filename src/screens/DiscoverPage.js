@@ -1,16 +1,11 @@
 import {
     React,
-    Component,
     View,
-    ScrollView,
-    ListView,
     PureComponent,
-    StyleSheet,
-    T,
+    StyleSheet
 } from '/components/Component'
-import { computed, observable, action } from 'mobx'
+import { computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import InfiniteScrollView from 'react-native-infinite-scroll-view'
 
 import { Page, Loader } from '/components/Page'
 import { LargeButton } from '/components/Button'
@@ -21,9 +16,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
-import { store, barStore, mapStore, historyStore, segment, searchStore } from '/model/store'
-import { config } from '/utils/config'
-import { SearchBar } from '/components/search/SearchBar'
+import { store, mapStore, historyStore, segment, searchStore } from '/model/store'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
@@ -272,7 +265,6 @@ class BarListPage extends Page {
             onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
         }
         return  <View style={this.styles.view}>
-                <SearchBar placeholder='Search for bars...' type='bar' />
                 <BackButton
                     onBack={this.showMap}
                     enabled={true}
