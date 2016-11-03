@@ -1,8 +1,11 @@
-import { computed, transaction, action, autorun } from 'mobx'
-import { BarQueryDownload } from './barquery.js'
-import { config } from '/utils/config.js'
+import { computed } from 'mobx'
+import { BarQueryDownload } from '../bar/barquery'
+import { config } from '/utils/config'
 
 export class BarStatusDownload extends BarQueryDownload {
+    /* properties:
+        barID: String
+    */
     name = 'bar status'
 
     // update bar status every 30s
@@ -13,7 +16,6 @@ export class BarStatusDownload extends BarQueryDownload {
         return {
             BarStatus: {
                 args: {
-                    /* NOTE: Use require() to resolve cyclic dependency */
                     barID: this.props.barID,
                 },
                 result: {
@@ -21,7 +23,10 @@ export class BarStatusDownload extends BarQueryDownload {
                         qdodger_bar:      'Bool',
                         taking_orders:    'Bool',
                         table_service:    'String',
-                        pickup_locations: ['String'],
+                        pickup_locations: [{
+                            name: 'String',
+                            open: 'Bool',
+                        }],
                     }
                 }
             }
