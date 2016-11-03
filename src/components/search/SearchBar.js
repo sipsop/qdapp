@@ -37,14 +37,14 @@ export class SearchBar extends PureComponent {
 
     _onSearchChanged = (text) => {
       // fire search query here
-      if (this.props.type === 'menu') {
-          searchStore.setMenuSearch(text)
-      } else if (this.props.type === 'bar') {
-          searchStore.setBarSearch(text)
-      }
+        if (this.props.type === 'menu') {
+            searchStore.setMenuSearch(text)
+        } else if (this.props.type === 'bar') {
+            searchStore.setBarSearch(text)
+        }
     }
 
-    @computed get searchText() {
+    @computed get searchText () {
         if (this.props.type === 'menu') {
             return searchStore.menuSearch
         } else if (this.props.type === 'bar') {
