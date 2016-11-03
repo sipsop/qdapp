@@ -2,8 +2,7 @@ import React from 'react'
 import {
   TextInput,
   View,
-  TouchableOpacity,
-  Image
+  Platform
 } from 'react-native'
 import {
     PureComponent
@@ -13,21 +12,14 @@ import { observer } from 'mobx-react/native'
 import { searchStore } from '/model/store'
 
 const styles = {
-    view: {
-        // height: 55,
-    },
     input: {
-        height: 45,
+        height: Platform.OS === 'ios' ? 25 : 45,
         textAlign: 'center',
         flex: 1
     },
     seperator: {
         height: 1,
         backgroundColor: '#cecece'
-    },
-    searchBtn: {
-        height: 30,
-        width: 30
     },
     searchBarContainer: {
         flexDirection: 'row',
