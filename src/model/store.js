@@ -19,6 +19,7 @@ import { orderStatusStore } from './orders/orderstatusstore'
 import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
+import { searchStore } from './searchstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -112,6 +113,8 @@ export class Store {
             segment.setState(state.segment)
         if (state.downloadManagerState)
             downloadManager.setState(state.downloadManagerState)
+        if (state.searchState)
+            searchStore.setState(state.searchState)
     })
 
     getState = () => {
@@ -127,6 +130,7 @@ export class Store {
             tagState:               tagStore.getState(),
             segment:                segment.getState(),
             downloadManagerState:   downloadManager.getState(),
+            searchState:            searchStore.getState(),
         })
     }
 
@@ -187,4 +191,5 @@ export {
     segment,
     drawerStore,
     notificationStore,
+    searchStore
 }

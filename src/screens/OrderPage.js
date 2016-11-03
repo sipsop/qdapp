@@ -9,7 +9,7 @@ import {
     T,
     StyleSheet,
     Picker,
-    Dimensions,
+    Dimensions
 } from '/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
