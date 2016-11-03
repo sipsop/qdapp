@@ -10,7 +10,6 @@ import { Main } from './Main'
 @observer
 export class App extends Component {
     render = () => {
-        return <Main />
         return (
             <NavigationProvider router={Router}>
                 <StackNavigation initialRoute={Router.getRoute('main')} />

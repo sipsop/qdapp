@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { downloadManager } from '/network/http'
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../download/DownloadResultView'
-import { LazyBarPhoto } from '../bar/LazyBarPhoto'
+import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
@@ -158,8 +158,6 @@ export class Receipt extends PureComponent {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
 
-        assert (bar.name != null)
-        assert(bar.photos != null)
         assert(orderResult.receipt != null)
         assert(orderResult.userName != null)
         assert(orderResult.orderList != null)
@@ -172,11 +170,7 @@ export class Receipt extends PureComponent {
         // this.updateEstimate()
 
         return <ScrollView>
-            <LazyBarPhoto
-                bar={bar}
-                photo={bar.photos[0]}
-                imageHeight={140}
-                showBackButton={this.props.showBackButton}
+            <CurrentBarPhoto
                 onBack={this.props.onClose}
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}

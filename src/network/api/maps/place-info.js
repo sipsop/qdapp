@@ -48,7 +48,7 @@ export class BarInfoDownload extends JSONDownload {
         }
 
         /* See if we support google map errors! */
-        if (config.errors.testGoogleMapErrors) {
+        if (config.errors.simulateGoogleMapErrors) {
             this.downloadError("Simulated error!")
             this.lastValue = null
         }

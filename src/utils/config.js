@@ -89,7 +89,7 @@ export const config = {
     },
     /* Simulated errors */
     errors: {
-        testGoogleMapErrors: true,
+        simulateGoogleMapErrors: false,
     },
     auth: {
         /* Auth token refresh params */

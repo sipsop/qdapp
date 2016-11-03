@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { OrderTotal } from '../orders/Receipt'
 import { LargeButton } from '../Button'
-import { LazyBarPhoto } from '../bar/LazyBarPhoto'
+import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
 import { SimpleListView, themedRefreshControl } from '../SimpleListView'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
@@ -121,17 +121,8 @@ class CheckoutView extends PureComponent {
 
     render = () => {
         return <ScrollView refreshControl={this.getRefreshControl()}>
-            <DownloadResultView
-                getDownloadResult={barStore.getBarDownloadResult}
-                renderFinished={(bar) =>
-                    <LazyBarPhoto
-                        bar={bar}
-                        photo={bar.photos[0]}
-                        imageHeight={150}
-                        showBackButton={true}
-                        onBack={this.props.onBack}
-                        />
-                }
+            <CurrentBarPhoto
+                onBack={this.props.onBack}
                 />
             {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
             <View style={styles.cardInfo}>
