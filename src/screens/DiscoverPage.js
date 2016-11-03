@@ -27,19 +27,6 @@ import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
 
-assert(Page)
-assert(Loader)
-assert(LargeButton)
-assert(BackButton)
-assert(MapView)
-assert(DiscoverBarCard)
-assert(DownloadResultView)
-assert(Header)
-assert(TextHeader)
-assert(SelectableButton)
-assert(Descriptor)
-assert(SimpleListView)
-
 @observer
 export class DiscoverPage extends DownloadResultView {
     errorMessage      = "Error downloading list of bars"
