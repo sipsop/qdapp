@@ -14,6 +14,7 @@ import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
 import { barStore, orderStore, loginStore } from '/model/store'
+import { DownloadResultView } from '../download/DownloadResultView'
 import { CreditCard } from './CreditCard'
 import { analytics } from '/model/analytics'
 import { config } from '/utils/config'
@@ -29,7 +30,7 @@ import type { String, Int } from '../Types'
 const { log, assert } = _.utils('/components/payment/Checkout')
 
 @observer
-export class Checkout extends PureComponent {
+export class Checkout extends DownloadResultView {
     /* properties:
     */
 
@@ -72,6 +73,33 @@ export class Checkout extends PureComponent {
         analytics.trackCheckoutCancel()
     }
 
+    render = () => {
+        if (!orderStore.checkoutVisible)
+            null
+        return <OkCancelModal
+                    visible={orderStore.checkoutVisible}
+                    showOkButton={this.haveCardNumber}
+                    showCancelButton={false}
+                    cancelModal={this.close}
+                    okModal={this.payNow}
+                    okLabel={`Buy Now`}
+                    okDisabled={orderStore.getActiveOrderToken() != null || !barStore.getBar()}
+                    okDisabledColor='rgba(0, 0, 0, 0.5)'
+                    okBackgroundColor='#000'
+                    okBorderColor='rgba(0, 0, 0, 0.8)'
+                    >
+                <CheckoutView onBack={this.cancel} />
+        </OkCancelModal>
+    }
+}
+
+class CheckoutView extends DownloadResultView {
+    /* properties:
+        onBack: () => void
+    */
+
+    getDownloadResult = () => barStore.getBarDownloadResult()
+
     handleRefresh = async () => {
         this.refreshing = true
         transaction(async () => {
@@ -87,53 +115,32 @@ export class Checkout extends PureComponent {
         })
     }
 
-    render = () => {
-        if (!orderStore.checkoutVisible)
-            return <View />
-
-        const textStyle = {
-            textAlign: 'center',
-        }
-        const bar = barStore.getBar()
-
-        return <OkCancelModal
-                    visible={orderStore.checkoutVisible}
-                    showOkButton={this.haveCardNumber}
-                    showCancelButton={false}
-                    cancelModal={this.close}
-                    okModal={this.payNow}
-                    okLabel={`Buy Now`}
-                    okDisabled={orderStore.getActiveOrderToken() != null}
-                    okDisabledColor='rgba(0, 0, 0, 0.5)'
-                    okBackgroundColor='#000'
-                    okBorderColor='rgba(0, 0, 0, 0.8)'
-                    >
-                <ScrollView refreshControl={this.getRefreshControl()}>
-                    <LazyBarPhoto
-                        bar={bar}
-                        photo={bar.photos[0]}
-                        imageHeight={150}
-                        showBackButton={true}
-                        onBack={this.cancel}
-                        />
-                    {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
-                    <View style={this.styles.cardInfo}>
-                        <SelectedCardInfo />
-                    </View>
-                    <TipComponent />
-                    <OrderTotal
-                        style={{marginRight: 10}}
-                        total={orderStore.total + orderStore.tipAmount}
-                        primary={false}
-                        /* Do not show tip amount here, it is too noisy */
-                        /* tip={orderStore.tipAmount} */
-                        tip={0.0}
-                        />
-                    <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
-                        <TipRoundButton />
-                    </View>
-                </ScrollView>
-        </OkCancelModal>
+    renderFinished = (bar) => {
+        return <ScrollView refreshControl={this.getRefreshControl()}>
+            <LazyBarPhoto
+                bar={bar}
+                photo={bar.photos[0]}
+                imageHeight={150}
+                showBackButton={true}
+                onBack={this.onBack}
+                />
+            {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
+            <View style={this.styles.cardInfo}>
+                <SelectedCardInfo />
+            </View>
+            <TipComponent />
+            <OrderTotal
+                style={{marginRight: 10}}
+                total={orderStore.total + orderStore.tipAmount}
+                primary={false}
+                /* Do not show tip amount here, it is too noisy */
+                /* tip={orderStore.tipAmount} */
+                tip={0.0}
+                />
+            <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
+                <TipRoundButton />
+            </View>
+        </ScrollView>
     }
 }
 

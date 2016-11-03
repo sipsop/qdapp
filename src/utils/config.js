@@ -87,6 +87,10 @@ export const config = {
     noCache: {
         noCache:        true,
     },
+    /* Simulated errors */
+    errors: {
+        testGoogleMapErrors: true,
+    },
     auth: {
         /* Auth token refresh params */
         /* TODO: UPDATE THESE FOR PRODUCTION */
