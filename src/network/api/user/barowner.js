@@ -37,6 +37,6 @@ export class BarOwnerProfileDownload extends QueryDownload {
     }
 
     @computed get profile() {
-        return this.lastValue.profile
+        return this.lastValue && this.lastValue.profile
     }
 }
