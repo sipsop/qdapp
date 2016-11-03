@@ -1,6 +1,6 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '/network/http'
+import { downloadManager, latest } from '/network/http'
 import { BarStatusDownload } from '/network/api/barstatus/status'
 import { UpdateBarStatusDownload } from '/network/api/barstatus/status-update'
 import { segment } from '/network/segment'
@@ -80,14 +80,21 @@ class BarStatusStore {
         }))
     }
 
-    getBarStatusDownload = () => downloadManager.getDownload('bar status')
+    @computed get barStatusDownload() {
+        return latest(
+            downloadManager.getDownload('bar status'),
+            downloadManager.getDownload('bar status update'),
+        )
+    }
+
+    getBarStatusDownload = () => this.barStatusDownload
 
     /*********************************************************************/
     /* Computed bar status */
     /*********************************************************************/
 
     @computed get barStatus() : ?BarStatus {
-        return this.getBarStatusDownload().barStatus
+        return this.barStatusDownload.barStatus
     }
 
     @computed get isQDodgerBar() : Bool {
