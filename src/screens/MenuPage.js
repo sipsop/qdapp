@@ -95,10 +95,10 @@ class MenuList extends PureComponent {
                     onRefresh={this.handleRefresh}
                     renderHeader={() => {
                         return (
-                          <View>
-                            <SearchBar placeholder='Search for drinks...' type='menu'/>
-                            <TagView />
-                          </View>
+                            <View>
+                                <TagView />
+                                <SearchBar placeholder='Search...' type='menu'/>
+                            </View>
                         )
                     }}
                     visible={this.menuItemVisible} />
