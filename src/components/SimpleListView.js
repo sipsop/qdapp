@@ -34,7 +34,7 @@ export class SimpleListView extends PureComponent {
 
     listView = null
 
-    @observable visibleRows = visibleRowsIncrement
+    @observable visibleRows = this.visibleRowsIncrement
 
     constructor(props) {
         super(props)
@@ -43,6 +43,14 @@ export class SimpleListView extends PureComponent {
         })
         this.contentHeight = 0
         this.verticalScrollPosition = 0
+    }
+
+    get visibleRowsIncrement() {
+        return this.props.visibleRowsIncrement || visibleRowsIncrement
+    }
+
+    @action resetVisibleRows = () => {
+        this.visibleRows = this.visibleRowsIncrement
     }
 
     rowHasChanged = (row1, row2) => {
@@ -61,7 +69,7 @@ export class SimpleListView extends PureComponent {
         this.listView.scrollTo({y: 0})
         /* NOTE: This needs to be async, otherwise it doesn't always scroll properly */
         setTimeout(() => {
-            this.visibleRows = visibleRowsIncrement
+            this.resetVisibleRows()
         }, 0)
     }
 
@@ -87,6 +95,7 @@ export class SimpleListView extends PureComponent {
     }
 
     @computed get numberOfVisibleRows() {
+        log("VISIBLE ROWS", this.visibleRows, "incr", this.visibleRowsIncrement)
         return _.min(this.props.descriptor.rows.length, this.visibleRows)
     }
 
@@ -98,7 +107,8 @@ export class SimpleListView extends PureComponent {
     }
 
     @action handleEndReached = () => {
-        this.visibleRows += visibleRowsIncrement
+        log("END REACHED, INCREASE VISIBLE ROWS")
+        this.visibleRows += this.visibleRowsIncrement
     }
 
     @computed get dataSource() {

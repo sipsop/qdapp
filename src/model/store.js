@@ -30,8 +30,10 @@ export class Store {
     @observable initialized = false
     @observable mapVisible = true
 
+    discoverScrollView = null
+    orderListScrollView = null
+
     constructor() {
-        this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
@@ -40,9 +42,14 @@ export class Store {
         tabStore.setCurrentTab(0)
         this.mapVisible = true
         if (scrollToTop && this.discoverScrollView) {
-            log("SCROLLING TO TOP!")
             this.discoverScrollView.scrollToTop()
         }
+    }
+
+    @action switchToMenuPage = (scrollToTop = false) => {
+        tabStore.setCurrentTab(2)
+        if (scrollToTop && this.orderListScrollView)
+            this.orderListScrollView.scrollToTop()
     }
 
     @action setMapVisible = (visible) => {

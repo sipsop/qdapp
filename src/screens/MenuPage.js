@@ -83,9 +83,12 @@ class MenuList extends PureComponent {
                   scrolled down say 100 items, then switching from
                   e.g. wine to beer will render 100 beer items, even
                   though only a few are visible.
+
+            NOTE: SimpleListView should be performant enough that this
+                  is no longer necessary!
         */}
         return <OrderList
-                    key={tagStore.tagSelection.join(';')}
+                    /* key={tagStore.tagSelection.join(';')} */
                     orderStore={orderStore}
                     getMenuItems={() => this.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
