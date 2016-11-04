@@ -154,6 +154,10 @@ class DeliveryMethod extends DownloadResultView {
         pickerStyle: {
             width: 150,
         },
+        deliveryText: {
+            fontSize: 20,
+            color: '#000',
+        },
     })
 
     getDownloadResult = () => barStatusStore.getBarStatusDownload()
@@ -188,19 +192,22 @@ class DeliveryMethod extends DownloadResultView {
     }
 
     renderFinished = () => {
-        const tableService =
-            orderStore.delivery === 'Table' &&
-            barStatusStore.tableService
-        const pickup =
-            orderStore.delivery === 'Pickup' &&
-            barStatusStore.pickupLocations.length > 1
+        const tableService = barStatusStore.tableService
+        const pickup = barStatusStore.pickupLocations.length >= 1
+        var delivery = orderStore.delivery
+        if (!tableService)
+            delivery = 'Pickup'
+        if (!pickup && delivery === 'Pickup')
+            delivery = null
         const tableNumber =
             orderStore.tableNumber
                 ? "" + orderStore.tableNumber
                 : ""
 
-        if (!tableService && !pickup) {
-            return null
+        if (!delivery) {
+            return <T style={this.styles.deliveryText}>
+                No table service or pickup available.
+            </T>
         }
 
         return <View style={this.props.style}>
@@ -229,7 +236,7 @@ class DeliveryMethod extends DownloadResultView {
                 }
             </Header>
             <View style={this.styles.optStyle}>
-                { tableService &&
+                { delivery === 'Table' &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
@@ -241,7 +248,7 @@ class DeliveryMethod extends DownloadResultView {
                             />
                     </View>
                 }
-                { pickup &&
+                { delivery === 'Pickup' &&
                     <Picker selectedValue={orderStore.pickupLocation}
                             onValueChange={location => orderStore.pickupLocation = location}
                             style={this.styles.pickerStyle}

@@ -53,10 +53,14 @@ class BarStatusStore {
     }
 
     @computed get tableService() : String {
+        if (config.test.tableService)
+            return true
         return this.barStatus && this.barStatus.table_service
     }
 
     @computed get pickupLocations() : Array<String> {
+        if (config.test.pickupLocations)
+            return ['Main Bar', 'First Floor']
         return this.barStatus && this.barStatus.pickup_locations
     }
 

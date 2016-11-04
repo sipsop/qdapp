@@ -87,6 +87,11 @@ export const config = {
     noCache: {
         noCache:        true,
     },
+    /* Test with some pre-fabricated data */
+    test: {
+        tableService: true,
+        pickupLocations: true,
+    },
     /* Simulated errors */
     errors: {
         simulateGoogleMapErrors: false,
