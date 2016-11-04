@@ -87,7 +87,7 @@ class MenuList extends PureComponent {
         return <OrderList
                     key={tagStore.tagSelection.join(';')}
                     orderStore={orderStore}
-                    menuItems={this.activeMenuItems}
+                    getMenuItems={() => this.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
                     onRefresh={this.handleRefresh}
                     renderHeader={() => {

@@ -39,6 +39,8 @@ export type OrderState = {
 export type OrderResult = {
     // date:           DateType,
     // time:           Time,
+    barID:          String,
+    orderID:        String,
     timestamp:      Float,
     queueSize:      Int,
     estimatedTime:  Float,

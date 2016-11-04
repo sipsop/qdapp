@@ -15,12 +15,15 @@ import { paymentStore } from '/model/orders/paymentstore'
 
 export class CreditCardListDesciptor {
 
-    @computed get numberOfRows() {
-        return paymentStore.cards.length
+    @computed get rows() : Array<Card> {
+        return paymentStore.cards
     }
 
-    renderRow = (i : Int) : Component => {
-        const card = paymentStore.cards[i]
+    rowHasChanged = (card1 : Card, card2 : Card) => {
+        return card1.cardNumber !== card2.cardNumber
+    }
+
+    renderRow = (card : Card, i : Int) : Component => {
         return <SelectorItem
                     isSelected={() => paymentStore.isSelected(i)}
                     onPress={() => paymentStore.selectCardByOffset(i)}

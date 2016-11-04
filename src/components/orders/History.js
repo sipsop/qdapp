@@ -64,9 +64,13 @@ class OrderHistoryDescriptor extends Descriptor {
         this.orderHistory = orderHistory
     }
 
-    @computed get numberOfRows() {
-        return this.orderHistory.length
+    @computed get rows() : Array<OrderResult> {
+        return this.orderHistory
     }
+
+    // rowHasChanged = (orderResult1, orderResult2) => {
+    //     return orderResult1.orderID !== orderResult2.orderID
+    // }
 
     refresh = async () => {
         await this.runRefresh(async () => {
@@ -74,11 +78,13 @@ class OrderHistoryDescriptor extends Descriptor {
         })
     }
 
-    renderRow = (i) => {
-        const orderResult = this.orderHistory[i]
-        return <HistoryBarCard
-                    rowNumber={i}
-                    orderResult={orderResult} />
+    renderRow = (orderResult, i) => {
+        return (
+            <HistoryBarCard
+                rowNumber={i}
+                orderResult={orderResult}
+                />
+        )
     }
 
     renderHeader = () => {
@@ -105,7 +111,7 @@ export class OrderHistory extends DownloadComponent {
         })
     }
 
-    @computed get orderHistory() {
+    @computed get orderHistory() : Array<OrderResult> {
         return this.getDownloadResult().orderHistory
     }
 

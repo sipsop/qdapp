@@ -32,7 +32,7 @@ export class HistoryQueryDownload extends QueryDownload {
         }
     }
 
-    @computed get orderHistory() {
+    @computed get orderHistory() : Array<OrderResult> {
         return this.lastValue
             ? this.lastValue.orderHistory
             : []

@@ -88,7 +88,10 @@ export class SimpleListView extends PureComponent {
     }
 
     @computed get rows() {
-        return this.props.descriptor.rows.slice(0, this.numberOfVisibleRows)
+        return this.props.descriptor
+            .rows
+            .slice(0, this.numberOfVisibleRows)
+            .map((rowData, i) => [rowData, i])
     }
 
     @action handleEndReached = () => {
@@ -105,6 +108,11 @@ export class SimpleListView extends PureComponent {
             this.props.getRef(listView)
     }
 
+    renderRow = (rowData, sectionID, rowID, highlightRow) => {
+        [rowData, i] = rowData
+        return this.props.descriptor.renderRow(rowData, i, sectionID, rowID, highlightRow)
+    }
+
     render = () => {
         return (
             <ListView
@@ -112,7 +120,7 @@ export class SimpleListView extends PureComponent {
                 dataSource={this.dataSource}
                 removeClippedSubviews={true}
                 enableEmptySections={true}
-                renderRow={this.props.descriptor.renderRow}
+                renderRow={this.renderRow}
                 refreshControl={this.getRefreshControl()}
                 renderHeader={this.props.descriptor.renderHeader}
                 renderFooter={this.props.descriptor.renderFooter}
@@ -143,11 +151,11 @@ export class Descriptor {
 
     @observable refreshing = false
 
-    get numberOfRows() {
-        throw Error("numberOfRows not implemented")
+    get rows() {
+        throw Error("rows not implemented")
     }
 
-    renderRow = (i) => {
+    renderRow = (rowData, i) => {
         throw Error("renderRow not implemented")
     }
 

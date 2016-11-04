@@ -60,19 +60,22 @@ export class OrderListDescriptor extends Descriptor {
         },
     })
 
-    get numberOfRows() {
-        return this.props.menuItems.length
+    @computed get rows() {
+        return this.props.getMenuItems()
+    }
+
+    rowHasChanged = (menuItem1, menuItem2) => {
+        return menuItem1.id !== menuItem2.id
     }
 
     scrollRelative = (y) => {
         this.getSimpleListView().scrollRelative(y)
     }
 
-    renderRow = (i) => {
-        const menuItem = this.props.menuItems[i]
-        const style = i === this.numberOfRows - 1 // && orderStore.menuItemsOnOrder.length === 0
-            ? this.styles.lastMenuItem
-            : undefined
+    renderRow = (menuItem, i) => {
+        var style = undefined
+        if (i === this.rows.length - 1)
+            style = this.styles.lastMenuItem
 
         return (
             <FancyMenuItem
@@ -85,14 +88,16 @@ export class OrderListDescriptor extends Descriptor {
                 showTitle={this.props.showTitle}
                 showPrice={this.props.showPrice}
                 showHeart={this.props.showHeart}
-                scrollRelative={this.scrollRelative} />)
+                scrollRelative={this.scrollRelative}
+                />
+        )
     }
 }
 
 @observer
 export class OrderList extends PureComponent {
     /* properties:
-        menuItems: [MenuItem]
+        getMenuItems: () => [MenuItem]
             menu items to show
         orderStore: OrderStore
             store for the orders
