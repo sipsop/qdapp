@@ -47,9 +47,11 @@ class DiscoverViewDescriptor extends Descriptor {
 
     progressViewOffset = mapHeight
 
-    get numberOfRows() {
-        return mapStore.nearbyBarList.length
+    @computed get rows() {
+        return mapStore.nearbyBarList
     }
+
+    rowHasChanged = (bar1, bar2) => bar1.id !== bar2.id
 
     renderHeader = () => {
         return <View style={{flex: 1, height: mapHeight}}>
@@ -70,18 +72,19 @@ class DiscoverViewDescriptor extends Descriptor {
     //     await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
     // }
 
-    renderRow = (i) => {
-      // SORT HERE
-        const bar = mapStore.nearbyBarList[i]
-        log("RENDERING BAR CARD", i)
-        return <DiscoverBarCard
-                    key={bar.id}
-                    bar={bar}
-                    /*
-                    onBack={this.handleBack}
-                    showBackButton={i === 0}
-                    */
-                    imageHeight={190} />
+    renderRow = (bar, sectionID, rowID) => {
+        log("RENDERING BAR CARD", rowID)
+        return (
+            <DiscoverBarCard
+                key={bar.id}
+                bar={bar}
+                /*
+                onBack={this.handleBack}
+                showBackButton={i === 0}
+                */
+                imageHeight={190}
+                />
+        )
     }
 }
 

@@ -36,7 +36,7 @@ export class Store {
         setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
 
-    @action switchToDiscoverPage = (scrollToTop) => {
+    @action switchToDiscoverPage = (scrollToTop = false) => {
         tabStore.setCurrentTab(0)
         this.mapVisible = true
         if (scrollToTop && this.discoverScrollView)

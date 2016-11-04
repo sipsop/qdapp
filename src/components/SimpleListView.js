@@ -8,13 +8,15 @@ import {
     Image,
     TouchableOpacity
 } from '/components/Component.js'
-import { observable } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 
 const { log, assert } = _.utils(__filename)
+
+const visibleRowsIncrement = 5
 
 @observer
 export class SimpleListView extends PureComponent {
@@ -32,13 +34,19 @@ export class SimpleListView extends PureComponent {
 
     listView = null
 
+    @observable visibleRows = visibleRowsIncrement
+
     constructor(props) {
         super(props)
         this._dataSource = new ListView.DataSource({
-            rowHasChanged: (i, j) => true, //i !== j,
+            rowHasChanged: (row1, row2) => this.rowHasChanged,
         })
         this.contentHeight = 0
         this.verticalScrollPosition = 0
+    }
+
+    rowHasChanged = (row1, row2) => {
+        return !_.deepEqual(row1, row2)
     }
 
     handleContentSizeChange = (contentWidth, contentHeight) => {
@@ -51,6 +59,7 @@ export class SimpleListView extends PureComponent {
 
     scrollToTop = () => {
         this.listView.scrollTo({y: 0})
+        this.visibleRows = visibleRowsIncrement
     }
 
     /* Scroll to the bottom of the page */
@@ -74,11 +83,20 @@ export class SimpleListView extends PureComponent {
         })
     }
 
+    @computed get numberOfVisibleRows() {
+        return _.min(this.props.descriptor.rows.length, this.visibleRows)
+    }
 
-    get dataSource() {
-        return this._dataSource.cloneWithRows(
-            _.range(this.props.descriptor.numberOfRows)
-        )
+    @computed get rows() {
+        return this.props.descriptor.rows.slice(0, this.numberOfVisibleRows)
+    }
+
+    @action handleEndReached = () => {
+        this.visibleRows += visibleRowsIncrement
+    }
+
+    @computed get dataSource() {
+        return this._dataSource.cloneWithRows(this.rows)
     }
 
     saveRef = (listView) => {
@@ -102,6 +120,8 @@ export class SimpleListView extends PureComponent {
                 onContentSizeChange={this.handleContentSizeChange}
                 scrollRenderAheadDistance={500}
                 onScroll={this.handleScroll}
+                onEndReachedThreshold={500}
+                onEndReached={this.handleEndReached}
                 />
         )
     }
