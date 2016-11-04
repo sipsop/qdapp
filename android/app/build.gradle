@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "io.fabric"
 
 import com.android.build.OutputFile
 
@@ -96,6 +97,12 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+
+    repositories {
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
     splits {
         abi {
             reset()
@@ -150,6 +157,11 @@ android {
 }
 
 dependencies {
+    // crashlytics
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true;
+    }
+
     compile project(':react-native-vector-icons')
     compile project(':react-native-maps')
     compile project(':react-native-lock')

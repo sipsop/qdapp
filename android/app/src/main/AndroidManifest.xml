@@ -24,6 +24,10 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyDynMGulARovF1G6iIPN6UVLP6OVxpcSS0" />
 
+      <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="7f359b5a6f520478695ba13700e14adb7dbda5d8" />
+
       <!-- Auth0 stuff -->
       <activity
         android:name="com.auth0.lock.LockActivity"

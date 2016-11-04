@@ -1,5 +1,8 @@
 package com.qdodger;
-
+import android.os.Bundle;
+import com.crashlytics.android.Crashlytics;
+// import com.crashlytics.android.ndk.CrashlyticsNdk;
+import io.fabric.sdk.android.Fabric;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -11,5 +14,13 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "QDodger";
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // super.onCreate(savedInstanceState, new CrashlyticsNdk());
+        super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics(), new Crashlytics());
+        // throw new RuntimeException("Test Crash");
     }
 }
