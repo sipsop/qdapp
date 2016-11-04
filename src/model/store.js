@@ -39,8 +39,10 @@ export class Store {
     @action switchToDiscoverPage = (scrollToTop = false) => {
         tabStore.setCurrentTab(0)
         this.mapVisible = true
-        if (scrollToTop && this.discoverScrollView)
+        if (scrollToTop && this.discoverScrollView) {
+            log("SCROLLING TO TOP!")
             this.discoverScrollView.scrollToTop()
+        }
     }
 
     @action setMapVisible = (visible) => {

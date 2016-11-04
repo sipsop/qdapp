@@ -59,7 +59,10 @@ export class SimpleListView extends PureComponent {
 
     scrollToTop = () => {
         this.listView.scrollTo({y: 0})
-        this.visibleRows = visibleRowsIncrement
+        /* NOTE: This needs to be async, otherwise it doesn't always scroll properly */
+        setTimeout(() => {
+            this.visibleRows = visibleRowsIncrement
+        }, 0)
     }
 
     /* Scroll to the bottom of the page */

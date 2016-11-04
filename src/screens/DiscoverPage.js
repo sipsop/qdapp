@@ -72,8 +72,8 @@ class DiscoverViewDescriptor extends Descriptor {
     //     await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
     // }
 
-    renderRow = (bar, sectionID, rowID) => {
-        log("RENDERING BAR CARD", rowID)
+    renderRow = (bar, i, sectionID, rowID) => {
+        log("RENDERING BAR CARD", i)
         return (
             <DiscoverBarCard
                 key={bar.id}
