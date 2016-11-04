@@ -1,7 +1,10 @@
+import { Platform } from 'react-native'
+
 import _ from 'lodash'
 import shortid from 'shortid'
 import { autorun } from 'mobx'
 import { getTime } from './time.js'
+import { Crashlytics } from 'react-native-fabric'
 
 export const DEV = true
 
@@ -66,9 +69,15 @@ export const runAndLogErrors = async (callback) => {
 }
 
 export const logError = err => {
-    // TODO: Crashlytics etc
-    if (err) { // this will crash on undefined
+    if (err) { // guard against undefined
         console.error(err)
+
+        const errorMessage = "" + err
+        if (Platform.OS === 'android') {
+            Crashlytics.logException(errorMessage)
+        } else {
+            Crashlytics.recordError(errorMessage)
+        }
     }
 }
 

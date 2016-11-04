@@ -87,6 +87,7 @@ class MenuList extends PureComponent {
             NOTE: SimpleListView should be performant enough that this
                   is no longer necessary!
         */}
+        throw Error("This is a simulated error!")
         return <OrderList
                     /* key={tagStore.tagSelection.join(';')} */
                     orderStore={orderStore}

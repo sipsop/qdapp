@@ -4,6 +4,7 @@ import com.crashlytics.android.Crashlytics;
 // import com.crashlytics.android.ndk.CrashlyticsNdk;
 import io.fabric.sdk.android.Fabric;
 import com.facebook.react.ReactActivity;
+import com.smixx.fabric.FabricPackage;
 
 public class MainActivity extends ReactActivity {
 

@@ -108,7 +108,7 @@ log('----------------------------------------------------------------')
 require('promise/setimmediate/rejection-tracking').enable({
     allRejections: true,
     onUnhandled: (id, error) => {
-        console.error(error)
+        _.logError(error)
     }
 })
 
