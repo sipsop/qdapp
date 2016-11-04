@@ -107,7 +107,7 @@ export class OrderPage extends DownloadResultView {
                     />,
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
-            menuItems:      orderStore.menuItemsOnOrder,
+            getMenuItems:   () => orderStore.menuItemsOnOrder,
             visible:        (i) => true,
             showTitle:      true,
             showPrice:      false,
