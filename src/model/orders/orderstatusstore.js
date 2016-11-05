@@ -10,6 +10,7 @@ const { log, assert } = _.utils(__filename)
 
 class OrderStatusStore {
     @observable orderID = null
+    @observable _initialized = false
 
     /*********************************************************************/
     /* State                                                             */
@@ -17,7 +18,13 @@ class OrderStatusStore {
 
     getState = () => {
         return {
-            orderID: this.haveUncompletedOrder && this.orderID,
+            orderID: this.haveUncompletedOrder ? this.orderID : null,
+        }
+    }
+
+    emptyState = () => {
+        return {
+            orderID: null,
         }
     }
 
@@ -48,10 +55,16 @@ class OrderStatusStore {
         }))
     }
 
+    initialized = () => {
+        this._initialized = true
+    }
+
     getOrderStatusDownload = () => downloadManager.getDownload('order status')
 
     @computed get orderResult() {
-        return this.getOrderStatusDownload().orderResult
+        if (this._initialized)
+            return this.getOrderStatusDownload().orderResult
+        return null
     }
 
     @computed get orderCompleted() {
@@ -61,22 +74,12 @@ class OrderStatusStore {
     }
 
     @computed get haveUncompletedOrder() {
-        return loginStore.isLoggedIn &&
-               this.orderID != null &&
-               !this.orderCompleted
-    }
-
-    @computed get orderStatusMessage() {
-        const d = this.getOrderStatusDownload()
-        if (this.orderResult != null) {
-            if (this.orderResult.errorMessage)
-                return this.orderResult.errorMessage
-            return `Order ${this.orderResult.receipt} will be ready in approx. ${this.orderResult.estimatedTime}`
-        } else if (d.lastMessage) {
-            return d.lastMessage
-        } else {
-            return 'Getting your order status...'
-        }
+        return !!(
+            loginStore.isLoggedIn &&
+            this.orderID &&
+            this.orderResult &&
+            !this.orderCompleted
+        )
     }
 }
 

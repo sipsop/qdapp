@@ -14,8 +14,8 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { Page } from '/components/Page'
-import { SimpleListView, CombinedDescriptor, SingletonDescriptor } from '/components/SimpleListView'
+import { Page, Loader } from '/components/Page'
+import { SimpleListView } from '/components/SimpleListView'
 import { LargeButton } from '/components/Button'
 import { SelectableButton } from '/components/ButtonRow'
 import { DownloadResultView } from '/components/download/DownloadResultView'
@@ -32,21 +32,6 @@ import { config } from '/utils/config'
 
 const { assert, log } = _.utils('./orders/OrderPage')
 
-assert(Page)
-assert(SimpleListView)
-assert(LargeButton)
-assert(SelectableButton)
-assert(DownloadResultView)
-assert(Checkout)
-assert(SelectedCardInfo)
-assert(Header)
-assert(TextHeader)
-assert(OrderList)
-assert(OrderListDescriptor)
-assert(Message)
-assert(SmallOkCancelModal)
-assert(ReceiptModal)
-
 const largeButtonStyle = {
     height: 55,
     margin: 5,
@@ -55,19 +40,20 @@ const largeButtonStyle = {
 const { width } = Dimensions.get('window')
 
 @observer
-export class OrderPage extends Page {
+export class OrderPage extends DownloadResultView {
 
     styles = {
         deliveryMethodView: {
-            position: 'absolute',
+            // position: 'absolute',
             width: width - 10,
-            top: 5,
-            left: 5,
+            // top: 5,
+            // left: 5,
         },
         deliveryMethod: {
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderRadius: 10,
             height: 120,
+            margin: 5,
             padding: 10,
             borderWidth: 0.5,
             borderColor: config.theme.primary.medium,
@@ -78,6 +64,9 @@ export class OrderPage extends Page {
         },
     }
 
+    inProgressMessage = "Loading menu..."
+    getDownloadResult = () => barStore.getMenuDownloadResult()
+
     handleOrderPress = () => {
         orderStore.setCheckoutVisibility(true)
         orderStore.freshCheckoutID()
@@ -85,10 +74,13 @@ export class OrderPage extends Page {
     }
 
     handleRefresh = async () => {
-        await barStore.getMenuDownloadResult().forceRefresh()
+        await Promise.all([
+            barStore.getMenuDownloadResult().forceRefresh(),
+            barStatusStore.getBarStatusDownload().forceRefresh(),
+        ])
     }
 
-    renderView = () => {
+    renderFinished = () => {
         if (orderStore.menuItemsOnOrder.length > 0)
             return this.renderOrderList()
         return this.renderEmptyOrder()
@@ -108,10 +100,14 @@ export class OrderPage extends Page {
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            renderHeader:   () => <View style={this.styles.emptyView} />,
+            renderHeader:   () =>
+                <DeliveryMethod
+                    style={this.styles.deliveryMethod}
+                    primary={true}
+                    />,
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
-            menuItems:      orderStore.menuItemsOnOrder,
+            getMenuItems:   () => orderStore.menuItemsOnOrder,
             visible:        (i) => true,
             showTitle:      true,
             showPrice:      false,
@@ -125,15 +121,6 @@ export class OrderPage extends Page {
             {/* Order stuff */}
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />
-            {/* Delivery Method. This needs to be at the end to give it a
-                higher elevation than the preceding elements.
-            */}
-            <View style={this.styles.deliveryMethodView}>
-                <DeliveryMethod
-                    style={this.styles.deliveryMethod}
-                    primary={true}
-                    />
-            </View>
         </View>
     }
 }
@@ -167,10 +154,14 @@ class DeliveryMethod extends DownloadResultView {
         pickerStyle: {
             width: 150,
         },
+        deliveryText: {
+            fontSize: 20,
+            color: '#000',
+        },
     })
 
     getDownloadResult = () => barStatusStore.getBarStatusDownload()
-    refreshPage = () => barStatusStore.refreshBarStatus()
+    refreshPage = () => barStatusStore.getBarStatusDownload().forceRefresh()
 
     @action tableDelivery = () => {
         orderStore.delivery = 'Table'
@@ -201,19 +192,22 @@ class DeliveryMethod extends DownloadResultView {
     }
 
     renderFinished = () => {
-        const tableService =
-            orderStore.delivery === 'Table' &&
-            barStatusStore.tableService
-        const pickup =
-            orderStore.delivery === 'Pickup' &&
-            barStatusStore.pickupLocations.length > 1
+        const tableService = barStatusStore.tableService
+        const pickup = barStatusStore.pickupLocations.length >= 1
+        var delivery = orderStore.delivery
+        if (!tableService)
+            delivery = 'Pickup'
+        if (!pickup && delivery === 'Pickup')
+            delivery = null
         const tableNumber =
             orderStore.tableNumber
                 ? "" + orderStore.tableNumber
                 : ""
 
-        if (!tableService && !pickup) {
-            return null
+        if (!delivery) {
+            return <T style={this.styles.deliveryText}>
+                No table service or pickup available.
+            </T>
         }
 
         return <View style={this.props.style}>
@@ -242,7 +236,7 @@ class DeliveryMethod extends DownloadResultView {
                 }
             </Header>
             <View style={this.styles.optStyle}>
-                { tableService &&
+                { delivery === 'Table' &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
@@ -254,7 +248,7 @@ class DeliveryMethod extends DownloadResultView {
                             />
                     </View>
                 }
-                { pickup &&
+                { delivery === 'Pickup' &&
                     <Picker selectedValue={orderStore.pickupLocation}
                             onValueChange={location => orderStore.pickupLocation = location}
                             style={this.styles.pickerStyle}

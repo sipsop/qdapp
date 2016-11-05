@@ -115,6 +115,7 @@ class MapMarker extends PureComponent {
     }
 
     @action handleMarkerPress = () => {
+        store.switchToDiscoverPage(scrollToTop = true)
         mapStore.setCurrentMarker(this.props.bar, track = true)
     }
 

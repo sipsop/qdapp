@@ -39,6 +39,8 @@ export type OrderState = {
 export type OrderResult = {
     // date:           DateType,
     // time:           Time,
+    barID:          String,
+    orderID:        String,
     timestamp:      Float,
     queueSize:      Int,
     estimatedTime:  Float,
@@ -311,7 +313,6 @@ class OrderStore {
                 delivery:            this.delivery,
                 tableNumber:         this.tableNumber,
                 pickupLocation:      this.pickupLocation,
-
             }
         }))
     }

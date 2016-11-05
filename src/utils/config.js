@@ -1,4 +1,5 @@
-import { Second, Minute, Hour, Day, Week, Month } from './time.js'
+import { appVersion } from '../../version'
+import { Second, Minute, Hour, Day, Week, Month } from './time'
 
 const pink200 = '#F48FB1'
 const pink300 = '#F06292'
@@ -49,6 +50,7 @@ export const makeConfig = (primaryPalette, secondaryPalette) => {
 }
 
 export const config = {
+    appVersion: appVersion,
     theme: {
         primary:        pinkPalette,
         secondary:      purplePalette,
@@ -84,6 +86,15 @@ export const config = {
     },
     noCache: {
         noCache:        true,
+    },
+    /* Test with some pre-fabricated data */
+    test: {
+        tableService: true,
+        pickupLocations: true,
+    },
+    /* Simulated errors */
+    errors: {
+        simulateGoogleMapErrors: false,
     },
     auth: {
         /* Auth token refresh params */

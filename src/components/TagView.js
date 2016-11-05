@@ -14,10 +14,10 @@ import { ButtonRow, ButtonGroup } from './ButtonRow.js'
 import { T } from '/components/Component.js'
 import { downloadManager } from '/network/http'
 import { analytics } from '/model/analytics.js'
-import { tagStore } from '/model/tagstore.js'
-import * as _ from '/utils/curry.js'
+import { store, tagStore } from '/model/store'
+import * as _ from '/utils/curry'
 
-const { log, assert } = _.utils('./components/tags.js')
+const { log, assert } = _.utils(__filename)
 
 @observer
 export class TagView extends PureComponent {
@@ -57,7 +57,12 @@ export class TagRow extends Component {
         if (this.isActive(tagID)) {
             tagStore.popTag(tagID)
         } else {
-            tagStore.pushTag(tagID)
+            /* Scroll to top of page and reset the number of visible rows */
+            store.switchToMenuPage(scrollToTop = true)
+            /* NOTE: Do this async, so that we first scroll to top smoothly, and
+                     then re-render only the first few menu items
+            */
+            setTimeout(() => tagStore.pushTag(tagID), 0)
         }
         // if (tagStore.tagSelection.length >= 1)
         //     analytics.trackTagFilter()

@@ -30,17 +30,26 @@ export class Store {
     @observable initialized = false
     @observable mapVisible = true
 
+    discoverScrollView = null
+    orderListScrollView = null
+
     constructor() {
-        // this.discoverScrollView = null
         this.previousState = null
         setTimeout(this.periodicallySaveToLocalStorage, 5000)
     }
 
-    @action switchToDiscoverPage = (scrollToTop) => {
+    @action switchToDiscoverPage = (scrollToTop = false) => {
         tabStore.setCurrentTab(0)
         this.mapVisible = true
-        // if (scrollToTop && this.discoverScrollView)
-        //     this.discoverScrollView.scrollTo({x: 0, y: 0})
+        if (scrollToTop && this.discoverScrollView) {
+            this.discoverScrollView.scrollToTop()
+        }
+    }
+
+    @action switchToMenuPage = (scrollToTop = false) => {
+        tabStore.setCurrentTab(2)
+        if (scrollToTop && this.orderListScrollView)
+            this.orderListScrollView.scrollToTop()
     }
 
     @action setMapVisible = (visible) => {
@@ -49,37 +58,45 @@ export class Store {
 
     initialize = async () => {
         /* First call initialize() */
-        await analytics.initialize()
-        await favStore.initialize()
-        await tabStore.initialize()
-        await barStore.initialize()
-        await barStatusStore.initialize()
-        await loginStore.initialize()
-        await tagStore.initialize()
-        await mapStore.initialize()
-        await orderStore.initialize()
-        await paymentStore.initialize()
-        await orderStatusStore.initialize()
-        await historyStore.initialize()
-        await timeStore.initialize()
-        await segment.initialize()
+        await Promise.all([
+            analytics.initialize(),
+            favStore.initialize(),
+            tabStore.initialize(),
+            barStore.initialize(),
+            barStatusStore.initialize(),
+            loginStore.initialize(),
+            tagStore.initialize(),
+            mapStore.initialize(),
+            orderStore.initialize(),
+            paymentStore.initialize(),
+            orderStatusStore.initialize(),
+            historyStore.initialize(),
+            timeStore.initialize(),
+            segment.initialize(),
+        ])
 
         try {
             await this.loadFromLocalStorage()
         } catch (e) {
             _.logError(e)
         }
-        this.initialized = true
 
         /* Then call initialized() */
-        await mapStore.initialized()
-        await segment.initialized()
-        await downloadManager.initialized()
+        await Promise.all([
+            mapStore.initialized(),
+            segment.initialized(),
+            downloadManager.initialized(),
+            orderStatusStore.initialized(),
+            loginStore.initialized(),
+        ])
+
         segment.track('Application Opened', {
             from_background: true, // TODO:
             // referring_application: 'GMail',
             // url: 'url://location'
         })
+
+        this.initialized = true
     }
 
     loadFromLocalStorage = async () => {
@@ -143,6 +160,7 @@ export class Store {
             barStatusState:         barStatusStore.emptyState(),
             tabState:               tabStore.emptyState(),
             orderState:             orderStore.emptyState(),
+            orderStatusState:       orderStatusStore.emptyState(),
             mapState:               mapStore.emptyState(),
             tagState:               tagStore.emptyState(),
             segment:                segment.emptyState(),
@@ -151,7 +169,7 @@ export class Store {
     }
 
     saveToLocalStorage = async (state) => {
-        if (!_.deepEqual(state, this.previousState)) {
+        if (this.initialized && !_.deepEqual(state, this.previousState)) {
             // log(state)
             // log(this.previousState)
             this.previousState = state

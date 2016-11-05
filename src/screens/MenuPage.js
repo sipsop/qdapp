@@ -18,7 +18,6 @@ import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
-import { Page } from '/components/Page'
 import { downloadManager } from '/network/http'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { NotificationBar } from '/components/notification/NotificationBar'
@@ -43,10 +42,10 @@ const { log, assert } = _.utils('./menu/MenuPage')
 const rowHeight = 55
 
 @observer
-export class MenuPage extends Page {
-    renderView = () => {
-        return <MenuView />
-    }
+export class MenuPage extends DownloadResultView {
+    inProgressMessage = "Loading menu..."
+    getDownloadResult = () => barStore.getMenuDownloadResult()
+    renderFinished = () => <MenuView />
 }
 
 @observer
@@ -63,15 +62,20 @@ export class MenuView extends PureComponent {
 }
 
 @observer
-class MenuList extends DownloadResultView {
+class MenuList extends PureComponent {
 
-    getDownloadResult = () => barStore.getMenuDownloadResult()
+    handleRefresh = async () => {
+        await Promise.all([
+            barStore.getMenuDownloadResult().forceRefresh(),
+            tagStore.getTagDownloadResult().forceRefresh(),
+        ])
+    }
 
     @computed get activeMenuItems() {
         return searchStore.searchMenuItems(tagStore.activeMenuItems)
     }
 
-    renderFinished = () => {
+    render = () => {
         {/*
             NOTE: Pass a key to OrderList to ensure it does not
                   reuse state. This has the effect of "reloading"
@@ -79,21 +83,24 @@ class MenuList extends DownloadResultView {
                   scrolled down say 100 items, then switching from
                   e.g. wine to beer will render 100 beer items, even
                   though only a few are visible.
+
+            NOTE: SimpleListView should be performant enough that this
+                  is no longer necessary!
         */}
         return <OrderList
-                    key={tagStore.tagSelection.join(';')}
+                    /* key={tagStore.tagSelection.join(';')} */
                     orderStore={orderStore}
-                    menuItems={this.activeMenuItems}
+                    getMenuItems={() => this.activeMenuItems}
                     /* menuItems={barStore.allMenuItems} */
+                    onRefresh={this.handleRefresh}
                     renderHeader={() => {
                         return (
-                          <View>
-                            <SearchBar placeholder='Search for drinks...' type='menu'/>
-                            <TagView />
-                          </View>
+                            <View>
+                                <TagView />
+                                <SearchBar placeholder='Search...' type='menu'/>
+                            </View>
                         )
                     }}
-                    onRefresh={this.refreshPage}
                     visible={this.menuItemVisible} />
     }
 

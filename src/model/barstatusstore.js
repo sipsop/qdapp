@@ -39,7 +39,6 @@ class BarStatusStore {
     }
 
     getBarStatusDownload = () => downloadManager.getDownload('bar status')
-    refreshBarStatus = () => downloadManager.forceRefresh('bar status')
 
     @computed get barStatus() : ?BarStatus {
         return this.getBarStatusDownload().barStatus
@@ -54,10 +53,14 @@ class BarStatusStore {
     }
 
     @computed get tableService() : String {
+        if (config.test.tableService)
+            return true
         return this.barStatus && this.barStatus.table_service
     }
 
     @computed get pickupLocations() : Array<String> {
+        if (config.test.pickupLocations)
+            return ['Main Bar', 'First Floor']
         return this.barStatus && this.barStatus.pickup_locations
     }
 

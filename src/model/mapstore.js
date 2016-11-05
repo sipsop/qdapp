@@ -368,18 +368,25 @@ class MapStore {
     }
 
     /* Focus the given bar on the map */
-    @action focusBar = (bar : Bar, switchToDiscoverPage = true, track = false) => {
+    focusBar = (bar : Bar, switchToDiscoverPage = true, track = false) => {
+        if (switchToDiscoverPage)
+            store.switchToDiscoverPage(scrollToTop = true)
+        /* NOTE: this needs to be async to
+            a) seem snappy, and
+            b) properly scroll to top
+        */
+        setTimeout(() => this._focusBar(bar, track), 0)
+    }
+
+    @action _focusBar = (bar, track = false) => {
         if (this.mapView != null) {
             const coords = getBarCoords(bar)
             const region = { ...coords, ...focusDelta }
             this.mapView.animateToRegion(region, 500)
         }
-        if (switchToDiscoverPage)
-            store.switchToDiscoverPage(true)
-        if (track) {
-            analytics.trackCurrentBar('Focus Bar on Map')
-        }
         this.setCurrentMarker(bar, track = false)
+        if (track)
+            analytics.trackCurrentBar('Focus Bar on Map')
     }
 
     /* All markers to be shown on the map.

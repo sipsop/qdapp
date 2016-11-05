@@ -36,12 +36,21 @@ export class BarInfoDownload extends JSONDownload {
         )
     }
 
-    @action finish = () => {
+    finish() {
+        super.finish()
         if (this.value && this.value.status === 'OK') {
             const bar = parseBar(this.value.result, this.value.html_attributions)
             this.downloadFinished(bar)
         } else if (this.value) {
-            this.downloadError(this.value.status)
+            log("Got a download error from google maps...", this.value)
+            this.downloadError(`Download failed with ${this.value.status}: ${this.value.error_message}`)
+            this.lastValue = null
+        }
+
+        /* See if we support google map errors! */
+        if (config.errors.simulateGoogleMapErrors) {
+            this.downloadError("Simulated error!")
+            this.lastValue = null
         }
     }
 }

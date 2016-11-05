@@ -4,7 +4,7 @@ import {
     PureComponent,
     StyleSheet
 } from '/components/Component'
-import { computed, action } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page, Loader } from '/components/Page'
@@ -21,34 +21,44 @@ import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
 
-assert(Page)
-assert(Loader)
-assert(LargeButton)
-assert(BackButton)
-assert(MapView)
-assert(DiscoverBarCard)
-assert(DownloadResultView)
-assert(Header)
-assert(TextHeader)
-assert(SelectableButton)
-assert(Descriptor)
-assert(SimpleListView)
-
 @observer
 export class DiscoverPage extends DownloadResultView {
+    @observable barListVisible = false
+
     errorMessage      = "Error downloading list of bars"
     refreshPage       = () => mapStore.updateNearbyBars(force = true)
     getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
-    renderNotStarted  = () => null
-    renderFinished    = (searchResponse) => <DiscoverView />
+
+    renderFinished = (searchResponse) => {
+        return <View style={{flex: 1}}>
+            <SimpleListView
+                ref={ref => store.discoverScrollView = ref}
+                descriptor={discoverViewDescriptor}
+                initialListSize={2}
+                pageSize={1}
+                />
+        </View>
+    }
 }
 
+const mapHeight = 280
+
 class DiscoverViewDescriptor extends Descriptor {
-    get numberOfRows() {
-        return mapStore.nearbyBarList.length
+
+    progressViewOffset = mapHeight
+
+    @computed get rows() {
+        return mapStore.nearbyBarList
     }
 
-    // renderHeader = () => <MapView key='mapview' />
+    rowHasChanged = (bar1, bar2) => bar1.id !== bar2.id
+
+    renderHeader = () => {
+        return <View style={{flex: 1, height: mapHeight}}>
+            <MapView key='mapview' />
+        </View>
+    }
+
     renderFooter = () => {
         return <MoreButton canReorderBarList={false} />
     }
@@ -57,25 +67,24 @@ class DiscoverViewDescriptor extends Descriptor {
         store.setMapVisible(true)
     }
 
-    refresh = async () => {
-        await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
-    }
+    /* NOTE: This breaks the map movements :( */
+    // refresh = async () => {
+    //     await this.runRefresh(() => mapStore.updateNearbyBars(force = true))
+    // }
 
-    renderRow = (i) => {
-      // SORT HERE
-        const bar = mapStore.nearbyBarList[i]
-        if (bar.name.includes(searchStore.getState().barSearch)) {
-            return (<DiscoverBarCard
+    renderRow = (bar, i, sectionID, rowID) => {
+        log("RENDERING BAR CARD", i)
+        return (
+            <DiscoverBarCard
                 key={bar.id}
                 bar={bar}
-                        /*
-                        onBack={this.handleBack}
-                        showBackButton={i === 0}
-                        */
-                        imageHeight={190} />)
-        } else {
-            return null
-        }
+                /*
+                onBack={this.handleBack}
+                showBackButton={i === 0}
+                */
+                imageHeight={190}
+                />
+        )
     }
 }
 
@@ -83,18 +92,12 @@ const discoverViewDescriptor = new DiscoverViewDescriptor()
 
 @observer
 export class DiscoverView extends Page {
-// export class DiscoverView extends PureComponent {
-
-    @computed get key() {
-        const key = mapStore.getCurrentMarker() && mapStore.getCurrentMarker().id
-        return key || 'barCardList'
-    }
-
     renderView = () => {
         return <View style={{flex: 1}}>
             { /*<MapNearbyToggle />*/}
-            {store.mapVisible && <MapPage />}
-            {!store.mapVisible && <BarListPage />}
+            <BarList />
+            {/*store.mapVisible && <MapPage />*/}
+            {/*!store.mapVisible && <BarListPage />*/}
         </View>
     }
 }
@@ -145,7 +148,7 @@ class NearbyButton extends PureComponent {
             <LargeButton
                 label={this.nearbyLabel}
                 style={this.styles.buttonStyle}
-                fontSize={16}
+                fonrSize={16}
                 onPress={this.showNearby} />
         </View>
     }
@@ -220,6 +223,9 @@ class MapPage extends PureComponent {
 
 @observer
 class BarListPage extends Page {
+    /* properties:
+        showBackButton: Bool
+    */
 
     styles = {
         view: {
@@ -265,6 +271,7 @@ class BarListPage extends Page {
             onLoadMoreAsync: this.loadMore, // () => this.loadMoreData(false),
         }
         return  <View style={this.styles.view}>
+            { this.props.showBackButton &&
                 <BackButton
                     onBack={this.showMap}
                     enabled={true}
@@ -273,12 +280,13 @@ class BarListPage extends Page {
                     /* color='#000' */
                     iconSize={35}
                     />
-                <SimpleListView
-                    descriptor={discoverViewDescriptor}
-                    initialListSize={2}
-                    pageSize={1}
-                    /* renderScrollComponent={props => <InfiniteScrollView {...infiniteScrollProps} />} */
-                    />
+            }
+            <SimpleListView
+                descriptor={discoverViewDescriptor}
+                initialListSize={2}
+                pageSize={1}
+                /* renderScrollComponent={props => <InfiniteScrollView {...infiniteScrollProps} />} */
+                />
         </View>
     }
 }

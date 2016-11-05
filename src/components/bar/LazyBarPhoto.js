@@ -6,6 +6,10 @@ import { BarPhoto } from './BarPhoto'
 
 @observer
 export class LazyBarPhoto extends PureComponent {
+    /* properties:
+        timeout: Int
+        see BarPhoto
+    */
     static defaultProps = {
         showMapButton: false
     }

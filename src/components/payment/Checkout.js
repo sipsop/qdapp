@@ -8,12 +8,13 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { OrderTotal } from '../orders/Receipt'
 import { LargeButton } from '../Button'
-import { LazyBarPhoto } from '../bar/LazyBarPhoto'
+import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
 import { SimpleListView, themedRefreshControl } from '../SimpleListView'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
 import { barStore, orderStore, loginStore } from '/model/store'
+import { DownloadResultView } from '../download/DownloadResultView'
 import { CreditCard } from './CreditCard'
 import { analytics } from '/model/analytics'
 import { config } from '/utils/config'
@@ -28,32 +29,31 @@ import type { String, Int } from '../Types'
 
 const { log, assert } = _.utils('/components/payment/Checkout')
 
+const styles = StyleSheet.create({
+    cardInfo: {
+        marginLeft: 5,
+        marginRight: 5,
+    }
+})
+
+
 @observer
-export class Checkout extends PureComponent {
+export class Checkout extends DownloadResultView {
     /* properties:
     */
-
-    @observable refreshing = false
 
     @computed get haveCardNumber() {
         return paymentStore.selectedCardNumber != null
     }
 
-    styles = StyleSheet.create({
-        cardInfo: {
-            marginLeft: 5,
-            marginRight: 5,
-        }
-    })
-
     payNow = () => {
         // orderStore.setFreshOrderToken()
         analytics.trackCheckoutStep(3)
+        orderStore.freshOrderToken()
         loginStore.login(
             () => {
                 // success
                 analytics.trackCheckoutFinish()
-                orderStore.freshOrderToken()
                 orderStore.placeActiveOrder()
                 this.close()
             },
@@ -72,10 +72,42 @@ export class Checkout extends PureComponent {
         analytics.trackCheckoutCancel()
     }
 
+    @computed get disableBuyButton() {
+        return !barStore.getBar()
+    }
+
+    render = () => {
+        if (!orderStore.checkoutVisible)
+            null
+        return <OkCancelModal
+                    visible={orderStore.checkoutVisible}
+                    showOkButton={this.haveCardNumber}
+                    showCancelButton={this.disableBuyButton}
+                    cancelModal={this.close}
+                    okModal={this.payNow}
+                    okLabel={`Buy Now`}
+                    okDisabled={orderStore.getActiveOrderToken() != null || this.disableBuyButton}
+                    okDisabledColor='rgba(0, 0, 0, 0.5)'
+                    okBackgroundColor='#000'
+                    okBorderColor='rgba(0, 0, 0, 0.8)'
+                    >
+                <CheckoutView onBack={this.cancel} />
+        </OkCancelModal>
+    }
+}
+
+class CheckoutView extends PureComponent {
+    /* properties:
+        onBack: () => void
+    */
+    @observable refreshing = false
+
+    getDownloadResult = () => barStore.getBarDownloadResult()
+
     handleRefresh = async () => {
         this.refreshing = true
         transaction(async () => {
-            await barStore.updateBarAndMenu(barStore.barID, force = true)
+            await barStore.updateBarAndMenu()
             this.refreshing = false
         })
     }
@@ -88,52 +120,27 @@ export class Checkout extends PureComponent {
     }
 
     render = () => {
-        if (!orderStore.checkoutVisible)
-            return <View />
-
-        const textStyle = {
-            textAlign: 'center',
-        }
-        const bar = barStore.getBar()
-
-        return <OkCancelModal
-                    visible={orderStore.checkoutVisible}
-                    showOkButton={this.haveCardNumber}
-                    showCancelButton={false}
-                    cancelModal={this.close}
-                    okModal={this.payNow}
-                    okLabel={`Buy Now`}
-                    /* okDisabled={!this.haveCardNumber}
-                    okDisabledColor='rgba(0, 0, 0, 0.5)' */
-                    okBackgroundColor='#000'
-                    okBorderColor='rgba(0, 0, 0, 0.8)'
-                    >
-                <ScrollView refreshControl={this.getRefreshControl()}>
-                    <LazyBarPhoto
-                        bar={bar}
-                        photo={bar.photos[0]}
-                        imageHeight={150}
-                        showBackButton={true}
-                        onBack={this.cancel}
-                        />
-                    {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
-                    <View style={this.styles.cardInfo}>
-                        <SelectedCardInfo />
-                    </View>
-                    <TipComponent />
-                    <OrderTotal
-                        style={{marginRight: 10}}
-                        total={orderStore.total + orderStore.tipAmount}
-                        primary={false}
-                        /* Do not show tip amount here, it is too noisy */
-                        /* tip={orderStore.tipAmount} */
-                        tip={0.0}
-                        />
-                    <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
-                        <TipRoundButton />
-                    </View>
-                </ScrollView>
-        </OkCancelModal>
+        return <ScrollView refreshControl={this.getRefreshControl()}>
+            <CurrentBarPhoto
+                onBack={this.props.onBack}
+                />
+            {/*<TextHeader label="Card" rowHeight={55} style={{marginBottom: 10}} />*/}
+            <View style={styles.cardInfo}>
+                <SelectedCardInfo />
+            </View>
+            <TipComponent />
+            <OrderTotal
+                style={{marginRight: 10}}
+                total={orderStore.total + orderStore.tipAmount}
+                primary={false}
+                /* Do not show tip amount here, it is too noisy */
+                /* tip={orderStore.tipAmount} */
+                tip={0.0}
+                />
+            <View style={{height: 55, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 10}}>
+                <TipRoundButton />
+            </View>
+        </ScrollView>
     }
 }
 

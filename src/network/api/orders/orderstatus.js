@@ -14,7 +14,7 @@ export class OrderStatusDownload extends QueryDownload {
 
     /* Refresh every 10s */
     cacheInfo = config.defaultRefreshCacheInfo
-    periodicRefresh = 10
+    periodicRefresh = 15
 
     @computed get cacheKey() {
         return `qd:orderstatus:userID=${this.props.userID}`

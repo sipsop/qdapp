@@ -1,11 +1,13 @@
 import { React, Component, ScrollView, View, TouchableOpacity, Image,
-         Icon, PureComponent, T } from '/components/Component'
+         Icon, PureComponent, T, StyleSheet,
+} from '/components/Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
+import { phonecall, email, web } from 'react-native-communications'
 
 import { TextHeader } from '../Header.js'
 import { RowTextButton } from '../Rows.js'
-import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
+import { SmallOkCancelModal, SimpleModal, MarkdownModal } from '../Modals.js'
 import { TextSelectorRow } from '../Selector.js'
 import { LazyComponent } from '../LazyComponent.js'
 import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
@@ -34,6 +36,7 @@ export class ControlPanel extends PureComponent {
             <PaymentConfig />
             <OrderHistory />
             <Settings />
+            {/*<Feedback />*/}
             <Signout />
         </ScrollView>
     }
@@ -92,9 +95,17 @@ class OrderHistory extends PureComponent {
     }
 }
 
+const settingsStyles = StyleSheet.create({
+    textRow: {
+        paddingLeft: 10,
+    }
+})
+
 @observer
 class Settings extends PureComponent {
-    settingsModal = null
+    settingsModal           = null
+    termsAndConditionsModal = null
+    privacyPolicyModal      = null
 
     clearCache = _.logErrors(async () => {
         await cache.clearAll()
@@ -127,29 +138,87 @@ class Settings extends PureComponent {
                     ref={ref => this.settingsModal = ref}
                     onClose={drawerStore.enable}
                     >
+                <MarkdownModal
+                    ref={ref => this.termsAndConditionsModal = ref}
+                    header="Terms and Conditions"
+                    url="https://qdodger.com/TermsAndConditions.md"
+                    />
+                <MarkdownModal
+                    ref={ref => this.privacyPolicyModal= ref}
+                    header="Privacy Policy"
+                    url="https://qdodger.com/PrivacyPolicy.md"
+                    />
                 <View style={{flex: 1}}>
                     <TextHeader
                         label="Settings"
                         rowHeight={55}
                         />
                     <TextSelectorRow
+                        label={`App Version: ${config.appVersion}`}
+                        onPress={undefined}
+                        align='left'
+                        style={settingsStyles.textRow}
+                        />
+                    <TextSelectorRow
+                        label="Feedback"
+                        onPress={feedback}
+                        align='left'
+                        style={settingsStyles.textRow}
+                        />
+                    <TextSelectorRow
+                        label="Terms and Conditions"
+                        onPress={() => {
+                            this.termsAndConditionsModal.show()
+                        }}
+                        align='left'
+                        style={settingsStyles.textRow}
+                        />
+                    <TextSelectorRow
+                        label={`Privacy Policy`}
+                        onPress={() => {
+                            this.privacyPolicyModal.show()
+                        }}
+                        align='left'
+                        style={settingsStyles.textRow}
+                        />
+                    <TextSelectorRow
                         label={"Clear Cache"}
                         onPress={this.clearCache}
                         confirmMessage="Delete any cached images, outstanding orders and related data?"
                         align='left'
-                        style={{paddingLeft: 10}}
+                        style={settingsStyles.textRow}
                         />
                     <TextSelectorRow
                         label={"Delete Account"}
                         onPress={this.deleteAccount}
                         confirmMessage="Are you sure you want to delete your account? This operation cannot be undone."
                         align='left'
-                        style={{paddingLeft: 10}}
+                        style={settingsStyles.textRow}
                         />
                 </View>
             </SimpleModal>
         </View>
     }
+}
+
+// @observer
+// class Feedback extends PureComponent {
+//     render = () => {
+//         return <SideMenuEntry
+//                     text="Feedback"
+//                     icon={icon("envelope", "rgba(0, 0, 0, 0.60)")}
+//                     onPress={feedback} />
+//     }
+// }
+
+const feedback = () => {
+    email(
+        ['hello@qdodger.com'],
+        null,       /* cc */
+        null,       /* bcc */
+        'feedback', /* subject */
+        null,       /* body */
+    )
 }
 
 @observer

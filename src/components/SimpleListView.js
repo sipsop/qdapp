@@ -8,11 +8,15 @@ import {
     Image,
     TouchableOpacity
 } from '/components/Component.js'
-import { observable } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
+
+const { log, assert } = _.utils(__filename)
+
+const visibleRowsIncrement = 5
 
 @observer
 export class SimpleListView extends PureComponent {
@@ -30,13 +34,27 @@ export class SimpleListView extends PureComponent {
 
     listView = null
 
+    @observable visibleRows = this.visibleRowsIncrement
+
     constructor(props) {
         super(props)
         this._dataSource = new ListView.DataSource({
-            rowHasChanged: (i, j) => true, //i !== j,
+            rowHasChanged: (row1, row2) => this.rowHasChanged,
         })
         this.contentHeight = 0
         this.verticalScrollPosition = 0
+    }
+
+    get visibleRowsIncrement() {
+        return this.props.visibleRowsIncrement || visibleRowsIncrement
+    }
+
+    @action resetVisibleRows = () => {
+        this.visibleRows = this.visibleRowsIncrement
+    }
+
+    rowHasChanged = (row1, row2) => {
+        return !_.deepEqual(row1, row2)
     }
 
     handleContentSizeChange = (contentWidth, contentHeight) => {
@@ -49,6 +67,10 @@ export class SimpleListView extends PureComponent {
 
     scrollToTop = () => {
         this.listView.scrollTo({y: 0})
+        /* NOTE: This needs to be async, otherwise it doesn't always scroll properly */
+        setTimeout(() => {
+            this.resetVisibleRows()
+        }, 0)
     }
 
     /* Scroll to the bottom of the page */
@@ -68,20 +90,40 @@ export class SimpleListView extends PureComponent {
         return themedRefreshControl({
             refreshing: this.props.descriptor.refreshing,
             onRefresh: this.props.descriptor.refresh,
+            progressViewOffset: this.props.descriptor.progressViewOffset,
         })
     }
 
+    @computed get numberOfVisibleRows() {
+        log("VISIBLE ROWS", this.visibleRows, "incr", this.visibleRowsIncrement)
+        return _.min(this.props.descriptor.rows.length, this.visibleRows)
+    }
 
-    get dataSource() {
-        return this._dataSource.cloneWithRows(
-            _.range(this.props.descriptor.numberOfRows)
-        )
+    @computed get rows() {
+        return this.props.descriptor
+            .rows
+            .slice(0, this.numberOfVisibleRows)
+            .map((rowData, i) => [rowData, i])
+    }
+
+    @action handleEndReached = () => {
+        log("END REACHED, INCREASE VISIBLE ROWS")
+        this.visibleRows += this.visibleRowsIncrement
+    }
+
+    @computed get dataSource() {
+        return this._dataSource.cloneWithRows(this.rows)
     }
 
     saveRef = (listView) => {
         this.listView = listView
         if (this.props.getRef)
             this.props.getRef(listView)
+    }
+
+    renderRow = (rowData, sectionID, rowID, highlightRow) => {
+        [rowData, i] = rowData
+        return this.props.descriptor.renderRow(rowData, i, sectionID, rowID, highlightRow)
     }
 
     render = () => {
@@ -91,23 +133,27 @@ export class SimpleListView extends PureComponent {
                 dataSource={this.dataSource}
                 removeClippedSubviews={true}
                 enableEmptySections={true}
-                renderRow={this.props.descriptor.renderRow}
+                renderRow={this.renderRow}
                 refreshControl={this.getRefreshControl()}
                 renderHeader={this.props.descriptor.renderHeader}
                 renderFooter={this.props.descriptor.renderFooter}
                 {...this.props}
                 onContentSizeChange={this.handleContentSizeChange}
+                scrollRenderAheadDistance={500}
                 onScroll={this.handleScroll}
-              />
-          )
+                onEndReachedThreshold={500}
+                onEndReached={this.handleEndReached}
+                />
+        )
     }
 }
 
-export const themedRefreshControl = ({refreshing, onRefresh}) => {
+export const themedRefreshControl = ({refreshing, onRefresh, progressViewOffset}) => {
     return <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 tintColor={config.theme.primary.medium}
+                progressViewOffset={progressViewOffset}
                 title="Loading..."
                 titleColor="#000"
                 colors={[config.theme.primary.medium, config.theme.primary.dark, '#000']}
@@ -118,11 +164,11 @@ export class Descriptor {
 
     @observable refreshing = false
 
-    get numberOfRows() {
-        throw Error("numberOfRows not implemented")
+    get rows() {
+        throw Error("rows not implemented")
     }
 
-    renderRow = (i) => {
+    renderRow = (rowData, i) => {
         throw Error("renderRow not implemented")
     }
 

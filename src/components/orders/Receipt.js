@@ -9,14 +9,15 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { downloadManager } from '/network/http'
 import { Header, TextHeader, HeaderText } from '../Header.js'
 import { DownloadResultView } from '../download/DownloadResultView'
-import { LazyBarPhoto } from '../bar/LazyBarPhoto'
+import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
 import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { store, tabStore, loginStore, segment } from '/model/store.js'
+import { store, tabStore, loginStore, orderStatusStore, segment } from '/model/store.js'
 
 import { barStore, orderStore } from '/model/store.js'
+import { formatDuration } from '/utils/time'
 import * as _ from '/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
@@ -46,19 +47,7 @@ export class ReceiptModal extends PureComponent {
 
 
     handleClose = () => {
-        if (_.includes(['NotStarted', 'Error'], this.downloadState)) {
-            /* Error submitting, allow closing */
-            this.closeModal()
-        } else if (this.downloadState === 'Finished') {
-            if (Platform.OS === 'android') {
-                this.confirmCloseModal.show()
-            } else {
-                if (this.showConfirmText)
-                    this.close() // close double tapped
-                else
-                    this.showConfirmText = true
-            }
-        }
+        this.close()
     }
 
     @action close = () => {
@@ -169,8 +158,6 @@ export class Receipt extends PureComponent {
         const bar = this.props.bar
         const orderResult = this.props.orderResult
 
-        assert (bar.name != null)
-        assert(bar.photos != null)
         assert(orderResult.receipt != null)
         assert(orderResult.userName != null)
         assert(orderResult.orderList != null)
@@ -182,15 +169,8 @@ export class Receipt extends PureComponent {
 
         // this.updateEstimate()
 
-        const timeEstimate = this.props.showEstimate &&
-                             renderTime(orderResult.estimatedTime)
-
         return <ScrollView>
-            <LazyBarPhoto
-                bar={bar}
-                photo={bar.photos[0]}
-                imageHeight={140}
-                showBackButton={this.props.showBackButton}
+            <CurrentBarPhoto
                 onBack={this.props.onClose}
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}
@@ -201,13 +181,9 @@ export class Receipt extends PureComponent {
                     {headerText(deliveryInfo, 20)}
                 </View>
             </Header>
-            { timeEstimate &&
-                <Header rowHeight={40}>
-                    <View style={{flexDirection: 'row'}}>
-                        {headerText('Estimated Time:', 20)}
-                        {headerText(timeEstimate, 20)}
-                    </View>
-                </Header>
+            {
+                this.props.showEstimate &&
+                    <TimeEstimate orderResult={orderResult}/>
             }
             <Info orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
@@ -219,9 +195,35 @@ export class Receipt extends PureComponent {
             <OrderTotal
                 total={orderResult.totalPrice}
                 tip={orderResult.tip}
-                showTipOnly={timeEstimate && orderStore.getAmount(orderResult.orderList) === 1}
+                showTipOnly={this.props.showEstimate && orderStore.getAmount(orderResult.orderList) === 1}
                 />
         </ScrollView>
+    }
+}
+
+@observer
+class TimeEstimate extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+
+    @computed get orderResult() {
+        const orderResult = orderStatusStore.orderResult
+        if (orderResult != null &&
+                orderResult.orderID === this.props.orderResult.orderID) {
+            return orderResult
+        }
+        return this.props.orderResult
+    }
+
+    render = () => {
+        const timeEstimate = formatDuration(this.orderResult.estimatedTime)
+        return <Header rowHeight={55}>
+            <View style={{flexDirection: 'row'}}>
+                {headerText('Estimated Time:', 20)}
+                {headerText(timeEstimate, 25)}
+            </View>
+        </Header>
     }
 }
 
@@ -261,7 +263,8 @@ class ReceiptHeader extends PureComponent {
                         style={{flex: 1}}
                         onPress={() => this.receiptModal.show()}>
                     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        {headerText(orderResult.userName, 20)}
+                        {/*headerText(orderResult.userName, 20)*/}
+                        {headerText('Receipt No.', 20)}
                         {headerText('#' + orderResult.receipt)}
                     </View>
                 </TouchableOpacity>
@@ -326,23 +329,4 @@ export class OrderTotal extends PureComponent {
             }
         </View>
     }
-}
-
-const renderTime = (time : Float) => {
-    if (time < 10)
-        return "Any time now..."
-    const seconds = renderNumber(time % 60)
-    const minutes = renderNumber(Math.floor(time / 60))
-    const hours   = renderNumber(Math.floor(time / 3600))
-    if (hours)
-        return `${hours}:${minutes}:${seconds}`
-    if (minutes)
-        return `${minutes}:${seconds}`
-    return `${seconds}s`
-}
-
-const renderNumber = (n : Int) => {
-    if (n < 10)
-        return '0' + n
-    return '' + n
 }

@@ -10,17 +10,17 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { barStore, orderStore, searchStore } from '/model/store.js'
-import { SimpleListView, Descriptor } from '../SimpleListView.js'
-import { Page } from '../Page.js'
-import { MenuItem } from '../menu/DetailedMenuItem.js'
-import { MenuItemImage } from '../menu/MenuItemImage.js'
-import { FancyMenuItem } from '../menu/FancyMenuItem.js'
-import { Header, HeaderText } from '../Header.js'
-import * as _ from '/utils/curry.js'
-import { config } from '/utils/config.js'
+import { store, barStore, orderStore, searchStore } from '/model/store'
+import { SimpleListView, Descriptor } from '../SimpleListView'
+import { Page } from '../Page'
+import { MenuItem } from '../menu/DetailedMenuItem'
+import { MenuItemImage } from '../menu/MenuItemImage'
+import { FancyMenuItem } from '../menu/FancyMenuItem'
+import { Header, HeaderText } from '../Header'
+import * as _ from '/utils/curry'
+import { config } from '/utils/config'
 
-const { log, assert } = _.utils('./orders/OrderList.js')
+const { log, assert } = _.utils('./components/orders/OrderList.js')
 
 // assert(Header != null)
 // assert(HeaderText != null)
@@ -60,19 +60,23 @@ export class OrderListDescriptor extends Descriptor {
         },
     })
 
-    get numberOfRows() {
-        return this.props.menuItems.length
+    @computed get rows() {
+        return this.props.getMenuItems()
+    }
+
+    rowHasChanged = (menuItem1, menuItem2) => {
+        return menuItem1.id !== menuItem2.id
     }
 
     scrollRelative = (y) => {
         this.getSimpleListView().scrollRelative(y)
     }
 
-    renderRow = (i) => {
-        const menuItem = this.props.menuItems[i]
-        const style = i === this.numberOfRows - 1 // && orderStore.menuItemsOnOrder.length === 0
-            ? this.styles.lastMenuItem
-            : undefined
+    renderRow = (menuItem, i) => {
+        log("RENDERING MENU ITEM", i)
+        var style = undefined
+        if (i === this.rows.length - 1)
+            style = this.styles.lastMenuItem
 
         return (
             <FancyMenuItem
@@ -85,14 +89,16 @@ export class OrderListDescriptor extends Descriptor {
                 showTitle={this.props.showTitle}
                 showPrice={this.props.showPrice}
                 showHeart={this.props.showHeart}
-                scrollRelative={this.scrollRelative} />)
+                scrollRelative={this.scrollRelative}
+                />
+        )
     }
 }
 
 @observer
 export class OrderList extends PureComponent {
     /* properties:
-        menuItems: [MenuItem]
+        getMenuItems: () => [MenuItem]
             menu items to show
         orderStore: OrderStore
             store for the orders
@@ -107,11 +113,24 @@ export class OrderList extends PureComponent {
     */
 
     simpleListView = null
+    getScrollView = () => this.simpleListView
 
     render = () => {
+        const orderListDesc = new OrderListDescriptor(
+            this.props,
+            () => store.orderListScrollView,
+        )
         return <SimpleListView
-                    ref={ref => this.simpleListView = ref}
-                    descriptor={new OrderListDescriptor(this.props, () => this.simpleListView)}
+                    /* TODO: This should probably move to MenuPage! */
+                    ref={(ref) => {
+                        store.orderListScrollView = ref
+                    }}
+                    descriptor={orderListDesc}
+                    /* NOTE:
+                        This does not give enough space to trigger
+                        onEndReached() with a threshold of 500px
+                    */
+                    /* visibleRowsIncrement={3} */
                     initialListSize={2}
                     pageSize={1} />
     }
