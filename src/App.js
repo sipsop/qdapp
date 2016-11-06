@@ -7,6 +7,7 @@ import {
 } from '@exponent/ex-navigation'
 import { Router } from './Router'
 import { Main } from './Main'
+import { OpeningTimesModalV } from './components/modals/OpeningTimesModal'
 
 @observer
 export class App extends Component {
@@ -16,6 +17,7 @@ export class App extends Component {
         return (
             <NavigationProvider router={Router}>
                 <StackNavigation initialRoute={Router.getRoute('main')} />
+                <OpeningTimesModalV />
             </NavigationProvider>
         )
     }
