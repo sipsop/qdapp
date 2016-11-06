@@ -22,7 +22,6 @@ import { phonecall, email, web } from 'react-native-communications'
 import { BarMenu } from '/components/bar/BarMenu'
 import { BarCardFooter } from '/components/bar/BarCardFooter'
 import { LazyBarPhoto } from '/components/bar/LazyBarPhoto'
-import { OpeningTimeView } from '/components/OpeningTimeView'
 import { themedRefreshControl } from '/components/SimpleListView'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { TextHeader } from '/components/Header'
@@ -40,6 +39,8 @@ import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
 const { assert, log } = _.utils('/components/bar/BarPage')
+
+// EXP
 
 @observer
 export class BarInfoFetcher extends DownloadResultView {
@@ -165,7 +166,7 @@ class BarIcons extends BarInfoFetcher {
     })
 
     handleShowOpeningTimes = () => {
-        this.openingTimesModal.show()
+        // fire action to open modal here:
         segment.track('Show Opening Times', {
             placeID:    barStore.barID,
             placeName:  barStore.barName,
@@ -191,9 +192,6 @@ class BarIcons extends BarInfoFetcher {
     renderInProgress = () => null
     renderFinished = (bar) => {
         return <View style={this.styles.view}>
-            <OpeningTimesModal
-                ref={ref => this.openingTimesModal = ref}
-                />
             <TouchableOpacity
                 style={this.styles.iconStyle}
                 onPress={this.handleShowOpeningTimes}
@@ -271,111 +269,6 @@ class BarFooter extends BarInfoFetcher {
                 {/* TODO: display additional attribution stuff here */}
             </View>
         </View>)
-    }
-}
-
-const dayNames = [
-    'Sun',
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-]
-
-@observer
-class OpeningTimesModal extends PureComponent {
-    /* properties:
-        openingTimes: Array<OpeningTime>
-    */
-
-    modal = null
-    show = () => this.modal.show()
-    close = () => this.modal.close()
-
-    styles = {
-        view: {
-            flex: 1,
-        },
-        openingTimeView: {
-            height:             55,
-            flexDirection:      'row',
-            // justifyContent: 'flex-start',
-            alignItems:         'center',
-            borderBottomWidth:  1,
-            borderColor:        config.theme.primary.medium,
-        },
-        day: {
-            flex: 1,
-            justifyContent: 'center',
-            paddingLeft: 5,
-        },
-        dayTextStyle: {
-            fontSize: 25,
-            fontWeight: 'bold',
-            color: '#000',
-            fontFamily: undefined, // TODO: Install bold font
-            // textDecorationLine: 'underline',
-        },
-        openingTime: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        openingTimeTextStyle: {
-            fontSize: 25,
-            color: '#000',
-            fontFamily: undefined, // TODO: Install bold font
-        },
-    }
-
-    @computed get openingTimes() {
-        const bar = barStore.getBar()
-        return bar && bar.openingTimes || []
-    }
-
-    @computed get haveOpeningTimes() {
-        return this.openingTimes.length > 0
-    }
-
-    render = () => {
-        return <SimpleModal ref={ref => this.modal = ref}>
-            <View style={this.styles.view}>
-                <TextHeader
-                    label="Opening Times"
-                    rowHeight={55}
-                    />
-                {
-                    this.openingTimes.map(this.renderOpeningTime)
-                }
-            </View>
-        </SimpleModal>
-    }
-
-    renderOpeningTime = (openingTime, i) => {
-        const today = i === timeStore.today
-        const openingTimeView = {
-            ...this.styles.openingTimeView,
-            backgroundColor: today ? config.theme.todayBackgroundColor : '#fff'
-        }
-        const openingTimeTextStyle = {
-            ...this.styles.openingTimeTextStyle,
-            fontWeight: today ? 'bold' : 'normal'
-        }
-        return <View key={i} style={openingTimeView}>
-            <View style={this.styles.day}>
-                <T style={this.styles.dayTextStyle}>
-                    {dayNames[i]}
-                </T>
-            </View>
-            <View style={this.styles.openingTime}>
-                <OpeningTimeView
-                    openingTime={openingTime}
-                    textStyle={openingTimeTextStyle}
-                    />
-            </View>
-        </View>
     }
 }
 
