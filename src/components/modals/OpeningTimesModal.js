@@ -73,7 +73,7 @@ const styles = {
 }
 
 @observer
-export class OpeningTimesModalV extends PureComponent {
+export class OpeningTimesModal extends PureComponent {
 
     @computed get openingTimes () {
         const bar = barStore.getBar()
@@ -99,7 +99,7 @@ export class OpeningTimesModalV extends PureComponent {
 
     renderOpeningTime = (openingTime, i) => {
         const today = i === timeStore.today
-        const specialRow = today ? { backgroundColor: '#eeceeb' } : { backgroundColor: '#fff' }
+        const specialRow = today ? { backgroundColor: '#f6e6f5' } : { backgroundColor: '#fff' }
         return (
           <View key={i}>
             <View style={[styles.rowContainer, specialRow]}>
@@ -115,7 +115,7 @@ export class OpeningTimesModalV extends PureComponent {
 
     render = () => {
         return (
-          <Modal style={styles.modalContainer} isOpen>
+          <Modal style={styles.modalContainer} onClosed={this.props.onClosedProp} isOpen={this.props.isVisible}>
             <Text style={styles.header}>Opening Times</Text>
             {this.openingTimes.map(this.renderOpeningTime)}
           </Modal>
