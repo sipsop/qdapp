@@ -21,7 +21,10 @@ export class BarStatusDownload extends BarQueryDownload {
                         qdodger_bar:      'Bool',
                         taking_orders:    'Bool',
                         table_service:    'String',
-                        pickup_locations: ['String'],
+                        pickup_locations: [{
+                            name: 'String',
+                            open: 'Bool',
+                        }],
                     }
                 }
             }
