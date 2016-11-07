@@ -19,7 +19,7 @@ export class App extends Component {
         const showOpeningTimes = modalStore.showOpeningTimesModal
         if (Platform.OS === 'android')
             return (
-              <View>
+              <View style={{flex: 1}}>
                 <Main />
                 <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
               </View>
