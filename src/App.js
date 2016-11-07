@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Platform } from 'react-native'
+import { Platform, View } from 'react-native'
 import { observer } from 'mobx-react/native'
 import {
   NavigationProvider,
@@ -7,17 +7,27 @@ import {
 } from '@exponent/ex-navigation'
 import { Router } from './Router'
 import { Main } from './Main'
-import { OpeningTimesModalV } from './components/modals/OpeningTimesModal'
+import { OpeningTimesModal } from './components/modals/OpeningTimesModal'
+import { modalStore } from './model/store'
 
 @observer
 export class App extends Component {
+    closeOpeningTimesModal = () => {
+        modalStore.closeModal()
+    }
     render = () => {
+        const showOpeningTimes = modalStore.showOpeningTimesModal
         if (Platform.OS === 'android')
-            return <Main />
+            return (
+              <View>
+                <Main />
+                <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
+              </View>
+            )
         return (
             <NavigationProvider router={Router}>
                 <StackNavigation initialRoute={Router.getRoute('main')} />
-                <OpeningTimesModalV />
+                <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
             </NavigationProvider>
         )
     }
