@@ -34,7 +34,7 @@ import { ImageSwiper } from '/components/ImageSwiper'
 import { LargeButton } from '/components/Button'
 import { FavBarContainer } from '/components/Fav'
 import { downloadManager } from '/network/http'
-import { tabStore, barStore, timeStore, mapStore, segment } from '/model/store'
+import { tabStore, barStore, timeStore, mapStore, segment, modalStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -167,6 +167,7 @@ class BarIcons extends BarInfoFetcher {
 
     handleShowOpeningTimes = () => {
         // fire action to open modal here:
+        modalStore.openModal()
         segment.track('Show Opening Times', {
             placeID:    barStore.barID,
             placeName:  barStore.barName,
