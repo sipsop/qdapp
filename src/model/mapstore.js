@@ -261,6 +261,7 @@ class MapStore {
     }
 
     searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
+        // log("SEARCH RADIUS", this.searchRadius)
         return await searchNearbyFirstPage(
             config.mapsAPIKey,
             this.searchLocation,

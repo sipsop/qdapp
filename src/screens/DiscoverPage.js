@@ -73,7 +73,7 @@ class DiscoverViewDescriptor extends Descriptor {
     // }
 
     renderRow = (bar, i, sectionID, rowID) => {
-        log("RENDERING BAR CARD", i)
+        // log("RENDERING BAR CARD", i)
         return (
             <DiscoverBarCard
                 key={bar.id}

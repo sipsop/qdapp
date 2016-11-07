@@ -95,7 +95,7 @@ export class SimpleListView extends PureComponent {
     }
 
     @computed get numberOfVisibleRows() {
-        log("VISIBLE ROWS", this.visibleRows, "incr", this.visibleRowsIncrement)
+        // log("VISIBLE ROWS", this.visibleRows, "incr", this.visibleRowsIncrement)
         return _.min(this.props.descriptor.rows.length, this.visibleRows)
     }
 
@@ -107,7 +107,7 @@ export class SimpleListView extends PureComponent {
     }
 
     @action handleEndReached = () => {
-        log("END REACHED, INCREASE VISIBLE ROWS")
+        // log("END REACHED, INCREASE VISIBLE ROWS")
         this.visibleRows += this.visibleRowsIncrement
     }
 

@@ -9,6 +9,7 @@ import {
     T,
     PureComponent,
     StyleSheet,
+    Dimensions,
 } from '/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -28,19 +29,29 @@ const passiveColor = 'rgb(222, 151, 14)'
 
 const { log, assert } = _.utils('Maps/MapView.js')
 
+const { width } = Dimensions.get('window')
+
 const mapStyles = {
     mapStyle: {
         flex: 1,
+        // height: 450,
         // position: 'absolute',
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
     },
-    searchButtonStyle: {
+    searchButtonView: {
+        flex: 0,
+        alignItems: 'center',
         position: 'absolute',
-        top: 5,
-        left: 5,
+        width: 150,
+        top: 12,
+        left: width / 2 - 75,
+    },
+    searchButton: {
+        height: 38,
+        width:  150,
     },
 }
 
@@ -49,7 +60,6 @@ export class MapView extends DownloadResultView {
     errorMessage = "Error downloading map"
 
     @action handleRegionChange = (region) => {
-        log("CHANGING REGION.....")
         mapStore.userChangedRegion(region)
     }
 
@@ -80,38 +90,17 @@ export class MapView extends DownloadResultView {
                         )
                     }
                 </NativeMapView>
-                <View style={mapStyles.searchButtonStyle}>
-                    <T>BLAHHHHHH</T>
-                    <SearchButton style={mapStyles.searchButtonStyle} />
+                <View style={mapStyles.searchButtonView}>
+                    <LargeButton
+                        label="Search Here"
+                        prominent={false}
+                        fontSize={20}
+                        style={mapStyles.searchButton}
+                        textColor={config.theme.primary.medium}
+                        borderWidth={0.5}
+                        borderColor={config.theme.primary.dark}
+                        onPress={() => mapStore.updateNearbyBars()} />
                 </View>
-            </View>
-        )
-    }
-}
-
-
-class SearchButton extends PureComponent {
-    /* properties:
-        style: style obj
-        fontSize: Int
-    */
-
-    static defaultProps = {
-        fontSize: 20,
-    }
-
-    render = () => {
-        // if (!mapStore.searchButtonVisible)
-        //     return null
-        return (
-            <View style={this.props.style}>
-                <LargeButton
-                    label="Search Here"
-                    primary={false}
-                    style={this.props.style}
-                    fontSize={this.props.fontSize}
-                    textColor={config.theme.primary.medium}
-                    onPress={() => mapStore.updateNearbyBars()} />
             </View>
         )
     }
