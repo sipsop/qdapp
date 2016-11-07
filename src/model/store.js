@@ -20,6 +20,7 @@ import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
 import { searchStore } from './searchstore'
+import { modalStore } from './modalstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -209,5 +210,6 @@ export {
     segment,
     drawerStore,
     notificationStore,
-    searchStore
+    searchStore,
+    modalStore
 }
