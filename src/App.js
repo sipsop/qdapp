@@ -19,10 +19,10 @@ export class App extends Component {
         const showOpeningTimes = modalStore.showOpeningTimesModal
         if (Platform.OS === 'android')
             return (
-              <View>
-                <Main />
-                <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
-              </View>
+                <View>
+                    <Main />
+                    <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
+                </View>
             )
         return (
             <NavigationProvider router={Router}>
