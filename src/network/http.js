@@ -2,7 +2,6 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 
 import { Cache, cache } from './cache.js'
 import { config } from '/utils/config.js'
-import { store } from '/model/store.js'
 import { HOST } from './host.js'
 import { getTime, Second, Minute } from '/utils/time.js'
 import * as _ from '/utils/curry.js'
@@ -41,10 +40,6 @@ export class DownloadResult<T> {
     @observable state   : DownloadState = 'NotStarted'
     @observable message : ?string       = undefined
     @observable value   : ?T            = null
-
-    constructor(errorMessage = "Error downloading some stuff...") {
-        this.errorMessage = errorMessage
-    }
 
     static combine = (downloadResults : Array<DownloadResult<*>>) => {
         return new CombinedDownloadResult(downloadResults)
@@ -87,6 +82,7 @@ export class DownloadResult<T> {
 
     @action downloadError = (message : string, refresh : () => void) : DownloadResult<T> => {
         this.reset('Error')
+        this.message = message
         return this
     }
 
@@ -160,8 +156,8 @@ class CombinedDownloadResult<T> {
     }
 }
 
-export const emptyResult = <T>(errorMessage) : DownloadResult<T> => {
-    return new DownloadResult(errorMessage)
+export const emptyResult = <T>() : DownloadResult<T> => {
+    return new DownloadResult()
 }
 
 /* Class for declarating an JSON API request */

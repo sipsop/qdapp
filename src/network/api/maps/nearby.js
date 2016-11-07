@@ -70,7 +70,6 @@ const searchNearby = async (
     const url = buildURL(BaseURL, params)
     const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
     const options = { method: 'GET' }
-    // log("FETCHING ", url)
     const jsonDownloadResult = await downloadManager.fetchJSON(
         key, url, options, getCacheInfo(config.nearbyCacheInfo, force))
     if (!jsonDownloadResult.value)
@@ -78,10 +77,10 @@ const searchNearby = async (
 
     const doc = jsonDownloadResult.value
     if (doc.status !== 'OK') {
-        jsonDownloadResult.downloadError(
-            `Error downloading data from google maps (${doc.status}): ${doc.error_message}`,
-            refresh = null, /* TODO: */
-        )
+        var msg = `Error downloading data from google maps (${doc.status})`
+        if (doc.error_message)
+            msg += `: ${doc.error_message}`
+        jsonDownloadResult.downloadError(msg)
     }
     return jsonDownloadResult
 }

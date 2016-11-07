@@ -25,7 +25,7 @@ const { log, assert } = _.utils('/screens/DiscoverPage')
 export class DiscoverPage extends DownloadResultView {
     @observable barListVisible = false
 
-    errorMessage      = "Error downloading list of bars"
+    // errorMessage      = "Error downloading list of bars"
     refreshPage       = () => mapStore.updateNearbyBars(force = true)
     getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
 
@@ -260,7 +260,7 @@ class BarListPage extends Page {
     }
 
     loadMore = async () => {
-        log("LOADING MORE DATA.............")
+        // log("LOADING MORE DATA.............")
         await loadMoreData(false)
     }
 

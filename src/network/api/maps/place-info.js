@@ -1,7 +1,7 @@
 // @flow
 
 import { computed, action } from 'mobx'
-import { JSONDownload } from '/network/http.js'
+import { QueryDownload, JSONDownload } from '/network/http.js'
 import { buildURL } from '/utils/urls.js'
 import { config } from '/utils/config.js'
 import * as _ from '/utils/curry.js'
@@ -11,6 +11,8 @@ import type { Key, Coords } from '/model/mapstore.js'
 import type { Bar, BarType, Photo, TagID } from '/model/barstore.js'
 
 const { log, assert } = _.utils('./network/api/maps/place-info.js')
+
+assert(JSONDownload != null, "JSONDOwnload is null...")
 
 export class BarInfoDownload extends JSONDownload {
     /* properties:

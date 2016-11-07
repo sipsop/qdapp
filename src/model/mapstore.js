@@ -110,6 +110,7 @@ export const distance = (c1 : Coords, c2 : Coords) : Float => {
 // }
 
 class MapStore {
+    @observable searchButtonVisible : Bool = false
     @observable currentLocation : Coords = initialLocation
     @observable region : Region = {
         ...initialLocation,
@@ -118,16 +119,20 @@ class MapStore {
 
     @observable currentMarker : ?Bar = null
     @observable currentLocation : Coords = initialLocation
-    @observable searchRadius : number = 7000 // 5 kilometer search radius
+    // @observable searchRadius : number = 7000 // 5 kilometer search radius
     @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
     @observable searchResponse1 : DownloadResult<SearchResponse> = emptyResult()
     @observable searchResponse2 : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
     @observable canReorderBarList : Bool = false
+
     @observable moreButtonLoading : Bool = false
     @observable moreButtonEnabled : Bool = false
+    /* Timer to enable the 'More' button on the discover page */
+    enableMoreButtonTimer = null
 
     mapView : ?NativeMapView
+
 
     constructor() {
         this.mapView = null
@@ -224,63 +229,41 @@ class MapStore {
         // )
     }
 
-
-
     /*********************************************************************/
     /* Nearby Search                                                     */
     /*********************************************************************/
 
-    /* Decide whether we allow the different page results downloaded from
-       google maps to be mixed.
-
-       This should be set to 'true' whenever we load more data from the
-       map view, or when we switch to the bar list from the map page.
-
-       This should be 'false' whenever the user hits the 'more' button at
-       the bottom of the bar list page.
-    */
-    @action allowBarListReordering = (allow) => {
-        this.canReorderBarList = allow
-    }
-
-    /* Load more bar info from google maps.
-
-       This should be called only iff canLoadMoreData istrue
-    */
-    loadMoreData = async (barType = 'bar') => {
-        transaction(() => {
-            this.moreButtonEnabled = false
-            this.moreButtonLoading = true
-        })
-        await this._loadMoreData(barType)
+    @action updateNearbyBars = async (force = false) : void => {
+        // this.searchResponse.downloadStarted()
+        this.searchResponse = await this.searchNearby(
+            'bar', pagetoken = undefined, force = force)
+        // log("GOT SEARCH RESPONSE", this.searchResponse)
         this.enableMoreButton()
-        this.moreButtonLoading = false
     }
 
-    @action _loadMoreData = async (barType = 'bar') => {
-        if (getNextPageToken(this.searchResponse1)) {
-            this.searchResponse2 = await this.searchNearby(barType, getNextPageToken(this.searchResponse1))
-        } else if (getNextPageToken(this.searchResponse)) {
-            this.searchResponse1 = await this.searchNearby(barType, getNextPageToken(this.searchResponse))
+    @computed get searchLocation() : Coords {
+        return {
+            latitude: this.region.latitude,
+            longitude: this.region.longitude,
         }
     }
 
-    /* Decide whether the user can press the 'load more data' button */
-    @computed get canLoadMoreData() {
-        return this.searchResponse2.state !== 'Finished'
-    }
-
-    /* Decide whether the "load more data" button should be enabled */
-    enableMoreButton = (after = 12000) => {
-        setTimeout(() => {
-            this.moreButtonEnabled = true
-        }, after)
+    /* Search radius (in meters) */
+    @computed get searchRadius() : Int {
+        return Math.ceil(
+            distance(
+                this.region,
+                { ...this.region
+                , latitude: this.region.latitude + this.region.latitudeDelta
+                }
+            )
+        )
     }
 
     searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
-        return await searchNearbyFirstPage( // searchNearbyFirstPage(
+        return await searchNearbyFirstPage(
             config.mapsAPIKey,
-            initialLocation,    // this.currentLocation,
+            this.searchLocation,
             this.searchRadius,
             barType,
             true,
@@ -291,14 +274,6 @@ class MapStore {
 
     getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
         return this.searchResponse
-    }
-
-    @action updateNearbyBars = async (force = false) : void => {
-        // this.searchResponse.downloadStarted()
-        this.searchResponse = await this.searchNearby(
-            'bar', pagetoken = undefined, force = force)
-        // log("GOT SEARCH RESPONSE", this.searchResponse)
-        this.enableMoreButton()
     }
 
     /* Initial batch of downloaded bars */
@@ -336,12 +311,71 @@ class MapStore {
     }
 
     /*********************************************************************/
+    /* More Button                                                       */
+    /*********************************************************************/
+
+    /* Decide whether we allow the different page results downloaded from
+       google maps to be mixed.
+
+       This should be set to 'true' whenever we load more data from the
+       map view, or when we switch to the bar list from the map page.
+
+       This should be 'false' whenever the user hits the 'more' button at
+       the bottom of the bar list page.
+    */
+    @action allowBarListReordering = (allow) => {
+        this.canReorderBarList = allow
+    }
+
+    /* Load more bar info from google maps.
+
+       This should be called only iff canLoadMoreData istrue
+    */
+    loadMoreData = async (barType = 'bar') => {
+        transaction(() => {
+            this.disableMoreButton()
+            this.moreButtonLoading = true
+        })
+        await this._loadMoreData(barType)
+        this.enableMoreButton()
+        this.moreButtonLoading = false
+    }
+
+    @action _loadMoreData = async (barType = 'bar') => {
+        if (getNextPageToken(this.searchResponse1)) {
+            this.searchResponse2 = await this.searchNearby(barType, getNextPageToken(this.searchResponse1))
+        } else if (getNextPageToken(this.searchResponse)) {
+            this.searchResponse1 = await this.searchNearby(barType, getNextPageToken(this.searchResponse))
+        }
+    }
+
+    /* Decide whether the user can press the 'load more data' button */
+    @computed get canLoadMoreData() {
+        return this.searchResponse2.state !== 'Finished'
+    }
+
+
+    disableMoreButton = () => {
+        if (this.enableMoreButtonTimer)
+            clearTimeout(this.enableMoreButtonTimer)
+        this.enableMoreButtonTimer = null
+    }
+
+    /* Decide whether the "load more data" button should be enabled */
+    enableMoreButton = (after = 12000) => {
+        this.enableMoreButtonTimer = setTimeout(() => {
+            this.moreButtonEnabled = true
+        }, after)
+    }
+
+    /*********************************************************************/
     /* Region and Map Marker                                             */
     /*********************************************************************/
 
     /* User changed region, stop following user location */
     @action userChangedRegion = (region) => {
         this.region = region
+        this.searchButtonVisible = true
     }
 
     /* Determine what to focus on: a bar or the current location */

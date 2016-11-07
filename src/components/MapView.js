@@ -8,30 +8,48 @@ import {
     Platform,
     T,
     PureComponent,
+    StyleSheet,
 } from '/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import NativeMapView from 'react-native-maps'
 
-import { merge, logger } from '/utils/curry.js'
-import { store, tabStore, barStore } from '/model/store.js'
-import { config } from '/utils/config.js'
-import { mapStore, getBarCoords } from '/model/mapstore.js'
 import { DownloadResultView } from './download/DownloadResultView'
-import * as _ from '/utils/curry.js'
+import { LargeButton } from '/components/Button'
+import { store, tabStore, barStore } from '/model/store'
+import { mapStore, getBarCoords } from '/model/mapstore'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
 const pubColor  = config.theme.primary.medium
 const clubColor = config.theme.primary.medium // config.theme.secondary.light
 const passiveColor = 'rgb(222, 151, 14)'
 
-const log = logger('Maps/MapView.js')
+const { log, assert } = _.utils('Maps/MapView.js')
+
+const mapStyles = {
+    mapStyle: {
+        flex: 1,
+        // position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
+    searchButtonStyle: {
+        position: 'absolute',
+        top: 5,
+        left: 5,
+    },
+}
 
 @observer
 export class MapView extends DownloadResultView {
     errorMessage = "Error downloading map"
 
     @action handleRegionChange = (region) => {
+        log("CHANGING REGION.....")
         mapStore.userChangedRegion(region)
     }
 
@@ -40,29 +58,14 @@ export class MapView extends DownloadResultView {
     }
 
     getDownloadResult = () => mapStore.searchResponse
-    refreshPage = () => mapStore.updateNearbyBars()
-    renderNotStarted = () => <View />
+    refreshPage = () => mapStore.updateNearbyBars(force = true)
 
     renderFinished = (searchResponse) => {
-        const style =  {
-            flex: 1,
-            // position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-        }
-
-        const style2 = _.clone(style)
-        style2.position = 'absolute'
-
-        // return <View style={{flex: 0, height: 300}} />
-
         return (
             <View style={{flex: 1, /* height: 275*/}}>
                 <NativeMapView
                     ref={mapView => {mapStore.mapView = mapView}}
-                    style={style}
+                    style={mapStyles.mapStyle}
                     /* NOTE: You need to add NSLocationWhenInUseUsageDescription key in Info.plist to enable geolocation, otherwise it is going to fail silently! */
                     showsUserLocation={true}
                     region={mapStore.region}
@@ -77,6 +80,38 @@ export class MapView extends DownloadResultView {
                         )
                     }
                 </NativeMapView>
+                <View style={mapStyles.searchButtonStyle}>
+                    <T>BLAHHHHHH</T>
+                    <SearchButton style={mapStyles.searchButtonStyle} />
+                </View>
+            </View>
+        )
+    }
+}
+
+
+class SearchButton extends PureComponent {
+    /* properties:
+        style: style obj
+        fontSize: Int
+    */
+
+    static defaultProps = {
+        fontSize: 20,
+    }
+
+    render = () => {
+        // if (!mapStore.searchButtonVisible)
+        //     return null
+        return (
+            <View style={this.props.style}>
+                <LargeButton
+                    label="Search Here"
+                    primary={false}
+                    style={this.props.style}
+                    fontSize={this.props.fontSize}
+                    textColor={config.theme.primary.medium}
+                    onPress={() => mapStore.updateNearbyBars()} />
             </View>
         )
     }
