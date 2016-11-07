@@ -10,6 +10,11 @@ Features we may want for users and for bar staff.
 * social login (configure Auth0)
 * automatic updates (codepush)
 * set spending limit for the night
+* deal async storage exceptions (e.g. when full)
+* implement state versioning
+* deal with cache versioning
+* deal with state upgrades
+* simulate download and cache errors
 
 ### Search
 
@@ -104,7 +109,7 @@ Manchester United vs Arsenal?
     * add item options + prices
         * item: burger
         * options1: (select one): rare, medium rare, well-done
-        * options2: (select zero or more): cheese, bacon, lettuce, mayonnaise, ... 
+        * options2: (select zero or more): cheese, bacon, lettuce, mayonnaise, ...
 
 ### Order Streaming
 
