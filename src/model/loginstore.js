@@ -4,6 +4,7 @@ import { observable, action, computed } from 'mobx'
 import { segment } from '/network/segment.js'
 import { downloadManager } from '/network/http.js'
 import { BarOwnerProfileDownload } from '/network/api/user/barowner'
+import { barStore } from './barstore'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 import { getTime, Hour, Minute } from '/utils/time.js'
@@ -240,6 +241,10 @@ class LoginStore {
 
     @computed get ownedBars() : Array<BarID> {
         return this.barOwnerProfile && this.barOwnerProfile.bars || []
+    }
+
+    @computed get isCurrentBarOwner() : Bool {
+        return _.includes(this.ownedBars, barStore.barID)
     }
 }
 

@@ -1,7 +1,8 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '/network/http'
-import { BarStatusDownload } from '/network/api/bar/barstatus'
+import { downloadManager, latest } from '/network/http'
+import { BarStatusDownload } from '/network/api/barstatus/status'
+import { UpdateBarStatusDownload } from '/network/api/barstatus/status-update'
 import { segment } from '/network/segment'
 import { barStore } from './barstore'
 import { config } from '/utils/config'
@@ -15,14 +16,38 @@ export type TableService =
     | 'Drinks'
     | 'FoodAndDrinks'
 
+export type PickupLocation = {
+    name: String,
+    open: Bool,
+}
+
+/* Bar status query results */
 export type BarStatus = {
     qdodger_bar: Bool,
     taking_orders: Bool,
     table_service: TableService,
-    pickup_locations: Array<String>,
+    pickup_locations: Array<PickupLocation>,
+}
+
+/* Bar status update queries */
+export type StatusUpdate = {
+    TakingOrders: Bool,
+    SetTableService: TableService,
+    AddBar: {
+        name: String,
+        listPosition: Int,
+    },
+    SetBarOpen: {
+        name: String,
+        open: Bool,
+    },
 }
 
 class BarStatusStore {
+
+    /*********************************************************************/
+    /* State */
+    /*********************************************************************/
 
     emptyState = () => {}
     getState = () => {}
@@ -34,14 +59,42 @@ class BarStatusStore {
         }
     }
 
+    /*********************************************************************/
+    /* Downloads */
+    /*********************************************************************/
+
     initialize = () => {
-        downloadManager.declareDownload(new BarStatusDownload(this.getDownloadProps))
+        downloadManager.declareDownload(new BarStatusDownload(() => {
+            return {
+                barID: barStore.barID,
+            }
+        }))
+        downloadManager.declareDownload(new UpdateBarStatusDownload(() => {
+            const barStatusDownload = this.barStatusDownload
+            this.barStatusDownload = null
+            return {
+                barID:           barStore.barID,
+                authToken:       loginStore.getAuthToken(),
+                barStatusUpdate: barStatusUpdate,
+            }
+        }))
     }
 
-    getBarStatusDownload = () => downloadManager.getDownload('bar status')
+    @computed get barStatusDownload() {
+        return latest(
+            downloadManager.getDownload('bar status'),
+            downloadManager.getDownload('bar status update'),
+        )
+    }
+
+    getBarStatusDownload = () => this.barStatusDownload
+
+    /*********************************************************************/
+    /* Computed bar status */
+    /*********************************************************************/
 
     @computed get barStatus() : ?BarStatus {
-        return this.getBarStatusDownload().barStatus
+        return this.barStatusDownload.barStatus
     }
 
     @computed get isQDodgerBar() : Bool {
@@ -83,6 +136,42 @@ class BarStatusStore {
         return {
             message: message,
             closeable: closeable,
+        }
+    }
+
+    /*********************************************************************/
+    /* Bar Status State Updates */
+    /*********************************************************************/
+
+    @observable barStatusUpdate : StatusUpdate = null
+
+    @action setTakingOrders = (takingOrders : Bool) => {
+        this.barStatusUpdate = {
+            TakingOrders: true,
+        }
+    }
+
+    @action setTableService = (tableService : TableService) => {
+        this.barStatusUpdate = {
+            SetTableService: tableService,
+        }
+    }
+
+    @action addBar = (barName : String) => {
+        this.barStatusUpdate = {
+            AddBar: {
+                name: barName,
+                listPosition: this.pickupLocations.length,
+            }
+        }
+    }
+
+    @action setBarOpen = (barName : String, open : Bool) => {
+        this.barStatusUpdate = {
+            SetBarOpen: {
+                name: barName,
+                open: open,
+            }
         }
     }
 }
