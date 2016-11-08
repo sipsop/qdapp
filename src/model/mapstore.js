@@ -324,6 +324,8 @@ class MapStore {
         this.search2Active = false
         this.search1Started = false
         this.search2Started = false
+        this.searchResponse1.reset()
+        this.searchResponse2.reset()
     }
 
     getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
@@ -332,21 +334,21 @@ class MapStore {
 
     /* Initial batch of downloaded bars */
     @computed get batch0() : Array<Bar> {
-        return getSearchResults(this.searchResponse0)
+        return getSearchResults(this.searchResponse0.searchResponse)
     }
 
     /* Second batch of downloaded bars */
     @computed get batch1() : Array<Bar> {
         if (!this.search1Started)
             return []
-        return getSearchResults(this.searchResponse1)
+        return getSearchResults(this.searchResponse1.searchResponse)
     }
 
     /* Final batch of downloaded bars */
     @computed get batch2() : Array<Bar> {
         if (!this.search2Started)
             return []
-        return getSearchResults(this.searchResponse2)
+        return getSearchResults(this.searchResponse2.searchResponse)
     }
 
     /* Compute the list of nearby bars.
@@ -357,15 +359,17 @@ class MapStore {
     user has selected a new bar).
     */
     @computed get nearbyBarList() : Array<Bar> {
+        let results
         if (this.canReorderBarList) {
             const entireBatch = [...this.batch0, ...this.batch1, ...this.batch2]
-            return this.sortResults(entireBatch)
+            results = this.sortResults(entireBatch)
         } else {
             const batch0 = this.sortResults(this.batch0)
             const batch1 = this.sortResults(this.batch1)
             const batch2 = this.sortResults(this.batch2)
-            return [...batch0, ...batch1, ...batch2]
+            results = [...batch0, ...batch1, ...batch2]
         }
+        return _.unique(results, bar => bar.id)
     }
 
     /*********************************************************************/
@@ -391,7 +395,7 @@ class MapStore {
     */
     @action loadMoreData = () => {
         this.disableMoreButton()
-        if (this.search1Started) {
+        if (this.search1Started && this.searchResponse1.value != null) {
             this.search2Active = true
         } else {
             this.search1Active = true
@@ -481,7 +485,7 @@ class MapStore {
     markers on the map!
     */
     @computed get allMarkers() : Array<Bar> {
-        return [...this.batch0, ...this.batch1, ...this.batch2]
+        return _.unique([...this.batch0, ...this.batch1, ...this.batch2], bar => bar.id)
     }
 
     distanceFromUser = (bar : Bar) : Float => {
@@ -531,8 +535,8 @@ const getNextPageToken = (downloadResult) => {
     return downloadResult.value && downloadResult.value.nextPageToken
 }
 
-const getSearchResults = (searchResponse) => {
-    if (searchResponse.value == null)
+const getSearchResults = (searchResponse : ?SearchResponse) => {
+    if (!searchResponse)
         return []
-    return searchResponse.value.results
+    return searchResponse.results
 }

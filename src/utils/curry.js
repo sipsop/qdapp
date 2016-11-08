@@ -253,14 +253,14 @@ export function take(n, xs) {
     return xs.slice(0, n-1)
 }
 
-export function unique(xs) {
-    let result = []
-    for (let i = 0; i < xs.length; i++) {
-        if (!includes(result, xs[i], deepEqual)) { // quadratic...
-            result.push(xs[i])
-        }
-    }
-    return result
+export const unique = (xs, key = (x) => x.id) => {
+    let seen = {}
+    return xs.filter(x => {
+        const id = key(x)
+        const result = !seen[id]
+        seen[id] = true
+        return result
+    })
 }
 
 export const and = (x, y) => x && y
