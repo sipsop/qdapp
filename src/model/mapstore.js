@@ -130,8 +130,9 @@ class MapStore {
     @observable search0Active = true
     @observable search1Active = false
     @observable search2Active = false
-    /* Whether search1 has started for this page token */
+    /* Whether search1/search2 have started for this page token */
     @observable search1Started = false
+    @observable search2Started = false
 
     mapView : ?NativeMapView
 
@@ -278,7 +279,10 @@ class MapStore {
             getPageToken: () => getNextPageToken(this.searchResponse1),
             attrib: {
                 name: 'map search 2',
-                onStart: () => this.search2Active = false,
+                onStart: () => {
+                    this.search2Started = true
+                    this.search2Active = false
+                },
                 onFinish: () => {
                     this.moreButtonLoading = false
                 },
@@ -318,6 +322,8 @@ class MapStore {
         this.search0Active = true
         this.search1Active = false
         this.search2Active = false
+        this.search1Started = false
+        this.search2Started = false
     }
 
     getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
@@ -331,11 +337,15 @@ class MapStore {
 
     /* Second batch of downloaded bars */
     @computed get batch1() : Array<Bar> {
+        if (!this.search1Started)
+            return []
         return getSearchResults(this.searchResponse1)
     }
 
     /* Final batch of downloaded bars */
     @computed get batch2() : Array<Bar> {
+        if (!this.search2Started)
+            return []
         return getSearchResults(this.searchResponse2)
     }
 
@@ -382,17 +392,15 @@ class MapStore {
     @action loadMoreData = () => {
         this.disableMoreButton()
         if (this.search1Started) {
-            log("ENABLING SEARCH 2")
             this.search2Active = true
         } else {
-            log("ENABLING SEARCH 1")
             this.search1Active = true
         }
     }
 
     /* Decide whether the user can press the 'load more data' button */
     @computed get canLoadMoreData() {
-        return this.searchResponse2.state !== 'Finished'
+        return !this.search2Started
     }
 
     disableMoreButton = () => {
