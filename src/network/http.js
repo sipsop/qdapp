@@ -199,9 +199,18 @@ export class Download {
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
 
-    constructor(getProps) {
+    constructor(getProps, attrib) {
         /* function returning props derived from a (observable) model state */
         this.getProps = getProps
+        /* Override 'name' and 'onFinish' attributes */
+        if (attrib != null) {
+            transaction(() => {
+                if (attrib.name)
+                    this.name = attrib.name
+                if (attrib.onFinish)
+                    this.onFinish = attrib.onFinish
+            })
+        }
     }
 
     @computed get props() {
@@ -213,7 +222,7 @@ export class Download {
     }
 
     @computed get cacheKey() {
-        throw Error("Cache key not implemented")
+        throw Error(`cacheKey method not implemented in ${this.name}`)
     }
 
     @computed get url() {
@@ -375,7 +384,12 @@ export class Download {
             Must use non-lambda functions, otherwise overriding and super()
             do not work. Broken stupid shit.
         */
+        this.onFinish()
     }
+
+    /* This method can be overridden by passing 'attrib' to the constructor of
+       Download */
+    onFinish = () => null
 
     wait = async () => {
         if (this.promise)

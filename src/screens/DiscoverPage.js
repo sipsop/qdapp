@@ -26,8 +26,8 @@ export class DiscoverPage extends DownloadResultView {
     @observable barListVisible = false
 
     // errorMessage      = "Error downloading list of bars"
-    refreshPage       = () => mapStore.updateNearbyBars(force = true)
-    getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
+    refreshPage       = mapStore.searchNearby
+    getDownloadResult = mapStore.getNearbyBarsDownloadResult
 
     renderFinished = (searchResponse) => {
         return <View style={{flex: 1}}>
