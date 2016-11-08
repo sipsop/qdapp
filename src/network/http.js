@@ -324,14 +324,15 @@ export class Download {
     }
 
     refresh = async (cacheInfo) => {
-        log("REFRESHING.............", this.name, this.errorAttempts)
+        log("REFRESHING:", this.name, this.errorAttempts)
         const refreshState = this.refreshState
+        const timestamp = getTime()
 
         // Update timestamp
         transaction(() => {
             this.downloadStarted()
             this.onStart()
-            this.timestamp = getTime()
+            this.timestamp = timestamp
             if (this.refreshStateChanged) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
@@ -356,10 +357,11 @@ export class Download {
         this.promise = promise
         const downloadResult = await promise
 
-        if (!_.deepEqual(refreshState, this.refreshState)) {
+        if (timestamp < this.timestamp) {
             // Result from an out-of-date download -- do not use
             return
         }
+
         transaction(() => {
             // Update state
             if (downloadResult.state === 'Finished') {
