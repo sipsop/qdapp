@@ -59,6 +59,7 @@ const styles = {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 13,
         height: 50,
     },
