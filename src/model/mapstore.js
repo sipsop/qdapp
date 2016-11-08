@@ -130,6 +130,8 @@ class MapStore {
     @observable search0Active = true
     @observable search1Active = false
     @observable search2Active = false
+    /* Whether search1 has started for this page token */
+    @observable search1Started = false
 
     mapView : ?NativeMapView
 
@@ -252,7 +254,11 @@ class MapStore {
             getPageToken: () => null,
             attrib: {
                 name: 'map search 0',
-                onFinish: () => this.search0Active = false,
+                onStart: () => {
+                    this.search0Active = false
+                    this.search1Started = false
+                },
+                onFinish: this.enableMoreButton,
             },
         })
         this.declareSearchDownload({
@@ -260,7 +266,11 @@ class MapStore {
             getPageToken: () => getNextPageToken(this.searchResponse0),
             attrib: {
                 name: 'map search 1',
-                onFinish: () => this.search1Active = false,
+                onStart: () => {
+                    this.search1Started = true
+                    this.search1Active = false
+                },
+                onFinish: this.enableMoreButton,
             },
         })
         this.declareSearchDownload({
@@ -268,7 +278,10 @@ class MapStore {
             getPageToken: () => getNextPageToken(this.searchResponse1),
             attrib: {
                 name: 'map search 2',
-                onFinish: () => this.search2Active = false,
+                onStart: () => this.search2Active = false,
+                onFinish: () => {
+                    this.moreButtonLoading = false
+                },
             },
         })
     }
@@ -303,6 +316,8 @@ class MapStore {
 
     @action searchNearby = () => {
         this.search0Active = true
+        this.search1Active = false
+        this.search2Active = false
     }
 
     getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
@@ -364,21 +379,14 @@ class MapStore {
 
        This should be called only iff canLoadMoreData istrue
     */
-    loadMoreData = async (barType = 'bar') => {
-        transaction(() => {
-            this.disableMoreButton()
-            this.moreButtonLoading = true
-        })
-        await this._loadMoreData(barType)
-        this.enableMoreButton()
-        this.moreButtonLoading = false
-    }
-
-    @action _loadMoreData = async (barType = 'bar') => {
-        if (getNextPageToken(this.searchResponse1)) {
-            this.searchResponse2 = await this.searchNearby(barType, getNextPageToken(this.searchResponse1))
-        } else if (getNextPageToken(this.searchResponse)) {
-            this.searchResponse1 = await this.searchNearby(barType, getNextPageToken(this.searchResponse))
+    @action loadMoreData = () => {
+        this.disableMoreButton()
+        if (this.search1Started) {
+            log("ENABLING SEARCH 2")
+            this.search2Active = true
+        } else {
+            log("ENABLING SEARCH 1")
+            this.search1Active = true
         }
     }
 
@@ -387,15 +395,17 @@ class MapStore {
         return this.searchResponse2.state !== 'Finished'
     }
 
-
     disableMoreButton = () => {
         if (this.enableMoreButtonTimer)
             clearTimeout(this.enableMoreButtonTimer)
         this.enableMoreButtonTimer = null
+        this.moreButtonEnabled = false
+        this.moreButtonLoading = true
     }
 
     /* Decide whether the "load more data" button should be enabled */
-    enableMoreButton = (after = 12000) => {
+    enableMoreButton = (after = 10000) => {
+        this.moreButtonLoading = false
         this.enableMoreButtonTimer = setTimeout(() => {
             this.moreButtonEnabled = true
         }, after)

@@ -207,6 +207,8 @@ export class Download {
             transaction(() => {
                 if (attrib.name)
                     this.name = attrib.name
+                if (attrib.onStart)
+                    this.onStart = attrib.onStart
                 if (attrib.onFinish)
                     this.onFinish = attrib.onFinish
             })
@@ -328,6 +330,7 @@ export class Download {
         // Update timestamp
         transaction(() => {
             this.downloadStarted()
+            this.onStart()
             this.timestamp = getTime()
             if (this.refreshStateChanged) {
                 /* lastValue and _message have become stale, clear them */
@@ -387,8 +390,9 @@ export class Download {
         this.onFinish()
     }
 
-    /* This method can be overridden by passing 'attrib' to the constructor of
+    /* These methods can be overridden by passing 'attrib' to the constructor of
        Download */
+    onStart  = () => null
     onFinish = () => null
 
     wait = async () => {
