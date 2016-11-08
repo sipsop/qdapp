@@ -5,6 +5,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     T,
+    Switch,
+    Picker,
 } from '/components/Component'
 import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -31,50 +33,129 @@ const styles = StyleSheet.create({
 @observer
 export class BarSettings extends PureComponent {
     render = () => {
+        const isQDodgerBar = barStatusStore.isQDodgerBar || true // TODO:
         return (
             <View style={styles.view}>
                 <T style={styles.headerText}>
                     You are an admin for this pub!
+                    { !barStatusStore.isQDodgerBar &&
+                        "Order taking is pending approval. Please send an email to:"
+                    }
                 </T>
                 { !barStatusStore.isQDodgerBar &&
-                    <View>
-                        <T style={styles.headerText}>
-                            Order taking is pending approval.
-                            Please send an email to:
-                        </T>
-                        <Email
-                            email="support@qdodger.com"
-                            subject={`Order taking for ${barStore.barName} (${barStore.barID})`}
-                            style={styles.headerText}
-                            />
-                    </View>
-                }
-                { barStatusStore.isQDodgerBar &&
-                    <BarSettingsSwitch
-                        label="Taking Orders:"
-                        onPress={barStatusStore.setTakingOrders}
+                    <Email
+                        email="support@qdodger.com"
+                        subject={`Order taking for ${barStore.barName} (${barStore.barID})`}
+                        style={styles.headerText}
                         />
+                }
+                { isQDodgerBar &&
+                    <View>
+                        <TakingOrders />
+                        <TableService />
+                        <PickupLocations />
+                        <OpenCloseBar />
+                    </View>
                 }
             </View>
         )
     }
 }
 
-// @observer
-// class BarSettingsHeader extends PureComponent {
-//     render = () => {
-//         return (
-//             <T style={styles.headerText}>
-//                 You are an admin for this pub!
-//                 { !barStatusStore.isQDodgerBar &&
-//                     " Order taking is pending approval. Please email support@qdodger.com for help."
-//                 }
-//             </T>
-//         )
-//         if (!barStatusStore.isQDodgerBar &&
-//                         " Order taking is pending approval. Please email support@qdodger.com for help."
-//     }
-// }
+@observer
+class TakingOrders extends PureComponent {
+    render = () => {
+        return (
+            <BarSettingsSwitch
+                label="Taking Orders:"
+                onPress={barStatusStore.setTakingOrders}
+                value={barStatusStore.takingOrders}
+                />
+        )
+    }
+}
+
+@observer
+class TableService extends PureComponent {
+    render = () => {
+        return (
+            <BarSettingsPicker
+                label="Table Service:"
+                valueLabels={['Disabled', 'Food', 'Drinks', 'Food and Drinks']}
+                values={['Disabled', 'Food', 'Drinks', 'FoodAndDrinks']}
+                value={barStatusStore.tableService}
+                onPress={barStatusStore.setTableService}
+                />
+        )
+    }
+}
+
+@observer
+class PickupLocations extends PureComponent {
+    setSelected = (value) => {
+        if (value === 'AddNew') {
+            // TODO: Implement
+        } else {
+            barSettingsStore.selectedPickupLocation = value
+        }
+    }
+
+    render = () => {
+        const locationNames = barStatusStore.pickupLocations.map(
+            pickupLocation => pickupLocation.name
+        )
+        let locationName = barSettingsStore.selectedPickupLocation
+        if (locationName == null)
+            locationName = locationNames.length > 0 && locationNames[0]
+
+        return (
+            <BarSettingsPicker
+                label="Pickup Locations:"
+                valueLabels={[...locationNames, 'Add New Pickup Location']}
+                values={[...locationNames, 'AddNew']}
+                value={locationName}
+                onPress={this.setSelected}
+                />
+        )
+    }
+}
+
+@observer
+class OpenCloseBar extends PureComponent {
+    openOrCloseLocation = (open: Bool) => {
+        barStatusStore.setBarOpen(barSettingsStore.selectedPickupLocation, open)
+    }
+
+    @computed get pickupLocations() {
+        const result = {}
+        barStatusStore.pickupLocations.forEach(pickupLocation => {
+            result[pickupLocation.name] = pickupLocation.open
+        })
+        return result
+    }
+
+    render = () => {
+        if (!barSettingsStore.selectedPickupLocation)
+            return null
+        const open = this.pickupLocations[barSettingsStore.selectedPickupLocation]
+        return (
+            <BarSettingsSwitch
+                label="Open/Close Pickup Location:"
+                onPress={this.openOrCloseLocation}
+                value={open}
+                />
+        )
+    }
+}
+
+class BarSettingsStore {
+    @observable selectedPickupLocation = null
+
+    /* TODO: getState/setState/emptyState */
+}
+
+const barSettingsStore = new BarSettingsStore()
+
 
 const switchStyles = StyleSheet.create({
     row: {
@@ -101,16 +182,64 @@ class BarSettingsSwitch extends PureComponent {
     */
     render = () => {
         return (
+            <Row label={this.props.label}>
+                <Switch
+                    value={this.props.value}
+                    onValueChange={this.props.onPress}
+                    onTintColor={config.theme.primary.medium}
+                    />
+            </Row>
+        )
+    }
+}
+
+@observer
+class BarSettingsPicker extends PureComponent {
+    /* properties:
+        label: String
+        values: Array<T>
+        valueLabels: Array<String>
+        selectedValue: T
+        onPress: (value : T) => void
+    */
+    render = () => {
+        return (
+            <Row label={this.props.label}>
+                <Picker
+                    selectedValue={this.props.selectedValue}
+                    onValueChange={this.props.onPress}
+                    >
+                    {
+                        this.props.values.map((value, i) => {
+                            return (
+                                <Picker.Item
+                                    key={value}
+                                    label={this.props.valueLabels[i]}
+                                    value={value}
+                                    />
+                            )
+                        })
+                    }
+                </Picker>
+            </Row>
+        )
+    }
+}
+
+@observer
+class Row extends PureComponent {
+    /* properties:
+        label: String
+        children: [Component]
+    */
+    render = () => {
+        return (
             <View style={switchStyles.row}>
                 <T style={switchStyles.labelText}>
                     {this.props.label}
                 </T>
                 <View style={switchStyles.switchView}>
-                    <Switch
-                        value={this.props.value}
-                        onValueChange={this.props.onPress}
-                        onTintColor={config.theme.primary.medium}
-                        />
+                    {this.props.children}
                 </View>
             </View>
         )

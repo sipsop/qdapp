@@ -111,9 +111,9 @@ class BarStatusStore {
         return this.barStatus && this.barStatus.table_service
     }
 
-    @computed get pickupLocations() : Array<String> {
+    @computed get pickupLocations() : Array<PickupLocation> {
         if (config.test.pickupLocations)
-            return ['Main Bar', 'First Floor']
+            return [{name: 'Main Bar', open: true}, {name: 'First Floor', open: true}]
         return this.barStatus && this.barStatus.pickup_locations
     }
 
