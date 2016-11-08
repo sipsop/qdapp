@@ -28,7 +28,7 @@ const dayNames = [
 const styles = {
     modalContainer: {
         width: 275,
-        height: 398
+        height: 425,
     },
     header: {
         textAlign: 'center',
@@ -59,10 +59,11 @@ const styles = {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 13
+        padding: 13,
+        height: 50,
     },
     row: {
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     seperator: {
         backgroundColor: '#f2f2f2',
