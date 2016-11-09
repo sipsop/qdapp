@@ -21,6 +21,8 @@ const { log, assert } = _.utils('/components/bar/BarSettings')
 const styles = StyleSheet.create({
     view: {
         margin: 5,
+        marginBottom: 10,
+        marginTop: 10,
     },
     headerText: {
         flex: 1,
@@ -39,7 +41,7 @@ export class BarSettings extends PureComponent {
                 <T style={styles.headerText}>
                     You are an admin for this pub!
                     { !barStatusStore.isQDodgerBar &&
-                        "Order taking is pending approval. Please send an email to:"
+                        " Order taking is pending approval. Please send an email to:"
                     }
                 </T>
                 { !barStatusStore.isQDodgerBar &&
@@ -67,7 +69,7 @@ class TakingOrders extends PureComponent {
     render = () => {
         return (
             <BarSettingsSwitch
-                label="Taking Orders:"
+                label="Accepting Orders:"
                 onPress={barStatusStore.setTakingOrders}
                 value={barStatusStore.takingOrders}
                 />
@@ -96,7 +98,7 @@ class PickupLocations extends PureComponent {
         if (value === 'AddNew') {
             // TODO: Implement
         } else {
-            barSettingsStore.selectedPickupLocation = value
+            barSettingsStore.setPickupLocation(value)
         }
     }
 
@@ -104,9 +106,7 @@ class PickupLocations extends PureComponent {
         const locationNames = barStatusStore.pickupLocations.map(
             pickupLocation => pickupLocation.name
         )
-        let locationName = barSettingsStore.selectedPickupLocation
-        if (locationName == null)
-            locationName = locationNames.length > 0 && locationNames[0]
+        const locationName = barSettingsStore.getPickupLocationName()
 
         return (
             <BarSettingsPicker
@@ -126,30 +126,46 @@ class OpenCloseBar extends PureComponent {
         barStatusStore.setBarOpen(barSettingsStore.selectedPickupLocation, open)
     }
 
-    @computed get pickupLocations() {
-        const result = {}
-        barStatusStore.pickupLocations.forEach(pickupLocation => {
-            result[pickupLocation.name] = pickupLocation.open
-        })
-        return result
-    }
-
     render = () => {
-        if (!barSettingsStore.selectedPickupLocation)
+        const pickupLocation = barSettingsStore.pickupLocation
+        if (!pickupLocation)
             return null
-        const open = this.pickupLocations[barSettingsStore.selectedPickupLocation]
         return (
             <BarSettingsSwitch
-                label="Open/Close Pickup Location:"
+                label={`${pickupLocation.name} open:`}
                 onPress={this.openOrCloseLocation}
-                value={open}
+                value={pickupLocation.open}
                 />
         )
     }
 }
 
 class BarSettingsStore {
-    @observable selectedPickupLocation = null
+    @observable selectedLocationName : String = null
+
+    @computed get pickupLocations() : Map<String, PickupLocation> {
+        const result = {}
+        barStatusStore.pickupLocations.forEach(pickupLocation => {
+            result[pickupLocation.name] = pickupLocation
+        })
+        return result
+    }
+
+    @computed get pickupLocation() {
+        return this.pickupLocations[this.getPickupLocationName()]
+    }
+
+    getPickupLocationName = () : ?String => {
+        const pickupLocations = barStatusStore.pickupLocations
+        if (this.selectedLocationName == null && pickupLocations.length) {
+            return pickupLocations[0].name
+        }
+        return this.selectedLocationName
+    }
+
+    @action setPickupLocationName = (locationName : String) => {
+        this.selectedLocationName = locationName
+    }
 
     /* TODO: getState/setState/emptyState */
 }
@@ -160,6 +176,8 @@ const barSettingsStore = new BarSettingsStore()
 const switchStyles = StyleSheet.create({
     row: {
         flexDirection: 'row',
+        alignItems: 'center',
+        height: 55,
     },
     labelText: {
         flex: 1,
@@ -206,6 +224,7 @@ class BarSettingsPicker extends PureComponent {
         return (
             <Row label={this.props.label}>
                 <Picker
+                    style={{width: 150}}
                     selectedValue={this.props.selectedValue}
                     onValueChange={this.props.onPress}
                     >

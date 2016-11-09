@@ -10,7 +10,7 @@ export class BarOwnerProfileDownload extends QueryDownload {
     */
 
     name = 'barOwnerProfile'
-    cacheInfo = config.defaultRefreshCacheInfo
+    // cacheInfo = config.defaultRefreshCacheInfo
 
     @computed get cacheKey() {
         return `qd:barOwnerProfile:userID${this.props.userID}`
