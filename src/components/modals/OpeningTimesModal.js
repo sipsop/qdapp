@@ -1,7 +1,8 @@
 import React from 'react'
 import {
   View,
-  Text
+  Text,
+  Platform
 } from 'react-native'
 import {
     PureComponent,
@@ -28,7 +29,7 @@ const dayNames = [
 const styles = {
     modalContainer: {
         width: 275,
-        height: 398
+        height: Platform.OS === 'ios' ? 398 : 425
     },
     header: {
         textAlign: 'center',
@@ -59,7 +60,9 @@ const styles = {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 13
+        alignItems: 'center',
+        padding: 13,
+        height: 50
     },
     row: {
         flexDirection: 'row'
