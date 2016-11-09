@@ -45,6 +45,7 @@ export class LargeButton extends PureComponent {
         borderColor: str
         textColor: str
         disabled: bool
+        borderWidth: Float
     */
     static defaultProps = {
         primary: true,
@@ -52,14 +53,14 @@ export class LargeButton extends PureComponent {
         borderRadius: 10,
         disabled: false,
         fontSize: 25,
+        borderWidth: 1.5,
     }
 
     render = () => {
         return <TextButton
                     fontSize={this.props.fontSize}
-                    borderWidth={1.5}
-                    {...this.props}
-                    />
+                    borderWidth={this.props.borderWidth}
+                    {...this.props} />
     }
 }
 

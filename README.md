@@ -11,6 +11,7 @@ Features we may want for users and for bar staff.
 * automatic updates (codepush)
 * set spending limit for the night
 * deal async storage exceptions (e.g. when full)
+* resizable map that allows users to increase map size
 * implement state versioning
 * deal with cache versioning
 * deal with state upgrades
