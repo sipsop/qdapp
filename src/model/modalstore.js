@@ -1,32 +1,48 @@
 import { observable, computed, action } from 'mobx'
 
 class ModalStore {
+  /* ALL MODALS */
   @observable showOpeningTimesModal = false
+  @observable showMenuItemModal = false
 
     initialize = () => {
     }
 
     getState = () => {
         return {
-            showOpeningTimesModal: this.showOpeningTimesModal
+            showOpeningTimesModal: this.showOpeningTimesModal,
+            showMenuItemModal: this.showMenuItemModal
         }
     }
 
     emptyState = () => {
         return {
-            showOpeningTimesModal: false
+            showOpeningTimesModal: false,
+            showMenuItemModal: false
         }
     }
 
-    @action openModal = () => {
+    /* CLOSE/OPEN ACTIONS FOR ALL MODALS */
+
+    // OpeningTimesModal
+    @action openOpeningTimesModal = () => {
         this.showOpeningTimesModal = true
     }
-
-    @action closeModal = () => {
+    @action closeOpeningTimesModal = () => {
         this.showOpeningTimesModal = false
     }
+    @computed get getOpeningModalStatus () {
+        return this.showOpeningTimesModal
+    }
 
-    @computed get getModalStatus () {
+    // MenuItemModal
+    @action openMenuItemModal = () => {
+        this.showMenuItemModal = true
+    }
+    @action closeMenuItemModal = () => {
+        this.showMenuItemModal = false
+    }
+    @computed get getMenuItemModalStatus () {
         return this.showOpeningTimesModal
     }
 

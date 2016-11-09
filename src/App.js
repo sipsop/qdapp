@@ -13,7 +13,7 @@ import { modalStore } from './model/store'
 @observer
 export class App extends Component {
     closeOpeningTimesModal = () => {
-        modalStore.closeModal()
+        modalStore.closeOpeningTimesModal()
     }
     render = () => {
         const showOpeningTimes = modalStore.showOpeningTimesModal
