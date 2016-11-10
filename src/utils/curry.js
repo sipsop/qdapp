@@ -2,6 +2,7 @@ import _ from 'lodash'
 import shortid from 'shortid'
 import { autorun } from 'mobx'
 import { getTime } from './time.js'
+export const mergeRecursive = require('merge')
 
 export const DEV = true
 
