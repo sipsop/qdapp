@@ -114,7 +114,9 @@ class MenuList extends PureComponent {
                                     placeholder='Search...'
                                     items={tagStore.activeMenuItems}
                                     getWords={(menuItem) => {
-                                        const result = menuItem.tags.slice()
+                                        const result = menuItem.tags.filter(
+                                            tagID => _.includes(tagStore.allTagIDs, tagID)
+                                        )
                                         result.push(menuItem.name)
                                         return result
                                     }}
