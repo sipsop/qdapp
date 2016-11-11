@@ -3,8 +3,10 @@ import {
     View,
     T,
     Platform,
+    ScrollView,
     PureComponent,
     TouchableOpacity,
+    StyleSheet,
 } from '/components/Component'
 import { observer } from 'mobx-react/native'
 import { computed } from 'mobx'
@@ -14,13 +16,17 @@ import { PINK_COLOR } from '/utils/appstyles/appColors'
 
 const styles = StyleSheet.create({
     autocomplete: {
-        position: 'absolute',
-        top: 0,
-        width:  200,
-        height: 300,
+        flex: 1,
+        alignItems: 'center',
+        // position: 'absolute',
+        // top:    40,
+        // width:  200,
+        // height: 300,
+        // zIndex: 999,
     },
     row: {
         flex: 1,
+        width: 200,
         height: 40,
     },
     suggestion: {
@@ -42,13 +48,14 @@ export class AutoComplete extends PureComponent {
     */
 
     render = () => {
-        return <View style={{height: 300}}>
+        return <View style={styles.autocomplete}>
             {
-                suggestions.map(suggestion => {
+                this.props.suggestions.map((suggestion, i) => {
                     return (
                         <TouchableOpacity
+                            key={i}
                             style={styles.row}
-                            onPress={() => this.onSelect(suggestion)}
+                            onPress={() => this.props.onSelect(suggestion)}
                             >
                             <T style={styles.suggestion}>
                                 {suggestion}

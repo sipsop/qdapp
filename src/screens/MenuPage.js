@@ -64,6 +64,9 @@ export class MenuView extends PureComponent {
 @observer
 class MenuList extends PureComponent {
 
+    @observable _activeMenuItems = null
+    searchBar = null
+
     handleRefresh = async () => {
         await Promise.all([
             barStore.getMenuDownloadResult().forceRefresh(),
@@ -72,7 +75,16 @@ class MenuList extends PureComponent {
     }
 
     @computed get activeMenuItems() {
-        return searchStore.searchMenuItems(tagStore.activeMenuItems)
+        return this._activeMenuItems || tagStore.activeMenuItems
+    }
+
+    @action handleTagChange = () => {
+        this.searchBar.clearSearch()
+        this._activeMenuItems = null
+    }
+
+    @action handleSubmitSearch = (activeMenuItems) => {
+        this._activeMenuItems = activeMenuItems
     }
 
     render = () => {
@@ -96,8 +108,18 @@ class MenuList extends PureComponent {
                     renderHeader={() => {
                         return (
                             <View>
-                                <TagView />
-                                <SearchBar placeholder='Search...' type='menu'/>
+                                <TagView onTagChange={this.handleTagChange} />
+                                <SearchBar
+                                    ref={(ref) => this.searchBar = ref}
+                                    placeholder='Search...'
+                                    items={tagStore.activeMenuItems}
+                                    getWords={(menuItem) => {
+                                        const result = menuItem.tags.slice()
+                                        result.push(menuItem.name)
+                                        return result
+                                    }}
+                                    onSubmitSearch={this.handleSubmitSearch}
+                                />
                             </View>
                         )
                     }}

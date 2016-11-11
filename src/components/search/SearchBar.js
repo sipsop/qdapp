@@ -7,11 +7,23 @@ import {
 import {
     PureComponent
 } from '/components/Component'
-import { computed } from 'mobx'
+import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import { searchStore } from '/model/store'
+import dismissKeyboard from 'react-native-dismiss-keyboard'
+
+// import { searchStore } from '/model/store'
+import * as _ from '/utils/curry.js'
+import { AutoComplete } from './AutoComplete'
+
+const { log, assert } = _.utils('/components/search/SearchBar')
 
 const styles = {
+    fullScreen: {
+        flex: 1,
+    },
+    searchBar: {
+
+    },
     input: {
         height: Platform.OS === 'ios' ? 25 : 45,
         textAlign: 'center',
@@ -32,40 +44,74 @@ const styles = {
 export class SearchBar extends PureComponent {
     /* properties:
         placeholder: String
-        type: 'menu' | 'bar'
+        items: Array<T>
+        getWords: (T) => Array<String>
+        onSubmitSearch: (Array<T>) => void
     */
 
-    _onSearchChanged = (text) => {
-      // fire search query here
-        if (this.props.type === 'menu') {
-            searchStore.setMenuSearch(text)
-        } else if (this.props.type === 'bar') {
-            searchStore.setBarSearch(text)
-        }
+    @observable searchText = ""
+    @observable searchActive = false
+
+    @computed get searchTerm() {
+        return this.searchText.toLowerCase()
     }
 
-    @computed get searchText () {
-        if (this.props.type === 'menu') {
-            return searchStore.menuSearch
-        } else if (this.props.type === 'bar') {
-            return searchStore.barSearch
-        } else {
-            throw Error(`Unknown search box: ${this.props.type}`)
-        }
+    @computed get allWords() {
+        return _.unique(_.flatten(this.props.items.map(this.props.getWords)))
+                    .map(word => word.toLowerCase())
+    }
+
+    @computed get suggestions() {
+        return this.allWords.filter((word) => word.includes(this.searchTerm))
+    }
+
+    @computed get activeItems() {
+        return this.props.items.filter((item) => {
+            return this.props.getWords(item).join('|').toLowerCase().includes(this.searchTerm)
+        })
+    }
+
+    @computed get showAutoComplete() {
+        return !!(this.searchActive && this.searchText)
+    }
+
+    @action clearSearch = () => {
+        this.searchText = ""
+        this.searchActive = false
+    }
+
+    handleSearchChanged = (text) => {
+        this.searchText = text
+    }
+
+    @action handleSubmitSearch = (text) => {
+        this.searchText = text
+        this.searchActive = false
+        dismissKeyboard()
+        this.props.onSubmitSearch(this.activeItems)
     }
 
     render = () => {
+        const viewStyle = this.searchActive ? styles.fullScreen : styles.searchBar
         return (
-            <View style={styles.view}>
-              <View style={styles.searchBarContainer}>
-                <TextInput
-                    placeholder={this.props.placeholder}
-                    value={this.searchText}
-                    style={styles.input}
-                    onChangeText={this._onSearchChanged}
-                />
-              </View>
-              <View style={styles.seperator} />
+            <View style={viewStyle}>
+                <View style={styles.searchBarContainer}>
+                    <TextInput
+                        placeholder={this.props.placeholder}
+                        value={this.searchText}
+                        style={styles.input}
+                        onChangeText={this.handleSearchChanged}
+                        onSubmitEditing={() => this.handleSubmitSearch(this.searchText)}
+                        onFocus={() => this.searchActive = true}
+                        onEndEditing={() => this.handleSubmitSearch(this.searchText)}
+                    />
+                </View>
+                {this.showAutoComplete &&
+                    <AutoComplete
+                        suggestions={this.suggestions}
+                        onSelect={this.handleSubmitSearch}
+                     />
+                }
             </View>
         )
     }
