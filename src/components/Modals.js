@@ -1,4 +1,4 @@
-import { React, Component, View, Modal, TouchableOpacity, PureComponent, T } from '/components/Component.js'
+import { React, Component, View, Modal, TouchableOpacity, PureComponent, ScrollView, T } from '/components/Component.js'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
 import { TextHeader } from './Header.js'
 import { MarkdownLoader } from './markdown/MarkdownLoader'
@@ -153,7 +153,7 @@ export class MarkdownModal extends PureComponent {
     show = () => this.modal.show()
     render = () => {
         return <SimpleModal ref={ref => this.modal = ref}>
-            <View style={{flex: 1}}>
+            <ScrollView style={{flex: 1}}>
                 <TextHeader
                     label={this.props.header}
                     rowHeight={55}
@@ -162,7 +162,7 @@ export class MarkdownModal extends PureComponent {
                     name={this.props.header}
                     url={this.props.url}
                     />
-            </View>
+            </ScrollView>
         </SimpleModal>
     }
 }
