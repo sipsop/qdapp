@@ -46,6 +46,8 @@ export class SearchStore<T> {
         const result = this.allWords.filter(
             (word) => word.toLowerCase().includes(this.searchTerm)
         )
+        if (result.length === 1 && this.searchText === result[0])
+            return []
         return _.sortBy(result, term => term.length)
     }
 
