@@ -54,7 +54,7 @@ const styles = {
     iconButtonRight: {
         width: 35,
         marginLeft: 10,
-        marginRight: 20,
+        marginRight: 10,
     },
 }
 
