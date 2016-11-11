@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexWrap: 'wrap',
-        margin: 5,
+        marginTop: 5,
         marginLeft: 20,
         marginRight: 20,
         borderBottomWidth: 0.5,
@@ -39,12 +39,6 @@ const styles = StyleSheet.create({
     suggestion: {
         fontSize: 18,
         color: '#000',
-    },
-    separator: {
-        backgroundColor: config.theme.primary.medium, //'#f2f2f2',
-        height: 1,
-        // marginRight: 15,
-        // marginLeft: 15,
     },
 })
 
