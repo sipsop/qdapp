@@ -10,9 +10,7 @@ import {
 } from '/components/Component'
 import { observer } from 'mobx-react/native'
 import { computed } from 'mobx'
-
-import { PINK_COLOR } from '/utils/appstyles/appColors'
-
+import { config } from '/utils/config'
 
 const styles = StyleSheet.create({
     autocomplete: {
@@ -30,14 +28,16 @@ const styles = StyleSheet.create({
         height: 40,
     },
     suggestion: {
-        fontSize: 16,
-        // color: '#000',
+        fontSize: 18,
+        color: '#000',
+        // marginLeft: 15,
+        // marginRight: 15,
     },
     separator: {
-        backgroundColor: '#f2f2f2',
+        backgroundColor: config.theme.primary.medium, //'#f2f2f2',
         height: 1,
-        marginRight: 15,
-        marginLeft: 15,
+        // marginRight: 15,
+        // marginLeft: 15,
     },
 })
 
