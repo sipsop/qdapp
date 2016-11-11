@@ -12,8 +12,9 @@ import { observer } from 'mobx-react/native'
 import dismissKeyboard from 'react-native-dismiss-keyboard'
 
 // import { searchStore } from '/model/store'
-import * as _ from '/utils/curry.js'
 import { AutoComplete } from './AutoComplete'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils('/components/search/SearchBar')
 
@@ -24,10 +25,13 @@ const styles = {
     searchBar: {
 
     },
-    input: {
-        height: Platform.OS === 'ios' ? 25 : 45,
+    searchInput: {
+        flex: 1,
+        height: Platform.OS === 'ios' ? 35 : 50,
         textAlign: 'center',
-        flex: 1
+        fontSize: 20,
+        color: '#000',
+        borderColor: config.theme.primary.medium,
     },
     seperator: {
         height: 1,
@@ -117,7 +121,7 @@ export class SearchBar extends PureComponent {
                     <TextInput
                         placeholder={this.props.placeholder}
                         value={this.searchText}
-                        style={styles.input}
+                        style={styles.searchInput}
                         onChangeText={this.handleSearchChanged}
                         onSubmitEditing={() => this.handleSubmitSearch(this.searchText)}
                         onFocus={() => this.searchActive = true}
