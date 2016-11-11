@@ -26,7 +26,7 @@ import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
 import { SearchBar } from '/components/search/SearchBar'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, searchStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, SearchStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -61,11 +61,18 @@ export class MenuView extends PureComponent {
     }
 }
 
+const getWords = (menuItem) => {
+    const result = menuItem.tags.filter(
+        tagID => _.includes(tagStore.allTagIDs, tagID)
+    )
+    result.push(menuItem.name)
+    return result
+}
+
+const searchStore = new SearchStore(getWords, () => tagStore.activeMenuItems)
+
 @observer
 class MenuList extends PureComponent {
-
-    @observable _activeMenuItems = null
-    searchBar = null
 
     handleRefresh = async () => {
         await Promise.all([
@@ -74,17 +81,16 @@ class MenuList extends PureComponent {
         ])
     }
 
-    @computed get activeMenuItems() {
-        return this._activeMenuItems || tagStore.activeMenuItems
+    componentDidMount = () => {
+        // searchStore.initialize()
+    }
+
+    componentWillUnmount = () => {
+        // searchStore.destroy()
     }
 
     @action handleTagChange = () => {
-        this.searchBar.clearSearch()
-        this._activeMenuItems = null
-    }
-
-    @action handleSubmitSearch = (activeMenuItems) => {
-        this._activeMenuItems = activeMenuItems
+        searchStore.clearSearch()
     }
 
     render = () => {
@@ -102,7 +108,7 @@ class MenuList extends PureComponent {
         return <OrderList
                     /* key={tagStore.tagSelection.join(';')} */
                     orderStore={orderStore}
-                    getMenuItems={() => this.activeMenuItems}
+                    getMenuItems={() => searchStore.activeItems}
                     /* menuItems={barStore.allMenuItems} */
                     onRefresh={this.handleRefresh}
                     renderHeader={() => {
@@ -110,18 +116,9 @@ class MenuList extends PureComponent {
                             <View>
                                 <TagView onTagChange={this.handleTagChange} />
                                 <SearchBar
-                                    ref={(ref) => this.searchBar = ref}
                                     placeholder='Search...'
-                                    items={tagStore.activeMenuItems}
-                                    getWords={(menuItem) => {
-                                        const result = menuItem.tags.filter(
-                                            tagID => _.includes(tagStore.allTagIDs, tagID)
-                                        )
-                                        result.push(menuItem.name)
-                                        return result
-                                    }}
-                                    onSubmitSearch={this.handleSubmitSearch}
-                                />
+                                    searchStore={searchStore}
+                                    />
                             </View>
                         )
                     }}

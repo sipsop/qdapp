@@ -1,11 +1,11 @@
-import React from 'react'
 import {
-  TextInput,
-  View,
-  Platform
-} from 'react-native'
-import {
-    PureComponent
+    React,
+    TextInput,
+    View,
+    Platform,
+    TouchableOpacity,
+    MaterialIcon,
+    PureComponent,
 } from '/components/Component'
 import { computed, observable, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -19,28 +19,43 @@ import * as _ from '/utils/curry.js'
 const { log, assert } = _.utils('/components/search/SearchBar')
 
 const styles = {
-    fullScreen: {
-        flex: 1,
+    view: {
     },
-    searchBar: {
-
+    searchBarContainer: {
+        flex: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 5,
+        marginLeft: 5,
+        marginRight: 5,
+        height: 50,
+        borderWidth: 0.5,
+        borderColor: '#000',
+        // borderColor: config.theme.primary.medium,
+        borderRadius: 5,
     },
     searchInput: {
         flex: 1,
-        height: Platform.OS === 'ios' ? 35 : 50,
+        height: Platform.OS === 'ios' ? 30 : 40,
         textAlign: 'center',
         fontSize: 20,
         color: '#000',
         borderColor: config.theme.primary.medium,
+        marginBottom: -5,
+        marginLeft: 5,
+        marginRight: 5,
     },
-    seperator: {
-        height: 1,
-        backgroundColor: '#cecece'
+    iconButtonLeft: {
+        width: 35,
+        marginLeft: 20,
+        marginRight: 10,
     },
-    searchBarContainer: {
-        flexDirection: 'row',
-        margin: 4
-    }
+    iconButtonRight: {
+        width: 35,
+        marginLeft: 10,
+        marginRight: 20,
+    },
 }
 
 /* Search bar on top, which fires the search query and populates a list (SearchResults) with results. */
@@ -48,91 +63,65 @@ const styles = {
 export class SearchBar extends PureComponent {
     /* properties:
         placeholder: String
-        items: Array<T>
-        getWords: (T) => Array<String>
-        onSubmitSearch: (Array<T>) => void
+        searchStore: SearchStore
     */
 
-    @observable searchText = ""
-    @observable searchActive = false
-
-    componentDidMount = () => {
-        /* Update every 50 ms */
-        this.suggestionsThrottler = _.throttle(300, () => this._suggestions)
-        this.searchTimer = _.runPeriodically(1000, () => {
-            this.props.onSubmitSearch(this.activeItems)
-        })
-    }
-
-    componentWillUnmount = () => {
-        this.suggestionsThrottler.destroy()
-        clearTimeout(this.searchTimer)
-    }
-
-    @computed get searchTerm() {
-        return this.searchText.toLowerCase()
-    }
-
-    @computed get allWords() {
-        return _.unique(_.flatten(this.props.items.map(this.props.getWords)))
-                    .map(word => word.toLowerCase())
-    }
-
-    @computed get _suggestions() {
-        return this.allWords.filter((word) => word.includes(this.searchTerm))
-    }
-
-    @computed get suggestions() {
-        /* Update suggestions every 50 ms */
-        return this.suggestionsThrottler.value
-    }
-
-    @computed get activeItems() {
-        return this.props.items.filter((item) => {
-            return this.props.getWords(item).join('|').toLowerCase().includes(this.searchTerm)
-        })
-    }
-
-    @computed get showAutoComplete() {
-        return !!(this.searchActive && this.searchText)
-    }
-
-    @action clearSearch = () => {
-        this.searchText = ""
-        this.searchActive = false
-    }
-
-    handleSearchChanged = (text) => {
-        this.searchText = text
-    }
-
-    @action handleSubmitSearch = (text) => {
-        this.searchText = text
-        this.searchActive = false
+    @action handleSubmitSearch = () => {
         dismissKeyboard()
-        this.props.onSubmitSearch(this.activeItems)
     }
 
     render = () => {
-        const viewStyle = this.searchActive ? styles.fullScreen : styles.searchBar
         return (
-            <View style={viewStyle}>
-                <View style={styles.searchBarContainer}>
-                    <TextInput
-                        placeholder={this.props.placeholder}
-                        value={this.searchText}
-                        style={styles.searchInput}
-                        onChangeText={this.handleSearchChanged}
-                        onSubmitEditing={() => this.handleSubmitSearch(this.searchText)}
-                        onFocus={() => this.searchActive = true}
-                        /* onEndEditing={() => this.handleSubmitSearch(this.searchText)} */
+            <View style={styles.view}>
+                <SearchInput
+                    placeholder={this.props.placeholder}
+                    searchStore={this.props.searchStore}
+                    onSubmitSearch={this.handleSubmitSearch}
                     />
-                </View>
-                {this.showAutoComplete &&
-                    <AutoComplete
-                        suggestions={this.suggestions}
-                        onSelect={this.handleSubmitSearch}
-                     />
+                <AutoComplete searchStore={this.props.searchStore}
+                    suggestions={this.props.searchStore.suggestions}
+                    onSelect={(text) => {
+                        this.props.searchStore.setSearchText(text)
+                        this.handleSubmitSearch()
+                    }}
+                    />
+            </View>
+        )
+    }
+}
+
+@observer
+class SearchInput extends PureComponent {
+    /* properties:
+        placeholder: String
+        searchStore: SearchStore
+        onSubmitSearch: () => void
+    */
+    render = () => {
+        const { searchStore, placeholder, submitSearch } = this.props
+        return (
+            <View style={styles.searchBarContainer}>
+                <View style={styles.iconButtonLeft} />
+                <TextInput
+                    placeholder={placeholder}
+                    style={styles.searchInput}
+                    value={searchStore.searchText}
+                    onChangeText={searchStore.setSearchText}
+                    onSubmitEditing={this.props.onSubmitSearch}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    />
+                { !!searchStore.searchText
+                    ? <TouchableOpacity
+                            style={styles.iconButtonRight}
+                            onPress={searchStore.clearSearch}>
+                        <MaterialIcon
+                            name="clear"
+                            size={35}
+                            color="#000"
+                            />
+                    </TouchableOpacity>
+                    : <View style={styles.iconButtonRight} />
+
                 }
             </View>
         )

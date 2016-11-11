@@ -1,75 +1,76 @@
 import { observable, computed, action } from 'mobx'
+import * as _ from '/utils/curry'
 
-class SearchStore {
-    @observable menuSearch = ''
-    @observable barSearch = ''
+const { log, assert } = _.utils('/model/search/SearchStore')
+
+export class SearchStore<T> {
+    @observable searchText = ''
+    @observable suggestionsThrottler = null
+    @observable activeItemsThrottler = null
+
+    constructor(getWords, getItems) {
+        this.getWords = getWords
+        this.getItems = getItems
+    }
 
     initialize = () => {
+        /* Update every 300 ms */
+        this.suggestionsThrottler = _.throttle(300, () => this._suggestions)
+        this.activeItemsThrottler = _.throttle(1000, () => this._activeItems)
     }
 
-    getState = () => {
-        return {
-            menuSearch: this.menuSearch,
-            barSearch: this.barSearch
-        }
+    destroy = () => {
+        this.suggestionsThrottler.destroy()
+        this.activeItemsThrottler.destory()
     }
 
-    emptyState = () => {
-        return {
-            menuSearch: '',
-            barSearch: ''
-        }
+    @action setSearchText = (text) => {
+        this.searchText = text
     }
 
-    @action setState = (state) => {
-        this.menuSearch = state.menuSearch
-        this.barSearch  = state.barSearch
+    @computed get items() {
+        return this.getItems()
     }
 
-    @action setMenuSearch = (searchString) => {
-        this.menuSearch = searchString
+    @computed get searchTerm() {
+        return this.searchText.toLowerCase()
     }
 
-    @action setBarSearch = (searchString) => {
-        this.barSearch = searchString
+    @computed get allWords() {
+        return _.unique(_.flatten(this.items.map(this.getWords)))
     }
 
-
-    /*********************************************************************/
-    /* Menu Search / AutoComplete                                        */
-    /*********************************************************************/
-
-    // @computed get
-
-    // @computed get activeMenuItems() : Array<MenuItem> {
-    //     return tagStore.activeMenuItems.filter(
-    //         menuItem => menuItem.name.toLowerCase().includes(this.menuSearch.toLowerCase())
-    //     )
-    // }
-    //
-    // @computed get menuItemSuggestions() {
-    //     return _.unique(_.flatten(
-    //         return this.activeMenuItems.map(menuItem => {
-    //             const result = menuItem.tags.slice()
-    //             result.push(menuItem.name)
-    //             return result
-    //         })
-    //     ))
-    // }
-
-    /*********************************************************************/
-    /* Bar Search / AutoComplete                                         */
-    /*********************************************************************/
-
-    @computed get activeBarItems() : Array<MenuItem> {
-        return mapStore.nearbyBarList.filter(
-            bar => bar.name.toLowerCase().includes(this.barSearch.toLowerCase())
+    @computed get suggestions() {
+        if (!this.searchText)
+            return []
+        const result = this.allWords.filter(
+            (word) => word.toLowerCase().includes(this.searchTerm)
         )
+        return _.sortBy(result, term => term.length)
     }
 
-    @computed get barItemSuggestions() {
-         return _.unique(this.activeBarItems.map(bar => bar.name))
+    // @computed get suggestions() {
+    //     /* Update suggestions every 50 ms */
+    //     return this.suggestionsThrottler && this.suggestionsThrottler.value || []
+    // }
+
+    @computed get activeItems() {
+        if (!this.searchText)
+            return this.items
+        return this.items.filter((item) => {
+            return this.getWords(item).join('|').toLowerCase().includes(this.searchTerm)
+        })
+    }
+
+    // @computed get activeItems() {
+    //     /* Update active items every second or so */
+    //     if (!this.activeItemsThrottler)
+    //         return this.getItems()
+    //     return this.activeItemsThrottler.value
+    // }
+
+    @action clearSearch = () => {
+        this.searchText = ""
+        this.searchActive = false
     }
 }
-
-export const searchStore = new SearchStore()

@@ -8,7 +8,6 @@ import {
     PureComponent,
     T,
     Icon,
-    MaterialIcon,
     StyleSheet,
 } from '/components/Component'
 import Dimensions from 'Dimensions'

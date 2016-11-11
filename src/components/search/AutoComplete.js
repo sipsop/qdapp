@@ -15,23 +15,30 @@ import { config } from '/utils/config'
 const styles = StyleSheet.create({
     autocomplete: {
         flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
-        // position: 'absolute',
-        // top:    40,
-        // width:  200,
-        // height: 300,
-        // zIndex: 999,
+        flexWrap: 'wrap',
+        margin: 5,
+        marginLeft: 20,
+        marginRight: 20,
+        borderBottomWidth: 0.5,
+        borderColor: '#f2f2f2',
     },
     row: {
         flex: 1,
         width: 200,
         height: 40,
     },
+    suggestionButton: {
+        borderWidth: 0.5,
+        borderRadius: 3,
+        margin: 5,
+        padding: 10,
+    },
     suggestion: {
         fontSize: 18,
         color: '#000',
-        // marginLeft: 15,
-        // marginRight: 15,
     },
     separator: {
         backgroundColor: config.theme.primary.medium, //'#f2f2f2',
@@ -48,23 +55,29 @@ export class AutoComplete extends PureComponent {
     */
 
     render = () => {
-        return <View style={styles.autocomplete}>
-            {
-                this.props.suggestions.map((suggestion, i) => {
-                    return (
-                        <TouchableOpacity
-                            key={i}
-                            style={styles.row}
-                            onPress={() => this.props.onSelect(suggestion)}
-                            >
-                            <T style={styles.suggestion}>
-                                {suggestion}
-                            </T>
-                            <View style={styles.separator} />
-                        </TouchableOpacity>
-                    )
-                })
-            }
-        </View>
+        if (!this.props.suggestions.length)
+            return null
+
+        return (
+            <View style={styles.autocomplete}>
+                {
+                    this.props.suggestions.map((suggestion, i) => {
+                        return (
+                            <View key={i}>
+                                <TouchableOpacity
+                                    key={i}
+                                    style={styles.suggestionButton}
+                                    onPress={() => this.props.onSelect(suggestion)}
+                                    >
+                                    <T style={styles.suggestion}>
+                                        {suggestion}
+                                    </T>
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    })
+                }
+            </View>
+        )
     }
 }
