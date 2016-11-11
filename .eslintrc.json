@@ -59,6 +59,7 @@
     "react/sort-comp": 1,
     "react/wrap-multilines": 1,
     "no-console": 1,
-    "indent": ["error", 4]
+    "indent": ["error", 4],
+    "comma-dangle": ["error", "only-multiline"]
   }
 }
