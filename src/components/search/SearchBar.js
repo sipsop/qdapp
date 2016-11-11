@@ -52,6 +52,19 @@ export class SearchBar extends PureComponent {
     @observable searchText = ""
     @observable searchActive = false
 
+    componentDidMount = () => {
+        /* Update every 50 ms */
+        this.suggestionsThrottler = _.throttle(300, () => this._suggestions)
+        this.searchTimer = _.runPeriodically(1000, () => {
+            this.props.onSubmitSearch(this.activeItems)
+        })
+    }
+
+    componentWillUnmount = () => {
+        this.suggestionsThrottler.destroy()
+        clearTimeout(this.searchTimer)
+    }
+
     @computed get searchTerm() {
         return this.searchText.toLowerCase()
     }
@@ -61,8 +74,13 @@ export class SearchBar extends PureComponent {
                     .map(word => word.toLowerCase())
     }
 
-    @computed get suggestions() {
+    @computed get _suggestions() {
         return this.allWords.filter((word) => word.includes(this.searchTerm))
+    }
+
+    @computed get suggestions() {
+        /* Update suggestions every 50 ms */
+        return this.suggestionsThrottler.value
     }
 
     @computed get activeItems() {
@@ -103,7 +121,7 @@ export class SearchBar extends PureComponent {
                         onChangeText={this.handleSearchChanged}
                         onSubmitEditing={() => this.handleSubmitSearch(this.searchText)}
                         onFocus={() => this.searchActive = true}
-                        onEndEditing={() => this.handleSubmitSearch(this.searchText)}
+                        /* onEndEditing={() => this.handleSubmitSearch(this.searchText)} */
                     />
                 </View>
                 {this.showAutoComplete &&

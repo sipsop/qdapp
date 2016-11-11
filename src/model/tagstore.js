@@ -115,7 +115,7 @@ export class TagStore {
     /* Tags                                                              */
     /*********************************************************************/
 
-    @computed get tagGraph() {
+    @computed get tagGraph() : Map<TagID, Array<TagID>> {
         if (!this.tags)
             return new Map()
         return new Map(this.tags.tagGraph.map(
@@ -123,7 +123,7 @@ export class TagStore {
         ))
     }
 
-    @computed get tagNames() {
+    @computed get tagNames() : Map<TagID, TagName> {
         const tagNames = this.tags.tagInfo.map(
             tagInfo => [tagInfo.tagID, tagInfo.tagName])
         return new Map(tagNames)
@@ -133,6 +133,10 @@ export class TagStore {
         const tagExcludes = this.tags.tagInfo.map(tagInfo =>
             [tagInfo.tagID, tagInfo.excludes])
         return new Map(tagExcludes)
+    }
+
+    @computed get allTagIDs() : Array<TagID> {
+        return Array.from(this.tagNames.keys())
     }
 
     @computed get activeMenuItems() {
