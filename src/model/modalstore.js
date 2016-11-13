@@ -4,6 +4,7 @@ class ModalStore {
   /* ALL MODALS */
   @observable showOpeningTimesModal = false
   @observable showMenuItemModal = false
+  @observable menuItem = false
 
     initialize = () => {
     }
@@ -11,14 +12,16 @@ class ModalStore {
     getState = () => {
         return {
             showOpeningTimesModal: this.showOpeningTimesModal,
-            showMenuItemModal: this.showMenuItemModal
+            showMenuItemModal: this.showMenuItemModal,
+            menuItem: this.menuItem
         }
     }
 
     emptyState = () => {
         return {
             showOpeningTimesModal: false,
-            showMenuItemModal: false
+            showMenuItemModal: false,
+            menuItem: {}
         }
     }
 
@@ -36,7 +39,8 @@ class ModalStore {
     }
 
     // MenuItemModal
-    @action openMenuItemModal = () => {
+    @action openMenuItemModal = (menuItem) => {
+        this.menuItem = menuItem
         this.showMenuItemModal = true
     }
     @action closeMenuItemModal = () => {
@@ -44,6 +48,9 @@ class ModalStore {
     }
     @computed get getMenuItemModalStatus () {
         return this.showOpeningTimesModal
+    }
+    @computed get getMenuItem () {
+        return this.menuItem
     }
 
 }
