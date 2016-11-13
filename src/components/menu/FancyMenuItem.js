@@ -22,7 +22,7 @@ import { createOrderItem, orderStore } from '/model/orders/orderstore.js'
 import { OrderList } from '../orders/OrderList.js'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
-import { tagStore } from '/model/store.js'
+import { tagStore, modalStore } from '/model/store.js'
 import { analytics } from '/model/analytics.js'
 
 const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
@@ -49,10 +49,11 @@ export class FancyMenuItem extends PureComponent {
     }
 
     @action showModal = () => {
-        const orderItem = createOrderItem(this.props.menuItem)
-        this.props.orderStore.addOrderItem(orderItem)
-        this.showModalFor = orderItem
+        // const orderItem = createOrderItem(this.props.menuItem)
+        // this.props.orderStore.addOrderItem(orderItem)
+        // this.showModalFor = orderItem
         analytics.trackMenuItemClicked(this.props.menuItem, this.props.rowNumber)
+        modalStore.openMenuItemModal(this.props.menuItem)
     }
 
     @action modalClosed = (scrollDown) => {
@@ -112,12 +113,6 @@ export class FancyMenuItem extends PureComponent {
                         showHeart={this.props.showHeart}
                         />
                 </TouchableOpacity>
-                <MenuItemOrderList
-                    menuItem={menuItem}
-                    showModalFor={this.showModalFor}
-                    onModalClose={this.modalClosed}
-                    orderStore={this.props.orderStore}
-                    />
             </View>
             <View style={{backgroundColor: '#fff', height: marginBottom}} />
         </View>
