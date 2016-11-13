@@ -4,6 +4,7 @@ import {
   Platform,
   View,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native'
 import {
     PureComponent,
@@ -99,7 +100,8 @@ const styles = {
         padding: 10,
     },
     selected: {
-    }
+        backgroundColor: PINK_COLOR,
+    },
 }
 
 @observer
@@ -122,19 +124,24 @@ export class MenuItemModal extends PureComponent {
         }
         return <View />
     }
-    renderPriceRow = (option, price, i) => {
+    renderPriceRow = (option, price, key) => {
+        const itemKey = key
         return (
-            <TouchableOpacity onPress={this.onPricePress} style={[styles.priceRow, styles.selected]} key={i}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
+            <TouchableOpacity onPress={this.rendFunc(itemKey)} ref={itemKey} style={[styles.priceRow, styles.selected]}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
         )
     }
-    renderGeneralPrices = (options) => {
+    rendFunc = (key) => {
+        this.onPricePress(key)
+    }
+    renderGeneralPrices = (menuItem) => {
+        const options = menuItem.options
         if (options !== undefined) {
             return options.map((val, o) => {
                 if (val.optionType === 'Single') {
                     return val.optionList.map((opt, i) => {
                         return (
-                          <View>
-                              {this.renderPriceRow(opt, val.prices[i], i)}
+                          <View key={`${menuItem.id}_size_${i}`}>
+                              {this.renderPriceRow(opt, val.prices[i], `${menuItem.id}_size_${i}`)}
                               <View style={styles.seperator} />
                           </View>
                         )
@@ -145,14 +152,15 @@ export class MenuItemModal extends PureComponent {
             })
         }
     }
-    renderExtraPrices = (options) => {
+    renderExtraPrices = (menuItem) => {
+        const options = menuItem.options
         if (options !== undefined) {
             return options.map((val, o) => {
                 if (val.optionType === 'AtMostOne') {
                     return val.optionList.map((opt, i) => {
                         return (
-                          <View>
-                              {this.renderPriceRow(opt, val.prices[i], i)}
+                          <View key={`${menuItem.id}_extra_${i}`}>
+                              {this.renderPriceRow(opt, val.prices[i], `${menuItem.id}_extra_${i}`)}
                               <View style={styles.seperator} />
                           </View>
                         )
@@ -167,6 +175,7 @@ export class MenuItemModal extends PureComponent {
         /*
             Idea here is to highlight the pressed row with a nice color
         */
+        this.refs[key].style.push(styles.selected)
     }
 
     onAddPress = () => {
@@ -196,10 +205,12 @@ export class MenuItemModal extends PureComponent {
               <View style={styles.seperator}/>
               {this.renderTagRow()}
               <View style={styles.seperator}/>
-              {this.renderGeneralPrices(menuItem.options)}
-              <Text style={styles.subheader}>Options</Text>
-              {this.renderExtraPrices(menuItem.options)}
-              {this.renderAddButton()}
+              <ScrollView>
+                  {this.renderGeneralPrices(menuItem)}
+                  <Text style={styles.subheader}>Options</Text>
+                  {this.renderExtraPrices(menuItem)}
+                  {this.renderAddButton()}
+              </ScrollView>
           </Modal>
         )
     }
