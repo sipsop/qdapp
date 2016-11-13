@@ -124,7 +124,7 @@ export class MenuItemModal extends PureComponent {
     }
     renderPriceRow = (option, price, i) => {
         return (
-            <TouchableOpacity onPress={this.onPricePress, i} style={[styles.priceRow, styles.selected]} key={i}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
+            <TouchableOpacity onPress={this.onPricePress} style={[styles.priceRow, styles.selected]} key={i}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
         )
     }
     renderGeneralPrices = (options) => {
@@ -176,7 +176,9 @@ export class MenuItemModal extends PureComponent {
     renderAddButton = () => {
         return (
           <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button}
+                  onPress={this.onAddPress}
+              >
                   <Text style={styles.buttonText}>Add</Text>
               </TouchableOpacity>
           </View>
