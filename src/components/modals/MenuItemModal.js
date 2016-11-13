@@ -98,6 +98,8 @@ const styles = {
         justifyContent: 'center',
         padding: 10,
     },
+    selected: {
+    }
 }
 
 @observer
@@ -122,7 +124,7 @@ export class MenuItemModal extends PureComponent {
     }
     renderPriceRow = (option, price, i) => {
         return (
-            <View style={styles.priceRow} key={i}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></View>
+            <TouchableOpacity onPress={this.onPricePress, i} style={[styles.priceRow, styles.selected]} key={i}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
         )
     }
     renderGeneralPrices = (options) => {
@@ -160,6 +162,15 @@ export class MenuItemModal extends PureComponent {
                 }
             })
         }
+    }
+    onPricePress = (key) => {
+        /*
+            Idea here is to highlight the pressed row with a nice color
+        */
+    }
+
+    onAddPress = () => {
+        // Add chosen order to orderlist in state
     }
 
     renderAddButton = () => {
