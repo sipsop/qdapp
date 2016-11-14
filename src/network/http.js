@@ -1,14 +1,15 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 
-import { Cache, cache } from './cache.js'
-import { config } from '/utils/config.js'
-import { HOST } from './host.js'
-import { getTime, Second, Minute } from '/utils/time.js'
-import * as _ from '/utils/curry.js'
+import { Cache, cache } from './cache'
+import { config } from '/utils/config'
+import { parseJSON } from '/utils/utils'
+import { HOST } from './host'
+import { getTime, Second, Minute } from '/utils/time'
+import * as _ from '/utils/curry'
 
-import type { Int, Float, String, URL } from '/utils/types.js'
+import type { Int, Float, String, URL } from '/utils/types'
 
-const { log, assert } = _.utils('/network/http.js')
+const { log, assert } = _.utils('/network/http')
 
 export type HTTPOptions = RequestOptions
 
@@ -330,14 +331,7 @@ export class Download {
 
         // Download
         cacheInfo = cacheInfo || this.cacheInfo
-        const promise = downloadManager.fetch(
-            this.cacheKey,
-            this.url,
-            this.httpOptions,
-            cacheInfo,
-            this.timeoutDesc,
-            this.acceptValueFromCache,
-        )
+        const promise = this.fetch()
         this.promise = promise
         const downloadResult = await promise
 
@@ -356,6 +350,10 @@ export class Download {
                 throw Error(`Invalid download state: ${downloadResult.state}`)
             }
         })
+    }
+
+    fetch = () : Promise<T> => {
+        throw Error("fetch() not implemented")
     }
 
     finish() {
@@ -459,7 +457,20 @@ export class Download {
     }
 }
 
-export class JSONDownload extends Download {
+export class HTTPDownload extends Download {
+    fetch = () => {
+        return downloadManager.fetch(
+            this.cacheKey,
+            this.url,
+            this.httpOptions,
+            cacheInfo,
+            this.timeoutDesc,
+            this.acceptValueFromCache,
+        )
+    }
+}
+
+export class JSONDownload extends HTTPDownload {
     finish() {
         super.finish()
         if (this.value != null) {
@@ -468,7 +479,7 @@ export class JSONDownload extends Download {
     }
 }
 
-export class QueryDownload extends JSONDownload {
+export class QueryDownload extends Download {
     @computed get url() {
         return HOST + '/api/v1/'
     }
@@ -789,7 +800,8 @@ class DownloadManager {
         /* Try a fresh download... */
         const timeoutInfo = getTimeoutInfo(timeoutDesc)
         return await fetchWithTimeouts(
-            key, url, httpOptions,
+            key,
+            (timeout) => simpleFetch(url, httpOptions, timeout),
             timeoutInfo.refreshTimeout,
             timeoutInfo.expiryTimeout,
             cacheInfo,
@@ -806,20 +818,15 @@ const isNetworkError = (e : Error) : boolean =>
 
 const fetchWithTimeouts = async /*<T>*/(
         key             : string,
-        url             : URL,
-        httpOptions     : HTTPOptions,
+        fetch           : (Float) => Promise<T>,
         refreshTimeout  : Float,
         expiredTimeout  : Float,
         cacheInfo       : CacheInfo,
         acceptValueFromCache = (value) => true,
         ) : Promise<DownloadResult<T>> => {
 
-    const refreshCallback = async () => {
-        return await simpleFetch(url, httpOptions, refreshTimeout)
-    }
-    const expiredCallback = async () => {
-        return await simpleFetch(url, httpOptions, expiredTimeout)
-    }
+    const refreshCallback = () => fetch(refreshTimeout)
+    const expiredCallback = () => fetch(expiredTimeout)
 
     let result
     try {
@@ -866,9 +873,4 @@ export const simpleFetch = async /*<T>*/(
         throw new NetworkError("Network Error", response.status)
     }
     return await response.text()
-}
-
-const parseJSON = (text) => {
-    // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
-    return JSON.parse(text.replace( /\\u2028|\\u2029/g, ''))
 }
