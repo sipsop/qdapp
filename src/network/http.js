@@ -354,7 +354,13 @@ export class Download {
         transaction(() => {
             // Update state
             if (downloadResult.state === 'Finished') {
-                this.downloadFinished(downloadResult.value)
+                /* NOTE: Do not use downloadFinished(), as it sets 'lastValue',
+                         and the downloaded value may indicate an error that
+                         could result in downloadError() being called instead.
+                */
+                // this.downloadFinished(downloadResult.value)
+                this.reset('Finished')
+                this.value = downloadResult.value
                 this.finish()
             } else if (downloadResult.state === 'Error') {
                 this.downloadError(downloadResult.message)
@@ -420,7 +426,7 @@ export class Download {
     @action downloadError = (message : string) : DownloadResult<T> => {
         this.errorAttempts += 1
         this.downloadState  = 'Error'
-        this.value   = null
+        this.value = null
         this._message = message
         return this
     }
@@ -491,8 +497,8 @@ export class HTTPDownload extends Download {
         }
     }
 
-    fetch = (cacheInfo) => {
-         return downloadManager.fetch({
+    fetch = async (cacheInfo) => {
+         return await downloadManager.fetch({
             key: this.cacheKey,
             url: this.url,
             httpOptions: this.httpOptions,
@@ -531,8 +537,8 @@ export class QueryDownload extends Download {
         return null
     }
 
-    fetch = (cacheInfo) => {
-        return downloadManager.query(this.name, {
+    fetch = async (cacheInfo) => {
+        return await downloadManager.query(this.name, {
             key: this.cacheKey,
             query: this.query,
             cacheInfo: cacheInfo,
@@ -549,10 +555,11 @@ export class QueryDownload extends Download {
     finish() {
         /* Unpack the queries result value or error message */
         super.finish()
-        if (this.value && this.value.error)
+        if (this.value && this.value.error) {
             this.downloadError(this.value.error)
-        else if (this.value)
+        } else if (this.value) {
             this.downloadFinished(this.value.result)
+        }
     }
 }
 
@@ -712,6 +719,7 @@ class DownloadManager {
     @observable downloadNames = []
     @observable downloads = {}
     @observable refreshing = false
+    @observable connected = false
 
     constructor() {
         this._initialized = false

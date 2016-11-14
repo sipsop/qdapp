@@ -42,6 +42,7 @@ export class QueryTransport {
     }
 
     connect = () => {
+        log("Trying to establish a websocket connection...")
         ws = new WebSocket(this.endpoint)
         ws.onopen = () => this.onOpen(ws)
         ws.onmessage = () => null
