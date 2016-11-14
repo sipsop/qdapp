@@ -67,8 +67,8 @@ export class MapView extends DownloadResultView {
         mapStore.setCurrentMarker(null, track = true)
     }
 
-    getDownloadResult = () => mapStore.searchResponse
-    refreshPage = () => mapStore.updateNearbyBars(force = true)
+    getDownloadResult = mapStore.getNearbyBarsDownloadResult
+    refreshPage = mapStore.searchNearby
 
     renderFinished = (searchResponse) => {
         return (
@@ -99,7 +99,7 @@ export class MapView extends DownloadResultView {
                         textColor={config.theme.primary.medium}
                         borderWidth={0.5}
                         borderColor={config.theme.primary.dark}
-                        onPress={() => mapStore.updateNearbyBars()} />
+                        onPress={mapStore.searchNearby} />
                 </View>
             </View>
         )

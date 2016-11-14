@@ -199,9 +199,20 @@ export class Download {
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
 
-    constructor(getProps) {
+    constructor(getProps, attrib) {
         /* function returning props derived from a (observable) model state */
         this.getProps = getProps
+        /* Override 'name' and 'onFinish' attributes */
+        if (attrib != null) {
+            transaction(() => {
+                if (attrib.name)
+                    this.name = attrib.name
+                if (attrib.onStart)
+                    this.onStart = attrib.onStart
+                if (attrib.onFinish)
+                    this.onFinish = attrib.onFinish
+            })
+        }
     }
 
     @computed get props() {
@@ -213,7 +224,7 @@ export class Download {
     }
 
     @computed get cacheKey() {
-        throw Error("Cache key not implemented")
+        throw Error(`cacheKey method not implemented in ${this.name}`)
     }
 
     @computed get url() {
@@ -313,13 +324,15 @@ export class Download {
     }
 
     refresh = async (cacheInfo) => {
-        log("REFRESHING.............", this.name, this.errorAttempts)
+        log("REFRESHING:", this.name, this.errorAttempts)
         const refreshState = this.refreshState
+        const timestamp = getTime()
 
         // Update timestamp
         transaction(() => {
             this.downloadStarted()
-            this.timestamp = getTime()
+            this.onStart()
+            this.timestamp = timestamp
             if (this.refreshStateChanged) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
@@ -344,10 +357,11 @@ export class Download {
         this.promise = promise
         const downloadResult = await promise
 
-        if (!_.deepEqual(refreshState, this.refreshState)) {
+        if (timestamp < this.timestamp) {
             // Result from an out-of-date download -- do not use
             return
         }
+
         transaction(() => {
             // Update state
             if (downloadResult.state === 'Finished') {
@@ -375,7 +389,13 @@ export class Download {
             Must use non-lambda functions, otherwise overriding and super()
             do not work. Broken stupid shit.
         */
+        this.onFinish()
     }
+
+    /* These methods can be overridden by passing 'attrib' to the constructor of
+       Download */
+    onStart  = () => null
+    onFinish = () => null
 
     wait = async () => {
         if (this.promise)

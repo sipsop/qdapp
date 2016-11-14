@@ -2,18 +2,18 @@
 
 import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 
-import { store, barStore, segment } from './store.js'
-import { DownloadResult, emptyResult } from '/network/http.js'
-import { searchNearbyFirstPage, searchNearbyAllPages } from '/network/api/maps/nearby.js'
-import { Second } from '/utils/time.js'
-import * as _ from '/utils/curry.js'
-import { analytics } from '/model/analytics.js'
-import { config } from '/utils/config.js'
+import { store, barStore, segment } from './store'
+import { DownloadResult, downloadManager } from '/network/http'
+import { SearchNearbyDownload } from '/network/api/maps/nearby'
+import { Second } from '/utils/time'
+import * as _ from '/utils/curry'
+import { analytics } from '/model/analytics'
+import { config } from '/utils/config'
 
-import type { Bar } from './barstore.js'
-import type { SearchResponse } from '/network/api/maps/nearby.js'
+import type { Bar } from './barstore'
+import type { SearchResponse } from '/network/api/maps/nearby'
 
-const { log, assert } = _.utils("model/mapstore.js")
+const { log, assert } = _.utils("model/mapstore")
 
 /*********************************************************************/
 
@@ -119,10 +119,6 @@ class MapStore {
 
     @observable currentMarker : ?Bar = null
     @observable currentLocation : Coords = initialLocation
-    // @observable searchRadius : number = 7000 // 5 kilometer search radius
-    @observable searchResponse : DownloadResult<SearchResponse> = emptyResult()
-    @observable searchResponse1 : DownloadResult<SearchResponse> = emptyResult()
-    @observable searchResponse2 : DownloadResult<SearchResponse> = emptyResult()
     @observable lastSelectedMarker : ?Bar = null
     @observable canReorderBarList : Bool = false
 
@@ -130,6 +126,13 @@ class MapStore {
     @observable moreButtonEnabled : Bool = false
     /* Timer to enable the 'More' button on the discover page */
     enableMoreButtonTimer = null
+
+    @observable search0Active = true
+    @observable search1Active = false
+    @observable search2Active = false
+    /* Whether search1/search2 have started for this page token */
+    @observable search1Started = false
+    @observable search2Started = false
 
     mapView : ?NativeMapView
 
@@ -172,15 +175,9 @@ class MapStore {
         }
     }
 
-    initialize = () => {
-
-    }
-
     initialized = async () => {
         // setTimeout(this.trackLocation, 2000)
         mapStore.trackLocation()
-        /* TODO: Declarative downloads */
-        await this.updateNearbyBars()
     }
 
     /*********************************************************************/
@@ -233,14 +230,6 @@ class MapStore {
     /* Nearby Search                                                     */
     /*********************************************************************/
 
-    @action updateNearbyBars = async (force = false) : void => {
-        // this.searchResponse.downloadStarted()
-        this.searchResponse = await this.searchNearby(
-            'bar', pagetoken = undefined, force = force)
-        // log("GOT SEARCH RESPONSE", this.searchResponse)
-        this.enableMoreButton()
-    }
-
     @computed get searchLocation() : Coords {
         return {
             latitude: this.region.latitude,
@@ -260,36 +249,106 @@ class MapStore {
         )
     }
 
-    searchNearby = async (barType = 'bar', pagetoken = undefined, force = false) : Promise<DownloadResult<SearchResponse>> => {
-        // log("SEARCH RADIUS", this.searchRadius)
-        return await searchNearbyFirstPage(
-            config.mapsAPIKey,
-            this.searchLocation,
-            this.searchRadius,
-            barType,
-            true,
-            pagetoken,
-            force,
-        )
+    initialize = () => {
+        this.declareSearchDownload({
+            isActive: () => this.search0Active,
+            getPageToken: () => null,
+            attrib: {
+                name: 'map search 0',
+                onStart: () => {
+                    this.search0Active = false
+                    this.search1Started = false
+                },
+                onFinish: this.enableMoreButton,
+            },
+        })
+        this.declareSearchDownload({
+            isActive: () => this.search1Active,
+            getPageToken: () => getNextPageToken(this.searchResponse0),
+            attrib: {
+                name: 'map search 1',
+                onStart: () => {
+                    this.search1Started = true
+                    this.search1Active = false
+                },
+                onFinish: this.enableMoreButton,
+            },
+        })
+        this.declareSearchDownload({
+            isActive: () => this.search2Active,
+            getPageToken: () => getNextPageToken(this.searchResponse1),
+            attrib: {
+                name: 'map search 2',
+                onStart: () => {
+                    this.search2Started = true
+                    this.search2Active = false
+                },
+                onFinish: () => {
+                    this.moreButtonLoading = false
+                },
+            },
+        })
+    }
+
+    declareSearchDownload = ({isActive, getPageToken, attrib}) => {
+        downloadManager.declareDownload(new SearchNearbyDownload(
+            () => {
+                return {
+                    active: isActive(),
+                    coords: this.searchLocation,
+                    radius: this.searchRadius,
+                    pagetoken: getPageToken(),
+                    locationType: 'bar',
+                    includeOpenNowOnly: true,
+                }
+            },
+            attrib,
+        ))
+    }
+
+    @computed get searchResponse0() {
+        return downloadManager.getDownload('map search 0')
+    }
+
+    @computed get searchResponse1() {
+        return downloadManager.getDownload('map search 1')
+    }
+
+    @computed get searchResponse2() {
+        return downloadManager.getDownload('map search 2')
+    }
+
+    @action searchNearby = () => {
+        this.search0Active = true
+        this.search1Active = false
+        this.search2Active = false
+        this.search1Started = false
+        this.search2Started = false
+        this.searchResponse1.reset()
+        this.searchResponse2.reset()
     }
 
     getNearbyBarsDownloadResult = () : DownloadResult<SearchResponse> => {
-        return this.searchResponse
+        return this.searchResponse0
     }
 
     /* Initial batch of downloaded bars */
     @computed get batch0() : Array<Bar> {
-        return getSearchResults(this.searchResponse)
+        return getSearchResults(this.searchResponse0.searchResponse)
     }
 
     /* Second batch of downloaded bars */
     @computed get batch1() : Array<Bar> {
-        return getSearchResults(this.searchResponse1)
+        if (!this.search1Started)
+            return []
+        return getSearchResults(this.searchResponse1.searchResponse)
     }
 
     /* Final batch of downloaded bars */
     @computed get batch2() : Array<Bar> {
-        return getSearchResults(this.searchResponse2)
+        if (!this.search2Started)
+            return []
+        return getSearchResults(this.searchResponse2.searchResponse)
     }
 
     /* Compute the list of nearby bars.
@@ -300,15 +359,17 @@ class MapStore {
     user has selected a new bar).
     */
     @computed get nearbyBarList() : Array<Bar> {
+        let results
         if (this.canReorderBarList) {
             const entireBatch = [...this.batch0, ...this.batch1, ...this.batch2]
-            return this.sortResults(entireBatch)
+            results = this.sortResults(entireBatch)
         } else {
             const batch0 = this.sortResults(this.batch0)
             const batch1 = this.sortResults(this.batch1)
             const batch2 = this.sortResults(this.batch2)
-            return [...batch0, ...batch1, ...batch2]
+            results = [...batch0, ...batch1, ...batch2]
         }
+        return _.unique(results, bar => bar.id)
     }
 
     /*********************************************************************/
@@ -332,38 +393,31 @@ class MapStore {
 
        This should be called only iff canLoadMoreData istrue
     */
-    loadMoreData = async (barType = 'bar') => {
-        transaction(() => {
-            this.disableMoreButton()
-            this.moreButtonLoading = true
-        })
-        await this._loadMoreData(barType)
-        this.enableMoreButton()
-        this.moreButtonLoading = false
-    }
-
-    @action _loadMoreData = async (barType = 'bar') => {
-        if (getNextPageToken(this.searchResponse1)) {
-            this.searchResponse2 = await this.searchNearby(barType, getNextPageToken(this.searchResponse1))
-        } else if (getNextPageToken(this.searchResponse)) {
-            this.searchResponse1 = await this.searchNearby(barType, getNextPageToken(this.searchResponse))
+    @action loadMoreData = () => {
+        this.disableMoreButton()
+        if (this.search1Started && this.searchResponse1.value != null) {
+            this.search2Active = true
+        } else {
+            this.search1Active = true
         }
     }
 
     /* Decide whether the user can press the 'load more data' button */
     @computed get canLoadMoreData() {
-        return this.searchResponse2.state !== 'Finished'
+        return !this.search2Started
     }
-
 
     disableMoreButton = () => {
         if (this.enableMoreButtonTimer)
             clearTimeout(this.enableMoreButtonTimer)
         this.enableMoreButtonTimer = null
+        this.moreButtonEnabled = false
+        this.moreButtonLoading = true
     }
 
     /* Decide whether the "load more data" button should be enabled */
-    enableMoreButton = (after = 12000) => {
+    enableMoreButton = (after = 10000) => {
+        this.moreButtonLoading = false
         this.enableMoreButtonTimer = setTimeout(() => {
             this.moreButtonEnabled = true
         }, after)
@@ -431,7 +485,7 @@ class MapStore {
     markers on the map!
     */
     @computed get allMarkers() : Array<Bar> {
-        return [...this.batch0, ...this.batch1, ...this.batch2]
+        return _.unique([...this.batch0, ...this.batch1, ...this.batch2], bar => bar.id)
     }
 
     distanceFromUser = (bar : Bar) : Float => {
@@ -481,8 +535,8 @@ const getNextPageToken = (downloadResult) => {
     return downloadResult.value && downloadResult.value.nextPageToken
 }
 
-const getSearchResults = (searchResponse) => {
-    if (searchResponse.value == null)
+const getSearchResults = (searchResponse : ?SearchResponse) => {
+    if (!searchResponse)
         return []
-    return searchResponse.value.results
+    return searchResponse.results
 }
