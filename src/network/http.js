@@ -3,8 +3,9 @@ import { observable, transaction, computed, action, autorun } from 'mobx'
 import { Cache, cache } from './cache'
 import { config } from '/utils/config'
 import { parseJSON } from '/utils/utils'
-import { HOST } from './host'
+import { HOST, WebSocketHOST } from './host'
 import { getTime, Second, Minute } from '/utils/time'
+import { QueryTransport } from './QueryTransport'
 import * as _ from '/utils/curry'
 
 import type { Int, Float, String, URL } from '/utils/types'
@@ -531,7 +532,7 @@ export class QueryDownload extends Download {
     }
 
     fetch = (cacheInfo) => {
-        return this._fetch({
+        return downloadManager.query(this.name, {
             key: this.cacheKey,
             query: this.query,
             cacheInfo: cacheInfo,
@@ -543,9 +544,6 @@ export class QueryDownload extends Download {
         })
     }
 
-    _fetch = (fetchOptions) => downloadManager.fetch(fetchOptions)
-
-    processValue = (value) => parseJSON(value)
     acceptValueFromCache = (value) => value.result && !value.error
 
     finish() {
@@ -588,12 +586,13 @@ export class FeedDownload extends QueryDownload {
 
         /* Establish feed */
         downloadManager.feed(
-            async (value) => {
-                value = this.processValue(value)
+            this.name,              /* messageID */
+            this.query,             /* query */
+            async (value) => {      /* onReceive */
                 this.onReceive(value)
                 await cache.set(this.cacheKey, value, this.cacheInfo)
             },
-            this.onError,
+            this.onError,           /* onError */
         )
 
         /* In the meantime, load cache entry */
@@ -718,7 +717,7 @@ class DownloadManager {
         this._initialized = false
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
-        this.queryTransport = new queryTransport(HOST + '/api/v1/')
+        this.queryTransport = new QueryTransport(WebSocketHOST)
     }
 
     /*********************************************************************/
@@ -852,21 +851,31 @@ class DownloadManager {
         return fetchWithTimeouts(fetchOptions)
     }
 
-    query = (fetchOptions) => {
-        const { query } = fetchOptions
-        fetchOptions.fetch = (timeout) => {
-            const request = {
-                type: 'query',
-                query: query,
-            }
-            return this.queryTransport.fetch(request, timeout)
-        }
-        return fetchWithTimeouts(fetchOptions)
+    query = (messageID, fetchOptions) => {
+        return fetchWithTimeouts({
+            ...fetchOptions,
+            fetch: (timeout) => {
+                const request = {
+                    messageID: messageID,
+                    type: 'query',
+                    query: fetchOptions.query,
+                }
+                return this.queryTransport.fetch(request, timeout)
+            },
+        })
     }
 
-    feed = (query, onReceive, onError) => {
+    feed = (messageID, query, onReceive, onError) => {
         const timeout = getTimeoutInfo({timeoutDesc: 'normal'})
-        this.queryTransport.feed(query, timeout.refreshTimeout, onReceive, onError)
+        const request = {
+            messageID: messageID,
+            type: 'feed',
+            query: query,
+        }
+        this.queryTransport.feed({
+            request,
+            resolve: _.timeoutCallback(timeout.refreshTimeout, onReceive, onError),
+        })
     }
 }
 

@@ -453,7 +453,7 @@ export const timeoutCallback = (timeout, resolve, reject) => {
     const obj = { called: false }
     setTimeout(() => {
         if (!obj.called)
-            reject()
+            reject(new TimeoutError())
     }, timeout)
     return (...args) => {
         obj.called = true
