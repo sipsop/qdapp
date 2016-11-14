@@ -1,51 +1,78 @@
 import { observable, computed, action } from 'mobx'
+import * as _ from '/utils/curry'
 
-class SearchStore {
-  @observable menuSearch = ''
-  @observable barSearch = ''
+const { log, assert } = _.utils('/model/search/SearchStore')
+
+export class SearchStore<T> {
+    @observable searchText = ''
+    @observable suggestionsThrottler = null
+    @observable activeItemsThrottler = null
+
+    constructor(getWords, getItems) {
+        this.getWords = getWords
+        this.getItems = getItems
+    }
 
     initialize = () => {
+        /* Update every 300 ms */
+        this.suggestionsThrottler = _.throttle(300, () => this._suggestions)
+        this.activeItemsThrottler = _.throttle(1000, () => this._activeItems)
     }
 
-    getState = () => {
-        return {
-            menuSearch: this.menuSearch,
-            barSearch: this.barSearch
-        }
+    destroy = () => {
+        this.suggestionsThrottler.destroy()
+        this.activeItemsThrottler.destory()
     }
 
-    emptyState = () => {
-        return {
-            menuSearch: '',
-            barSearch: ''
-        }
+    @action setSearchText = (text) => {
+        this.searchText = text
     }
 
-    @action setState = (state) => {
-        this.menuSearch = state.menuSearch
-        this.barSearch  = state.barSearch
+    @computed get items() {
+        return this.getItems()
     }
 
-    @computed get currentMenuSearch () {
-        return this.menuSearch
-    }
-    @computed get currentBarSearch () {
-        return this.barSearch
+    @computed get searchTerm() {
+        return this.searchText.toLowerCase()
     }
 
-    searchMenuItems = (menuItems : Array<MenuItem>) : Array<MenuItem> => {
-        return menuItems.filter(
-            menuItem => menuItem.name.toLowerCase().includes(this.menuSearch.toLowerCase())
+    @computed get allWords() {
+        return _.unique(_.flatten(this.items.map(this.getWords)))
+    }
+
+    @computed get suggestions() {
+        if (!this.searchText)
+            return []
+        const result = this.allWords.filter(
+            (word) => word.toLowerCase().includes(this.searchTerm)
         )
+        if (result.length === 1 && this.searchText === result[0])
+            return []
+        return _.sortBy(result, term => term.length)
     }
 
-    @action setMenuSearch = (searchString) => {
-        this.menuSearch = searchString
-    }
-    @action setBarSearch = (searchString) => {
-        this.barSearch = searchString
+    // @computed get suggestions() {
+    //     /* Update suggestions every 50 ms */
+    //     return this.suggestionsThrottler && this.suggestionsThrottler.value || []
+    // }
+
+    @computed get activeItems() {
+        if (!this.searchText)
+            return this.items
+        return this.items.filter((item) => {
+            return this.getWords(item).join('|').toLowerCase().includes(this.searchTerm)
+        })
     }
 
+    // @computed get activeItems() {
+    //     /* Update active items every second or so */
+    //     if (!this.activeItemsThrottler)
+    //         return this.getItems()
+    //     return this.activeItemsThrottler.value
+    // }
+
+    @action clearSearch = () => {
+        this.searchText = ""
+        this.searchActive = false
+    }
 }
-
-export const searchStore = new SearchStore()

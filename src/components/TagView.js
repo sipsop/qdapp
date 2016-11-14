@@ -23,6 +23,7 @@ const { log, assert } = _.utils(__filename)
 export class TagView extends PureComponent {
     /* properties:
         children: [Component]
+        onTagChange: () => void
     */
 
     render = () => {
@@ -36,6 +37,7 @@ export class TagView extends PureComponent {
                     rowOfTags={rowOfTags}
                     menuItems={menuItems}
                     isExcluded={tagID => false}
+                    onTagChange={this.props.onTagChange}
                     />
                 )
             }
@@ -51,6 +53,7 @@ export class TagRow extends Component {
         rowOfTags: [TagID]
         menuItems: [schema.MenuItem]
         isExcluded(tagID) -> bool
+        onTagChange: () => void
     */
 
     @action toggleButton = (tagID) => {
@@ -66,6 +69,7 @@ export class TagRow extends Component {
         }
         // if (tagStore.tagSelection.length >= 1)
         //     analytics.trackTagFilter()
+        this.props.onTagChange()
     }
 
     isActive = (tagID) => {
@@ -75,6 +79,7 @@ export class TagRow extends Component {
     clearRow = () => {
         const tagIDs = this.props.rowOfTags
         tagStore.popTags(tagIDs)
+        this.props.onTagChange()
     }
 
     render = () => {

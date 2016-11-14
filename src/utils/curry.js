@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import shortid from 'shortid'
-import { autorun } from 'mobx'
+import { autorun, observable } from 'mobx'
 import { getTime } from './time.js'
 
 export const DEV = true
@@ -442,6 +442,33 @@ export const timeout = async (timeout, promise) => {
         throw new TimeoutError()
     }
     return result
+}
+
+class Throttler {
+    @observable value = null
+    timer = null
+
+    constructor(timeout, getComputedValue) {
+        const update = () => {
+            this.value = getComputedValue()
+        }
+        this.timer = runPeriodically(timeout, update)
+    }
+
+    destroy = () => {
+        clearTimeout(this.timer)
+    }
+}
+
+/* Run a function periodically, returning a timer */
+export const runPeriodically = (timeout, callback) => {
+    callback()
+    setTimeout(() => runPeriodically(timeout, callback), timeout)
+}
+
+/* Throttle a stream of values (e.g. @computed values) */
+export const throttle = (timeout, getComputedValue) => {
+    return new Throttler(timeout, getComputedValue)
 }
 
 export const sleep = (time) => {

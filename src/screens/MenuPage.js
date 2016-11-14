@@ -26,7 +26,7 @@ import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
 import { SearchBar } from '/components/search/SearchBar'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, searchStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, SearchStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -61,6 +61,16 @@ export class MenuView extends PureComponent {
     }
 }
 
+const getWords = (menuItem) => {
+    const result = menuItem.tags.filter(
+        tagID => _.includes(tagStore.allTagIDs, tagID)
+    )
+    result.push(menuItem.name)
+    return result
+}
+
+const searchStore = new SearchStore(getWords, () => tagStore.activeMenuItems)
+
 @observer
 class MenuList extends PureComponent {
 
@@ -71,8 +81,16 @@ class MenuList extends PureComponent {
         ])
     }
 
-    @computed get activeMenuItems() {
-        return searchStore.searchMenuItems(tagStore.activeMenuItems)
+    componentDidMount = () => {
+        // searchStore.initialize()
+    }
+
+    componentWillUnmount = () => {
+        // searchStore.destroy()
+    }
+
+    @action handleTagChange = () => {
+        searchStore.clearSearch()
     }
 
     render = () => {
@@ -90,14 +108,17 @@ class MenuList extends PureComponent {
         return <OrderList
                     /* key={tagStore.tagSelection.join(';')} */
                     orderStore={orderStore}
-                    getMenuItems={() => this.activeMenuItems}
+                    getMenuItems={() => searchStore.activeItems}
                     /* menuItems={barStore.allMenuItems} */
                     onRefresh={this.handleRefresh}
                     renderHeader={() => {
                         return (
                             <View>
-                                <TagView />
-                                <SearchBar placeholder='Search...' type='menu'/>
+                                <TagView onTagChange={this.handleTagChange} />
+                                <SearchBar
+                                    placeholder='Search...'
+                                    searchStore={searchStore}
+                                    />
                             </View>
                         )
                     }}

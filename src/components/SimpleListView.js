@@ -143,6 +143,8 @@ export class SimpleListView extends PureComponent {
                 onScroll={this.handleScroll}
                 onEndReachedThreshold={500}
                 onEndReached={this.handleEndReached}
+                keyboardDismissMode='on-drag'
+                keyboardShouldPersistTaps={true}
                 />
         )
     }
