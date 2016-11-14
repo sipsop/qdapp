@@ -19,10 +19,9 @@ export type QueryResponse<T> = {
 }
 
 export class QueryTransport {
-    /*
-    A mapping of active query/feed names to promise resolve functions.
-    */
+    /* { messageID: { resolve, query } } */
     activeQueries = {}
+    timeouts = {}
     @observable connected = false
 
     constructor(endpoint : URL, tryReconnectAfter = 5000) {
@@ -42,15 +41,16 @@ export class QueryTransport {
     connect = () => {
         ws = new Websocket(this.endpoint)
         this.ws.onopen = () => this.onOpen(ws)
-        this.ws.onmessage = this.onMessage
-        this.ws.onerror = this.onError
-        this.ws.onclose = this.onClose
     }
 
     /* Successfully established connection with 'ws'. */
     @action onOpen = (ws) => {
         if (!this.connected) {
             this.ws = ws
+            this.ws.onmessage = this.onMessage
+            this.ws.onerror = this.onError
+            this.ws.onclose = this.onClose
+
             this.connected = true
             this.dispatchMessages()
         } else {
@@ -67,7 +67,6 @@ export class QueryTransport {
         /* Make sure that query/feed is still active */
         if (resolve) {
             resolve(data)
-            delete this.activeQueries[messageID]
         }
     }
 
@@ -82,18 +81,27 @@ export class QueryTransport {
     }
 
     /* Submit query and expect response with timeout */
-    fetch = (query : Query, downloadTimeout : Float) : Promise<QueryResponse> => {
-        const promise = new Promise((resolve, reject) => this.feed(query, resolve))
+    fetch = async (query : Query, timeout : Float) : Promise<QueryResponse> => {
+        assert(query.messageID != null, "messageID is null...")
+        const messageID = query.messageID
         try {
-            return _.timeout(downloadTimeout, promise)
+            const result = await new Promise((resolve, reject) => {
+                this.feed(query, resolve, reject, timeout)
+            })
+            delete this.activeQueries[messageID]
+            return result
         } catch (err) {
+            delete this.activeQueries[messageID]
             throw new NetworkError(err.message)
         }
     }
 
-    feed = (query : Query, resolve : (QueryResponse) => void) => {
+    feed = (query, timeout, resolve, reject) => {
         assert(query.messageID != null, "messageID is null...")
         const messageID = query.messageID
+        if (timeout) {
+            resolve = timeoutCallback(timeout, resolve, reject)
+        }
         this.activeQueries[messageID] = { query, resolve }
         if (this.connected) {
             this.ws.send(JSON.stringify(query))

@@ -238,10 +238,7 @@ export class Download {
 
     /* Refresh the download whenever 'url' or 'httpOptions' change */
     @computed get refreshState() {
-        return {
-            url: this.url,
-            httpOptions: this.httpOptions,
-        }
+        throw Error("refreshState method not implement")
     }
 
     /***********************************************************************/
@@ -485,6 +482,14 @@ export class Download {
 }
 
 export class HTTPDownload extends Download {
+    /* Refresh the download whenever 'url' or 'httpOptions' change */
+    @computed get refreshState() {
+        return {
+            url: this.url,
+            httpOptions: this.httpOptions,
+        }
+    }
+
     fetch = (cacheInfo) => {
          return downloadManager.fetch({
             key: this.cacheKey,
@@ -504,40 +509,7 @@ export class JSONDownload extends HTTPDownload {
     processValue = (value) => parseJSON(value)
 }
 
-export class QueryDownload extends JSONDownload {
-    @computed get url() {
-        return HOST + '/api/v1/'
-    }
-
-    @computed get httpOptions() {
-        return {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.query),
-        }
-    }
-
-    @computed get query() {
-        return null
-    }
-
-    acceptValueFromCache = (value) => {
-        return value.result && !value.error
-    }
-
-    finish() {
-        /* Unpack the queries result value or error message */
-        super.finish()
-        if (this.value && this.value.error)
-            this.downloadError(this.value.error)
-        else if (this.value)
-            this.downloadFinished(this.value.result)
-    }
-}
-
-/* TODO: Re-use properties */
+/* TODO: Re-use properties below */
 export class JSONMutation extends JSONDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
@@ -549,7 +521,104 @@ export class JSONMutation extends JSONDownload {
     }
 }
 
+export class QueryDownload extends Download {
+    @computed get refreshState() {
+        return this.query
+    }
+
+    @computed get query() {
+        return null
+    }
+
+    fetch = (cacheInfo) => {
+        return this._fetch({
+            key: this.cacheKey,
+            query: this.query,
+            cacheInfo: cacheInfo,
+            timeoutInfo: {
+                timeoutDesc: this.timeoutDesc,
+            },
+            processValue: this.processValue,
+            acceptValueFromCache: this.acceptValueFromCache,
+        })
+    }
+
+    _fetch = (fetchOptions) => downloadManager.fetch(fetchOptions)
+
+    processValue = (value) => parseJSON(value)
+    acceptValueFromCache = (value) => value.result && !value.error
+
+    finish() {
+        /* Unpack the queries result value or error message */
+        super.finish()
+        if (this.value && this.value.error)
+            this.downloadError(this.value.error)
+        else if (this.value)
+            this.downloadFinished(this.value.result)
+    }
+}
+
 export class QueryMutation extends QueryDownload {
+    cacheInfo = config.noCache
+    refreshCacheInfo = config.noCache
+    restoreAfterRestart = true
+    autoDownload = false
+
+    @computed get cacheKey() {
+        return 'DO_NOT_CACHE'
+    }
+}
+
+export class FeedDownload extends QueryDownload {
+    cacheInfo = config.defaultRefreshCacheInfo
+
+    refresh = async () => {
+        log("REFRESHING FEED:", this.name, this.errorAttempts)
+
+        transaction(() => {
+            this.downloadStarted()
+            this.onStart()
+            if (this.refreshStateChanged) {
+                /* lastValue and _message have become stale, clear them */
+                this.lastValue = null
+                this._message  = null
+            }
+            this.lastRefreshState = this.refreshState
+        })
+
+        /* Establish feed */
+        downloadManager.feed(
+            async (value) => {
+                value = this.processValue(value)
+                this.onReceive(value)
+                await cache.set(this.cacheKey, value, this.cacheInfo)
+            },
+            this.onError,
+        )
+
+        /* In the meantime, load cache entry */
+        const cacheEntry = await this.cache.get(
+            this.cacheKey,
+            () => null, /* refreshCallback */
+            () => null, /* expiredCallback */
+            cacheInfo,
+        )
+        if (this.value == null && this.lastValue == null) {
+            this.onReceive(cacheEntry.value)
+        }
+    }
+
+    @action onReceive = (value) => {
+        this.downloadFinished(value)
+        this.finish()
+    }
+
+    @action onError = (message) => {
+        this.downloadError(message)
+    }
+}
+
+export class FeedMutation extends FeedDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
     restoreAfterRestart = true
@@ -649,6 +718,7 @@ class DownloadManager {
         this._initialized = false
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
+        this.queryTransport = new queryTransport(HOST + '/api/v1/')
     }
 
     /*********************************************************************/
@@ -683,6 +753,7 @@ class DownloadManager {
 
     initialized = () => {
         this.downloadList.forEach(this.initializeDownload)
+        this.queryTransport.tryConnect()
         this._initialized = true
     }
 
@@ -775,7 +846,28 @@ class DownloadManager {
     /* Helper functions                                                  */
     /*********************************************************************/
 
-    fetch = (fetchOptions) => fetchWithTimeouts(fetchOptions)
+    fetch = (fetchOptions) => {
+        const { url, httpOptions } = fetchOptions
+        fetchOptions.fetch = (timeout) => simpleFetch(url, httpOptions, timeout)
+        return fetchWithTimeouts(fetchOptions)
+    }
+
+    query = (fetchOptions) => {
+        const { query } = fetchOptions
+        fetchOptions.fetch = (timeout) => {
+            const request = {
+                type: 'query',
+                query: query,
+            }
+            return this.queryTransport.fetch(request, timeout)
+        }
+        return fetchWithTimeouts(fetchOptions)
+    }
+
+    feed = (query, onReceive, onError) => {
+        const timeout = getTimeoutInfo({timeoutDesc: 'normal'})
+        this.queryTransport.feed(query, timeout.refreshTimeout, onReceive, onError)
+    }
 }
 
 export const downloadManager = new DownloadManager()
@@ -784,12 +876,12 @@ const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError
 
 const fetchWithTimeouts = async ({
-        key, url, httpOptions, timeoutInfo, cacheInfo,
+        key, fetch, timeoutInfo, cacheInfo,
         processValue, acceptValueFromCache,
         }) : Promise<T> => {
 
     const _fetchNow = async (timeout : Float) => {
-        return processValue(await simpleFetch(url, httpOptions, timeout))
+        return processValue(await fetch(timeout))
     }
 
     timeoutInfo = getTimeoutInfo(timeoutInfo)
