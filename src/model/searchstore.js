@@ -37,7 +37,7 @@ export class SearchStore<T> {
     }
 
     @computed get allWords() {
-        return _.unique(_.flatten(this.items.map(this.getWords)))
+        return _.unique(_.flatten(this.items.map(this.getWords)), (tag) => tag)
     }
 
     @computed get suggestions() {

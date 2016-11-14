@@ -11,6 +11,9 @@ import {
 import { observer } from 'mobx-react/native'
 import { computed } from 'mobx'
 import { config } from '/utils/config'
+import * as _ from '/utils/curry'
+
+const { assert, log } = _.utils('/components/search/AutoComplete')
 
 const styles = StyleSheet.create({
     autocomplete: {
@@ -42,6 +45,7 @@ const styles = StyleSheet.create({
     },
 })
 
+@observer
 export class AutoComplete extends PureComponent {
     /* properties:
         suggestions: [String]
