@@ -1,21 +1,17 @@
 // @flow
 
-import { DownloadResult, emptyResult, downloadManager } from '/network/http.js'
 import { buildURL } from '/utils/utils.js'
-import { parseBar } from './place-info.js'
-import { getCacheInfo } from '/network/cache.js'
+import { computed, action } from 'mobx'
+import { JSONDownload } from '/network/http.js'
 import { config } from '/utils/config.js'
 import * as _ from '/utils/curry.js'
+import { parseBar } from './place-info.js'
 
-import type { Int, Float } from '/utils/types.js'
-import type { Key, Coords, PlaceID } from '/model/mapstore.js'
-import type { Bar, Photo } from '/model/barstore.js'
+import type { Int, Float, URL, HTML } from '/utils/types.js'
+import type { Key, Coords } from '/model/mapstore.js'
+import type { Bar, BarType, Photo, TagID } from '/model/barstore.js'
 
-const { log, assert } = _.utils('./Maps/Nearby.js')
-
-/* TODO: Use declarative downloads */
-
-/*********************************************************************/
+const { log, assert } = _.utils('./network/api/maps/nearby.js')
 
 export type SearchResponse = {
     htmlAttrib:     Array<string>,
@@ -23,137 +19,75 @@ export type SearchResponse = {
     results:        Array<Bar>,
 }
 
-// export type MarkerInfo = {
-//     coords:     Coords,
-//     placeID:    PlaceID,
-// }
+type LocationType =
+    | 'bar'
+    // | 'night_club'
 
-/*********************************************************************/
+export class SearchNearbyDownload extends JSONDownload {
+    /* poperties:
+        active: Bool
+        coords: Coords
+        radius: Int
+            radius in meters
+        pagetoken: ?String
+        locationType: LocationType
+        includeOpenNowOnly: Bool
+    */
 
+    // Name should be passed as 'attrib' to the constructor!
+    // name = 'map nearby search'
 
-const BaseURL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    cacheInfo = config.nearbyCacheInfo
 
-const noResults = {
-    htmlAttrib:     [],
-    nextPageToken:  null,
-    results:        [],
-}
-
-const searchNearby = async (
-        apiKey       : Key,
-        coords       : Coords,
-        radius       : Int,
-        locationType : string,
-        includeOpenNowOnly = true,
-        pagetoken    = undefined,
-        force        = false
-        ) : Promise<DownloadResult<SearchResponse>> => {
-
-    let params
-    if (pagetoken) {
-        params = {
-            key:        apiKey,
-            pagetoken:  pagetoken,
-        }
-    } else {
-        params = {
-            key:        apiKey,
-            // rankby: 'distance',
-            radius:     radius,
-            location:   `${coords.latitude},${coords.longitude}`,
-            type:       locationType,
-        }
-        if (includeOpenNowOnly)
-            params.opennow = true
+    @computed get active() {
+        return this.props.active
     }
 
-    const url = buildURL(BaseURL, params)
-    const key = `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
-    const options = { method: 'GET' }
-    const jsonDownloadResult = await downloadManager.fetchJSON(
-        key, url, options, getCacheInfo(config.nearbyCacheInfo, force))
-    if (!jsonDownloadResult.value)
-        return jsonDownloadResult
-
-    const doc = jsonDownloadResult.value
-    if (doc.status !== 'OK') {
-        var msg = `Error downloading data from google maps (${doc.status})`
-        if (doc.error_message)
-            msg += `: ${doc.error_message}`
-        jsonDownloadResult.downloadError(msg)
+    @computed get cacheKey() {
+        const { coords, radius, locationType, pagetoken } = this.props
+        return `qd:maps:search:lat=${coords.latitude},lon=${coords.longitude},radius=${radius},locationType=${locationType},pagetoken=${pagetoken}`
     }
-    return jsonDownloadResult
-}
 
-export const searchNearbyFirstPage = async (
-        apiKey       : Key,
-        coords       : Coords,
-        radius       : Int,
-        locationType : string,
-        includeOpenNowOnly = true,
-        pagetoken    = undefined,
-        force        = false,
-        ) => {
-    const jsonDownloadResult = await searchNearby(
-        apiKey, coords, radius, locationType, includeOpenNowOnly, pagetoken, force)
-    return jsonDownloadResult.update(parseResponse)
-}
-
-/* Note: This will not work, as you "need to wait a bit" between successive requests */
-export const searchNearbyAllPages = async (
-        apiKey       : Key,
-        coords       : Coords,
-        radius       : Int,
-        locationType : string,
-        includeOpenNowOnly = true,
-        ) : Promise<DownloadResult<SearchResponse>> => {
-
-    let htmlAttrib = []
-    let results = []
-    let pagetoken = undefined
-
-    for (let i = 0; i < 3; i++) {
-        const jsonDownloadResult = await searchNearby(
-            apiKey,
-            coords,
-            radius,
-            locationType,
-            includeOpenNowOnly,
-            pagetoken,
+    @computed get url() {
+        let params
+        const { pagetoken, coords, radius, locationType, includeOpenNowOnly } = this.props
+        if (this.props.pagetoken) {
+            params = {
+                key:        config.mapsAPIKey,
+                pagetoken:  pagetoken,
+            }
+        } else {
+            params = {
+                key:        config.mapsAPIKey,
+                // rankby: 'distance',
+                radius:     radius,
+                location:   `${coords.latitude},${coords.longitude}`,
+                type:       locationType,
+            }
+            if (includeOpenNowOnly)
+                params.opennow = true
+        }
+        return buildURL(
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+            params,
         )
-        if (!jsonDownloadResult.value)
-            return jsonDownloadResult
-
-        const doc = jsonDownloadResult.value
-        if (doc.html_attribution)
-            htmlAttrib = [...htmlAttrib, ...doc.html_attribution]
-        if (doc.results)
-            results = [...results, ...doc.results]
-
-        pagetoken = doc.next_page_token
-        if (!pagetoken)
-            break
-
-        // log("GOT NEXT PAGE TOKEN =", pagetoken)
-        // await _.sleep(15000)
     }
 
-    return emptyResult().downloadFinished({
-        htmlAttrib: htmlAttrib,
-        results:    results.map(parseBar),
-    })
-}
+    finish() {
+        super.finish()
+        if (this.value && this.value.status !== 'OK') {
+            var msg = `Error downloading data from google maps (${doc.status})`
+            if (this.value.error_message)
+                msg += `: ${doc.error_message}`
+            this.downloadError(msg)
+        } else if (this.value) {
+            this.downloadFinished(parseResponse(this.value))
+        }
+    }
 
-export const fetchMore = async (
-        apiKey : Key, prevResponse : SearchResponse
-    ) : Promise<DownloadResult<SearchResponse>> => {
-    if (!prevResponse.next_page_token)
-        return noResults
-
-    const url = buildURL(BaseURL, {
-        key: apiKey,
-        next_page_token: prevResponse.next_page_token,
-    })
+    @computed get searchResponse() : ?SearchResponse {
+        return this.value
+    }
 }
 
 /* See https://developers.google.com/places/web-service/search for the response structure */

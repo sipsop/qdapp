@@ -2,7 +2,7 @@ import {
     React,
     View,
     PureComponent,
-    StyleSheet
+    StyleSheet,
 } from '/components/Component'
 import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -21,16 +21,23 @@ import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/screens/DiscoverPage')
 
+const discoverPageStyles = StyleSheet.create({
+    discoverView: {
+        flex: 1,
+        marginBottom: 5,
+    }
+})
+
 @observer
 export class DiscoverPage extends DownloadResultView {
     @observable barListVisible = false
 
     // errorMessage      = "Error downloading list of bars"
-    refreshPage       = () => mapStore.updateNearbyBars(force = true)
-    getDownloadResult = () => mapStore.getNearbyBarsDownloadResult()
+    refreshPage       = mapStore.searchNearby
+    getDownloadResult = mapStore.getNearbyBarsDownloadResult
 
     renderFinished = (searchResponse) => {
-        return <View style={{flex: 1}}>
+        return <View style={discoverPageStyles.discoverView}>
             <SimpleListView
                 ref={ref => store.discoverScrollView = ref}
                 descriptor={discoverViewDescriptor}
