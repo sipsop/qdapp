@@ -199,9 +199,20 @@ export class Download {
     /* How long before a download times out */
     @observable timeoutDesc = 'normal'
 
-    constructor(getProps) {
+    constructor(getProps, attrib) {
         /* function returning props derived from a (observable) model state */
         this.getProps = getProps
+        /* Override 'name' and 'onFinish' attributes */
+        if (attrib != null) {
+            transaction(() => {
+                if (attrib.name)
+                    this.name = attrib.name
+                if (attrib.onStart)
+                    this.onStart = attrib.onStart
+                if (attrib.onFinish)
+                    this.onFinish = attrib.onFinish
+            })
+        }
     }
 
     @computed get props() {
@@ -213,7 +224,7 @@ export class Download {
     }
 
     @computed get cacheKey() {
-        throw Error("Cache key not implemented")
+        throw Error(`cacheKey method not implemented in ${this.name}`)
     }
 
     @computed get url() {
@@ -313,13 +324,15 @@ export class Download {
     }
 
     refresh = async (cacheInfo) => {
-        log("REFRESHING.............", this.name, this.errorAttempts)
+        log("REFRESHING:", this.name, this.errorAttempts)
         const refreshState = this.refreshState
+        const timestamp = getTime()
 
         // Update timestamp
         transaction(() => {
             this.downloadStarted()
-            this.timestamp = getTime()
+            this.onStart()
+            this.timestamp = timestamp
             if (this.refreshStateChanged) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
@@ -330,21 +343,25 @@ export class Download {
 
         // Download
         cacheInfo = cacheInfo || this.cacheInfo
-        const promise = downloadManager.fetch(
-            this.cacheKey,
-            this.url,
-            this.httpOptions,
-            cacheInfo,
-            this.timeoutDesc,
-            this.acceptValueFromCache,
-        )
+        const promise = downloadManager.fetch({
+            key: this.cacheKey,
+            url: this.url,
+            httpOptions: this.httpOptions,
+            cacheInfo: cacheInfo,
+            timeoutInfo: {
+                timeoutDesc: this.timeoutDesc,
+            },
+            processValue: this.processValue,
+            acceptValueFromCache: this.acceptValueFromCache,
+        })
         this.promise = promise
         const downloadResult = await promise
 
-        if (!_.deepEqual(refreshState, this.refreshState)) {
+        if (timestamp < this.timestamp) {
             // Result from an out-of-date download -- do not use
             return
         }
+
         transaction(() => {
             // Update state
             if (downloadResult.state === 'Finished') {
@@ -358,6 +375,13 @@ export class Download {
         })
     }
 
+    /* Process the value before caching (e.g. parse JSON) */
+    processValue = (value) => value
+
+    /* Whether to accept the cached value as a useful result.
+    Return false for downloads that returned errors. */
+    acceptValueFromCache = (value) => true
+
     finish() {
         /*
         Update the download state here for any finished download
@@ -365,7 +389,13 @@ export class Download {
             Must use non-lambda functions, otherwise overriding and super()
             do not work. Broken stupid shit.
         */
+        this.onFinish()
     }
+
+    /* These methods can be overridden by passing 'attrib' to the constructor of
+       Download */
+    onStart  = () => null
+    onFinish = () => null
 
     wait = async () => {
         if (this.promise)
@@ -460,12 +490,7 @@ export class Download {
 }
 
 export class JSONDownload extends Download {
-    finish() {
-        super.finish()
-        if (this.value != null) {
-            this.value = parseJSON(this.value)
-        }
-    }
+    processValue = (value) => parseJSON(value)
 }
 
 export class QueryDownload extends JSONDownload {
@@ -549,23 +574,59 @@ const updateTicker = () => {
 
 updateTicker()
 
-const getTimeoutInfo = (timeoutDesc) => {
+/*********************************************************************/
+/* Download Manager */
+/*********************************************************************/
+
+type TimeoutDesc =
+    | 'short'
+    | 'normal'
+    | 'long'
+
+type TimeoutInfo = {
+    timeoutDesc: ?TimeoutDesc,
+    refreshTimeout: ?Float,
+    expiredTimeout: ?Float,
+}
+
+type FetchOptions<T> = {
+    /* key used for caching responses */
+    key: String,
+    /* URL to fetch */
+    url: URL,
+    /* HTTP options to pass to fetch() */
+    httpOptions: HTTPOptions,
+    cacheInfo: CacheInfo,
+    timeoutInfo: TimeoutInfo,
+    processValue: (value : T) => T,
+    acceptValueFromCache: (value : T) => Bool,
+}
+
+const getTimeoutInfo = (timeoutInfo : TimeoutInfo) : TimeoutInfo => {
+    if (timeoutInfo.refreshTimeout && timeoutInfo.expiryTimeout)
+        return timeoutInfo
+
+    const { timeoutDesc } = timeoutInfo
     if (timeoutDesc === 'short')
         return {
+            timeoutDesc: 'short',
             refreshTimeout: 6000,
             expiryTimeout:  9000,
         }
     if (timeoutDesc === 'normal')
         return {
+            timeoutDesc: 'normal',
             refreshTimeout: 10000,
             expiryTimeout:  20000,
         }
     if (timeoutDesc === 'long')
         return {
+            timeoutDesc: 'long',
             refreshTimeout: 12000,
             expiryTimeout:  25000,
         }
 }
+
 
 class DownloadManager {
 
@@ -703,100 +764,15 @@ class DownloadManager {
     /* Helper functions                                                  */
     /*********************************************************************/
 
-    queryMutate = async (query) => {
-        return await this.query(
-            'DO_NOT_CACHE',
-            query,
-            { noCache: true },
-        )
+    fetchJSON = async (fetchOptions : FetchOptions<T>) : Promise<T> => {
+        return await fetchWithTimeouts({
+            ...fetchOptions,
+            processValue: parseJSON,
+            acceptValueFromCache: (value) => true,
+        })
     }
 
-    query = async (
-            /* key used for caching responses */
-            key : string,
-            /* GraphQL query string to execute */
-            query : 'object',
-            /* Callback that decides whether the download is still relevant */
-            cacheInfo    : CacheInfo,
-            timeoutDesc = 'normal',
-            ) => {
-        assert(typeof(query) == 'object', typeof(query))
-        const httpOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(query),
-        }
-        const downloadResult = await this.fetchJSON(
-            key,
-            HOST + '/api/v1/',
-            httpOptions,
-            cacheInfo,
-            timeoutDesc,
-            acceptValueFromCache = (value) => {
-                return value.result && !value.error
-            },
-        )
-        const value = downloadResult.value
-        if (value && value.error) {
-            /* GraphQL error */
-            const errorMessage = value.error
-            return downloadResult.downloadError(errorMessage)
-        }
-
-        return downloadResult.update(value => value.result)
-    }
-
-    fetchJSON = async (
-            /* key used for caching responses */
-            key : string,
-            /* URL to fetch */
-            url : URL,
-            /* HTTP options to pass to fetch() */
-            httpOptions : HTTPOptions,
-            cacheInfo : CacheInfo,
-            timeoutDesc = 'normal',
-            acceptValueFromCache = (value) => true,
-            ) => {
-        const downloadResult : DownloadResult<String> = await this.fetch(
-            key,
-            url,
-            httpOptions,
-            cacheInfo,
-            timeoutDesc,
-            acceptValueFromCache,
-        )
-        if (downloadResult.value) {
-            downloadResult.update(parseJSON)
-        }
-        return downloadResult
-    }
-
-    /* HTTP GET/POST/etc to a URL */
-    fetch = async /*<T>*/(
-            /* key used for caching responses */
-            key : string,
-            /* URL to fetch */
-            url : URL,
-            /* HTTP options to pass to fetch() */
-            httpOptions : HTTPOptions,
-            cacheInfo : CacheInfo,
-            timeoutDesc = 'normal',
-            acceptValueFromCache = (value) => true,
-        ) : Promise<DownloadResult<T>> => {
-        assert(url)
-        /* Try a fresh download... */
-        const timeoutInfo = getTimeoutInfo(timeoutDesc)
-        return await fetchWithTimeouts(
-            key, url, httpOptions,
-            timeoutInfo.refreshTimeout,
-            timeoutInfo.expiryTimeout,
-            cacheInfo,
-            acceptValueFromCache = acceptValueFromCache,
-        )
-    }
-
+    fetch = (fetchOptions) => fetchWithTimeouts(fetchOptions)
 }
 
 export const downloadManager = new DownloadManager()
@@ -804,24 +780,20 @@ export const downloadManager = new DownloadManager()
 const isNetworkError = (e : Error) : boolean =>
     e instanceof NetworkError || e instanceof _.TimeoutError
 
-const fetchWithTimeouts = async /*<T>*/(
-        key             : string,
-        url             : URL,
-        httpOptions     : HTTPOptions,
-        refreshTimeout  : Float,
-        expiredTimeout  : Float,
-        cacheInfo       : CacheInfo,
-        acceptValueFromCache = (value) => true,
-        ) : Promise<DownloadResult<T>> => {
+const fetchWithTimeouts = async ({
+        key, url, httpOptions, timeoutInfo, cacheInfo,
+        processValue, acceptValueFromCache,
+        }) : Promise<T> => {
 
-    const refreshCallback = async () => {
-        return await simpleFetch(url, httpOptions, refreshTimeout)
-    }
-    const expiredCallback = async () => {
-        return await simpleFetch(url, httpOptions, expiredTimeout)
+    const _fetchNow = async (timeout : Float) => {
+        return processValue(await simpleFetch(url, httpOptions, timeout))
     }
 
-    let result
+    timeoutInfo = getTimeoutInfo(timeoutInfo)
+    const refreshCallback = () => _fetchNow(timeoutInfo.refreshTimeout)
+    const expiredCallback = () => _fetchNow(timeoutInfo.expiredTimeout)
+
+    var result
     try {
         if (cacheInfo && (cacheInfo.noCache || cacheInfo.getFromCache === false)) {
             result = await refreshCallback()
@@ -855,6 +827,7 @@ export const simpleFetch = async /*<T>*/(
     let response : Response
     httpOptions = httpOptions || {}
     httpOptions['Accept-Encoding'] = 'gzip,deflate'
+    // log("FETCHING", url, httpOptions && httpOptions.body)
     try {
         const fetchPromise : Promise<Response> = fetch(url, httpOptions)
         response = await _.timeout(downloadTimeout, fetchPromise)
