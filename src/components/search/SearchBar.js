@@ -71,6 +71,8 @@ export class SearchBar extends PureComponent {
     }
 
     render = () => {
+        const searchStore = this.props.searchStore
+        log("GOT SUGGESTIONS", searchStore.suggestions, searchStore.searchText, searchStore.allWords)
         return (
             <View style={styles.view}>
                 <SearchInput
