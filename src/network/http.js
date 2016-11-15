@@ -624,11 +624,11 @@ export class FeedDownload extends QueryDownload {
         )
 
         /* In the meantime, load cache entry */
-        const cacheEntry = await this.cache.get(
+        const cacheEntry = await cache.get(
             this.cacheKey,
             () => null, /* refreshCallback */
             () => null, /* expiredCallback */
-            cacheInfo,
+            this.cacheInfo,
         )
         if (this.value == null && this.lastValue == null) {
             this.onReceive(cacheEntry.value)
@@ -636,6 +636,7 @@ export class FeedDownload extends QueryDownload {
     }
 
     @action onReceive = (value) => {
+        log(`Feed ${this.name} got an update.`)
         this.downloadFinished(value)
         this.finish()
     }

@@ -1,13 +1,26 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { BarQueryDownload } from './barquery.js'
+// import { BarQueryDownload } from './barquery.js'
+import { FeedDownload } from '/network/http'
 import { config } from '/utils/config.js'
 
-export class BarStatusDownload extends BarQueryDownload {
+export class BarStatusDownload extends FeedDownload {
+    /* properties:
+        barID: String
+    */
+
     name = 'bar status'
 
     // update bar status every 30s
-    cacheInfo = config.defaultRefreshCacheInfo
-    periodicRefresh = 30
+    // cacheInfo = config.defaultRefreshCacheInfo
+    // periodicRefresh = 30
+
+    @computed get active() {
+        return this.props.barID != null
+    }
+
+    @computed get cacheKey() {
+        return `qd:${this.name}:barID=${this.props.barID}`
+    }
 
     @computed get query() {
         return {
