@@ -22,7 +22,7 @@ export type QResponse<T> = {
 }
 
 export class QueryTransport {
-    /* { messageID: { resolve, query } } */
+    /* { messageID: { resolve, request } } */
     activeQueries = {}
     timeouts = {}
     @observable connected = false
@@ -77,9 +77,10 @@ export class QueryTransport {
         const feedParams = this.activeQueries[messageID]
         /* Make sure that query/feed is still active */
         if (feedParams) {
+            log("RESOLVING QUERY...", messageID)
             feedParams.resolve(data)
         } else {
-            log("GOT QUERY RESULT BUT NO RESOLVER!", messageID, data)
+            log("GOT QUERY RESULT BUT NO RESOLVER!", messageID)
         }
     }
 
@@ -114,14 +115,15 @@ export class QueryTransport {
         assert(request.messageID != null, "messageID is null...")
         this.activeQueries[request.messageID] = feedParams
         if (this.connected) {
+            log("SENDING MESSAGE...", request.messageID)
             this.ws.send(JSON.stringify(request))
+        } else {
+            log("NOT CONNECTED! WILL SEND LATER...", request.messageID)
         }
     }
 
     /* Dispatch any active messages in the queue */
     dispatchMessages = () => {
-        const activeQueries = this.activeQueries
-        this.activeQueries = {}
         Object.values(this.activeQueries).forEach((feedParams) => {
             this.feed(feedParams)
         })
