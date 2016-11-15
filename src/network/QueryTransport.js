@@ -21,11 +21,18 @@ export type QResponse<T> = {
     result:     ?T,
 }
 
+/* WebSocket.readyState values */
+CONNECTING = 0
+OPEN = 1
+CLOSING = 2
+CLOSED = 3
+
 export class QueryTransport {
     /* { messageID: { resolve, request } } */
     activeQueries = {}
     timeouts = {}
     @observable connected = false
+    @observable firstMessageReceived = false
 
     constructor(endpoint : URL, tryReconnectAfter = 5000) {
         this.endpoint = endpoint
@@ -37,8 +44,8 @@ export class QueryTransport {
     tryConnect = () => {
         if (!this.connected) {
             this.connect()
-            setTimeout(this.tryConnect, this.tryReconnectAfter)
         }
+        setTimeout(this.tryConnect, this.tryReconnectAfter)
     }
 
     connect = () => {
@@ -46,21 +53,21 @@ export class QueryTransport {
         ws = new WebSocket(this.endpoint)
         ws.onopen = () => this.onOpen(ws)
         ws.onmessage = () => null
-        ws.onerror = this.onError
-        // ws.onerror = () => null
+        ws.onerror = () => null
         ws.onclose = () => null
     }
 
     /* Successfully established connection with 'ws'. */
     @action onOpen = (ws) => {
         if (!this.connected) {
-            log("websocket connection established...")
+            log("websocket connection established...", ws.readyState)
             this.ws = ws
             this.ws.onmessage = this.onMessage
             this.ws.onerror = this.onError
             this.ws.onclose = this.onClose
 
             this.connected = true
+            this.send({messageID: "ping"})
             this.dispatchMessages()
         } else {
             /* We successfully established a connection on another websocket
@@ -72,26 +79,27 @@ export class QueryTransport {
     onMessage = (event) => {
         if (!event.data)
             return
+        this.firstMessageReceived = true
         const data = parseJSON(event.data)
         const messageID = data.messageID
         const feedParams = this.activeQueries[messageID]
         /* Make sure that query/feed is still active */
-        if (feedParams) {
-            log("RESOLVING QUERY...", messageID)
+        if (data.messageID === "pong") {
+            /* Nothing to do */
+        } else if (feedParams) {
             feedParams.resolve(data)
-        } else {
-            log("GOT QUERY RESULT BUT NO RESOLVER!", messageID)
         }
     }
 
-    onError = (e) => {
-        // _.logError(e.message)
-        log("WEBSOCKET ERROR:", e.message)
+    @action onError = (e) => {
+        // log("WEBSOCKET ERROR:", e.message)
+        this.onClose()
     }
 
     @action onClose = () => {
+        this.ws = null
         this.connected = false
-        this.tryConnect()
+        this.firstMessageReceived = false
     }
 
     /* Submit query and expect response with timeout */
@@ -105,7 +113,7 @@ export class QueryTransport {
                 })
             })
         } finally {
-            delete this.activeQueries[request.messageID]
+            this.disposeMessage(request.messageID)
         }
     }
 
@@ -116,9 +124,15 @@ export class QueryTransport {
         this.activeQueries[request.messageID] = feedParams
         if (this.connected) {
             log("SENDING MESSAGE...", request.messageID)
-            this.ws.send(JSON.stringify(request))
+            this.send(request)
         } else {
             log("NOT CONNECTED! WILL SEND LATER...", request.messageID)
+        }
+    }
+
+    send = (request) => {
+        if (this.ws.readyState === OPEN) {
+            this.ws.send(JSON.stringify(request))
         }
     }
 
@@ -127,5 +141,9 @@ export class QueryTransport {
         Object.values(this.activeQueries).forEach((feedParams) => {
             this.feed(feedParams)
         })
+    }
+
+    disposeMessage = (messageID) => {
+        delete this.activeQueries[messageID]
     }
 }

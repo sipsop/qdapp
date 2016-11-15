@@ -362,6 +362,8 @@ export class Download {
                 this.reset('Finished')
                 this.value = downloadResult.value
                 this.finish()
+                if (this.value != null)
+                    this.lastValue = this.value
             } else if (downloadResult.state === 'Error') {
                 this.downloadError(downloadResult.message)
             } else {
@@ -486,6 +488,14 @@ export class Download {
     @computed get inProgress() {
         return this.state === 'InProgress'
     }
+
+    /***********************************************************************/
+    /* Dispose of Download                                                 */
+    /***********************************************************************/
+
+    dispose = () => {
+
+    }
 }
 
 export class HTTPDownload extends Download {
@@ -533,6 +543,13 @@ export class QueryDownload extends Download {
         return this.query
     }
 
+    /* Do not automatically retry downloads in case of a download error,
+    as the QueryTransport already restarts any downloads after a reconnection.
+    */
+    @computed get shouldRetry() {
+        return false
+    }
+
     @computed get query() {
         return null
     }
@@ -560,6 +577,10 @@ export class QueryDownload extends Download {
         } else if (this.value) {
             this.downloadFinished(this.value.result)
         }
+    }
+
+    dispose = () => {
+        downloadManager.queryTransport.disposeMessage(this.name)
     }
 }
 
@@ -724,11 +745,17 @@ class DownloadManager {
         this._initialized = false
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
-        this.queryTransport = new QueryTransport(WebSocketHOST)
+        this.queryTransport = new QueryTransport(WebSocketHOST, 5000)
     }
 
     @computed get connected() {
-        return this.queryTransport.connected
+        /* We consider the user connected when a websocket has been
+           established, and when an actual message has been received.
+        */
+        return (
+            this.queryTransport.connected &&
+            this.queryTransport.firstMessageReceived
+        )
     }
 
     /*********************************************************************/
@@ -816,6 +843,7 @@ class DownloadManager {
     }
 
     removeDownload = (name) => {
+        this.downloads[name].dispose()
         delete this.downloads[name]
         this.downloadNames = this.downloadNames.filter(n => n != name)
         /* Dispose of autorun that re-triggers download */

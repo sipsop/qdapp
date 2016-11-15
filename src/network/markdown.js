@@ -1,7 +1,7 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { Download } from '/network/http'
+import { HTTPDownload } from '/network/http'
 
-export class MarkdownDownload extends Download {
+export class MarkdownDownload extends HTTPDownload {
     /* properties:
         url: ?String
     */
