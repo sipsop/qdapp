@@ -127,11 +127,8 @@ export class MenuItemModal extends PureComponent {
     renderPriceRow = (option, price, key) => {
         const itemKey = key
         return (
-            <TouchableOpacity onPress={this.rendFunc(itemKey)} ref={itemKey} style={[styles.priceRow, styles.selected]}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
+            <TouchableOpacity onPress={() => { this.onPricePress(itemKey) }} ref={itemKey} style={[styles.priceRow]}><Text style={styles.option}>{option}</Text><Price price={price} style={styles.price} /></TouchableOpacity>
         )
-    }
-    rendFunc = (key) => {
-        this.onPricePress(key)
     }
     renderGeneralPrices = (menuItem) => {
         const options = menuItem.options
@@ -175,7 +172,9 @@ export class MenuItemModal extends PureComponent {
         /*
             Idea here is to highlight the pressed row with a nice color
         */
-        this.refs[key].style.push(styles.selected)
+        console.log(key);
+        this.refs[`${key}`].props.style.push(styles.selected)
+        console.log(this.refs[`${key}`].props.style);
     }
 
     onAddPress = () => {
