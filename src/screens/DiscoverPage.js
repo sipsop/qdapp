@@ -16,6 +16,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 import { store, mapStore, historyStore, segment, searchStore } from '/model/store'
 import * as _ from '/utils/curry'
 
@@ -62,6 +63,7 @@ class DiscoverViewDescriptor extends Descriptor {
 
     renderHeader = () => {
         return <View style={{flex: 1, height: mapHeight}}>
+            <ConnectionBar />
             <MapView key='mapview' />
         </View>
     }

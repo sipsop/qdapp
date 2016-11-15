@@ -74,7 +74,7 @@ export class PlaceOrderDownload extends QueryMutation {
         return {
             PlaceOrder: {
                 args: {
-                    orderID:        this.props.orderID,
+                    // orderID:        this.props.orderID,
                     barID:          this.props.barID,
                     authToken:      this.props.authToken,
                     userName:       this.props.userName,

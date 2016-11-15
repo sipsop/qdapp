@@ -24,6 +24,7 @@ import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
 import { ReceiptModal } from '/components/orders/Receipt'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
 import { analytics } from '/model/analytics'
@@ -100,11 +101,17 @@ export class OrderPage extends DownloadResultView {
     /*** NONEMPTY ***/
     renderOrderList = () => {
         const descriptor = new OrderListDescriptor({
-            renderHeader:   () =>
-                <DeliveryMethod
-                    style={this.styles.deliveryMethod}
-                    primary={true}
-                    />,
+            renderHeader: () => {
+                return (
+                    <View>
+                        <ConnectionBar />
+                        <DeliveryMethod
+                            style={this.styles.deliveryMethod}
+                            primary={true}
+                            />
+                    </View>
+                )
+            },
             // renderFooter:   () => <DeliveryMethod primary={false} />,
             orderStore:     orderStore,
             getMenuItems:   () => orderStore.menuItemsOnOrder,
@@ -116,8 +123,10 @@ export class OrderPage extends DownloadResultView {
         })
         return <View style={{flex: 1}}>
             {/* modals */}
+            {/*
             <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />
             <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
+            */}
             {/* Order stuff */}
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />

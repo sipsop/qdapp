@@ -21,6 +21,8 @@ import { ControlPanel } from './components/sidemenu/ControlPanel'
 import { TabView } from './components/Tabs'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
+import { Checkout } from '/components/payment/Checkout'
+import { ReceiptModal } from '/components/orders/Receipt'
 
 import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
@@ -68,10 +70,8 @@ export class Main extends Component {
                 { this.barSelected ?
                     <SideMenu content={<ControlPanel />}>
                         <View style={{flex: 1, flexDirection: 'row'}}>
-                            {/*
                             <Checkout />
                             <ReceiptModal />
-                            */}
                             <TabView>
                                 <View tabLabel='Discover' style={{flex: 1}}>
                                     <DiscoverPage />

@@ -719,13 +719,16 @@ class DownloadManager {
     @observable downloadNames = []
     @observable downloads = {}
     @observable refreshing = false
-    @observable connected = false
 
     constructor() {
         this._initialized = false
         this.disposeHandlers = {}
         this.downloadStatesToRestore = {}
         this.queryTransport = new QueryTransport(WebSocketHOST)
+    }
+
+    @computed get connected() {
+        return this.queryTransport.connected
     }
 
     /*********************************************************************/
