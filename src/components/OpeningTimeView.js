@@ -13,11 +13,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    openingTime: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 })
 
 @observer
@@ -34,7 +29,7 @@ export class OpeningTimeView extends PureComponent {
         return (
             <View style={styles.row}>
                 <Time style={this.props.timeTextStyle} time={openingTime.open} />
-                <T style={styles.openingTime}> - </T>
+                <T style={this.props.timeTextStyle}> - </T>
                 <Time style={this.props.timeTextStyle} time={openingTime.close} />
             </View>
         )
