@@ -22,19 +22,15 @@ const styles = StyleSheet.create({
         margin: 0,
         borderRadius: 0,
         height: 55,
+        justifyContent: 'center',
     },
 })
 
 @observer
 export class NotificationBar extends PureComponent {
-    /* properties:
-        flashPeriod: Int
-            number of seconds to flash notifications that have a lower priority
-            that the current notification
-    */
-
     render = () => {
         const unreadMessages = messageStore.unreadMessages
+        log("NOTIFICATON BAR", unreadMessages)
         if (!unreadMessages.length)
             return null
 

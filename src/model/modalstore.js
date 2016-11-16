@@ -1,4 +1,6 @@
 import { observable, computed, action } from 'mobx'
+import { drawerStore } from './drawerstore'
+import { messageStore } from './messagestore'
 
 class ModalStore {
     @observable showOpeningTimesModal = false
@@ -29,10 +31,13 @@ class ModalStore {
 
     @action openMessageListModal = () => {
         this.showMessageListModal = true
+        drawerStore.disable()
+        messageStore.acknowledgeAllUnread()
     }
 
     @action closeMessagListModal = () => {
         this.showMessageListModal = false
+        drawerStore.enable()
     }
 
     @computed get getModalStatus () {

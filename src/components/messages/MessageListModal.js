@@ -15,11 +15,6 @@ export class MessageListModal extends PureComponent {
         onClose: () => void
     */
 
-    componentDidMount = () => {
-        /* Acknowledge all messages as read */
-        messageStore.acknowledgeAllUnread()
-    }
-
     handleClose = () => {
         modalStore.closeMessagListModal()
         this.props.onClose()

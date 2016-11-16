@@ -133,7 +133,7 @@ class MessageStore {
 /* Helpers */
 /*********************************************************************/
 
-containsMessage = (messages : Array<Message>, messageID) : Bool => {
+const containsMessage = (messages : Array<Message>, messageID) : Bool => {
     return _.includes(messages, messageID, (message, messageID) => {
         return message.id == messageID
     })

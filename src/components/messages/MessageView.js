@@ -3,6 +3,7 @@ import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import { getTheme } from 'react-native-material-kit'
 
+import { modalStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
@@ -21,7 +22,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     messageText: {
-        flex: 1,
+        // flex: 1,
+        // justifyContent: 'center',
         textAlign: 'center',
         color: '#fff',
         fontSize: 15,
@@ -58,16 +60,12 @@ export class MessageView extends PureComponent {
         useDefaultButton: true,
     }
 
-    @action showMessageList = () => {
-        // TODO:
-    }
-
     render = () => {
         const message = this.props.message
 
         const buttonLabel = message.buttonLabel || 'VIEW'
         const buttonPress = message.buttonPress || (
-            this.props.useDefaultButton && this.showMessageList)
+            this.props.useDefaultButton && modalStore.openMessageListModal)
 
         return (
             <View style={[styles.view, this.props.style]}>

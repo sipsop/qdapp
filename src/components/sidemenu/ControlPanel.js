@@ -17,7 +17,7 @@ import { MessageListModal } from '../messages/MessageListModal.js'
 
 import { downloadManager } from '/network/http.js'
 import { DownloadResultView } from '../download/DownloadResultView'
-import { store, loginStore, tabStore, drawerStore, messageStore } from '/model/store.js'
+import { store, loginStore, tabStore, drawerStore, modalStore, messageStore } from '/model/store.js'
 import { analytics } from '/model/analytics.js'
 import { segment } from '/network/segment.js'
 import { config } from '/utils/config.js'
@@ -99,15 +99,6 @@ class OrderHistory extends PureComponent {
 
 @observer
 class MessageHistory extends PureComponent {
-    messageListModal = null
-
-    @observable visible = false
-
-    @action handleClose = () => {
-        this.visible = false
-        drawerStore.enable()
-    }
-
     render = () => {
         const unread = messageStore.numberOfUnreadMessages
             ? `(${messageStore.numberOfUnreadMessages})`
@@ -120,7 +111,7 @@ class MessageHistory extends PureComponent {
                     drawerStore.disable()
                     loginStore.login(
                         () => {
-                            this.visible = true
+                            modalStore.openMessageListModal()
                             segment.track('Message List Viewed')
                         },
                         () => {
@@ -128,11 +119,6 @@ class MessageHistory extends PureComponent {
                         },
                     )
                 }}
-                />
-            <MessageListModal
-                ref={ref => this.messageListModal = ref}
-                visible={this.visible}
-                onClose={this.handleClose}
                 />
         </View>
     }
