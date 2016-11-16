@@ -21,6 +21,7 @@ import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
 import { SearchStore } from './searchstore'
 import { modalStore } from './modalstore'
+import { messageStore } from './messagestore'
 
 import { notificationStore } from './notificationstore'
 
@@ -209,4 +210,5 @@ export {
     notificationStore,
     modalStore,
     SearchStore,
+    messageStore,
 }

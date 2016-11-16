@@ -13,10 +13,11 @@ import { LazyComponent } from '../LazyComponent.js'
 import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
+import { MessageListModal } from '../messages/MessageListModal.js'
 
 import { downloadManager } from '/network/http.js'
 import { DownloadResultView } from '../download/DownloadResultView'
-import { store, loginStore, tabStore, drawerStore } from '/model/store.js'
+import { store, loginStore, tabStore, drawerStore, messageStore } from '/model/store.js'
 import { analytics } from '/model/analytics.js'
 import { segment } from '/network/segment.js'
 import { config } from '/utils/config.js'
@@ -34,6 +35,7 @@ export class ControlPanel extends PureComponent {
         return <ScrollView style={{flex: 1}}>
             <LoginInfo />
             <PaymentConfig />
+            <MessageHistory />
             <OrderHistory />
             <Settings />
             {/*<Feedback />*/}
@@ -89,6 +91,39 @@ class OrderHistory extends PureComponent {
                 />
             <OrderHistoryModal
                 ref={ref => this.orderHistoryModal = ref}
+                onClose={drawerStore.enable}
+                />
+        </View>
+    }
+}
+
+@observer
+class MessageHistory extends PureComponent {
+    messageListModal = null
+
+    render = () => {
+        const unread = messageStore.numberOfUnreadMessages
+            ? `(${messageStore.numberOfUnreadMessages})`
+            : ''
+        return <View>
+            <SideMenuEntry
+                text={`Messages ${unread}`}
+                icon={icon("glass", config.theme.primary.dark)}
+                    onPress={() => {
+                    drawerStore.disable()
+                    loginStore.login(
+                        () => {
+                            this.messageListModal.show()
+                            segment.track('Message List Viewed')
+                        },
+                        () => {
+                            drawerStore.enable()
+                        },
+                    )
+                }}
+                />
+            <MessageListModal
+                ref={ref => this.messageListModal = ref}
                 onClose={drawerStore.enable}
                 />
         </View>
