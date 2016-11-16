@@ -11,6 +11,7 @@ import {
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { MessageView } from '../messages/MessageView'
 import { store, messageStore } from '/model/store'
 import * as _ from '/utils/curry'
 

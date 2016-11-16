@@ -3,7 +3,7 @@ import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Modal from 'react-native-modalbox'
 
-import { SimpleModal } from '../Modals.js'
+import { OkCancelModal } from '../Modals.js'
 import { MessageList } from './MessageList'
 import { modalStore, messageStore } from '/model/store'
 
@@ -37,6 +37,6 @@ export class MessageListModal extends PureComponent {
                     visible={this.props.visible}
                     >
             <MessageList />
-        </SimpleModal>
+        </OkCancelModal>
     }
 }

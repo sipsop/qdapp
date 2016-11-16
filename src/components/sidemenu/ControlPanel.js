@@ -101,6 +101,13 @@ class OrderHistory extends PureComponent {
 class MessageHistory extends PureComponent {
     messageListModal = null
 
+    @observable visible = false
+
+    @action handleClose = () => {
+        this.visible = false
+        drawerStore.enable()
+    }
+
     render = () => {
         const unread = messageStore.numberOfUnreadMessages
             ? `(${messageStore.numberOfUnreadMessages})`
@@ -113,7 +120,7 @@ class MessageHistory extends PureComponent {
                     drawerStore.disable()
                     loginStore.login(
                         () => {
-                            this.messageListModal.show()
+                            this.visible = true
                             segment.track('Message List Viewed')
                         },
                         () => {
@@ -124,7 +131,8 @@ class MessageHistory extends PureComponent {
                 />
             <MessageListModal
                 ref={ref => this.messageListModal = ref}
-                onClose={drawerStore.enable}
+                visible={this.visible}
+                onClose={this.handleClose}
                 />
         </View>
     }
