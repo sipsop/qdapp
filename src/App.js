@@ -8,27 +8,44 @@ import {
 import { Router } from './Router'
 import { Main } from './Main'
 import { OpeningTimesModal } from './components/modals/OpeningTimesModal'
+import { MessageListModal } from '/components/messages/MessageListModal'
 import { modalStore } from './model/store'
 
 @observer
 export class App extends Component {
-    closeOpeningTimesModal = () => {
-        modalStore.closeModal()
-    }
     render = () => {
-        const showOpeningTimes = modalStore.showOpeningTimesModal
-        if (Platform.OS === 'android')
-            return (
-              <View style={{flex: 1}}>
-                <Main />
-                <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
-              </View>
-            )
         return (
-            <NavigationProvider router={Router}>
-                <StackNavigation initialRoute={Router.getRoute('main')} />
-                <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
-            </NavigationProvider>
+            <MainApp>
+                <OpeningTimesModal
+                    isVisible={modalStore.showOpeningTimesModal}
+                    onClosedProp={modalStore.closeOpeningTimesModal}
+                    />
+                <MessageListModal
+                    visible={modalStore.showMessageListModal}
+                    onClose={modalStore.closeMessagListModal}
+                    />
+            </MainApp>
         )
+    }
+}
+
+@observer
+class MainApp extends PureComponent {
+    render = () => {
+        if (Platform.OS === 'android') {
+            return (
+                <View style={{flex: 1}}>
+                    <Main />
+                    {this.props.children}
+                </View>
+            )
+        } else {
+            return (
+                <NavigationProvider router={Router}>
+                    <StackNavigation initialRoute={Router.getRoute('main')} />
+                    {this.props.children}
+                </NavigationProvider>
+            )
+        }
     }
 }

@@ -51,6 +51,7 @@ export class MessageView extends PureComponent {
     /* properties:
         message: Message
         useDefaultButton: Bool
+        style: style obj
     */
 
     static defaultProps = {
@@ -69,7 +70,7 @@ export class MessageView extends PureComponent {
             this.props.useDefaultButton && this.showMessageList)
 
         return (
-            <View style={styles.view}>
+            <View style={[styles.view, this.props.style]}>
                 <View style={{flex: 1}}>
                     <T style={styles.messageText} numberOfLines={2}>
                         {message.content}

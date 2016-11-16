@@ -1,29 +1,40 @@
 import { React, Component, View, TouchableOpacity, PureComponent, T } from '/components/Component.js'
 import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
+import Modal from 'react-native-modalbox'
 
 import { SimpleModal } from '../Modals.js'
 import { MessageList } from './MessageList'
-import { messageStore } from '/model/messagestore'
+import { modalStore, messageStore } from '/model/store'
+
 
 @observer
 export class MessageListModal extends PureComponent {
     /* properties:
+        visible: Bool
         onClose: () => void
     */
-    modal = null
-
-    show = () => this.modal.show()
 
     componentDidMount = () => {
         /* Acknowledge all messages as read */
         messageStore.acknowledgeAllUnread()
     }
 
+    handleClose = () => {
+        modalStore.closeMessagListModal()
+        this.props.onClose()
+    }
+
     render = () => {
-        return <SimpleModal
+        if (!this.props.visible)
+            return null
+        return <OkCancelModal
                     ref={ref => this.modal =ref}
                     onClose={this.props.onClose}
+                    showOkButton={false}
+                    cancelLabel="Close"
+                    cancelModal={this.handleClose}
+                    visible={this.props.visible}
                     >
             <MessageList />
         </SimpleModal>

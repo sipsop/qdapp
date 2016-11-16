@@ -166,7 +166,7 @@ class BarIcons extends BarInfoFetcher {
 
     handleShowOpeningTimes = () => {
         // fire action to open modal here:
-        modalStore.openModal()
+        modalStore.openOpeningTimesModal()
         segment.track('Show Opening Times', {
             placeID:    barStore.barID,
             placeName:  barStore.barName,

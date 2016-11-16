@@ -1,7 +1,8 @@
 import { observable, computed, action } from 'mobx'
 
 class ModalStore {
-  @observable showOpeningTimesModal = false
+    @observable showOpeningTimesModal = false
+    @observable showMessageListModal  = false
 
     initialize = () => {
     }
@@ -18,12 +19,20 @@ class ModalStore {
         }
     }
 
-    @action openModal = () => {
+    @action openOpeningTimesModal = () => {
         this.showOpeningTimesModal = true
     }
 
-    @action closeModal = () => {
+    @action closeOpeningTimesModal = () => {
         this.showOpeningTimesModal = false
+    }
+
+    @action openMessageListModal = () => {
+        this.showMessageListModal = true
+    }
+
+    @action closeMessagListModal = () => {
+        this.showMessageListModal = false
     }
 
     @computed get getModalStatus () {
