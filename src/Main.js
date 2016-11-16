@@ -64,9 +64,9 @@ export class Main extends Component {
         }
         return (
             <View style={{flex: 1}}>
-                <NotificationBar />
                 { this.barSelected ?
                     <SideMenu content={<ControlPanel />}>
+                        <NotificationBar />
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             {/*
                             <Checkout />
@@ -88,7 +88,10 @@ export class Main extends Component {
                             </TabView>
                         </View>
                     </SideMenu> :
-                    <DiscoverPage />
+                    <View style={{flex: 1}}>
+                        <NotificationBar />
+                        <DiscoverPage />
+                    </View>
                 }
             </View>
         )
