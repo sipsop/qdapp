@@ -9,11 +9,6 @@ import * as _ from '/utils/curry.js'
 
 const { log, assert } = _.utils(__filename)
 
-assert(PlaceInfo)
-assert(BarName)
-assert(TimeInfo)
-assert(Distance)
-
 @observer
 export class BarCardFooter extends PureComponent {
     /* properties:

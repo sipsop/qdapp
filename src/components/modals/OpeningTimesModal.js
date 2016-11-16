@@ -12,6 +12,7 @@ import { observer } from 'mobx-react/native'
 import { computed } from 'mobx'
 import Modal from 'react-native-modalbox'
 
+import { OpeningTimeView } from '../OpeningTimeView'
 import { barStore, timeStore } from '/model/store'
 import { Time } from '/components/Time'
 import { PINK_COLOR } from '/utils/appstyles/appColors'
@@ -23,38 +24,33 @@ const dayNames = [
     'Wed',
     'Thu',
     'Fri',
-    'Sat'
+    'Sat',
 ]
 
 const styles = {
     modalContainer: {
         width: 275,
-        height: Platform.OS === 'ios' ? 398 : 425
+        height: Platform.OS === 'ios' ? 398 : 425,
     },
     header: {
         textAlign: 'center',
         fontSize: 18,
         padding: 18,
         fontWeight: 'bold',
-        color: PINK_COLOR
+        color: PINK_COLOR,
     },
     day: {
         flex: 1,
         justifyContent: 'center',
-        paddingLeft: 5
+        paddingLeft: 5,
     },
     dayTextStyle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#000'
+        color: '#000',
     },
     timeText: {
-        fontWeight: 'bold'
-    },
-    openingTime: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        fontWeight: 'bold',
     },
     rowContainer: {
         flex: 1,
@@ -62,17 +58,17 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 13,
-        height: 50
+        height: 50,
     },
     row: {
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     seperator: {
         backgroundColor: '#f2f2f2',
         height: 1,
         marginRight: 15,
-        marginLeft: 15
-    }
+        marginLeft: 15,
+    },
 }
 
 @observer
@@ -88,15 +84,11 @@ export class OpeningTimesModal extends PureComponent {
     }
 
     renderTime = (openingTime) => {
-        if (!openingTime) {
-            return <T>Unknown</T>
-        }
         return (
-            <View style={styles.row}>
-                <Time style={styles.timeText} time={openingTime.open} />
-                <T style={styles.openingTime}> - </T>
-                <Time style={styles.timeText} time={openingTime.close} />
-            </View>
+            <OpeningTimeView
+                openingTime={openingTime}
+                timeTextStyle={styles.timeText}
+                />
         )
     }
 

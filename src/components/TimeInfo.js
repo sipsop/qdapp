@@ -1,10 +1,15 @@
-import { React, Component, View, PureComponent, T, Icon } from '/components/Component'
+import { React, Component, View, PureComponent, StyleSheet, T, Icon } from '/components/Component'
 import { observer } from 'mobx-react/native'
 
 import { getBarOpenTime } from '/model/barstore.js'
 import { OpeningTimeView } from './OpeningTimeView'
 
-const timeTextStyle = {fontSize: 11, color: '#fff'}
+const styles = StyleSheet.create({
+    timeTextStyle: {
+        fontSize: 11,
+        color: '#fff',
+    },
+})
 
 @observer
 export class TimeInfo extends PureComponent {
@@ -28,9 +33,12 @@ export class TimeInfo extends PureComponent {
     }
 
     renderOpeningTime = (openingTime) => {
-        return <OpeningTimeView
-                    openingTime={openingTime}
-                    textStyle={timeTextStyle} />
+        return (
+            <OpeningTimeView
+                openingTime={openingTime}
+                timeTextStyle={styles.timeTextStyle}
+                />
+        )
     }
 
     renderUnknownOpeningTime = () => {
@@ -44,6 +52,6 @@ export class TimeInfo extends PureComponent {
         } else {
             text = 'unknown'
         }
-        return <T style={timeTextStyle}>{text}</T>
+        return <T style={styles.timeTextStyle}>{text}</T>
     }
 }

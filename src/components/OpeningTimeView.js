@@ -11,20 +11,32 @@ import { Time } from './Time'
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
-        alignItems: 'center'
-    }
+        alignItems: 'center',
+    },
+    openingTime: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 })
 
 @observer
 export class OpeningTimeView extends PureComponent {
     /* properties:
         openingTime: OpeningTime
-        textStyle: style object
+        timeTextStyle: text style
     */
-
     render = () => {
+        const openingTime = this.props.openingTime
+        if (!openingTime) {
+            return <T>Unknown</T>
+        }
         return (
-          <View />
+            <View style={styles.row}>
+                <Time style={this.props.timeTextStyle} time={openingTime.open} />
+                <T style={styles.openingTime}> - </T>
+                <Time style={this.props.timeTextStyle} time={openingTime.close} />
+            </View>
         )
     }
 }
