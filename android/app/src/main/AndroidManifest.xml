@@ -20,7 +20,7 @@
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
 
-        <!-- Push Notifications -->
+      <!-- Push Notifications -->
       <service android:name="com.evollu.react.fcm.MessagingService">
         <intent-filter>
           <action android:name="com.google.firebase.MESSAGING_EVENT"/>
@@ -32,6 +32,17 @@
           <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
         </intent-filter>
       </service>
+
+      <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+                See README(https://goo.gl/l4GJaQ) for more. -->
+        <!-- <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="ic_notification" /> -->
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the
+             incoming notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!-- <meta-data -->
+            <!-- android:name="com.google.firebase.messaging.default_notification_color" -->
+            <!-- android:resource="@color/pink_color" /> -->
 
       <meta-data
         android:name="com.google.android.geo.API_KEY"

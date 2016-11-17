@@ -38,31 +38,33 @@ class MainApp extends PureComponent {
 
     componentDidMount = () => {
         FCM.requestPermissions() // for iOS
-        FCM.getFCMToken().then(token => {
-            log("GOT FCM TOKEN", token)
+        FCM.getFCMToken().then(fcmToken => {
+            log("GOT FCM TOKEN", fcmToken)
             // store fcm token in your server
         })
         this.notificationUnsubscribe = FCM.on('notification', (notification) => {
             // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-            log("GOT A NOTIFICATION!")
-            log(notification)
+            log("GOT A NOTIFICATION!", notification)
             if (notification.local_notification) {
                 //this is a local notification
                 log("LOCAL NOTIFICATION")
             }
-            if (notification.opened_from_tray) {
-                //app is open/resumed because user clicked banner
-                log("OPENED FROM TRAY")
+            if (!notification.opened_from_tray) {
+                /* If we got here, it means the app was running in the foreground.
+                IN that case, no notifications are shown. Show one manually */
+                notification.title
+                notification.body
+                notification.deepLink
             }
         })
-        this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
+        this.refreshUnsubscribe = FCM.on('refreshToken', (fcmTOken) => {
             console.log(token)
-            // fcm token may not be available on first load, catch it here
+            // TODO: Send to server
         })
 
         // Test local push notification
         FCM.presentLocalNotification({
-            id: "UNIQ_ID_STRING",                               // (optional for instant notification)
+            // id: "UNIQ_ID_STRING",                            // (optional for instant notification)
             title: "My Notification Title",                     // as FCM payload
             body: "My Notification Message",                    // as FCM payload (required)
             sound: "default",                                   // as FCM payload
@@ -72,7 +74,7 @@ class MainApp extends PureComponent {
             number: 10,                                         // Android only
             ticker: "My Notification Ticker",                   // Android only
             auto_cancel: true,                                  // Android only (default true)
-            large_icon: "ic_launcher",                           // Android only
+            large_icon: "ic_launcher",                          // Android only
             icon: "ic_notification",                            // as FCM payload
             big_text: "Show when notification is expanded",     // Android only
             sub_text: "This is a subText",                      // Android only
@@ -82,7 +84,7 @@ class MainApp extends PureComponent {
             group: "group",                                     // Android only
             my_custom_data:'my_custom_field_value',             // extra data you want to throw
             lights: true,                                       // Android only, LED blinking (default false)
-            show_in_foreground                                  // notification when app is in foreground (local & remote)
+            show_in_foreground: true,                           // notification when app is in foreground (local & remote)
         })
     }
 
