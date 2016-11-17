@@ -9,6 +9,25 @@ export const Month = 30 * Day
 /* Time in seconds after the Jan 1, 1970, 00.00.00 UTC */
 export const getTime = () => new Date().getTime() / 1000
 
+export const formatDateTime = (time : Float) => {
+    return `${formatDate(time)} ${formatTime(time)}`
+}
+
+export const formatDate = (time : Float) => {
+    const d = new Date(time * 1000)
+    const year  = d.getFullYear()
+    const month = d.getMonth()
+    const day   = d.getDay()
+    return `${year}/${month}/${day}`
+}
+
+export const formatTime = (time : Float) => {
+    const d = new Date(time * 1000)
+    const hour = d.getHours()
+    const minutes = d.getMinutes()
+    return `${renderNumber(hour)}.${renderNumber(minutes)}`
+}
+
 export const formatDuration = (time : Float) => {
     if (time < 60)
         return "Any time now..."

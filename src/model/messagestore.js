@@ -1,9 +1,10 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
-import { downloadManager } from '../network/http.js'
-// import { MessageDownload } from '../network/api/messages.js'
-import { config } from '/utils/config.js'
-import * as _ from '/utils/curry.js'
+import { downloadManager } from '../network/http'
+// import { MessageDownload } from '../network/api/messages'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
+import { getTime } from '/utils/time'
 
 const { log, assert } = _.utils('/model/messagestore')
 
@@ -15,17 +16,21 @@ export type AboutType =
     | '...' /* other values are permitted, e.g. in later versions new message
                types may be introduced */
 
-export type About = {
-    type: AboutType,
-    id: ?ID,
-}
+/* What action should be shown for this message.
+   The default will depend on 'AboutType'
+*/
+export type AboutAction =
+    | 'AddOrderToBooking'
+    | '...'
 
 export type Message = {
     // title: String,
     id: ID,
     timestamp: Float,
     content: String,
-    about: About,
+    aboutType: AboutType,
+    acoutAction: ?AboutAction,
+    aboutID: ?ID,
     flash: Bool,
     beep: Bool,
     popup: Bool,
@@ -148,6 +153,15 @@ export const messageStore = new MessageStore()
 /* TOOD: Remove, testing only */
 messageStore.addMessages([
     makeMessage({
-        content: "Some stuff here... blah blah blah blah blah",
-    })
+        timestamp: new Date().getTime(),
+        content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a",
+    }),
+    makeMessage({
+        timestamp: new Date().getTime(),
+        content: "short message",
+    }),
+    makeMessage({
+        timestamp: new Date().getTime(),
+        content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a absolute gigantic etc hahhah ahaha ha ahah a haah ahh aaha haahhaah haah haah ha h",
+    }),
 ])

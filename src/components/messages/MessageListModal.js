@@ -31,7 +31,9 @@ export class MessageListModal extends PureComponent {
                     cancelModal={this.handleClose}
                     visible={this.props.visible}
                     >
-            <MessageList />
+            <MessageList
+                getRows={() => messageStore.last100Messages}
+                />
         </OkCancelModal>
     }
 }

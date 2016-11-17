@@ -1,11 +1,14 @@
-import { React, Component, View, TouchableOpacity, PureComponent, StyleSheet, T } from '/components/Component'
+import { React, Component, View, TouchableOpacity, PureComponent, Dimensions, StyleSheet, T } from '/components/Component'
 import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { TextHeader } from '../Header.js'
+import { TimeView } from '../TimeView'
 import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { MessageView } from './MessageView'
 import { messageStore } from '/model/messagestore'
+
+const { width } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
     view: {
@@ -21,18 +24,31 @@ const styles = StyleSheet.create({
 
 @observer
 export class MessageList extends SimpleListView {
+    /* properties:
+        getRows: () => Array<Message>
+    */
+
+    @computed get descriptor() {
+        return new MessageListDescriptor(this.props.getRows)
+    }
+
     render = () => {
         return (
             <View style={styles.view}>
-                <SimpleListView descriptor={messageListDescriptor} />
+                <SimpleListView descriptor={this.descriptor} />
             </View>
         )
     }
 }
 
 class MessageListDescriptor extends Descriptor {
-    @computed get rows() : Array<OrderResult> {
-        return messageStore.last100Messages
+    constructor(getRows) {
+        super()
+        this.getRows = getRows
+    }
+
+    @computed get rows() : Array<Message> {
+        return this.getRows()
     }
 
     rowHasChanged = (m1, m2) => {
@@ -58,9 +74,11 @@ class MessageListDescriptor extends Descriptor {
 
     renderRow = (message, i) => {
         return (
+            /* alignment is set to 'stretch', so reset it... */
             <MessageView
                 useDefaultButton={false}
                 message={message}
+                showTimeStamp={true}
                 />
         )
     }

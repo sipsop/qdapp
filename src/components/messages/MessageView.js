@@ -1,8 +1,9 @@
 import { React, Component, View, TouchableOpacity, PureComponent, StyleSheet, T } from '/components/Component'
 import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import { getTheme } from 'react-native-material-kit'
 
+import { TimeView } from '../TimeView'
+import { formatTime } from '/utils/time'
 import { modalStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
@@ -10,8 +11,9 @@ import { config } from '/utils/config'
 const { assert, log } = _.utils('/components/messages/MessageView')
 
 const styles = StyleSheet.create({
-    view: {
+    messageBubble: {
         flex: 0,
+        // minWidth: 100,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -21,22 +23,21 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 10,
     },
+    messageContents: {
+        flex: 1,
+        flexWrap: 'wrap',
+    },
     messageText: {
-        // flex: 1,
+        flex: 1,
         // justifyContent: 'center',
-        textAlign: 'center',
+        // textAlign: 'center',
         color: '#fff',
         fontSize: 15,
         margin: 5,
     },
-    verticalBar: {
-        borderWidth: 0.5,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
-        // height: 35,
-        width: 1,
-        margin: 5,
-        marginTop: 10,
-        marginBottom: 10,
+    time: {
+        // flex: 1,
+        alignItems: 'flex-end',
     },
     button: {
         flexWrap: 'wrap',
@@ -54,10 +55,13 @@ export class MessageView extends PureComponent {
         message: Message
         useDefaultButton: Bool
         style: style obj
+        numberOfLines: Int
+        showTimeStamp: Bool
     */
 
     static defaultProps = {
         useDefaultButton: true,
+        showTimeStamp: false,
     }
 
     render = () => {
@@ -68,13 +72,21 @@ export class MessageView extends PureComponent {
             this.props.useDefaultButton && modalStore.openMessageListModal)
 
         return (
-            <View style={[styles.view, this.props.style]}>
-                <View style={{flex: 1}}>
-                    <T style={styles.messageText} numberOfLines={2}>
+            <View style={[styles.messageBubble, this.props.style]}>
+                <View style={styles.messageContents}>
+                    <T style={styles.messageText}
+                        numberOfLines={this.props.numberOfLines}>
                         {message.content}
                     </T>
+                    {this.props.showTimeStamp &&
+                        <View style={styles.time}>
+                            <TimeView
+                                color='rgb(193, 193, 193)'
+                                time={formatTime(message.timestamp)}
+                                />
+                        </View>
+                    }
                 </View>
-                {/*<View style={styles.verticalBar} />*/}
                 {buttonPress &&
                     <TouchableOpacity onPress={buttonPress}>
                         <View style={styles.button}>
