@@ -1,4 +1,4 @@
-import { React, Component, View, TouchableOpacity, PureComponent, StyleSheet, T } from '/components/Component'
+import { React, Component, View, TouchableOpacity, PureComponent, StyleSheet, Text, T } from '/components/Component'
 import { observable, computed, transaction, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -26,6 +26,13 @@ const styles = StyleSheet.create({
     messageContents: {
         flex: 1,
         flexWrap: 'wrap',
+        padding: 5,
+    },
+    titleText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        // textDecorationLine: 'underline',
     },
     messageText: {
         flex: 1,
@@ -33,7 +40,6 @@ const styles = StyleSheet.create({
         // textAlign: 'center',
         color: '#fff',
         fontSize: 15,
-        margin: 5,
     },
     time: {
         // flex: 1,
@@ -71,11 +77,22 @@ export class MessageView extends PureComponent {
         const buttonPress = message.buttonPress || (
             this.props.useDefaultButton && modalStore.openMessageListModal)
 
+        var numberOfLines = this.props.numberOfLines
+        if (message.title != null && numberOfLines) {
+            numberOfLines -= 1
+        }
+
         return (
             <View style={[styles.messageBubble, this.props.style]}>
                 <View style={styles.messageContents}>
+                    {message.title &&
+                        <Text style={styles.titleText}
+                            numberOfLines={1}>
+                            {message.title}
+                        </Text>
+                    }
                     <T style={styles.messageText}
-                        numberOfLines={this.props.numberOfLines}>
+                        numberOfLines={numberOfLines}>
                         {message.content}
                     </T>
                     {this.props.showTimeStamp &&

@@ -22,6 +22,7 @@ import { drawerStore } from './drawerstore'
 import { SearchStore } from './searchstore'
 import { modalStore } from './modalstore'
 import { messageStore } from './messagestore'
+import { pushNotificationStore } from './pushNotifications'
 
 import { notificationStore } from './notificationstore'
 
@@ -75,6 +76,7 @@ export class Store {
             historyStore.initialize(),
             timeStore.initialize(),
             segment.initialize(),
+            pushNotificationStore.initialize(),
         ])
 
         try {

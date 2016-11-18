@@ -25,7 +25,7 @@ export const formatTime = (time : Float) => {
     const d = new Date(time * 1000)
     const hour = d.getHours()
     const minutes = d.getMinutes()
-    return `${renderNumber(hour)}.${renderNumber(minutes)}`
+    return `${renderNumber(hour)}:${renderNumber(minutes)}`
 }
 
 export const formatDuration = (time : Float) => {

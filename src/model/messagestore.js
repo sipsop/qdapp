@@ -25,16 +25,22 @@ export type AboutAction =
 
 export type Message = {
     // title: String,
-    id: ID,
+    messageID: ID,
     timestamp: Float,
+    title: String,
     content: String,
     aboutType: AboutType,
     acoutAction: ?AboutAction,
     aboutID: ?ID,
     flash: Bool,
-    beep: Bool,
+    vibrate: Bool,
+    sound: Bool,
+    deepLink: ?String,
+    /* Grouping tag (for an ungoing message stream) */
+    grouping: ?String,
     popup: Bool,
     buttonLabel: ?String,
+    /* TODO: Remove */
     buttonPress: ?() => void,
 }
 
@@ -92,11 +98,13 @@ class MessageStore {
     /* Add a bunch of messages to the store */
     @action addMessages = (messages) => {
         messages.forEach((message) => {
-            this.messageByID[message.id] = message
+            this.messageByID[message.messageID] = message
             this.last100Messages.push(message)
             if (message.popup) {
+                log("ADDING POPUP MESSAGE!", message)
                 this.popupMessages.push(message)
             } else {
+                log("ADDING UNREAD MESSAGE!", message)
                 this.unreadMessages.push(message)
             }
         })
@@ -104,7 +112,7 @@ class MessageStore {
         const beginPos = _.max(last100Messages.length - 100, 0)
         /* Delete old messages */
         last100Messages.slice(0, beginPos).forEach(message => {
-            delete this.messageByID[message.id]
+            delete this.messageByID[message.messageID]
         })
         this.last100Messages = last100Messages.slice(beginPos)
     }
@@ -113,11 +121,11 @@ class MessageStore {
     @action acknowledge = (messageID) => {
         if (containsMessage(this.unreadMessages, messageID)) {
             this.unreadMessages = this.unreadMessages.filter(message => {
-                return message.id !== messageID
+                return message.messageID !== messageID
             })
         } else if (containsMessage(this.popupMessages, messageID)) {
             this.unreadMessages = this.popupMessages.filter(message => {
-                return message.id !== messageID
+                return message.messageID !== messageID
             })
         }
     }
@@ -140,7 +148,7 @@ class MessageStore {
 
 const containsMessage = (messages : Array<Message>, messageID) : Bool => {
     return _.includes(messages, messageID, (message, messageID) => {
-        return message.id == messageID
+        return message.messageID == messageID
     })
 }
 
@@ -153,15 +161,15 @@ export const messageStore = new MessageStore()
 /* TOOD: Remove, testing only */
 messageStore.addMessages([
     makeMessage({
-        timestamp: new Date().getTime(),
+        timestamp: getTime(),
         content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a",
     }),
     makeMessage({
-        timestamp: new Date().getTime(),
+        timestamp: getTime(),
         content: "short message",
     }),
     makeMessage({
-        timestamp: new Date().getTime(),
+        timestamp: getTime(),
         content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a absolute gigantic etc hahhah ahaha ha ahah a haah ahh aaha haahhaah haah haah ha h",
     }),
 ])
