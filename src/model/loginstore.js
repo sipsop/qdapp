@@ -4,6 +4,8 @@ import { observable, action, computed } from 'mobx'
 import { segment } from '/network/segment.js'
 import { downloadManager } from '/network/http.js'
 import { BarOwnerProfileDownload } from '/network/api/user/barowner'
+import { RegisterUser } from '/network/api/user/register'
+import { pushNotificationStore } from '/model/pushnotificationstore'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 import { getTime, Hour, Minute } from '/utils/time.js'
@@ -219,15 +221,20 @@ class LoginStore {
     /*********************************************************************/
 
     initialize = () => {
-        downloadManager.declareDownload(new BarOwnerProfileDownload(this.getDownloadProps))
-    }
-
-    getDownloadProps = () => {
-        return {
-            isLoggedIn: this.isLoggedIn,
-            authToken:  this.getAuthToken(),
-            userID:     this.userID,
-        }
+        downloadManager.declareDownload(new BarOwnerProfileDownload(() => {
+            return {
+                isLoggedIn: this.isLoggedIn,
+                authToken:  this.getAuthToken(),
+                userID:     this.userID,
+            }
+        })
+        downloadManager.declareDownload(new RegisterUser(() => {
+            return {
+                authToken:     this.getAuthToken(),
+                email:         this.email,
+                firebaseToken: pushNotificationStore.getFirebaseToken(),
+            }
+        }))
     }
 
     @computed get barOwnerProfile() : UserProfile {

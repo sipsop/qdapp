@@ -22,7 +22,7 @@ import { drawerStore } from './drawerstore'
 import { SearchStore } from './searchstore'
 import { modalStore } from './modalstore'
 import { messageStore } from './messagestore'
-import { pushNotificationStore } from './pushNotifications'
+import { pushNotificationStore } from './pushnotificationstore'
 
 import { notificationStore } from './notificationstore'
 

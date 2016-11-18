@@ -16,13 +16,6 @@ export type AboutType =
     | '...' /* other values are permitted, e.g. in later versions new message
                types may be introduced */
 
-/* What action should be shown for this message.
-   The default will depend on 'AboutType'
-*/
-export type AboutAction =
-    | 'AddOrderToBooking'
-    | '...'
-
 export type Message = {
     // title: String,
     messageID: ID,
@@ -30,15 +23,14 @@ export type Message = {
     title: String,
     content: String,
     aboutType: AboutType,
-    acoutAction: ?AboutAction,
+    deepLink: ?String,
     aboutID: ?ID,
     flash: Bool,
     vibrate: Bool,
     sound: Bool,
-    deepLink: ?String,
-    /* Grouping tag (for an ungoing message stream) */
-    grouping: ?String,
     popup: Bool,
+    /* Grouping tag (for an ungoing message stream) */
+    topic: ?String,
     buttonLabel: ?String,
     /* TODO: Remove */
     buttonPress: ?() => void,

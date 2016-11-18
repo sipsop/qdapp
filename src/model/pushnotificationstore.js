@@ -5,7 +5,7 @@ import { messageStore, makeMessage } from './messagestore'
 import { getTime } from '/utils/time'
 import * as _ from '/utils/curry'
 
-const { log, assert } = _.utils('/model/pushNotifications')
+const { log, assert } = _.utils('/model/pushnotificationstore')
 
 const convertToBool = (value : ?String) => {
     if (value == null)
@@ -15,11 +15,14 @@ const convertToBool = (value : ?String) => {
 
 class PushNotificationStore {
 
+    @observable fcmToken = null
+
+    getFirebaseToken = () => this.fcmToken
+
     initialize = () => {
         FCM.requestPermissions() // for iOS
         FCM.getFCMToken().then(fcmToken => {
-            log("GOT FCM TOKEN", fcmToken)
-            // store fcm token in your server
+            this.fcmToken = fcmToken
         })
 
         this.notificationUnsubscribe = FCM.on('notification', (notification) => {
@@ -54,9 +57,8 @@ class PushNotificationStore {
                 // acknowledgeMessage(notification.messageID)
             }
         })
-        this.refreshUnsubscribe = FCM.on('refreshToken', (fcmTOken) => {
-            console.log(token)
-            // TODO: Send to server
+        this.refreshUnsubscribe = FCM.on('refreshToken', (fcmToken) => {
+            this.fcmToken = fcmToken
         })
     }
 
@@ -129,7 +131,7 @@ export const localPushNotification = (message : Message) => {
             // color: "red",
             // Android only default: 300, no vibration if you pass null
             vibrate: message.vibrate ? 300 : undefined,
-            tag: message.grouping,
+            tag: message.topic,
             // group: "group",
             // LED blinking (default false)
             lights: message.popup,
@@ -167,7 +169,7 @@ export const localPushNotification2 = (message : Message) => {
         // vibration length in milliseconds, ignored if vibrate=false, default: 1000
         vibration: message.vibrationLength || 300,
         // (optional) add tag to message
-        tag: message.grouping,
+        tag: message.topic,
         // (optional) add group to message
         // group: "g        /* iOS only properties */
         // alertAction: // (optional) default: view
