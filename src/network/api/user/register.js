@@ -9,6 +9,7 @@ export class RegisterUser extends QueryMutation {
     */
 
     name = 'register user'
+    autoDownload = true
 
     @computed get active() {
         return this.props.email != null
@@ -28,7 +29,7 @@ export class RegisterUser extends QueryMutation {
                     profileParams: profileParams,
                 },
                 result: {
-
+                    success: 'Bool',
                 }
             }
         }

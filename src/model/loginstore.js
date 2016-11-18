@@ -227,7 +227,7 @@ class LoginStore {
                 authToken:  this.getAuthToken(),
                 userID:     this.userID,
             }
-        })
+        }))
         downloadManager.declareDownload(new RegisterUser(() => {
             return {
                 authToken:     this.getAuthToken(),
