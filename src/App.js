@@ -49,12 +49,15 @@ class MainApp extends PureComponent {
                 //this is a local notification
                 log("LOCAL NOTIFICATION")
             }
-            if (!notification.opened_from_tray) {
+            if (notification.opened_from_tray) {
+                /* Notification opened from tray, open deep link */
+                // openDeepLink(notification.deepLink)
+                // acknowledgeMessage(notification.messageID)
+            } else {
                 /* If we got here, it means the app was running in the foreground.
-                IN that case, no notifications are shown. Show one manually */
-                notification.title
-                notification.body
-                notification.deepLink
+                In that case, no notifications are shown. Grab the user's attention
+                */
+                showMessage(notification)
             }
         })
         this.refreshUnsubscribe = FCM.on('refreshToken', (fcmTOken) => {
