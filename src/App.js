@@ -8,7 +8,7 @@ import {
 import { Router } from './Router'
 import { Main } from './Main'
 import { OpeningTimesModal } from './components/modals/OpeningTimesModal'
-import { MessageListModal } from '/components/messages/MessageListModal'
+import { MessagePopup } from '/components/messages/MessagePopup'
 import { modalStore } from './model/store'
 import * as _ from '/utils/curry'
 
@@ -23,10 +23,7 @@ export class App extends PureComponent {
                     isVisible={modalStore.showOpeningTimesModal}
                     onClosedProp={modalStore.closeOpeningTimesModal}
                     />
-                <MessageListModal
-                    visible={modalStore.showMessageListModal}
-                    onClose={modalStore.closeMessagListModal}
-                    />
+                <MessagePopup />
             </MainApp>
         )
     }

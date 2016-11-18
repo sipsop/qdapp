@@ -4,7 +4,6 @@ import { messageStore } from './messagestore'
 
 class ModalStore {
     @observable showOpeningTimesModal = false
-    @observable showMessageListModal  = false
 
     initialize = () => {
     }
@@ -27,17 +26,6 @@ class ModalStore {
 
     @action closeOpeningTimesModal = () => {
         this.showOpeningTimesModal = false
-    }
-
-    @action openMessageListModal = () => {
-        this.showMessageListModal = true
-        drawerStore.disable()
-        messageStore.acknowledgeAllUnread()
-    }
-
-    @action closeMessagListModal = () => {
-        this.showMessageListModal = false
-        drawerStore.enable()
     }
 
     @computed get getModalStatus () {

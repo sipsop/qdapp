@@ -1,13 +1,14 @@
-import { React, Component, View, Modal, TouchableOpacity, PureComponent, ScrollView, T } from '/components/Component.js'
-import { LargeButton, PrimaryButton, SecondaryButton } from './Button.js'
-import { TextHeader } from './Header.js'
+import { React, Component, View, Modal, TouchableOpacity, PureComponent, ScrollView, T, Text } from '/components/Component'
+import { LargeButton, PrimaryButton, SecondaryButton } from './Button'
+import { TextHeader } from './Header'
 import { MarkdownLoader } from './markdown/MarkdownLoader'
-import * as _ from '/utils/curry.js'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-const log = _.logger('./Modals.js')
+const log = _.logger('/components/Modals')
 
 @observer
 export class Message extends PureComponent {
@@ -29,6 +30,7 @@ export class Message extends PureComponent {
 @observer
 export class SmallOkCancelModal extends PureComponent {
     /* properties:
+        title: ?String
         message: String
         onConfirm: ?() => void
         onClose: () => void
@@ -37,9 +39,10 @@ export class SmallOkCancelModal extends PureComponent {
         showOkButton: bool
         showCancelButton: bool
         closeOnTouch: bool
+        visible: overrides visibility state
     */
 
-    @observable visible = false
+    @observable _visible = false
 
     static defaultProps = {
         showOkButton:       true,
@@ -48,11 +51,11 @@ export class SmallOkCancelModal extends PureComponent {
     }
 
     @action show = () => {
-        this.visible = true
+        this._visible = true
     }
 
     @action close = () => {
-        this.visible = false
+        this._visible = false
         if (this.props.onClose)
             this.props.onClose()
     }
@@ -63,7 +66,18 @@ export class SmallOkCancelModal extends PureComponent {
         this.close()
     }
 
+    @computed get visible() {
+        if (this.props.visible != null)
+            return this.props.visible
+        return this._visible
+    }
+
     render = () => {
+        const titleTextStyle = {
+            color: config.theme.primary.medium,
+            fontSize: 25,
+            fontWeight: 'bold',
+        }
         const textStyle = {
             color: 'black',
             fontSize: 20,
@@ -92,6 +106,11 @@ export class SmallOkCancelModal extends PureComponent {
                     , borderRadius: 20
                     }
                 }>
+                {
+                    this.props.title
+                        ? <Text style={titleTextStyle}>{this.props.title}</Text>
+                        : null
+                }
                 {
                     this.props.message
                         ? <T style={textStyle}>{this.props.message}</T>
@@ -133,13 +152,15 @@ export class SmallOkCancelModal extends PureComponent {
             </TouchableOpacity>
         }
 
-        return  <Modal
+        return (
+            <Modal
                 visible={this.visible}
                 onRequestClose={this.close}
                 transparent={true}
                 >
-            {content}
-        </Modal>
+                {content}
+            </Modal>
+        )
     }
 }
 

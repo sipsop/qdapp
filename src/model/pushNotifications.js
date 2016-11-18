@@ -33,7 +33,7 @@ class PushNotificationStore {
                 This means no notification has been shown, so show one now.
                 */
                 localPushNotification(notification)
-                messageStore.addMessages([
+                messageStore.showMessage(
                     makeMessage({
                         timestamp: getTime(),
                         messageID: notification.id,
@@ -44,7 +44,7 @@ class PushNotificationStore {
                         sound:   convertToBool(notification.sound),
                         popup:   convertToBool(notification.popup),
                     })
-                ])
+                )
             }
 
             if (notification.opened_from_tray) {

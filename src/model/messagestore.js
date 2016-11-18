@@ -61,95 +61,23 @@ export const makeMessage = (message) => {
 
 class MessageStore {
 
-    /* Mapping from message ID to Message for the last100Messages */
-    messageByID = {}
+    @observable message : Message = null
+    @observable popup   : Message = null
 
-    /* The latest 100 messages */
-    @observable last100Messages = []
-    /* Any unread/unviewed messages */
-    @observable unreadMessages = []
-    /* Messages that should be popped up */
-    @observable popupMessages = []
-
-    /*********************************************************************/
-    /* State */
-    /*********************************************************************/
-
-    initialize = () => {
-        // TODO: messages download
+    /* Display the given message */
+    @action showMessage = (message) => {
+        if (message.popup)
+            this.popup = message
+        else
+            this.message = message
     }
 
-    @computed get numberOfUnreadMessages() {
-        return this.unreadMessages.length + this.popupMessages.length
+    @action dismissMessage = (message) => {
+        if (this.message && this.message.messageID === message.messageID)
+            this.message = null
+        if (this.popup && this.popup.messageID === message.messageID)
+            this.popup = null
     }
-
-    /*********************************************************************/
-    /* Download Actions */
-    /*********************************************************************/
-
-    refresh = async () => {
-        // TODO:
-    }
-
-    /*********************************************************************/
-    /* Actions */
-    /*********************************************************************/
-
-    /* Add a bunch of messages to the store */
-    @action addMessages = (messages) => {
-        messages.forEach((message) => {
-            this.messageByID[message.messageID] = message
-            this.last100Messages.push(message)
-            if (message.popup) {
-                log("ADDING POPUP MESSAGE!", message)
-                this.popupMessages.push(message)
-            } else {
-                log("ADDING UNREAD MESSAGE!", message)
-                this.unreadMessages.push(message)
-            }
-        })
-        const last100Messages = _.sortBy(this.last100Messages, 'timestamp')
-        const beginPos = _.max(last100Messages.length - 100, 0)
-        /* Delete old messages */
-        last100Messages.slice(0, beginPos).forEach(message => {
-            delete this.messageByID[message.messageID]
-        })
-        this.last100Messages = last100Messages.slice(beginPos)
-    }
-
-    /* Acknowledge a message by viewing it or dismissing it as a popup */
-    @action acknowledge = (messageID) => {
-        if (containsMessage(this.unreadMessages, messageID)) {
-            this.unreadMessages = this.unreadMessages.filter(message => {
-                return message.messageID !== messageID
-            })
-        } else if (containsMessage(this.popupMessages, messageID)) {
-            this.unreadMessages = this.popupMessages.filter(message => {
-                return message.messageID !== messageID
-            })
-        }
-    }
-
-    /*
-    Acknowledge all unread messages as read.
-
-    NOTE:
-        This does not acknowledge popup messages, as they are
-        sufficiently important that they should be dismissed manually.
-    */
-    @action acknowledgeAllUnread = () => {
-        this.unreadMessages = []
-    }
-}
-
-/*********************************************************************/
-/* Helpers */
-/*********************************************************************/
-
-const containsMessage = (messages : Array<Message>, messageID) : Bool => {
-    return _.includes(messages, messageID, (message, messageID) => {
-        return message.messageID == messageID
-    })
 }
 
 /*********************************************************************/
@@ -157,19 +85,3 @@ const containsMessage = (messages : Array<Message>, messageID) : Bool => {
 /*********************************************************************/
 
 export const messageStore = new MessageStore()
-
-/* TOOD: Remove, testing only */
-messageStore.addMessages([
-    makeMessage({
-        timestamp: getTime(),
-        content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a",
-    }),
-    makeMessage({
-        timestamp: getTime(),
-        content: "short message",
-    }),
-    makeMessage({
-        timestamp: getTime(),
-        content: "Some stuff here... blah blah blah blah blah. Thee heehehehehi fjeiajfe;iaife;a absolute gigantic etc hahhah ahaha ha ahah a haah ahh aaha haahhaah haah haah ha h",
-    }),
-])

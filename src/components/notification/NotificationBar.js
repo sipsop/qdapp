@@ -29,15 +29,12 @@ const styles = StyleSheet.create({
 @observer
 export class NotificationBar extends PureComponent {
     render = () => {
-        const unreadMessages = messageStore.unreadMessages
-        if (!unreadMessages.length)
+        if (!messageStore.message)
             return null
-
-        const message = unreadMessages[unreadMessages.length - 1]
         return (
             <MessageView
                 style={styles.notification}
-                message={message}
+                message={messageStore.message}
                 numberOfLines={2}
                 />
         )

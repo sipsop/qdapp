@@ -4,7 +4,7 @@ import { observer } from 'mobx-react/native'
 
 import { TimeView } from '../TimeView'
 import { formatTime } from '/utils/time'
-import { modalStore } from '/model/store'
+import { modalStore, messageStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
@@ -70,12 +70,14 @@ export class MessageView extends PureComponent {
         showTimeStamp: false,
     }
 
+    dismiss = () => messageStore.dismissMessage(this.props.message)
+
     render = () => {
         const message = this.props.message
 
-        const buttonLabel = message.buttonLabel || 'VIEW'
-        const buttonPress = message.buttonPress || (
-            this.props.useDefaultButton && modalStore.openMessageListModal)
+        // TODO: open deep links
+        const buttonLabel = message.buttonLabel || 'DISMISS'
+        const buttonPress = message.buttonPress || this.dismiss
 
         var numberOfLines = this.props.numberOfLines
         if (message.title != null && numberOfLines) {
