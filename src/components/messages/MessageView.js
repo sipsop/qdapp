@@ -28,7 +28,12 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         padding: 5,
     },
+    messageTitle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
     titleText: {
+        flex: 1,
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
@@ -76,8 +81,12 @@ export class MessageView extends PureComponent {
         const message = this.props.message
 
         // TODO: open deep links
-        const buttonLabel = message.buttonLabel || 'DISMISS'
-        const buttonPress = message.buttonPress || this.dismiss
+        var buttonLabel = message.buttonLabel
+        var buttonPress = message.buttonPress
+        if (this.props.useDefaultButton) {
+            buttonLabel = buttonLabel || 'DISMISS'
+            buttonPress = buttonPress || this.dismiss
+        }
 
         var numberOfLines = this.props.numberOfLines
         if (message.title != null && numberOfLines) {
@@ -87,24 +96,26 @@ export class MessageView extends PureComponent {
         return (
             <View style={[styles.messageBubble, this.props.style]}>
                 <View style={styles.messageContents}>
-                    {message.title &&
-                        <Text style={styles.titleText}
-                            numberOfLines={1}>
-                            {message.title}
-                        </Text>
-                    }
+                    <View style={styles.messageTitle}>
+                        {message.title &&
+                            <Text style={styles.titleText}
+                                numberOfLines={1}>
+                                {message.title}
+                            </Text>
+                        }
+                        {this.props.showTimeStamp &&
+                            <View style={styles.time}>
+                                <TimeView
+                                    color='rgb(193, 193, 193)'
+                                    time={formatTime(message.timestamp)}
+                                    />
+                            </View>
+                        }
+                    </View>
                     <T style={styles.messageText}
                         numberOfLines={numberOfLines}>
                         {message.content}
                     </T>
-                    {this.props.showTimeStamp &&
-                        <View style={styles.time}>
-                            <TimeView
-                                color='rgb(193, 193, 193)'
-                                time={formatTime(message.timestamp)}
-                                />
-                        </View>
-                    }
                 </View>
                 {buttonPress &&
                     <TouchableOpacity onPress={buttonPress}>

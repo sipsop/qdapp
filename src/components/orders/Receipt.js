@@ -215,7 +215,7 @@ class MessageLog extends PureComponent {
     @computed get orderPlacedMessage() {
         return {
             title: "Your order has been placed!",
-            message: "Claim your order with this receipt.",
+            content: "Claim your order with this receipt.",
             timestamp: this.props.orderResult.timestamp,
         }
     }
@@ -225,7 +225,7 @@ class MessageLog extends PureComponent {
             const reason = refund.reason ? `: ${refund.reason}` : ""
             return {
                 title: "You got a Refund",
-                message: `${getRefundedItemAmount(refund)} items have been refunded${reason}`,
+                content: `${getRefundedItemAmount(refund)} items have been refunded${reason}`,
                 timestamp: refund.timestamp,
             }
         })
@@ -239,13 +239,13 @@ class MessageLog extends PureComponent {
         if (isRefundedCompletely(orderResult)) {
             return [{
                 title: "Order Refunded",
-                message: "Your order has been refunded.",
+                content: "Your order has been refunded.",
                 timestamp: orderResult.completedTimestamp,
             }]
         } else {
             return [{
                 title: "Order Completed",
-                message: orderResult.delivery === 'Table'
+                content: orderResult.delivery === 'Table'
                     ? `Your order will be delivered to your table shortly`
                     : `Your order is available for pickup (at ${orderResult.pickupLocation})`
                     ,
