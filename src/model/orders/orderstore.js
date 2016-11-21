@@ -15,7 +15,7 @@ import { loginStore } from '../loginstore.js'
 import { orderStatusStore } from './orderstatusstore'
 import * as _ from '/utils/curry.js'
 
-import type { BarID, MenuItemID, DateType, Time } from '../bar/Bar.js'
+import type { BarID, MenuItemID, DateType, Time, OrderItemID } from '../bar/Bar.js'
 import type { Int, String } from '../Types.js'
 
 const { log, assert } = _.utils('./model/orders/orderstore.js')
@@ -25,7 +25,7 @@ const { log, assert } = _.utils('./model/orders/orderstore.js')
 /*********************************************************************/
 
 export type OrderItem = {
-    id:                 ID,
+    id:                 OrderItemID,
     // barID:           BarID,
     menuItemID:         MenuItemID,
     selectedOptions:    Array<Array<String>>,
@@ -34,6 +34,17 @@ export type OrderItem = {
 
 export type OrderState = {
     orderList: Array<OrderItem>,
+}
+
+export type RefundOrderItem = {
+    id:     OrderItemID,
+    amount: Int,
+}
+
+export type Refund = {
+    timestamp:      Float,
+    refundedItems:  Array<RefundOrderItem>,
+    reason:         ?String,
 }
 
 export type OrderResult = {
@@ -56,6 +67,22 @@ export type OrderResult = {
     delivery:       String,
     tableNumber:    ?String,
     pickupLocation: ?String,
+
+    refunds:        Array<Refund>,
+    completed:      Bool,
+    completedTimestamp: ?Float,
+}
+
+export const getRefundedItemAmount = (refund : Refund) => {
+    return _.sum(refund.refundedItems.map(
+        refundedItem => refundedItem.amount
+    ))
+}
+
+export const isRefundedCompletely = (orderResult) => {
+    const totalOrderedAmount = _.sum(orderResult.orderList.map(orderItem => orderItem.amount))
+    const totalRefundedAmount = _.sum(orderResult.refunds.map(getRefundedItemAmount))
+    return totalOrderedAmount === totalRefundedAmount
 }
 
 /*********************************************************************/

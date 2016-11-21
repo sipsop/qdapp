@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
 export class MessageList extends SimpleListView {
     /* properties:
         getRows: () => Array<Message>
+        insideScrollView: Bool
     */
 
     @computed get descriptor() {
@@ -35,7 +36,10 @@ export class MessageList extends SimpleListView {
     render = () => {
         return (
             <View style={styles.view}>
-                <SimpleListView descriptor={this.descriptor} />
+                <SimpleListView
+                    descriptor={this.descriptor}
+                    insideScrollView={this.props.insideScrollView}
+                    />
             </View>
         )
     }

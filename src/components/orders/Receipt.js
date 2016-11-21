@@ -14,6 +14,7 @@ import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
+import { MessageList } from '/components/messages/MessageList'
 import { store, tabStore, loginStore, orderStatusStore, segment } from '/model/store.js'
 
 import { barStore, orderStore } from '/model/store.js'
@@ -22,6 +23,7 @@ import * as _ from '/utils/curry.js'
 
 import { SimpleOrderList } from './OrderList.js'
 import { paymentStore } from '/model/orders/paymentstore.js'
+import { getRefundedItemAmount, isRefundedCompletely } from '/model/orders/orderstore.js'
 
 import type { String, Int } from '../Types.js'
 
@@ -105,18 +107,12 @@ export class PlaceOrderDownloadView extends DownloadResultView {
     showLastErrorMessage = false
     errorMessage      = "There was an error processing your order"
 
-    getDownloadResult = () => {
-        return orderStore.getPlaceOrderDownload()
-    }
+    getDownloadResult = () => orderStore.getPlaceOrderDownload()
 
     refreshPage = () => {
         loginStore.login(() => {
             orderStore.placeActiveOrder()
         })
-    }
-
-    renderNotStarted = () => {
-        return <View />
     }
 
     renderFinished = (_) => {
@@ -185,7 +181,7 @@ export class Receipt extends PureComponent {
                 this.props.showEstimate &&
                     <TimeEstimate orderResult={orderResult}/>
             }
-            <Info orderResult={orderResult} />
+            <MessageLog orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
             <SimpleOrderList
                 /* menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)} */
@@ -228,22 +224,79 @@ class TimeEstimate extends PureComponent {
 }
 
 @observer
-class Info extends PureComponent {
+class MessageLog extends PureComponent {
     /* properties:
         orderResult: OrderResult
     */
+
+    @computed get orderPlacedMessage() {
+        return {
+            title: "Your order has been placed!",
+            message: "Claim your order with this receipt.",
+            timestamp: this.props.orderResult.timestamp,
+        }
+    }
+
+    @computed get refundMessages() {
+        return this.props.orderResult.refunds.map(refund => {
+            const reason = refund.reason ? `: ${refund.reason}` : ""
+            return {
+                title: "You got a Refund",
+                message: `${getRefundedItemAmount(refund)} items have been refunded${reason}`,
+                timestamp: refund.timestamp,
+            }
+        })
+    }
+
+    @computed get completedMessages() {
+        const orderResult = this.props.orderResult
+        if (!orderResult.completed)
+            return []
+
+        if (isRefundedCompletely(orderResult)) {
+            return [{
+                title: "Order Refunded",
+                message: "Your order has been refunded.",
+                timestamp: orderResult.completedTimestamp,
+            }]
+        } else {
+            return [{
+                title: "Order Completed",
+                message: orderResult.delivery === 'Table'
+                    ? `Your order will be delivered to your table shortly`
+                    : `Your order is available for pickup (at ${orderResult.pickupLocation})`
+                    ,
+                timestamp: orderResult.completedTimestamp,
+            }]
+        }
+    }
+
+    @computed get messages() {
+        return [
+            this.orderPlacedMessage,
+            ...this.refundMessages,
+            ...this.completedMessages,
+        ]
+    }
+
     render = () => {
-        return <T style={
-                    { fontSize: 18
-                    , color: '#000'
-                    , textAlign: 'center'
-                    , marginTop: 10
-                    , marginBottom: 5
-                    }
-                }>
-            Your order has been placed!{'\n'}
-            Claim your order with this receipt.
-        </T>
+        return (
+            <MessageList
+                insideScrollView={true}
+                getRows={() => this.messages}
+                />
+        )
+        // return <T style={
+        //             { fontSize: 18
+        //             , color: '#000'
+        //             , textAlign: 'center'
+        //             , marginTop: 10
+        //             , marginBottom: 5
+        //             }
+        //         }>
+        //     Your order has been placed!{'\n'}
+        //     Claim your order with this receipt.
+        // </T>
     }
 }
 

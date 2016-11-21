@@ -9,6 +9,17 @@ export const OrderItemQuery = {
     amount:             'Int',
 }
 
+export const RefundOrderItemQuery = {
+    id: 'String',
+    'amount': 'Int',
+}
+
+export const RefundQuery = {
+    timestamp: 'Float',
+    refundedItems: [RefundOrderItemQuery],
+    reason: 'String',
+}
+
 export const OrderResultQuery = {
     errorMessage: 'String',
     barID:        'String',
@@ -29,6 +40,10 @@ export const OrderResultQuery = {
     delivery:       'String',
     tableNumber:    'String',
     pickupLocation: 'String',
+
+    refunds:        [RefundQuery],
+    completed:      'Bool',
+    completedTimestamp: 'Float',
 }
 
 export class PlaceOrderDownload extends QueryMutation {

@@ -22,6 +22,10 @@ const visibleRowsIncrement = 5
 export class SimpleListView extends PureComponent {
     /* properties:
         descriptor: Descriptor
+        insideScrollView: Bool
+            whether to render the descriptor as a listview, or just as a
+            normal view. This can be set to true whenever there is already
+            a scrollview used at an outer level.
         getRef: (listview : Component) => void
             pass as <ListView ref={getRef} ... />
         other props: passed to ListView, e.g.
@@ -43,6 +47,10 @@ export class SimpleListView extends PureComponent {
         })
         this.contentHeight = 0
         this.verticalScrollPosition = 0
+    }
+
+    static defaultProps = {
+        insideScrollView: false,
     }
 
     get visibleRowsIncrement() {
@@ -127,6 +135,9 @@ export class SimpleListView extends PureComponent {
     }
 
     render = () => {
+        if (this.props.insideScrollView)
+            return this.renderInsideScrollView()
+
         return (
             <ListView
                 ref={this.saveRef}
@@ -146,6 +157,23 @@ export class SimpleListView extends PureComponent {
                 keyboardDismissMode='on-drag'
                 keyboardShouldPersistTaps={true}
                 />
+        )
+    }
+
+    renderInsideScrollView = () => {
+        const descriptor = this.props.descriptor
+        return (
+            <View>
+                {this.props.renderHeader && this.props.renderHeader()}
+                {
+                    descriptor.rows.map((row, i) =>
+                        <View key={i}>
+                            {descriptor.renderRow(row, i)}
+                        </View>
+                    )
+                }
+                {this.props.renderFooter && this.props.renderFooter()}
+            </View>
         )
     }
 }
