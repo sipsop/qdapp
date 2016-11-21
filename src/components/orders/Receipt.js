@@ -199,6 +199,7 @@ class TimeEstimate extends PureComponent {
 const styles = StyleSheet.create({
     icons: {
         marginTop: 15,
+        marginBottom: 5,
         flexDirection: 'row',
         justifyContent: 'space-around',
         height: 70,
@@ -208,6 +209,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         color: '#000',
+    },
+    iconSubText: {
+        flex: 1,
+        textAlign: 'center',
     },
 })
 
@@ -219,6 +224,10 @@ class ReceiptOptions extends PureComponent {
 
     @observable messagesVisible = true
 
+    @action setMessagesVisible = (visible : Bool) => {
+        this.messagesVisible = visible
+    }
+
     render = () => {
         const orderResult = this.props.orderResult
         const activeIconStyle = {
@@ -228,19 +237,25 @@ class ReceiptOptions extends PureComponent {
         return (
             <View>
                 <View style={styles.icons}>
-                    <TouchableOpacity onPress={() => this.messagesVisible = true}>
-                        <MaterialIcon
-                            name="message"
-                            size={60}
-                            style={[styles.optionIcon, this.messagesVisible && activeIconStyle]}
-                            />
+                    <TouchableOpacity onPress={() => this.setMessagesVisible(true)}>
+                        <View>
+                            <MaterialIcon
+                                name="message"
+                                size={60}
+                                style={[styles.optionIcon, this.messagesVisible && activeIconStyle]}
+                                />
+                            <T style={styles.iconSubText}>Messages</T>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.messagesVisible = false}>
-                        <MaterialIcon
-                            name="receipt"
-                            size={60}
-                            style={[styles.optionIcon, !this.messagesVisible && activeIconStyle]}
-                            />
+                    <TouchableOpacity onPress={() => this.setMessagesVisible(false)}>
+                        <View>
+                            <MaterialIcon
+                                name="receipt"
+                                size={60}
+                                style={[styles.optionIcon, !this.messagesVisible && activeIconStyle]}
+                                />
+                            <T style={styles.iconSubText}>Receipt</T>
+                        </View>
                     </TouchableOpacity>
                 </View>
                 {this.messagesVisible &&
