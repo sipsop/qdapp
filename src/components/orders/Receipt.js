@@ -1,6 +1,6 @@
 import {
     React, Component, Platform, View, TouchableOpacity, ScrollView, ListView,
-    T, Mono, PureComponent
+    T, Mono, PureComponent, MaterialIcon, StyleSheet,
 } from '/components/Component.js'
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -165,17 +165,7 @@ export class Receipt extends PureComponent {
                 this.props.showEstimate &&
                     <TimeEstimate orderResult={orderResult}/>
             }
-            <MessageLog orderResult={orderResult} />
-            <View style={{height: 15, backgroundColor: '#fff'}} />
-            <SimpleOrderList
-                menuItems={orderResult.menuItems}
-                orderList={orderResult.orderList}
-                />
-            <OrderTotal
-                total={orderResult.totalPrice}
-                tip={orderResult.tip}
-                showTipOnly={this.props.showEstimate && orderStore.getAmount(orderResult.orderList) === 1}
-                />
+            <ReceiptOptions orderResult={orderResult} />
         </ScrollView>
     }
 }
@@ -203,6 +193,75 @@ class TimeEstimate extends PureComponent {
                 {headerText(timeEstimate, 25)}
             </View>
         </Header>
+    }
+}
+
+const styles = StyleSheet.create({
+    icons: {
+        marginTop: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        height: 70,
+    },
+    optionIcon: {
+        // flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#000',
+    },
+})
+
+@observer
+class ReceiptOptions extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
+
+    @observable messagesVisible = true
+
+    render = () => {
+        const orderResult = this.props.orderResult
+        const activeIconStyle = {
+            borderBottomWidth: 2,
+            borderColor: config.theme.primary.medium,
+        }
+        return (
+            <View>
+                <View style={styles.icons}>
+                    <TouchableOpacity onPress={() => this.messagesVisible = true}>
+                        <MaterialIcon
+                            name="message"
+                            size={60}
+                            style={[styles.optionIcon, this.messagesVisible && activeIconStyle]}
+                            />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.messagesVisible = false}>
+                        <MaterialIcon
+                            name="receipt"
+                            size={60}
+                            style={[styles.optionIcon, !this.messagesVisible && activeIconStyle]}
+                            />
+                    </TouchableOpacity>
+                </View>
+                {this.messagesVisible &&
+                    <MessageLog orderResult={orderResult} />
+                }
+                {!this.messagesVisible &&
+                    <View>
+                        <View style={{height: 15, backgroundColor: '#fff'}} />
+                        <SimpleOrderList
+                            menuItems={orderResult.menuItems}
+                            orderList={orderResult.orderList}
+                            />
+                        <OrderTotal
+                            total={orderResult.totalPrice}
+                            tip={orderResult.tip}
+                            showTipOnly={this.props.showEstimate && orderStore.getAmount(orderResult.orderList) === 1}
+                            />
+                    </View>
+                }
+            </View>
+        )
     }
 }
 
