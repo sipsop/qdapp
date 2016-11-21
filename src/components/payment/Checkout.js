@@ -16,6 +16,8 @@ import { Header, HeaderText, TextHeader } from '../Header'
 import { barStore, orderStore, loginStore } from '/model/store'
 import { DownloadResultView } from '../download/DownloadResultView'
 import { CreditCard } from './CreditCard'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
+import { downloadManager } from '/network/http'
 import { analytics } from '/model/analytics'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -73,7 +75,7 @@ export class Checkout extends DownloadResultView {
     }
 
     @computed get disableBuyButton() {
-        return !barStore.getBar()
+        return !barStore.getBar() || !downloadManager.connected
     }
 
     render = () => {
@@ -82,7 +84,7 @@ export class Checkout extends DownloadResultView {
         return <OkCancelModal
                     visible={orderStore.checkoutVisible}
                     showOkButton={this.haveCardNumber}
-                    showCancelButton={this.disableBuyButton}
+                    showCancelButton={false}
                     cancelModal={this.close}
                     okModal={this.payNow}
                     okLabel={`Buy Now`}
@@ -121,6 +123,7 @@ class CheckoutView extends PureComponent {
 
     render = () => {
         return <ScrollView refreshControl={this.getRefreshControl()}>
+            <ConnectionBar />
             <CurrentBarPhoto
                 onBack={this.props.onBack}
                 />

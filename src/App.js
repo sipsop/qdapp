@@ -31,11 +31,6 @@ export class App extends PureComponent {
 
 @observer
 class MainApp extends PureComponent {
-
-    closeOpeningTimesModal = () => {
-        modalStore.closeModal()
-    }
-
     render = () => {
         if (Platform.OS === 'android') {
             return (

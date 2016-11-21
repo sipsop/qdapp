@@ -9,3 +9,8 @@ export const buildURL = (baseURL, obj) => {
     const params = str.join("&")
     return `${baseURL}?${params}`
 }
+
+export const parseJSON = (text) => {
+    // Avoid JSON.parse() bug, see https://github.com/facebook/react-native/issues/4961
+    return JSON.parse(text.replace( /\\u2028|\\u2029/g, ''))
+}

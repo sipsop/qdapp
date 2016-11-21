@@ -1,5 +1,8 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { BarQueryDownload } from './barquery.js'
+import { BarQueryDownload } from './barquery'
+import * as _ from '/utils/curry'
+
+const { log, assert } = _.utils('/network/api/bar/menu')
 
 export const PriceQuery = {
     currency:   'String',
@@ -56,4 +59,9 @@ export class MenuDownload extends BarQueryDownload {
             }
         }
     }
+
+    // finish() {
+    //     super.finish()
+    //     log("FINISHED MENU DOWNLOAD with VALUE", this.value)
+    // }
 }

@@ -434,7 +434,7 @@ const timeoutError = (timeout) => {
 }
 
 /* Set a timeout for an asynchronous callback */
-export const timeout = async (timeout, promise) => {
+export const timeout = async (timeout, promise) : Promise<T> => {
     const tPromise = timeoutError(timeout)
     const result = await Promise.race([tPromise, promise])
     if (result == timedout) {
@@ -442,6 +442,23 @@ export const timeout = async (timeout, promise) => {
         throw new TimeoutError()
     }
     return result
+}
+
+/* Set a timeout for an async callback.
+If the timeout expires before resolve() is called, call reject().
+
+Returns a wrapped version of 'resolve'.
+*/
+export const timeoutCallback = (timeout, resolve, reject) => {
+    const obj = { called: false }
+    setTimeout(() => {
+        if (!obj.called)
+            reject(new TimeoutError())
+    }, timeout)
+    return (...args) => {
+        obj.called = true
+        resolve(...args)
+    }
 }
 
 class Throttler {

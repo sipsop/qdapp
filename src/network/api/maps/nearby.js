@@ -1,8 +1,8 @@
 // @flow
 
+import { buildURL } from '/utils/utils.js'
 import { computed, action } from 'mobx'
 import { JSONDownload } from '/network/http.js'
-import { buildURL } from '/utils/urls.js'
 import { config } from '/utils/config.js'
 import * as _ from '/utils/curry.js'
 import { parseBar } from './place-info.js'

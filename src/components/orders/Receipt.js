@@ -15,6 +15,7 @@ import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
 import { MessageList } from '/components/messages/MessageList'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 import { store, tabStore, loginStore, orderStatusStore, segment } from '/model/store.js'
 
 import { barStore, orderStore } from '/model/store.js'
@@ -31,8 +32,6 @@ const { log, assert } = _.utils('Orders/Receipt.js')
 
 @observer
 export class ReceiptModal extends PureComponent {
-    @observable showConfirmText = false
-
     confirmCloseModal = null
 
     @computed get visible() {
@@ -65,7 +64,7 @@ export class ReceiptModal extends PureComponent {
 
     render = () => {
         if (!this.visible)
-            return <View />
+            return null
         return <OkCancelModal
                     visible={this.visible}
                     showCancelButton={false}
@@ -74,28 +73,7 @@ export class ReceiptModal extends PureComponent {
                     okModal={this.handleClose}
                     cancelModal={this.handleClose}
                     >
-            <SmallOkCancelModal
-                ref={ref => this.confirmCloseModal = ref}
-                message="Did receive your order?"
-                onConfirm={this.close}
-                okLabel="Yes I Did"
-                cancelLabel="Nope  "
-                />
             <PlaceOrderDownloadView />
-            {
-                this.showConfirmText
-                    ?    <T style={
-                                    { fontSize: 18
-                                    , color: '#000'
-                                    , textAlign: 'center'
-                                    , marginTop: 10
-                                    , marginBottom: 10
-                                    }
-                                }>
-                            Close this window?
-                        </T>
-                    :   undefined
-            }
         </OkCancelModal>
     }
 }
@@ -117,10 +95,14 @@ export class PlaceOrderDownloadView extends DownloadResultView {
 
     renderFinished = (_) => {
         const orderResult = this.getDownloadResult().orderResult
-        return <Receipt
-                    bar={barStore.getBar()}
-                    orderResult={orderResult}
-                    showEstimate={true} />
+        log("RENDERING RECEIPT...", orderResult)
+        return (
+            <Receipt
+                bar={barStore.getBar()}
+                orderResult={orderResult}
+                showEstimate={true}
+                />
+        )
     }
 }
 
@@ -156,6 +138,7 @@ export class Receipt extends PureComponent {
 
         assert(orderResult.receipt != null)
         assert(orderResult.userName != null)
+        // assert(orderResult.menuItems != null)
         assert(orderResult.orderList != null)
 
         const deliveryInfo =
@@ -166,6 +149,7 @@ export class Receipt extends PureComponent {
         // this.updateEstimate()
 
         return <ScrollView>
+            <ConnectionBar />
             <CurrentBarPhoto
                 onBack={this.props.onClose}
                 />
@@ -184,7 +168,6 @@ export class Receipt extends PureComponent {
             <MessageLog orderResult={orderResult} />
             <View style={{height: 15, backgroundColor: '#fff'}} />
             <SimpleOrderList
-                /* menuItems={orderStore.getMenuItemsOnOrder(orderResult.orderList)} */
                 menuItems={orderResult.menuItems}
                 orderList={orderResult.orderList}
                 />

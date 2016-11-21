@@ -28,6 +28,7 @@ import { TextSelectorRow } from '/components/Selector'
 import { SimpleModal } from '/components/Modals'
 import { LazyComponent } from '/components/LazyComponent'
 import { PhotoImage } from '/components/PhotoImage'
+import { ConnectionBar, getConnectionBarHeight } from '/components/notification/ConnectionBar'
 import { Page } from '/components/Page'
 import { ImageSwiper } from '/components/ImageSwiper'
 import { LargeButton } from '/components/Button'
@@ -50,6 +51,9 @@ export class BarInfoFetcher extends DownloadResultView {
 const headerHeight = 250
 const stickyHeaderHeight = 55
 
+const getHeaderHeight = () => headerHeight + getConnectionBarHeight()
+const getStickyHeaderHeight = () => stickyHeaderHeight + getConnectionBarHeight()
+
 @observer
 export class BarPage extends Page {
     /* properties:
@@ -66,11 +70,21 @@ export class BarPage extends Page {
     })
 
     renderBarHeader = (height : Int) => {
-        return <BarHeader imageHeight={height} />
+        return (
+            <View>
+                <ConnectionBar />
+                <BarHeader imageHeight={height} />
+            </View>
+        )
     }
 
     renderStickyHeader = () => {
-        return <BarStickyHeader />
+        return (
+            <View>
+                <ConnectionBar />
+                <BarStickyHeader />
+            </View>
+        )
     }
 
     renderView = () => {
@@ -78,10 +92,10 @@ export class BarPage extends Page {
                     ref={ref => barStore.barScrollView = ref}
                     backgroundSpeed={60}
                     contentBackgroundColor='#fff'
-                    parallaxHeaderHeight={headerHeight}
+                    parallaxHeaderHeight={getHeaderHeight()}
                     renderForeground={() => this.renderBarHeader(headerHeight)}
                     renderStickyHeader={this.renderStickyHeader}
-                    stickyHeaderHeight={stickyHeaderHeight}
+                    stickyHeaderHeight={getStickyHeaderHeight()}
                     /* refreshControl={this.getRefreshControl()} */
                     >
             <BarIcons />
