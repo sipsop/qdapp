@@ -26,8 +26,8 @@ export const OrderResultQuery = {
     timestamp:    'Float',
     userName:     'String',
 
-    queueSize:     'Int',
-    estimatedTime: 'Int',
+    // queueSize:     'Int',
+    // estimatedTime: 'Int',
     receipt:       'String',
 
     menuItems:      [MenuItemQuery],

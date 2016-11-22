@@ -95,7 +95,6 @@ export class PlaceOrderDownloadView extends DownloadResultView {
 
     renderFinished = (_) => {
         const orderResult = this.getDownloadResult().orderResult
-        log("RENDERING RECEIPT...", orderResult)
         return (
             <Receipt
                 bar={barStore.getBar()}
@@ -155,16 +154,18 @@ export class Receipt extends PureComponent {
                 />
             {/*<TextHeader label={'#' + orderResult.receipt} />*/}
             <ReceiptHeader orderResult={orderResult} />
+            {/*
             <Header primary={false} rowHeight={40}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                     {headerText(orderResult.delivery + ':', 20)}
                     {headerText(deliveryInfo, 20)}
                 </View>
             </Header>
-            {
+            */}
+            {/*
                 this.props.showEstimate &&
                     <TimeEstimate orderResult={orderResult}/>
-            }
+            */}
             <ReceiptOptions orderResult={orderResult} />
         </ScrollView>
     }
