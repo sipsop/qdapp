@@ -56,6 +56,10 @@ export class ReceiptDownload extends DownloadComponent {
         return this.getDownloadResult().orderResult
     }
 
+    render() {
+        super.render()
+    }
+
     renderFinished = (_) => {
         if (!this.orderResult) {
             /* TODO: Whis is orderResult null sometimes? */

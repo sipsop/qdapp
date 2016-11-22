@@ -2,6 +2,16 @@ import { computed, transaction, action, autorun } from 'mobx'
 import { QueryDownload } from '/network/http.js'
 import { OrderResultQuery } from './order.js'
 
+export type HistoryItem = {
+    barID: String,
+    orderID: String,
+}
+
+export const HistoryItemQuery = {
+    barID: 'String',
+    orderID: 'String',
+}
+
 export class HistoryQueryDownload extends QueryDownload {
     /* properties:
         isLoggedIn: Bool
@@ -26,13 +36,13 @@ export class HistoryQueryDownload extends QueryDownload {
                     n: 100,
                 },
                 result: {
-                    orderHistory: [OrderResultQuery],
+                    orderHistory: [HistoryItemQuery],
                 }
             }
         }
     }
 
-    @computed get orderHistory() : Array<OrderResult> {
+    @computed get orderHistory() : Array<HistoryItem> {
         return this.lastValue
             ? this.lastValue.orderHistory
             : []

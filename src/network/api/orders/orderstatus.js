@@ -16,6 +16,7 @@ export class OrderStatusDownload extends FeedDownload {
     // periodicRefresh = 15
 
     @computed get active() {
+        console.log("ORDER STATUS DOWNLOAD ACTIVE?", this.props.orderID, this.props.authToken)
         return this.props.orderID != null && this.props.authToken
     }
 

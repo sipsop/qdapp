@@ -9,7 +9,7 @@ import { SimpleListView, Descriptor } from '../SimpleListView.js'
 import { SmallOkCancelModal, SimpleModal } from '../Modals.js'
 import { barStore, loginStore, orderStore } from '/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
-import { Receipt } from './Receipt.js'
+import { ReceiptDownload } from './Receipt.js'
 import { DownloadComponent } from '../download/DownloadComponent'
 
 import { HistoryQueryDownload } from '/network/api/orders/history'
@@ -22,11 +22,6 @@ import * as _ from '/utils/curry.js'
 /***************************************************************************/
 
 import type { CacheInfo } from '/network/cache.js'
-
-export type HistoryItem = {
-    barID: String,
-    orderID: String,
-}
 
 /***************************************************************************/
 
@@ -84,6 +79,8 @@ class OrderHistoryDescriptor extends Descriptor {
     }
 
     renderRow = ({orderID, barID}, i) => {
+        assert(barID != null, "barID is null...")
+        assert(orderID != null, "orderID is null...")
         return (
             <HistoryBarCard
                 rowNumber={i}
@@ -152,11 +149,11 @@ class HistoryBarCard extends DownloadComponent {
     }
 
     renderFinished = (bar) => {
-        log("rendering bar card number", this.props.rowNumber)
         return this.renderBarCard(bar)
     }
 
     renderBarCard = (bar) => {
+        assert(this.props.orderID != null, "orderID is null...")
         return <View style={cardStyle}>
             <SimpleReceiptModal
                 ref={ref => this.receiptModal = ref}
@@ -194,6 +191,7 @@ class SimpleReceiptModal extends PureComponent {
     close = () => this.modal.close()
 
     render = () => {
+        assert(this.props.orderID != null, "orderID is null...")
         return <SimpleModal
                     ref={ref => this.modal = ref}
                     onClose={this.props.onClose}
