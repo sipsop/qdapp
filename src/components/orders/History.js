@@ -11,6 +11,7 @@ import { barStore, loginStore, orderStore } from '/model/store.js'
 import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { ReceiptDownload } from './Receipt.js'
 import { DownloadComponent } from '../download/DownloadComponent'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { HistoryQueryDownload } from '/network/api/orders/history'
 import { BarInfoDownload } from '/network/api/maps/place-info.js'
@@ -91,7 +92,8 @@ class OrderHistoryDescriptor extends Descriptor {
     }
 
     renderHeader = () => {
-        return <View style={{flex: 0, height: 55, marginBottom: cardMargin}}>
+        return <View style={{flex: 0, marginBottom: cardMargin}}>
+            <ConnectionBar />
             <TextHeader
                 label="Order History"
                 rowHeight={55}
@@ -196,6 +198,7 @@ class SimpleReceiptModal extends PureComponent {
                     ref={ref => this.modal = ref}
                     onClose={this.props.onClose}
                     >
+            <ConnectionBar />
             <ReceiptDownload
                 bar={this.props.bar}
                 orderID={this.props.orderID}

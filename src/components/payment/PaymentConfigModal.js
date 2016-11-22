@@ -6,6 +6,7 @@ import { TextHeader } from '../Header'
 import { SimpleModal } from '../Modals'
 import { LazyComponent } from '../LazyComponent'
 import { CreditCardList } from './CreditCardList'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 @observer
 export class PaymentConfigModal extends PureComponent {
@@ -22,6 +23,7 @@ export class PaymentConfigModal extends PureComponent {
                     onClose={this.props.onClose}
                     >
                 <ScrollView>
+                    <ConnectionBar />
                     <TextHeader
                         label="Payment Details"
                         rowHeight={55}

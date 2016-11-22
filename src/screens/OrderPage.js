@@ -23,7 +23,6 @@ import { Checkout, SelectedCardInfo } from '/components/payment/Checkout'
 import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
-import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
 import { analytics } from '/model/analytics'
@@ -103,7 +102,6 @@ export class OrderPage extends DownloadResultView {
             renderHeader: () => {
                 return (
                     <View>
-                        <ConnectionBar />
                         <DeliveryMethod
                             style={this.styles.deliveryMethod}
                             primary={true}

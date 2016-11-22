@@ -20,7 +20,6 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons'
 
 import { downloadManager } from '/network/http'
 import { DownloadResultView } from '/components/download/DownloadResultView'
-import { ConnectionBar } from '/components/notification/ConnectionBar'
 import { OrderList } from '/components/orders/OrderList'
 import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
@@ -114,7 +113,6 @@ class MenuList extends PureComponent {
                     renderHeader={() => {
                         return (
                             <View>
-                                <ConnectionBar style={{marginBottom: 5}} />
                                 <TagView onTagChange={this.handleTagChange} />
                                 <SearchBar
                                     placeholder='Search...'

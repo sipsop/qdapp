@@ -28,7 +28,6 @@ import { TextSelectorRow } from '/components/Selector'
 import { SimpleModal } from '/components/Modals'
 import { LazyComponent } from '/components/LazyComponent'
 import { PhotoImage } from '/components/PhotoImage'
-import { ConnectionBar, getConnectionBarHeight } from '/components/notification/ConnectionBar'
 import { Page } from '/components/Page'
 import { ImageSwiper } from '/components/ImageSwiper'
 import { LargeButton } from '/components/Button'
@@ -51,8 +50,8 @@ export class BarInfoFetcher extends DownloadResultView {
 const headerHeight = 250
 const stickyHeaderHeight = 55
 
-const getHeaderHeight = () => headerHeight + getConnectionBarHeight()
-const getStickyHeaderHeight = () => stickyHeaderHeight + getConnectionBarHeight()
+const getHeaderHeight = () => headerHeight // + getConnectionBarHeight()
+const getStickyHeaderHeight = () => stickyHeaderHeight // + getConnectionBarHeight()
 
 @observer
 export class BarPage extends Page {
@@ -72,19 +71,13 @@ export class BarPage extends Page {
     renderBarHeader = (height : Int) => {
         return (
             <View>
-                <ConnectionBar />
                 <BarHeader imageHeight={height} />
             </View>
         )
     }
 
     renderStickyHeader = () => {
-        return (
-            <View>
-                <ConnectionBar />
-                <BarStickyHeader />
-            </View>
-        )
+        return <BarStickyHeader />
     }
 
     renderView = () => {

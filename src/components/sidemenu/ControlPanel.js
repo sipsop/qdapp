@@ -13,6 +13,7 @@ import { LazyComponent } from '../LazyComponent.js'
 import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
+import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { downloadManager } from '/network/http.js'
 import { DownloadResultView } from '../download/DownloadResultView'
@@ -138,6 +139,7 @@ class Settings extends PureComponent {
                     ref={ref => this.settingsModal = ref}
                     onClose={drawerStore.enable}
                     >
+                <ConnectionBar />
                 <MarkdownModal
                     ref={ref => this.termsAndConditionsModal = ref}
                     header="Terms and Conditions"

@@ -62,6 +62,7 @@ export class PlaceOrderModal extends PureComponent {
                     okModal={this.handleClose}
                     cancelModal={this.handleClose}
                     >
+            <ConnectionBar />    
             <PlaceOrderDownloadView />
         </OkCancelModal>
     }

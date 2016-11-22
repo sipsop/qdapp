@@ -16,7 +16,6 @@ import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
 import { MessageList } from '/components/messages/MessageList'
-import { ConnectionBar } from '/components/notification/ConnectionBar'
 import { OrderStatusDownload } from '/network/api/orders/orderstatus'
 import { store, tabStore, loginStore, segment } from '/model/store.js'
 
@@ -94,7 +93,6 @@ export class Receipt extends PureComponent {
 
         return (
             <ScrollView>
-                <ConnectionBar />
                 <LazyBarPhoto
                     bar={bar}
                     photo={bar.photos[0]}
