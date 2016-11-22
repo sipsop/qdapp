@@ -187,7 +187,7 @@ class TimeEstimate extends PureComponent {
 
     render = () => {
         const timeEstimate = formatDuration(this.orderResult.estimatedTime)
-        return <Header rowHeight={55}>
+        return <Header rowHeight={55} primary={false}>
             <View style={{flexDirection: 'row'}}>
                 {headerText('Estimated Time:', 20)}
                 {headerText(timeEstimate, 25)}
@@ -287,9 +287,16 @@ class MessageLog extends PureComponent {
     */
 
     @computed get orderPlacedMessage() {
+        var content
+        const orderResult = this.props.orderResult
+        if (orderResult.delivery === 'Table') {
+            content = `Your order will be delivered to table ${orderResult.tableNumber}.`
+        } else {
+            content = `You can pick it up later at ${orderResult.pickupLocation}.`
+        }
         return {
             title: "Your order has been placed!",
-            content: "Claim your order with this receipt.",
+            content: content,
             timestamp: this.props.orderResult.timestamp,
         }
     }
