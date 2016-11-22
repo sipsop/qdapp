@@ -23,7 +23,6 @@ import { Checkout, SelectedCardInfo } from '/components/payment/Checkout'
 import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
-import { ReceiptModal } from '/components/orders/Receipt'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
@@ -122,11 +121,6 @@ export class OrderPage extends DownloadResultView {
             onRefresh:      this.handleRefresh,
         })
         return <View style={{flex: 1}}>
-            {/* modals */}
-            {/*
-            <Checkout key={'checkout' + orderStore.getActiveOrderToken()} />
-            <ReceiptModal key={'receiptModal' + orderStore.getActiveOrderToken()} />
-            */}
             {/* Order stuff */}
             <SimpleListView descriptor={descriptor} />
             <OrderButton onPress={this.handleOrderPress} />

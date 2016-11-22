@@ -1,27 +1,26 @@
 import { computed } from 'mobx'
-import { QueryDownload } from '/network/http'
+import { FeedDownload } from '/network/http'
 import { OrderResultQuery } from './order'
 import { config } from '/utils/config'
 
-export class OrderStatusDownload extends QueryDownload {
+export class OrderStatusDownload extends FeedDownload {
     /* properties:
         authToken:      String
         userID:         String
         orderID:        String
-        orderCompleted: String
     */
     name = 'order status'
 
     /* Refresh every 10s */
-    cacheInfo = config.defaultRefreshCacheInfo
-    periodicRefresh = 15
-
-    @computed get cacheKey() {
-        return `qd:orderstatus:userID=${this.props.userID}`
-    }
+    // cacheInfo = config.defaultRefreshCacheInfo
+    // periodicRefresh = 15
 
     @computed get active() {
-        return this.props.orderID != null && !this.props.orderCompleted && this.props.authToken
+        return this.props.orderID != null && this.props.authToken
+    }
+
+    @computed get cacheKey() {
+        return `qd:orderstatus:userID=${this.props.userID}:orderID=${this.props.orderID}`
     }
 
     @computed get query() {
@@ -33,7 +32,7 @@ export class OrderStatusDownload extends QueryDownload {
                 },
                 result: {
                     orderResult: OrderResultQuery,
-                }
+                },
             }
         }
     }

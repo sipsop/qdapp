@@ -15,7 +15,6 @@ import { tagStore } from './tagstore'
 import { mapStore } from './mapstore'
 import { orderStore } from './orders/orderstore'
 import { paymentStore } from './orders/paymentstore'
-import { orderStatusStore } from './orders/orderstatusstore'
 import { historyStore } from './historystore'
 import { timeStore } from './timestore'
 import { drawerStore } from './drawerstore'
@@ -72,7 +71,6 @@ export class Store {
             mapStore.initialize(),
             orderStore.initialize(),
             paymentStore.initialize(),
-            orderStatusStore.initialize(),
             historyStore.initialize(),
             timeStore.initialize(),
             segment.initialize(),
@@ -90,7 +88,6 @@ export class Store {
             mapStore.initialized(),
             segment.initialized(),
             downloadManager.initialized(),
-            orderStatusStore.initialized(),
             loginStore.initialized(),
         ])
 
@@ -124,8 +121,6 @@ export class Store {
             loginStore.setState(state.loginState)
         if (state.orderState)
             orderStore.setState(state.orderState)
-        if (state.orderStatusState)
-            orderStatusStore.setState(state.orderStatusState)
         if (state.mapState)
             mapStore.setState(state.mapState)
         if (state.tagState)
@@ -144,7 +139,6 @@ export class Store {
             tabState:               tabStore.getState(),
             loginState:             loginStore.getState(),
             orderState:             orderStore.getState(),
-            orderStatusState:       orderStatusStore.getState(),
             mapState:               mapStore.getState(),
             tagState:               tagStore.getState(),
             segment:                segment.getState(),
@@ -161,7 +155,6 @@ export class Store {
             barStatusState:         barStatusStore.emptyState(),
             tabState:               tabStore.emptyState(),
             orderState:             orderStore.emptyState(),
-            orderStatusState:       orderStatusStore.emptyState(),
             mapState:               mapStore.emptyState(),
             tagState:               tagStore.emptyState(),
             segment:                segment.emptyState(),
@@ -204,7 +197,6 @@ export {
     mapStore,
     orderStore,
     paymentStore,
-    orderStatusStore,
     historyStore,
     timeStore,
     segment,

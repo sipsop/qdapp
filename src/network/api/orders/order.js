@@ -103,7 +103,8 @@ export class PlaceOrderDownload extends QueryMutation {
                     pickupLocation: pickupLocation,
                 },
                 result: {
-                    orderResult: OrderResultQuery,
+                    // orderResult: OrderResultQuery,
+                    orderID: 'String',
                 }
             }
         }
@@ -111,5 +112,9 @@ export class PlaceOrderDownload extends QueryMutation {
 
     @computed get orderResult() {
         return this.value && this.value.orderResult
+    }
+
+    @computed get orderID() {
+        return this.value && this.value.orderID
     }
 }

@@ -43,4 +43,6 @@ export class DownloadComponent extends DownloadResultView {
     getDownload = () => {
         throw Error("getDownload() not implemented")
     }
+
+    downloadHasStarted = () => this.downloadName != null
 }

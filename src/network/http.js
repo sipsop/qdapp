@@ -358,12 +358,7 @@ export class Download {
                          and the downloaded value may indicate an error that
                          could result in downloadError() being called instead.
                 */
-                // this.downloadFinished(downloadResult.value)
-                this.reset('Finished')
-                this.value = downloadResult.value
-                this.finish()
-                if (this.value != null)
-                    this.lastValue = this.value
+                this._finishDownload(downloadResult.value)
             } else if (downloadResult.state === 'Error') {
                 this.downloadError(downloadResult.message)
             } else {
@@ -386,11 +381,7 @@ export class Download {
     finish() {
         /*
         Update the download state here for any finished download
-
-            Must use non-lambda functions, otherwise overriding and super()
-            do not work. Broken stupid shit.
         */
-        this.onFinish()
     }
 
     /* These methods can be overridden by passing 'attrib' to the constructor of
@@ -439,6 +430,16 @@ export class Download {
         this.value = value
         this.lastValue = value
         return this
+    }
+
+    /* Finish download, calling 'finish()' and 'onFinish()' */
+    @action _finishDownload = (value : T) => {
+        this.reset('Finished')
+        this.value = value
+        this.finish()
+        this.onFinish()
+        if (this.value != null)
+            this.lastValue = this.value
     }
 
     @computed get state() {
@@ -637,8 +638,7 @@ export class FeedDownload extends QueryDownload {
 
     @action onReceive = (value) => {
         log(`Feed ${this.name} got an update.`)
-        this.downloadFinished(value)
-        this.finish()
+        this._finishDownload(value)
     }
 
     @action onError = (message) => {

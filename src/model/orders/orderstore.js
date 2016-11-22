@@ -5,6 +5,7 @@ import shortid from 'shortid'
 
 import { StripeTokenDownload } from '/network/api/orders/payment'
 import { PlaceOrderDownload } from '/network/api/orders/order'
+import { OrderStatusDownload } from '/network/api/orders/orderstatus'
 import { downloadManager } from '/network/http'
 
 /* TODO: Imports */
@@ -12,7 +13,6 @@ import { addToSelection } from './orderSelection.js'
 import { barStore } from '../barstore.js'
 import { paymentStore } from './paymentstore.js'
 import { loginStore } from '../loginstore.js'
-import { orderStatusStore } from './orderstatusstore'
 import * as _ from '/utils/curry.js'
 
 import type { BarID, MenuItemID, DateType, Time, OrderItemID } from '../bar/Bar.js'
@@ -101,6 +101,7 @@ class OrderStore {
 
     @observable checkoutVisible = false
     @observable activeOrderID : ?ID = null
+    @observable orderID = null
 
     /* Checkout ID which is fresh for every checkout that is entered.
        The user may try checking out several times with a single shopping cart
@@ -129,16 +130,18 @@ class OrderStore {
             },
             cartID:                 this.cartID,
             checkoutID:             this.checkoutID,
+            orderID:                this.orderID,
         }
     }
 
     emptyState = () => {
         return {
-            orderList: [],
+            orderList:  [],
             orderToken: null,
-            delivery: null,
-            cartID: _.uuid(),
+            delivery:   null,
+            cartID:     _.uuid(),
             checkoutID: null,
+            orderID:    null,
         }
     }
 
@@ -156,6 +159,50 @@ class OrderStore {
             this.tableNumber = orderState.delivery.tableNumber
             this.pickupLocation = orderState.delivery.pickupLocation
         }
+        this.orderID = orderState.orderID
+    }
+
+    /*********************************************************************/
+    /* Downloads                                                         */
+    /*********************************************************************/
+
+    initialize = () => {
+        downloadManager.declareDownload(new StripeTokenDownload(() => {
+            return {
+                selectedCard:        paymentStore.getSelectedCard(),
+            }
+        }))
+        downloadManager.declareDownload(new PlaceOrderDownload(
+            () => {
+                return {
+                    barID:               barStore.barID,
+                    stripeToken:         this.stripeToken,
+                    authToken:           loginStore.getAuthToken(),
+                    userName:            loginStore.userName,
+                    price:               this.total,
+                    tipAmount:           this.tipAmount,
+                    currency:            this.currency,
+                    orderList:           this.orderList,
+                    delivery:            this.delivery,
+                    tableNumber:         this.tableNumber,
+                    pickupLocation:      this.pickupLocation,
+                }
+            },
+            {
+                onFinish: () => {
+                    const download = this.getPlaceOrderDownload()
+                    this.setOrderID(download.orderID)
+                },
+            }
+        ))
+    }
+
+    getPaymentTokenDownload = () => downloadManager.getDownload('stripe')
+    getPlaceOrderDownload   = () => downloadManager.getDownload('placeOrder')
+    getOrderStatusDownload  = () => downloadManager.getDownload('order status')
+
+    @action setOrderID = (orderID) => {
+        this.orderID = orderID
     }
 
     /*********************************************************************/
@@ -320,40 +367,10 @@ class OrderStore {
     /* Order Placement                                                   */
     /*********************************************************************/
 
-    initialize = () => {
-        downloadManager.declareDownload(new StripeTokenDownload(() => {
-            return {
-                selectedCard:        paymentStore.getSelectedCard(),
-            }
-        }))
-        downloadManager.declareDownload(new PlaceOrderDownload(() => {
-            return {
-                orderID:             this.getActiveOrderToken(),
-                barID:               barStore.barID,
-                stripeToken:         this.stripeToken,
-                authToken:           loginStore.getAuthToken(),
-                userName:            loginStore.userName,
-                price:               this.total,
-                tipAmount:           this.tipAmount,
-                currency:            this.currency,
-                orderList:           this.orderList,
-                delivery:            this.delivery,
-                tableNumber:         this.tableNumber,
-                pickupLocation:      this.pickupLocation,
-            }
-        }))
-    }
-
-    getPaymentTokenDownload = () => downloadManager.getDownload('stripe')
-    getPlaceOrderDownload = () => downloadManager.getDownload('placeOrder')
     getActiveOrderToken = () => this.activeOrderID
 
     @computed get stripeToken() {
         return this.getPaymentTokenDownload().stripeToken
-    }
-
-    @computed get orderResult() {
-        return this.getPlaceOrderDownload().orderResult
     }
 
     /* Order Actions */
@@ -375,13 +392,11 @@ class OrderStore {
         if (this.stripeToken) {
             /* Submit order to server along with stripe token */
             await this.getPlaceOrderDownload().forceRefresh()
-            if (this.orderResult)
-                orderStatusStore.setOrderID(this.getActiveOrderToken())
         }
     }
 
     placeActiveOrder = _.logErrors(async () => {
-        try{
+        try {
             this._placeActiveOrder()
         } catch (e) {
             this.closeReceipt()
@@ -395,6 +410,7 @@ class OrderStore {
     /* Close the receipt window, but keep the current shopping cart */
     @action closeReceipt = () => {
         this.activeOrderID = null
+        this.orderID = null
     }
 
     /* Clear the order list at the bar, e.g. after closing the receipt window */

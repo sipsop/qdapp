@@ -22,7 +22,7 @@ import { TabView } from './components/Tabs'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
 import { Checkout } from '/components/payment/Checkout'
-import { ReceiptModal } from '/components/orders/Receipt'
+import { PlaceOrderModal } from '/components/orders/PlaceOrder'
 
 import { store, barStore, tabStore } from './model/store'
 import * as _ from './utils/curry'
@@ -71,7 +71,7 @@ export class Main extends Component {
                         <NotificationBar />
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <Checkout />
-                            <ReceiptModal />
+                            <PlaceOrderModal />
                             <TabView>
                                 <View tabLabel='Discover' style={{flex: 1}}>
                                     <DiscoverPage />

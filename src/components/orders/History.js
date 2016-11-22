@@ -23,6 +23,11 @@ import * as _ from '/utils/curry.js'
 
 import type { CacheInfo } from '/network/cache.js'
 
+export type HistoryItem = {
+    barID: String,
+    orderID: String,
+}
+
 /***************************************************************************/
 
 const { log, assert } = _.utils('./orders/History.js')
@@ -64,7 +69,7 @@ class OrderHistoryDescriptor extends Descriptor {
         this.orderHistory = orderHistory
     }
 
-    @computed get rows() : Array<OrderResult> {
+    @computed get rows() : Array<HistoryItem> {
         return this.orderHistory
     }
 
@@ -78,11 +83,12 @@ class OrderHistoryDescriptor extends Descriptor {
         })
     }
 
-    renderRow = (orderResult, i) => {
+    renderRow = ({orderID, barID}, i) => {
         return (
             <HistoryBarCard
                 rowNumber={i}
-                orderResult={orderResult}
+                barID={barID}
+                orderID={orderID}
                 />
         )
     }
@@ -111,7 +117,7 @@ export class OrderHistory extends DownloadComponent {
         })
     }
 
-    @computed get orderHistory() : Array<OrderResult> {
+    @computed get orderHistory() : Array<HistoryItem> {
         return this.getDownloadResult().orderHistory
     }
 
@@ -128,28 +134,17 @@ export class OrderHistory extends DownloadComponent {
 class HistoryBarCard extends DownloadComponent {
     /* properties:
         rowNumber: Int
-        orderResult: OrderResult
+        orderID: OrderID
+        barID: BarID
     */
     receiptModal = null
 
     getDownload = () => {
         return new BarInfoDownload(() => {
             return {
-                barID: this.barID,
+                barID: this.props.barID,
             }
         })
-    }
-
-    get orderResult() {
-        return this.props.orderResult
-    }
-
-    get barID() {
-        return this.orderResult.barID
-    }
-
-    get bar() {
-        return this.download.lastValue
     }
 
     showReceiptModal = () => {
@@ -166,7 +161,7 @@ class HistoryBarCard extends DownloadComponent {
             <SimpleReceiptModal
                 ref={ref => this.receiptModal = ref}
                 bar={bar}
-                orderResult={this.props.orderResult}
+                orderID={this.props.orderID}
                 />
             <BarCard
                 bar={bar}
@@ -191,7 +186,7 @@ class SimpleReceiptModal extends PureComponent {
     /* properties:
         onClose: () => void
         bar: Bar
-        orderResult: OrderResult
+        orderID: OrderID
     */
 
     modal = null
@@ -203,13 +198,10 @@ class SimpleReceiptModal extends PureComponent {
                     ref={ref => this.modal = ref}
                     onClose={this.props.onClose}
                     >
-            <Receipt
+            <ReceiptDownload
                 bar={this.props.bar}
-                orderResult={this.props.orderResult}
-                showEstimate={false}
-                showBackButton={true}
+                orderID={this.props.orderID}
                 onClose={this.close}
-                alwaysShowTotal={true}
                 />
         </SimpleModal>
     }
