@@ -11,11 +11,11 @@ import { BarCardDownload, cardMargin } from './BarCardDownload'
 import { DiscoverBarCard } from './DiscoverBarCard'
 import * as _ from '/utils/curry.js'
 
-const { log, assert } = _.utils('/components/bar/OwnedBarList.js')
+const { log, assert } = _.utils('/components/bar/AdminBarListModal.js')
 
 /* Modal showing a list of bars that the user is a bar admin for */
 @observer
-export class OwnedBarList extends PureComponent {
+export class AdminBarListModal extends PureComponent {
     /* properties:
         onClose: () => void
     */
@@ -25,8 +25,8 @@ export class OwnedBarList extends PureComponent {
     close = () => this.modal.close()
 
     @computed get descriptor() {
-        return new OwnedBarListDescriptor(() => {
-            /* Close OwnedBarList modal whenever the user selects a bar */
+        return new AdminBarListDescriptor(() => {
+            /* Close AdminBarListModal whenever the user selects a bar */
             this.modal.close()
             this.props.onClose()
         })
@@ -42,7 +42,7 @@ export class OwnedBarList extends PureComponent {
     }
 }
 
-class OwnedBarListDescriptor extends Descriptor {
+class AdminBarListDescriptor extends Descriptor {
     constructor(onPress) {
         super()
         this.onPress = onPress
@@ -56,7 +56,7 @@ class OwnedBarListDescriptor extends Descriptor {
 
     renderRow = (barID, i) => {
         return (
-            <OwnedBarCard
+            <AdminBarCard
                 rowNumber={i}
                 barID={barID}
                 onPress={this.onPress}
@@ -77,7 +77,7 @@ class OwnedBarListDescriptor extends Descriptor {
 
 /* Component that downloads bar info and shows a DiscoverBarCard */
 @observer
-class OwnedBarCard extends BarCardDownload {
+class AdminBarCard extends BarCardDownload {
     /* properties:
         barID: BarID
         onPress: ?() => void

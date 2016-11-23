@@ -14,7 +14,7 @@ import { LazyComponent } from '../LazyComponent.js'
 import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
-import { OwnedBarList } from '../bar/OwnedBarList'
+import { AdminBarListModal } from '../bar/AdminBarListModal'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { downloadManager } from '/network/http.js'
@@ -66,7 +66,7 @@ export class ControlPanel extends PureComponent {
                 refreshControl={this.getRefreshControl()}
                 >
                 <LoginInfo />
-                {loginStore.isBarOwner && <BarList />}
+                {loginStore.isBarOwner && <AdminBarList />}
                 <PaymentConfig />
                 <OrderHistory />
                 <Settings />
@@ -78,7 +78,7 @@ export class ControlPanel extends PureComponent {
 }
 
 @observer
-class BarList extends PureComponent {
+class AdminBarList extends PureComponent {
     barListModal = null
 
     render = () => {
@@ -93,7 +93,7 @@ class BarList extends PureComponent {
                         segment.track('Payment Info Viewed')
                     }}
                     />
-                <OwnedBarList
+                <AdminBarListModal
                     ref={ref => this.barListModal = ref}
                     onClose={drawerStore.enable}
                     />
