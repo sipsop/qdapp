@@ -40,8 +40,6 @@ export class UserProfileDownload extends QueryDownload {
     }
 
     @computed get profile() {
-        if (this.lastValue)
-            assert(this.lastValue.profile != null, "profile is null... " + this.lastValue)
         return this.lastValue && this.lastValue.profile
     }
 }

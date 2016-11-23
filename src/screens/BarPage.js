@@ -26,6 +26,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { TextHeader } from '/components/Header'
 import { TextSelectorRow } from '/components/Selector'
 import { SimpleModal } from '/components/Modals'
+import { BarSettings } from '/components/bar/BarSettings'
 import { LazyComponent } from '/components/LazyComponent'
 import { PhotoImage } from '/components/PhotoImage'
 import { Page } from '/components/Page'
@@ -33,7 +34,7 @@ import { ImageSwiper } from '/components/ImageSwiper'
 import { LargeButton } from '/components/Button'
 import { FavBarContainer } from '/components/Fav'
 import { downloadManager } from '/network/http'
-import { tabStore, barStore, timeStore, mapStore, segment, modalStore } from '/model/store'
+import { tabStore, barStore, mapStore, loginStore, modalStore, segment } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -92,6 +93,9 @@ export class BarPage extends Page {
                     /* refreshControl={this.getRefreshControl()} */
                     >
             <BarIcons />
+            { loginStore.isCurrentBarOwner &&
+                <BarSettings />
+            }
             <View style={this.styles.menuView}>
                 <MenuView />
             </View>

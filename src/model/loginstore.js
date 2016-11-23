@@ -5,7 +5,10 @@ import { segment } from '/network/segment.js'
 import { downloadManager } from '/network/http.js'
 import { UserProfileDownload } from '/network/api/user/userprofile'
 import { RegisterUser } from '/network/api/user/register'
+
 import { pushNotificationStore } from '/model/pushnotificationstore'
+import { barStore } from './barstore'
+
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 import { getTime, Hour, Minute } from '/utils/time.js'
@@ -241,17 +244,19 @@ class LoginStore {
     refreshUserProfile = () => this.getUserProfileDownload().forceRefresh()
 
     @computed get userProfile() : UserProfile {
-        log("USER PROFILE", this.getUserProfileDownload().lastValue)
         return this.getUserProfileDownload().profile
     }
 
     @computed get isBarOwner() : Bool {
-        log("IS BAR OWNER???????", this.userProfile)
         return this.userProfile && this.userProfile.is_bar_owner
     }
 
     @computed get ownedBars() : Array<BarID> {
         return this.userProfile && this.userProfile.bars || []
+    }
+
+    @computed get isCurrentBarOwner() : Bool {
+        return _.includes(this.ownedBars, barStore.barID)
     }
 }
 
