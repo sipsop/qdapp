@@ -10,62 +10,73 @@ import {
 } from '/components/Component'
 import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
-import { Email } from '../Email'
+
+import { TextHeader } from '../Header.js'
+
 import { store, barStore, barStatusStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/components/bar/BarSettings')
 
-
 const styles = StyleSheet.create({
     view: {
-        margin: 5,
-        marginBottom: 10,
-        marginTop: 10,
+        // margin: 5,
+        // marginBottom: 10,
+        // marginTop: 10,
+        // borderTopWidth: 1,
+        // borderColor: config.theme.primary.medium,
     },
     headerText: {
         flex: 1,
         textAlign: 'center',
         fontSize: 20,
-        color: config.theme.primary.medium,
+        color: '#000',
+    },
+    subText: {
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    borderView: {
+        flex: 1,
+        height: 1,
+        // borderBottomWidth: 0.5,
+        // marginLeft: 15,
+        // marginRight: 15,
+        backgroundColor: config.theme.primary.medium,
     },
 })
+
+const Border = (props) => <View style={styles.borderView} />
 
 @observer
 export class BarSettings extends PureComponent {
     render = () => {
-        const isQDodgerBar = barStatusStore.isQDodgerBar || true // TODO:
+        const isQDodgerBar = true // TODO:
         return (
             <View style={styles.view}>
-                <T style={styles.headerText}>
-                    You are an admin for this pub!
-                    { !barStatusStore.isQDodgerBar &&
-                        " Order taking is pending approval. Please send an email to:"
-                    }
-                </T>
-                { !barStatusStore.isQDodgerBar &&
-                    <Email
-                        email="support@qdodger.com"
-                        subject={`Order taking for ${barStore.barName} (${barStore.barID})`}
-                        style={styles.headerText}
-                        />
-                }
-                { isQDodgerBar &&
-                    <View>
-                        <TakingOrders />
-                        <TableService />
-                        <PickupLocations />
-                        <OpenCloseBar />
-                    </View>
-                }
+                <TextHeader
+                    label="Admin"
+                    rowHeight={55}
+                    />
+                <AcceptingOrders />
+                <Border />
+                <TableService />
+                <Border />
+                <PickupLocations />
+                <Border />
+                <OpenCloseBar />
+                <TextHeader
+                    label="Menu"
+                    rowHeight={55}
+                    />
             </View>
         )
     }
 }
 
 @observer
-class TakingOrders extends PureComponent {
+class AcceptingOrders extends PureComponent {
     render = () => {
         return (
             <BarSettingsSwitch
@@ -178,6 +189,10 @@ const switchStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         height: 55,
+        // borderBottomWidth: 0.5,
+        // borderColor: config.theme.primary.medium,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     labelText: {
         flex: 1,

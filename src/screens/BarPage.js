@@ -92,10 +92,10 @@ export class BarPage extends Page {
                     stickyHeaderHeight={getStickyHeaderHeight()}
                     /* refreshControl={this.getRefreshControl()} */
                     >
-            <BarIcons />
             { loginStore.isCurrentBarOwner &&
                 <BarSettings />
             }
+            <BarIcons />
             <View style={this.styles.menuView}>
                 <MenuView />
             </View>

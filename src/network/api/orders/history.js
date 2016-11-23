@@ -1,6 +1,9 @@
 import { computed, transaction, action, autorun } from 'mobx'
 import { QueryDownload } from '/network/http.js'
 import { OrderResultQuery } from './order.js'
+import * as _ from '/utils/curry'
+
+const { log, assert } = _.utils('/network/api/orders/history.js')
 
 export type HistoryItem = {
     barID: String,

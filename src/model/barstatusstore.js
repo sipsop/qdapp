@@ -70,8 +70,6 @@ class BarStatusStore {
             }
         }))
         downloadManager.declareDownload(new UpdateBarStatusDownload(() => {
-            const barStatusDownload = this.barStatusDownload
-            this.barStatusDownload = null
             return {
                 barID:           barStore.barID,
                 authToken:       loginStore.getAuthToken(),
@@ -98,6 +96,8 @@ class BarStatusStore {
     }
 
     @computed get isQDodgerBar() : Bool {
+        if (config.test.qdodgerBar)
+            return true
         return this.barStatus && this.barStatus.qdodger_bar
     }
 

@@ -89,6 +89,7 @@ export const config = {
     },
     /* Test with some pre-fabricated data */
     test: {
+        qdodgerBar: true,
         tableService: true,
         pickupLocations: true,
     },
