@@ -644,6 +644,10 @@ export class FeedDownload extends QueryDownload {
     @action onError = (message) => {
         this.downloadError(message)
     }
+
+    dispose = () => {
+        downloadManager.queryTransport.unsubscribeFeed(this.name)
+    }
 }
 
 export class FeedMutation extends FeedDownload {

@@ -1,7 +1,10 @@
 import { computed } from 'mobx'
 import { FeedDownload } from '/network/http'
 import { OrderResultQuery } from './order'
+import * as _ from '/utils/curry'
 import { config } from '/utils/config'
+
+const { assert, log } = _.utils('/network/api/order/orderstatus.js')
 
 export class OrderStatusDownload extends FeedDownload {
     /* properties:
@@ -16,7 +19,6 @@ export class OrderStatusDownload extends FeedDownload {
     // periodicRefresh = 15
 
     @computed get active() {
-        console.log("ORDER STATUS DOWNLOAD ACTIVE?", this.props.orderID, this.props.authToken)
         return this.props.orderID != null && this.props.authToken
     }
 

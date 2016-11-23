@@ -7,6 +7,7 @@ const { log, assert } = _.utils('/network/QueryTransport')
 export type QueryType =
     | 'query'
     | 'feed'
+    | 'unsubscribe'
 
 export type QRequest<T> = {
     messageID:  String,
@@ -141,6 +142,14 @@ export class QueryTransport {
         Object.values(this.activeQueries).forEach((feedParams) => {
             this.feed(feedParams)
         })
+    }
+
+    unsubscribeFeed = (messageID) => {
+        this.send({
+            messageID: messageID,
+            type: 'unsubscribe',
+        })
+        this.disposeMessage(messageID)
     }
 
     disposeMessage = (messageID) => {
