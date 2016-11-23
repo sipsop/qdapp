@@ -44,10 +44,14 @@ export class BarCardDownload extends DownloadComponent {
                     bar={bar}
                     photo={bar.photos && bar.photos[0]}
                     imageHeight={200}
-                    onPress={this.showReceiptModal}
+                    onPress={this.handleCardPress}
                     />
             </View>
         )
+    }
+
+    handleCardPress = () => {
+        throw new error("handleCardPress of BarCardDownload not implemented")
     }
 
     renderFinished = (bar) => {

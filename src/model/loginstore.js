@@ -3,7 +3,7 @@ import { observable, action, computed } from 'mobx'
 
 import { segment } from '/network/segment.js'
 import { downloadManager } from '/network/http.js'
-import { BarOwnerProfileDownload } from '/network/api/user/barowner'
+import { UserProfileDownload } from '/network/api/user/userprofile'
 import { RegisterUser } from '/network/api/user/register'
 import { pushNotificationStore } from '/model/pushnotificationstore'
 import * as _ from '/utils/curry.js'
@@ -221,7 +221,7 @@ class LoginStore {
     /*********************************************************************/
 
     initialize = () => {
-        downloadManager.declareDownload(new BarOwnerProfileDownload(() => {
+        downloadManager.declareDownload(new UserProfileDownload(() => {
             return {
                 isLoggedIn: this.isLoggedIn,
                 authToken:  this.getAuthToken(),
@@ -237,16 +237,21 @@ class LoginStore {
         }))
     }
 
-    @computed get barOwnerProfile() : UserProfile {
-        return downloadManager.getDownload('barOwnerProfile').profile
+    getUserProfileDownload = () => downloadManager.getDownload('user profile')
+    refreshUserProfile = () => this.getUserProfileDownload().forceRefresh()
+
+    @computed get userProfile() : UserProfile {
+        log("USER PROFILE", this.getUserProfileDownload().lastValue)
+        return this.getUserProfileDownload().profile
     }
 
     @computed get isBarOwner() : Bool {
-        return this.barOwnerProfile && this.barOwnerProfile.is_bar_owner
+        log("IS BAR OWNER???????", this.userProfile)
+        return this.userProfile && this.userProfile.is_bar_owner
     }
 
     @computed get ownedBars() : Array<BarID> {
-        return this.barOwnerProfile && this.barOwnerProfile.bars || []
+        return this.userProfile && this.userProfile.bars || []
     }
 }
 

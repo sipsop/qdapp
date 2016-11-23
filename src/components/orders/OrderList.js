@@ -73,7 +73,7 @@ export class OrderListDescriptor extends Descriptor {
     }
 
     renderRow = (menuItem, i) => {
-        log("RENDERING MENU ITEM", i)
+        // log("RENDERING MENU ITEM", i)
         var style = undefined
         if (i === this.rows.length - 1)
             style = this.styles.lastMenuItem

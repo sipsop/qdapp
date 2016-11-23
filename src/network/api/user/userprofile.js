@@ -1,19 +1,22 @@
 import { computed } from 'mobx'
-import { QueryDownload } from '/network/http.js'
-import { config } from '/utils/config.js'
+import { QueryDownload } from '/network/http'
+import { config } from '/utils/config'
+import * as _ from '/utils/curry'
 
-export class BarOwnerProfileDownload extends QueryDownload {
+const { log, assert } = _.utils('/network/api/user/userprofile.js')
+
+export class UserProfileDownload extends QueryDownload {
     /* properties:
         isLoggedIn: Bool
         authToken: String
         userID: String
     */
 
-    name = 'barOwnerProfile'
+    name = 'user profile'
     cacheInfo = config.defaultRefreshCacheInfo
 
     @computed get cacheKey() {
-        return `qd:barOwnerProfile:userID${this.props.userID}`
+        return `qd:userProfile:userID${this.props.userID}`
     }
 
     @computed get active() {
@@ -37,6 +40,8 @@ export class BarOwnerProfileDownload extends QueryDownload {
     }
 
     @computed get profile() {
-        return this.lastValue.profile
+        if (this.lastValue)
+            assert(this.lastValue.profile != null, "profile is null... " + this.lastValue)
+        return this.lastValue && this.lastValue.profile
     }
 }

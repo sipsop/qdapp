@@ -19,7 +19,7 @@ export class BarStatusDownload extends FeedDownload {
     }
 
     @computed get cacheKey() {
-        return `qd:${this.name}:barID=${this.props.barID}`
+        return `qd:barStatus:barID=${this.props.barID}`
     }
 
     @computed get query() {

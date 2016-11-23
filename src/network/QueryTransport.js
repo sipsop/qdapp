@@ -88,6 +88,7 @@ export class QueryTransport {
         if (data.messageID === "pong") {
             /* Nothing to do */
         } else if (feedParams) {
+            // log("GOT MESSAGE WITH ID", messageID, data)
             feedParams.resolve(data)
         }
     }
@@ -120,14 +121,14 @@ export class QueryTransport {
 
     feed = (feedParams) => {
         var { request, resolve } = feedParams
-        log("Scheduling request with messageID...", request.messageID)
+        // log("Scheduling request with messageID...", request.messageID)
         assert(request.messageID != null, "messageID is null...")
         this.activeQueries[request.messageID] = feedParams
         if (this.connected) {
-            log("SENDING MESSAGE...", request.messageID)
+            // log("SENDING MESSAGE...", request.messageID, request.query)
             this.send(request)
         } else {
-            log("NOT CONNECTED! WILL SEND LATER...", request.messageID)
+            // log("NOT CONNECTED! WILL SEND LATER...", request.messageID)
         }
     }
 

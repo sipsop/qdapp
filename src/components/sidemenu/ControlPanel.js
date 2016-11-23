@@ -1,5 +1,5 @@
 import { React, Component, ScrollView, View, TouchableOpacity, Image,
-         Icon, PureComponent, T, StyleSheet,
+         Icon, MaterialIcon, PureComponent, T, StyleSheet,
 } from '/components/Component'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
@@ -13,6 +13,7 @@ import { LazyComponent } from '../LazyComponent.js'
 import { PaymentConfigModal } from '../payment/PaymentConfigModal.js'
 import { CreditCardList } from '../payment/Checkout.js'
 import { OrderHistoryModal } from '../orders/History.js'
+import { OwnedBarList } from '../bar/OwnedBarList'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
 
 import { downloadManager } from '/network/http.js'
@@ -24,7 +25,15 @@ import { config } from '/utils/config.js'
 import { cache } from '/network/cache.js'
 import * as _ from '/utils/curry.js'
 
-const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
+const icon = (iconName, color, IconType = Icon) => {
+    return (
+        <IconType
+            name={iconName}
+            size={25}
+            color='rgba(255, 255, 255, 0.5)'
+            />
+    )
+}
 
 const { log, assert } = _.utils('/components/sidemenu/ControlPanel.js')
 assert(drawerStore != null, 'drawerStore is null')
@@ -34,6 +43,7 @@ export class ControlPanel extends PureComponent {
     render = () => {
         return <ScrollView style={{flex: 1}}>
             <LoginInfo />
+            {loginStore.isBarOwner && <BarList />}
             <PaymentConfig />
             <OrderHistory />
             <Settings />
@@ -43,16 +53,30 @@ export class ControlPanel extends PureComponent {
     }
 }
 
-// @observer
-// class BarList extends PureComponent {
-//     render = () => {
-//         return (
-//             <BarList>
-//
-//             </
-//         )
-//     }
-// }
+@observer
+class BarList extends PureComponent {
+    barListModal = null
+
+    render = () => {
+        return (
+            <View>
+                <SideMenuEntry
+                    text="Bar Admin"
+                    icon={icon("map-marker", "rgb(19, 58, 194)")}
+                    onPress={() => {
+                        drawerStore.disable()
+                        this.barListModal.show()
+                        segment.track('Payment Info Viewed')
+                    }}
+                    />
+                <OwnedBarList
+                    ref={ref => this.barListModal = ref}
+                    onClose={drawerStore.enable}
+                    />
+            </View>
+        )
+    }
+}
 
 @observer
 class PaymentConfig extends PureComponent {
@@ -322,8 +346,8 @@ export class BarOwnerProfile extends DownloadResultView {
         }
     }
 
-    getDownloadResult = () => downloadManager.getDownload('barOwnerProfile')
-    refreshPage = () => downloadManager.forceRefresh('barOwnerProfile')
+    getDownloadResult = loginStore.getUserProfileDownload
+    refreshPage = loginStore.refreshUserProfile
 
     renderFinished = () => {
         if (!loginStore.isBarOwner)

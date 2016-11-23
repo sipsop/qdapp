@@ -131,6 +131,8 @@ class HistoryBarCard extends BarCardDownload {
 
     receiptModal = null
 
+    handleCardPress = () => this.receiptModal.show()
+
     renderFinished = (bar) => {
         return (
             <View>

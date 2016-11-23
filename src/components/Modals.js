@@ -200,6 +200,7 @@ export class SimpleModal extends PureComponent {
     @observable visible = false
 
     show = () => this.visible = true
+
     close = () => {
         this.visible = false
         if (this.props.onClose)
@@ -209,9 +210,11 @@ export class SimpleModal extends PureComponent {
     render = () => {
         return (<OkCancelModal
                     visible={this.visible}
+                    okModal={this.close}
                     cancelModal={this.close}
-                    showOkButton={false}
-                    cancelLabel="Close"
+                    showOkButton={true}
+                    showCancelButton={false}
+                    okLabel="Close"
                     {...this.props}
                     />)
     }
