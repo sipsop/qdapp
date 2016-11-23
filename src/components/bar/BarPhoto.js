@@ -19,6 +19,8 @@ export class BarPhoto extends PureComponent {
         showTimeInfo: Bool
         showBarName: Bool
         showMapButton: Bool
+        footer: ?Component
+            bar card footer to render
     */
   render = () => {
     let photo = this.props.photo
@@ -62,13 +64,15 @@ export class BarPhoto extends PureComponent {
                 style={{flex: 3}} />
             <LinearGradient style={{flex: 5}} colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 1.0)']}>
                 <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0)'}}>
-                    <BarCardFooter
-                        bar={this.props.bar}
-                        showDistance={this.props.showDistance}
-                        showTimeInfo={this.props.showTimeInfo}
-                        showBarName={this.props.showBarName}
-                        showMapButton={this.props.showMapButton}
-                        />
+                    { this.props.footer ||
+                        <BarCardFooter
+                            bar={this.props.bar}
+                            showDistance={this.props.showDistance}
+                            showTimeInfo={this.props.showTimeInfo}
+                            showBarName={this.props.showBarName}
+                            showMapButton={this.props.showMapButton}
+                            />
+                    }
                 </View>
             </LinearGradient>
         </PhotoImage>)

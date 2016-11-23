@@ -28,20 +28,22 @@ const styles = StyleSheet.create({
 @observer
 export class DiscoverBarCard extends PureComponent {
     /* properties:
-        borderRadius: Int
-        imageHeight: Int
         bar: Bar
             bar info
+        borderRadius: ?Int
+        imageHeight: ?Int
         onBack: ?() => void
-        showBackButton: Bool
-        showBorder: Bool
+        showBackButton: ?Bool
+        showBorder: ?Bool
             show a border around the bar card
+        onPress: ?() => void
     */
     modal = null
 
     static defaultProps = {
         borderRadius: 5,
         showBorder: false,
+        imageHeight: 200,
     }
 
     handleCardPress = () => {
@@ -58,6 +60,7 @@ export class DiscoverBarCard extends PureComponent {
         if (barStore.barScrollView) {
             barStore.barScrollView.scrollTo({x: 0, y: 0})
         }
+        this.props.onPress && this.props.onPress()
     }
 
     render = () => {

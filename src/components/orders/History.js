@@ -12,6 +12,7 @@ import { BarCard, BarName, timeTextStyle } from '../bar/BarCard.js'
 import { ReceiptDownload } from './Receipt.js'
 import { DownloadComponent } from '../download/DownloadComponent'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
+import { BarCardDownload, cardMargin } from '/components/bar/BarCardDownload'
 
 import { HistoryQueryDownload } from '/network/api/orders/history'
 import { BarInfoDownload } from '/network/api/maps/place-info.js'
@@ -29,15 +30,6 @@ import type { CacheInfo } from '/network/cache.js'
 const { log, assert } = _.utils('./orders/History.js')
 
 const cacheInfo : CacheInfo = {...config.defaultCacheInfo, refreshAfter: 1 * Second}
-
-const cardMargin = 10
-
-const cardStyle = {
-    marginLeft:     cardMargin,
-    marginRight:    cardMargin,
-    marginBottom:   cardMargin,
-    height:         200,
-}
 
 @observer
 export class OrderHistoryModal extends PureComponent {
@@ -130,53 +122,26 @@ export class OrderHistory extends DownloadComponent {
 }
 
 @observer
-class HistoryBarCard extends DownloadComponent {
+class HistoryBarCard extends BarCardDownload {
     /* properties:
         rowNumber: Int
-        orderID: OrderID
         barID: BarID
+        orderID: OrderID
     */
+
     receiptModal = null
 
-    getDownload = () => {
-        return new BarInfoDownload(() => {
-            return {
-                barID: this.props.barID,
-            }
-        })
-    }
-
-    showReceiptModal = () => {
-        this.receiptModal.show()
-    }
-
     renderFinished = (bar) => {
-        return this.renderBarCard(bar)
-    }
-
-    renderBarCard = (bar) => {
-        assert(this.props.orderID != null, "orderID is null...")
-        return <View style={cardStyle}>
-            <SimpleReceiptModal
-                ref={ref => this.receiptModal = ref}
-                bar={bar}
-                orderID={this.props.orderID}
-                />
-            <BarCard
-                bar={bar}
-                photo={bar.photos && bar.photos[0]}
-                imageHeight={200}
-                footer={this.renderFooter(bar.name)}
-                onPress={this.showReceiptModal}
-                />
-        </View>
-    }
-
-    renderFooter = (barName, textColor = '#fff') => {
-        return <HistoryBarCardFooter
-                    barName={barName}
-                    orderResult={this.orderResult}
-                    textColor={textColor} />
+        return (
+            <View>
+                <SimpleReceiptModal
+                    ref={ref => this.receiptModal = ref}
+                    bar={bar}
+                    orderID={this.props.orderID}
+                    />
+                {this.renderBarCard(bar)}
+            </View>
+        )
     }
 }
 
@@ -193,6 +158,8 @@ class SimpleReceiptModal extends PureComponent {
     close = () => this.modal.close()
 
     render = () => {
+        if (this.props.bar == null)
+            return null
         assert(this.props.orderID != null, "orderID is null...")
         return <SimpleModal
                     ref={ref => this.modal = ref}
@@ -229,16 +196,6 @@ class HistoryBarCardFooter extends PureComponent {
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <Icon name="clock-o" size={15} color={this.props.textColor} />
-                    {/*
-                    <DateView
-                        date={orderResult.date}
-                        textStyle={{...timeTextStyle, marginLeft: 5}}
-                        />
-                    <TimeView
-                        time={orderResult.time}
-                        textStyle={{...timeTextStyle, marginLeft: 5}}
-                        />
-                    */}
                 </View>
                 <T style={{color: this.props.textColor, textAlign: 'right'}}>#{orderResult.receipt}</T>
             </View>
@@ -250,40 +207,4 @@ class HistoryBarCardFooter extends PureComponent {
             </View>
         </View>
     }
-}
-
-@observer
-class DateView extends PureComponent {
-    /* properties:
-        date: Date
-        textStyle: text style object
-    */
-
-    render = () => {
-        const date = this.props.date
-        return <T style={this.props.textStyle}>
-            {date.year}/{formatNumber(date.month)}/{formatNumber(date.day)}
-        </T>
-    }
-}
-
-@observer
-class TimeView extends PureComponent {
-    /* properties:
-        time: Time
-        textStyle: text style object
-    */
-
-    render = () => {
-        const time = this.props.time
-        return <T style={this.props.textStyle}>
-            {formatNumber(time.hour)}:{formatNumber(time.minute)}
-        </T>
-    }
-}
-
-const formatNumber = (i) => {
-    if (i < 10)
-        return '0' + i
-    return '' + i
 }

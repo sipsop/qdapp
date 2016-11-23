@@ -43,6 +43,17 @@ export class ControlPanel extends PureComponent {
     }
 }
 
+// @observer
+// class BarList extends PureComponent {
+//     render = () => {
+//         return (
+//             <BarList>
+//
+//             </
+//         )
+//     }
+// }
+
 @observer
 class PaymentConfig extends PureComponent {
     paymentConfigModal = null
@@ -316,7 +327,7 @@ export class BarOwnerProfile extends DownloadResultView {
 
     renderFinished = () => {
         if (!loginStore.isBarOwner)
-            null
+            return null
         return <View style={this.styles.view}>
             <T style={this.styles.textStyle}>
                 Navigate to your bar page to control bar settings.
