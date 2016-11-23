@@ -5,6 +5,7 @@ import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import { phonecall, email, web } from 'react-native-communications'
 
+import { themedRefreshControl } from '/components/SimpleListView'
 import { TextHeader } from '../Header.js'
 import { RowTextButton } from '../Rows.js'
 import { SmallOkCancelModal, SimpleModal, MarkdownModal } from '../Modals.js'
@@ -40,16 +41,39 @@ assert(drawerStore != null, 'drawerStore is null')
 
 @observer
 export class ControlPanel extends PureComponent {
+    /* TODO: Factor out this refresh stuff into something reusable */
+    @observable refreshing = false
+
+    handleRefresh = () => {
+        this.refreshing = true
+        transaction(async () => {
+            loginStore.refreshUserProfile()
+            this.refreshing = false
+        })
+    }
+
+    getRefreshControl = () => {
+        return themedRefreshControl({
+            refreshing: this.refreshing,
+            onRefresh:  this.handleRefresh,
+        })
+    }
+
     render = () => {
-        return <ScrollView style={{flex: 1}}>
-            <LoginInfo />
-            {loginStore.isBarOwner && <BarList />}
-            <PaymentConfig />
-            <OrderHistory />
-            <Settings />
-            {/*<Feedback />*/}
-            <Signout />
-        </ScrollView>
+        return (
+            <ScrollView
+                style={{flex: 1}}
+                refreshControl={this.getRefreshControl()}
+                >
+                <LoginInfo />
+                {loginStore.isBarOwner && <BarList />}
+                <PaymentConfig />
+                <OrderHistory />
+                <Settings />
+                {/*<Feedback />*/}
+                <Signout />
+            </ScrollView>
+        )
     }
 }
 
