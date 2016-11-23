@@ -81,6 +81,11 @@ export class ControlPanel extends PureComponent {
 class AdminBarList extends PureComponent {
     barListModal = null
 
+    @action closeDrawer = () => {
+        drawerStore.enable()
+        drawerStore.setClosed()
+    }
+
     render = () => {
         return (
             <View>
@@ -95,7 +100,7 @@ class AdminBarList extends PureComponent {
                     />
                 <AdminBarListModal
                     ref={ref => this.barListModal = ref}
-                    onClose={drawerStore.enable}
+                    onClose={this.closeDrawer}
                     />
             </View>
         )
