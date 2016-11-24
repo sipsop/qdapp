@@ -10,6 +10,7 @@ import { favStore } from './favstore'
 import { tabStore } from './tabstore'
 import { barStore } from './barstore'
 import { barStatusStore } from './barstatusstore'
+import { barSettingsStore } from './barsettingsstore'
 import { loginStore } from './loginstore'
 import { tagStore } from './tagstore'
 import { mapStore } from './mapstore'
@@ -192,6 +193,7 @@ export {
     tabStore,
     barStore,
     barStatusStore,
+    barSettingsStore,
     loginStore,
     tagStore,
     mapStore,

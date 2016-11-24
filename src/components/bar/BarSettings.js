@@ -14,7 +14,7 @@ import { observer } from 'mobx-react/native'
 import { Loader } from '../Page'
 import { Header, HeaderText, TextHeader } from '../Header'
 
-import { store, barStore, barStatusStore } from '/model/store'
+import { store, barStore, barStatusStore, barSettingsStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -182,39 +182,6 @@ class OpenCloseBar extends PureComponent {
         )
     }
 }
-
-class BarSettingsStore {
-    @observable selectedLocationName : String = null
-
-    @computed get pickupLocations() : Map<String, PickupLocation> {
-        const result = {}
-        barStatusStore.pickupLocations.forEach(pickupLocation => {
-            result[pickupLocation.name] = pickupLocation
-        })
-        return result
-    }
-
-    @computed get pickupLocation() {
-        return this.pickupLocations[this.getPickupLocationName()]
-    }
-
-    getPickupLocationName = () : ?String => {
-        const pickupLocations = barStatusStore.pickupLocations
-        if (this.selectedLocationName == null && pickupLocations.length) {
-            return pickupLocations[0].name
-        }
-        return this.selectedLocationName
-    }
-
-    @action setPickupLocationName = (locationName : String) => {
-        this.selectedLocationName = locationName
-    }
-
-    /* TODO: getState/setState/emptyState */
-}
-
-const barSettingsStore = new BarSettingsStore()
-
 
 const switchStyles = StyleSheet.create({
     row: {
