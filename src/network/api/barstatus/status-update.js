@@ -1,5 +1,8 @@
 import { computed } from 'mobx'
 import { QueryMutation } from '/network/http'
+import * as _ from '/utils/curry'
+
+const { log, assert } = _.utils('/network/api/bar/status-update')
 
 export class UpdateBarStatusDownload extends QueryMutation {
     /* properties:
@@ -9,34 +12,19 @@ export class UpdateBarStatusDownload extends QueryMutation {
     */
     name = 'bar status update'
 
-    @computed get active() {
-        return this.statusUpdate != null
-    }
-
     @computed get query() {
+        assert(this.props.statusUpdate != null)
         return {
-            BarStatus: {
+            UpdateBarStatus: {
                 args: {
                     barID: this.props.barID,
                     authToken: this.props.authToken,
                     statusUpdate: this.props.statusUpdate,
                 },
                 result: {
-                    bar_status: {
-                        qdodger_bar:      'Bool',
-                        taking_orders:    'Bool',
-                        table_service:    'String',
-                        pickup_locations: [{
-                            name: 'String',
-                            open: 'Bool',
-                        }],
-                    }
+                    status: 'String',
                 }
             }
         }
-    }
-
-    @computed get barStatus() {
-        return this.lastValue && this.lastValue.bar_status
     }
 }

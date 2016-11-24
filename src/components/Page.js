@@ -48,6 +48,7 @@ export class Page extends PureComponent {
 export class Loader extends PureComponent {
     /* properties:
         style: style object
+        color: ?String
     */
     styles = {
         view: {
@@ -58,10 +59,10 @@ export class Loader extends PureComponent {
     }
 
     render = () => {
-        return <View style={{...this.styles.view, ...this.props.style}}>
+        return <View style={[this.styles.view, this.props.style]}>
             <ActivityIndicator
                 animating={true}
-                color={config.theme.primary.dark}
+                color={this.props.color || config.theme.primary.dark}
                 size="large"
                 />
         </View>

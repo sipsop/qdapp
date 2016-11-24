@@ -4,6 +4,7 @@ import { downloadManager, latest } from '/network/http'
 import { BarStatusDownload } from '/network/api/barstatus/status'
 import { UpdateBarStatusDownload } from '/network/api/barstatus/status-update'
 import { segment } from '/network/segment'
+import { loginStore } from './loginstore'
 import { barStore } from './barstore'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -45,6 +46,9 @@ export type StatusUpdate = {
 
 class BarStatusStore {
 
+    /* Whether to show a loading indicator for the bar status */
+    @observable barStatusLoading = false
+
     /*********************************************************************/
     /* State */
     /*********************************************************************/
@@ -64,25 +68,35 @@ class BarStatusStore {
     /*********************************************************************/
 
     initialize = () => {
-        downloadManager.declareDownload(new BarStatusDownload(() => {
-            return {
-                barID: barStore.barID,
-            }
-        }))
-        downloadManager.declareDownload(new UpdateBarStatusDownload(() => {
-            return {
-                barID:           barStore.barID,
-                authToken:       loginStore.getAuthToken(),
-                barStatusUpdate: barStatusUpdate,
-            }
-        }))
+        downloadManager.declareDownload(new BarStatusDownload(
+            () => {
+                return {
+                    barID: barStore.barID,
+                }
+            },
+            {
+                onFinish: () => this.barStatusLoading = false,
+            },
+        ))
+        downloadManager.declareDownload(new UpdateBarStatusDownload(
+            () => {
+                return {
+                    barID:           barStore.barID,
+                    authToken:       loginStore.getAuthToken(),
+                    statusUpdate:    this.barStatusUpdate,
+                }
+            }, {
+                onStart: () => this.barStatusLoading = true,
+            },
+        ))
     }
 
     @computed get barStatusDownload() {
-        return latest(
-            downloadManager.getDownload('bar status'),
-            downloadManager.getDownload('bar status update'),
-        )
+        return downloadManager.getDownload('bar status')
+    }
+
+    @computed get updateBarStatusDownload() {
+        return downloadManager.getDownload('bar status update')
     }
 
     getBarStatusDownload = () => this.barStatusDownload
@@ -92,6 +106,7 @@ class BarStatusStore {
     /*********************************************************************/
 
     @computed get barStatus() : ?BarStatus {
+        log("GOT BAR STATUS", this.barStatusDownload.barStatus)
         return this.barStatusDownload.barStatus
     }
 
@@ -101,20 +116,21 @@ class BarStatusStore {
         return this.barStatus && this.barStatus.qdodger_bar
     }
 
-    @computed get takingOrders() : Bool {
+    @computed get acceptingOrders() : Bool {
         return this.barStatus && this.barStatus.taking_orders
     }
 
     @computed get tableService() : String {
         if (config.test.tableService)
-            return true
+            return 'FoodAndDrinks'
         return this.barStatus && this.barStatus.table_service
     }
 
     @computed get pickupLocations() : Array<PickupLocation> {
-        if (config.test.pickupLocations)
+        const pickupLocations = this.barStatus && this.barStatus.pickup_locations
+        if (!(pickupLocations || pickupLocations.length) && config.test.pickupLocations)
             return [{name: 'Main Bar', open: true}, {name: 'First Floor', open: true}]
-        return this.barStatus && this.barStatus.pickup_locations
+        return pickupLocations
     }
 
     @computed get barStatusNotification() {
@@ -122,7 +138,7 @@ class BarStatusStore {
         let closeable = false
         if (!this.isQDodgerBar) {
             message = 'No menu available :('
-        } else if (!this.takingOrders) {
+        } else if (!this.acceptingOrders) {
             message = `Sorry, the bar is not currently accepting orders`
             closeable = true
         } else if (!this.tableService) {
@@ -145,34 +161,39 @@ class BarStatusStore {
 
     @observable barStatusUpdate : StatusUpdate = null
 
-    @action setTakingOrders = (takingOrders : Bool) => {
-        this.barStatusUpdate = {
-            TakingOrders: true,
-        }
+    @action updateBarStatus = (barStatusUpdate : StatusUpdate) => {
+        this.barStatusUpdate = barStatusUpdate
+        this.updateBarStatusDownload.forceRefresh()
+    }
+
+    @action setAcceptingOrders = (acceptingOrders : Bool) => {
+        this.updateBarStatus({
+            TakingOrders: acceptingOrders,
+        })
     }
 
     @action setTableService = (tableService : TableService) => {
-        this.barStatusUpdate = {
+        this.updateBarStatus({
             SetTableService: tableService,
-        }
+        })
     }
 
     @action addBar = (barName : String) => {
-        this.barStatusUpdate = {
+        this.updateBarStatus({
             AddBar: {
                 name: barName,
                 listPosition: this.pickupLocations.length,
             }
-        }
+        })
     }
 
     @action setBarOpen = (barName : String, open : Bool) => {
-        this.barStatusUpdate = {
+        this.updateBarStatus({
             SetBarOpen: {
                 name: barName,
                 open: open,
             }
-        }
+        })
     }
 }
 

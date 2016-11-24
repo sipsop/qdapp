@@ -11,7 +11,8 @@ import {
 import { observable, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { TextHeader } from '../Header.js'
+import { Loader } from '../Page'
+import { Header, HeaderText, TextHeader } from '../Header'
 
 import { store, barStore, barStatusStore } from '/model/store'
 import { config } from '/utils/config'
@@ -27,11 +28,17 @@ const styles = StyleSheet.create({
         // borderTopWidth: 1,
         // borderColor: config.theme.primary.medium,
     },
+    barHeaderContents: {
+        flexDirection: 'row',
+    },
     headerText: {
         flex: 1,
         textAlign: 'center',
         fontSize: 20,
         color: '#000',
+    },
+    loader: {
+        width: 60,
     },
     subText: {
         textAlign: 'center',
@@ -55,17 +62,21 @@ export class BarSettings extends PureComponent {
         const isQDodgerBar = true // TODO:
         return (
             <View style={styles.view}>
-                <TextHeader
+                <BarHeader
                     label="Admin"
                     rowHeight={55}
                     />
                 <AcceptingOrders />
-                <Border />
-                <TableService />
-                <Border />
-                <PickupLocations />
-                <Border />
-                <OpenCloseBar />
+                {barStatusStore.acceptingOrders &&
+                    <View>
+                        <Border />
+                        <TableService />
+                        <Border />
+                        <PickupLocations />
+                        <Border />
+                        <OpenCloseBar />
+                    </View>
+                }
                 <TextHeader
                     label="Menu"
                     rowHeight={55}
@@ -76,13 +87,36 @@ export class BarSettings extends PureComponent {
 }
 
 @observer
+class BarHeader extends PureComponent {
+    /* properties:
+        label: String
+        rowHeight: Int
+    */
+    render = () => {
+        return (
+            <Header rowHeight={this.props.rowHeight}>
+                <View style={styles.barHeaderContents}>
+                    {
+                        !barStatusStore.barStatusLoading
+                            ? <HeaderText>
+                                {this.props.label}
+                            </HeaderText>
+                            : <Loader color='#fff' />
+                    }
+                </View>
+            </Header>
+        )
+    }
+}
+
+@observer
 class AcceptingOrders extends PureComponent {
     render = () => {
         return (
             <BarSettingsSwitch
                 label="Accepting Orders:"
-                onPress={barStatusStore.setTakingOrders}
-                value={barStatusStore.takingOrders}
+                onPress={barStatusStore.setAcceptingOrders}
+                value={barStatusStore.acceptingOrders}
                 />
         )
     }
@@ -96,8 +130,8 @@ class TableService extends PureComponent {
                 label="Table Service:"
                 valueLabels={['Disabled', 'Food', 'Drinks', 'Food and Drinks']}
                 values={['Disabled', 'Food', 'Drinks', 'FoodAndDrinks']}
-                value={barStatusStore.tableService}
                 onPress={barStatusStore.setTableService}
+                value={barStatusStore.tableService}
                 />
         )
     }
@@ -105,12 +139,15 @@ class TableService extends PureComponent {
 
 @observer
 class PickupLocations extends PureComponent {
+    addPickupLocationModal = null
+
     setSelected = (value) => {
-        if (value === 'AddNew') {
-            // TODO: Implement
-        } else {
-            barSettingsStore.setPickupLocation(value)
-        }
+        // if (value === 'AddNew') {
+        //     this.addPickupLocationModal.show()
+        // } else {
+        //     barSettingsStore.setPickupLocation(value)
+        // }
+        barSettingsStore.setPickupLocation(value)
     }
 
     render = () => {
@@ -120,13 +157,44 @@ class PickupLocations extends PureComponent {
         const locationName = barSettingsStore.getPickupLocationName()
 
         return (
-            <BarSettingsPicker
-                label="Pickup Locations:"
-                valueLabels={[...locationNames, 'Add New Pickup Location']}
-                values={[...locationNames, 'AddNew']}
-                value={locationName}
-                onPress={this.setSelected}
-                />
+            <View>
+                {/* TODO: */}
+                {/*<AddPickupLocationModal />*/}
+                <BarSettingsPicker
+                    label="Pickup Locations:"
+                    valueLabels={[...locationNames/*, 'Add New Pickup Location'*/]}
+                    values={[...locationNames/*, 'AddNew'*/]}
+                    value={locationName}
+                    onPress={this.setSelected}
+                    />
+            </View>
+        )
+    }
+}
+
+@observer
+class AddPickupLocationModal extends PureComponent {
+
+    @observable barName = ""
+
+    show = () => this.modal.show()
+    close = () => this.modal.close()
+
+    @action confirm = () => {
+        barStatusStore.addBar(this.barName)
+        this.barName = ""
+    }
+
+    render = () => {
+        return (
+            <SmallOkCancelModal
+                ref={ref => this.addPickupLocationModal = ref}
+                showOkButton={orderStore.haveDeliveryMethod}
+                okLabel="Add Bar"
+                onConfirm={addBar}
+                >
+                <DeliveryMethod />
+            </SmallOkCancelModal>
         )
     }
 }
@@ -232,7 +300,7 @@ class BarSettingsPicker extends PureComponent {
         label: String
         values: Array<T>
         valueLabels: Array<String>
-        selectedValue: T
+        value: T
         onPress: (value : T) => void
     */
     render = () => {
@@ -240,7 +308,7 @@ class BarSettingsPicker extends PureComponent {
             <Row label={this.props.label}>
                 <Picker
                     style={{width: 150}}
-                    selectedValue={this.props.selectedValue}
+                    selectedValue={this.props.value}
                     onValueChange={this.props.onPress}
                     >
                     {
