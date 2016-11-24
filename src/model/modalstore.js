@@ -4,6 +4,7 @@ import { messageStore } from './messagestore'
 
 class ModalStore {
     @observable showOpeningTimesModal = false
+    @observable showDeliveryModal = false
 
     initialize = () => {
     }
@@ -26,6 +27,15 @@ class ModalStore {
 
     @action closeOpeningTimesModal = () => {
         this.showOpeningTimesModal = false
+    }
+
+    @action openDeliveryModal = () => {
+        this.showDeliveryModal = true
+    }
+
+    @action closeDeliveryModal = () => {
+        console.log("CLOSING DELIVERY MODAL!")
+        this.showDeliveryModal = false
     }
 
     @computed get getModalStatus () {

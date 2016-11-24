@@ -39,7 +39,8 @@ export class SmallOkCancelModal extends PureComponent {
         showOkButton: bool
         showCancelButton: bool
         closeOnTouch: bool
-        visible: overrides visibility state
+        isVisible: ?() => bool
+            overrides visibility state
     */
 
     @observable _visible = false
@@ -67,8 +68,8 @@ export class SmallOkCancelModal extends PureComponent {
     }
 
     @computed get visible() {
-        if (this.props.visible != null)
-            return this.props.visible
+        if (this.props.isVisible != null)
+            return this.props.isVisible()
         return this._visible
     }
 

@@ -38,14 +38,21 @@ const styles = StyleSheet.create({
     }
 })
 
-
 @observer
 export class Checkout extends DownloadResultView {
     /* properties:
     */
 
+    // askDeliveryModal = null
+
     @computed get haveCardNumber() {
         return paymentStore.selectedCardNumber != null
+    }
+
+    _payNow = () => {
+        analytics.trackCheckoutFinish()
+        orderStore.placeActiveOrder()
+        this.close()
     }
 
     payNow = () => {
@@ -55,9 +62,10 @@ export class Checkout extends DownloadResultView {
         loginStore.login(
             () => {
                 // success
-                analytics.trackCheckoutFinish()
-                orderStore.placeActiveOrder()
-                this.close()
+                // if (!orderStore.haveDeliveryMethod)
+                    // this.askDeliveryModal.show()
+                // else
+                this._payNow()
             },
             () => {
                 // error
@@ -77,8 +85,7 @@ export class Checkout extends DownloadResultView {
     @computed get disableBuyButton() {
         return (
             !barStore.getBar() ||
-            !downloadManager.connected ||
-            !orderStore.haveDeliveryMethod
+            !downloadManager.connected
         )
     }
 

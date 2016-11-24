@@ -121,11 +121,11 @@ class TimeEstimate extends PureComponent {
 
 const styles = StyleSheet.create({
     icons: {
-        marginTop: 15,
+        marginTop: 5,
         marginBottom: 5,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        height: 70,
+        // height: 70,
     },
     optionIcon: {
         // flex: 1,

@@ -78,6 +78,16 @@ export class DeliveryMethod extends DownloadResultView {
         }
     }
 
+    @action setTableNumber = (tableNumber) => {
+        orderStore.setDelivery('Table')
+        orderStore.setTableNumber(tableNumber)
+    }
+
+    @action setPickupLocation = (locationName) => {
+        orderStore.setDelivery('Pickup')
+        orderStore.setPickupLocation(locationName)
+    }
+
     @action toggleButton = (delivery) => {
         orderStore.setDelivery(delivery)
     }
@@ -89,12 +99,7 @@ export class DeliveryMethod extends DownloadResultView {
     }
 
     @computed get delivery() {
-        if (!barStatusStore.haveTableService) {
-            return 'Pickup'
-        } else if (!barStatusStore.haveOpenPickupLocations) {
-            return 'Table'
-        }
-        return orderStore.delivery
+        return orderStore.delivery || 'Table'
     }
 
     isActive = (label) => this.delivery === label
@@ -148,14 +153,13 @@ export class DeliveryMethod extends DownloadResultView {
                             style={{marginTop: -10, width: 250, textAlign: 'center'}}
                             placeholder="table number"
                             defaultValue={tableNumber}
-                            onChangeText={orderStore.setTableNumber}
-                            /* onEndEditing={event => orderStore.setTableNumber(event.nativeEvent.text)} */
+                            onChangeText={this.setTableNumber}
                             />
                     </View>
                 }
                 { this.delivery === 'Pickup' &&
                     <Picker selectedValue={orderStore.pickupLocation}
-                            onValueChange={orderStore.setPickupLocation}
+                            onValueChange={this.setPickupLocation}
                             style={this.styles.pickerStyle}
                             >
                         {

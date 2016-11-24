@@ -1,6 +1,6 @@
 /* @flow */
 
-import { observable, computed, action, asMap } from 'mobx'
+import { observable, computed, action, asMap, autorun } from 'mobx'
 import shortid from 'shortid'
 
 import { StripeTokenDownload } from '/network/api/orders/payment'
@@ -14,6 +14,9 @@ import { barStore } from '../barstore'
 import { paymentStore } from './paymentstore'
 import { loginStore } from '../loginstore'
 import { barStatusStore } from '../barstatusstore'
+import { messageStore } from '../messagestore'
+import { modalStore } from '../modalstore'
+import { getTime } from '/utils/time'
 import * as _ from '/utils/curry'
 
 import type { BarID, MenuItemID, DateType, Time, OrderItemID } from '../bar/Bar.js'
@@ -197,11 +200,28 @@ class OrderStore {
                 },
             }
         ))
+        autorun(() => {
+            if (this.deliveryMethodHasChanged) {
+                this.confirmDeliveryMethod()
+                modalStore.openDeliveryModal()
+                // messageStore.showMessage({
+                //     messageID: 'delivery method changed',
+                //     timestamp: getTime(),
+                //     title: 'Delivery Method Changed',
+                //     content: 'The bar has updated the way orders are accepted.',
+                // })
+            }
+        })
     }
 
     getPaymentTokenDownload = () => downloadManager.getDownload('stripe')
     getPlaceOrderDownload   = () => downloadManager.getDownload('placeOrder')
     getOrderStatusDownload  = () => downloadManager.getDownload('order status')
+
+    @action confirmDeliveryMethod = () => {
+        this._delivery = this.delivery
+        this._pickupLocation = this.pickupLocation
+    }
 
     @action setOrderID = (orderID) => {
         this.orderID = orderID
@@ -345,10 +365,10 @@ class OrderStore {
     @computed get delivery() : ?Delivery {
         if (!barStatusStore.allowOrderPlacing)
             return null
-        if (!barStatusStore.haveTableService && this._delivery === 'Table')
-            return null
-        else if (!barStatusStore.haveOpenPickupLocations && this._delivery === 'Pickup')
-            return null
+        if (!barStatusStore.haveTableService)
+            return 'Pickup'
+        else if (!barStatusStore.haveOpenPickupLocations)
+            return 'Table'
         return this._delivery
     }
 
@@ -371,7 +391,7 @@ class OrderStore {
     }
 
     @computed get haveDeliveryMethod() {
-        if (!barStatusStore.allowOrderPlacing)
+        if (!barStatusStore.allowOrderPlacing || this.delivery == null)
             return false
         if (this.delivery === 'Table')
             return !!this.tableNumber
@@ -379,8 +399,16 @@ class OrderStore {
             return !!this.pickupLocation
     }
 
+    @computed get deliveryMethodHasChanged() : Bool {
+        return (
+            this.delivery !== this._delivery ||
+            this.tableNumber !== this._tableNumber ||
+            this.pickupLocation !== this._pickupLocation
+        )
+    }
+
     @computed get checkoutVisible() {
-        return this._checkoutVisible && this.haveDeliveryMethod
+        return this._checkoutVisible // && this.haveDeliveryMethod
     }
 
     @action setDelivery = (delivery) => {
@@ -481,7 +509,7 @@ class OrderStore {
 
 export const orderStore = new OrderStore()
 
-_.safeAutorun(() => {
+autorun(() => {
     /* Clear the order list whenever the selected bar changes */
     barStore.barID
     orderStore.clearAllOrderData()

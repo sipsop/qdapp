@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     messageContents: {
         flex: 1,
         flexWrap: 'wrap',
-        padding: 5,
+        // padding: 5,
     },
     messageTitle: {
         flexDirection: 'row',

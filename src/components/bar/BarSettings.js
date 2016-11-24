@@ -13,7 +13,7 @@ import { observer } from 'mobx-react/native'
 
 import { Loader } from '../Page'
 import { Header, HeaderText, TextHeader } from '../Header'
-import { AskDeliveryModal } from '/components/orders/AskDeliveryModal'
+import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 import { LargeButton } from '/components/Button'
 
 import { store, barStore, barStatusStore, barSettingsStore } from '/model/store'
@@ -196,17 +196,12 @@ class OpenCloseBar extends PureComponent {
 
 @observer
 class TestConfiguration extends PureComponent {
-    modal = null
-
     render = () => {
         return (
             <View style={styles.testConfiguration}>
-                <AskDeliveryModal
-                    ref={ref => this.modal = ref}
-                    />
                 <LargeButton
                     label={`Test Configuration`}
-                    onPress={() => this.modal.show()}
+                    onPress={modalStore.openDeliveryModal}
                     style={styles.testButtonStyle}
                     prominent={false}
                     textColor={config.theme.primary.medium}

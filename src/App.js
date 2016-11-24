@@ -9,6 +9,7 @@ import { Router } from './Router'
 import { Main } from './Main'
 import { OpeningTimesModal } from './components/modals/OpeningTimesModal'
 import { MessagePopup } from '/components/messages/MessagePopup'
+import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 import { modalStore } from './model/store'
 import * as _ from '/utils/curry'
 
@@ -17,6 +18,7 @@ const { log, assert } = _.utils('/components/App')
 @observer
 export class App extends PureComponent {
     render = () => {
+        log("SHOW DELIVER MODAL", modalStore.showDeliveryModal)
         return (
             <MainApp>
                 <OpeningTimesModal
@@ -24,6 +26,10 @@ export class App extends PureComponent {
                     onClosedProp={modalStore.closeOpeningTimesModal}
                     />
                 <MessagePopup />
+                <ConfirmDeliveryModal
+                    isVisible={() => modalStore.showDeliveryModal}
+                    onClose={modalStore.closeDeliveryModal}
+                    />
             </MainApp>
         )
     }

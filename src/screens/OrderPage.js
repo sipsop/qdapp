@@ -24,7 +24,7 @@ import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
 import { DeliveryMethod } from '/components/orders/DeliveryMethod'
-import { AskDeliveryModal } from '/components/orders/AskDeliveryModal'
+import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 
 import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
 import { analytics } from '/model/analytics'
@@ -148,7 +148,7 @@ class OrderButton extends PureComponent {
         if (!orderStore.haveOrders)
             return <View />
         return <View>
-            <AskDeliveryModal
+            <ConfirmDeliveryModal
                 ref={ref => this.modal = ref}
                 onConfirm={this.props.onPress}
                 />
