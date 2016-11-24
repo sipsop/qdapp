@@ -13,6 +13,8 @@ import { observer } from 'mobx-react/native'
 
 import { Loader } from '../Page'
 import { Header, HeaderText, TextHeader } from '../Header'
+import { AskDeliveryModal } from '/components/orders/AskDeliveryModal'
+import { LargeButton } from '/components/Button'
 
 import { store, barStore, barStatusStore, barSettingsStore } from '/model/store'
 import { config } from '/utils/config'
@@ -52,6 +54,15 @@ const styles = StyleSheet.create({
         // marginRight: 15,
         backgroundColor: config.theme.primary.medium,
     },
+    testConfiguration: {
+        flex: 1,
+        height: 55,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    testButtonStyle: {
+        height: 40,
+    },
 })
 
 const Border = (props) => <View style={styles.borderView} />
@@ -77,6 +88,8 @@ export class BarSettings extends PureComponent {
                         <OpenCloseBar />
                     </View>
                 }
+                <Border />
+                <TestConfiguration />
                 <TextHeader
                     label="Menu"
                     rowHeight={55}
@@ -140,10 +153,8 @@ class TableService extends PureComponent {
 @observer
 class PickupLocations extends PureComponent {
     render = () => {
-        const locationNames = barStatusStore.pickupLocations.map(
-            pickupLocation => pickupLocation.name
-        )
-        const locationName = barSettingsStore.getPickupLocationName()
+        const locationNames = barStatusStore.pickupLocationNames
+        const locationName = barSettingsStore.pickupLocationName
 
         return (
             <View>
@@ -164,8 +175,8 @@ class PickupLocations extends PureComponent {
 @observer
 class OpenCloseBar extends PureComponent {
     toggle = () => {
-        const barName = barSettingsStore.getPickupLocationName()
-        const open = !barSettingsStore.pickupLocation.open
+        const barName = barSettingsStore.pickupLocationName
+        const open = !barSettingsStore.pickupLocationOpen
         barStatusStore.setBarOpen(barName, open)
     }
 
@@ -179,6 +190,32 @@ class OpenCloseBar extends PureComponent {
                 onPress={this.toggle}
                 value={pickupLocation.open}
                 />
+        )
+    }
+}
+
+@observer
+class TestConfiguration extends PureComponent {
+    modal = null
+
+    render = () => {
+        return (
+            <View style={styles.testConfiguration}>
+                <AskDeliveryModal
+                    ref={ref => this.modal = ref}
+                    />
+                <LargeButton
+                    label={`Test Configuration`}
+                    onPress={() => this.modal.show()}
+                    style={styles.testButtonStyle}
+                    prominent={false}
+                    textColor={config.theme.primary.medium}
+                    /*textColor='#000'*/
+                    fontSize={15}
+                    /*borderColor='#000'*/
+                    borderColor={config.theme.primary.medium}
+                    />
+            </View>
         )
     }
 }

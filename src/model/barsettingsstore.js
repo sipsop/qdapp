@@ -16,16 +16,22 @@ class BarSettingsStore {
         return result
     }
 
-    @computed get pickupLocation() {
+    @computed get pickupLocation() : ?PickupLocation {
+        const pickupLocations = barStatusStore.pickupLocations
+        if (this.selectedLocationName == null && pickupLocations.length) {
+            return pickupLocations[0]
+        } else if (this.selectedLocationName) {
+            return this.pickupLocations[this.selectedLocationName]
+        }
         return this.pickupLocations[this.getPickupLocationName()]
     }
 
-    getPickupLocationName = () : ?String => {
-        const pickupLocations = barStatusStore.pickupLocations
-        if (this.selectedLocationName == null && pickupLocations.length) {
-            return pickupLocations[0].name
-        }
-        return this.selectedLocationName
+    @computed get pickupLocationName() : ?String {
+        return this.pickupLocation && this.pickupLocation.name
+    }
+
+    @computed get pickupLocationOpen() : ?Bool {
+        return this.pickupLocation && this.pickupLocation.open
     }
 
     @action setPickupLocationName = (locationName : String) => {

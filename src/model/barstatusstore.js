@@ -130,7 +130,11 @@ class BarStatusStore {
         const pickupLocations = this.barStatus && this.barStatus.pickup_locations
         if (!(pickupLocations || pickupLocations.length) && config.test.pickupLocations)
             return [{name: 'Main Bar', open: true}, {name: 'First Floor', open: true}]
-        return pickupLocations
+        return pickupLocations || []
+    }
+
+    @computed get pickupLocationNames() : Array<String> {
+        return this.pickupLocations.map(p => p.name)
     }
 
     @computed get barStatusNotification() {
