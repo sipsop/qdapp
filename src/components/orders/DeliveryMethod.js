@@ -53,9 +53,11 @@ export class DeliveryMethod extends DownloadResultView {
         pickerStyle: {
             width: 150,
         },
-        deliveryText: {
+        serviceNotAvailableText: {
+            flex: 1,
             fontSize: 20,
             color: '#000',
+            textAlign: 'center',
         },
     })
 
@@ -63,26 +65,22 @@ export class DeliveryMethod extends DownloadResultView {
     refreshPage = () => barStatusStore.getBarStatusDownload().forceRefresh()
 
     @action tableDelivery = () => {
-        orderStore.delivery = 'Table'
+        orderStore.setDelivery('Table')
     }
 
     @action pickup = () => {
-        orderStore.delivery = 'Pickup'
-    }
-
-    @action setTableNumber = (tableNumber : String) => {
-        orderStore.tableNumber = tableNumber
-    }
-
-    @action setPickupLocation = (location) => {
-        orderStore.pickupLocation = location
+        orderStore.setDelivery('Pickup')
+        /* Initialize pickup location if not set already */
+        if (!orderStore.pickupLocation) {
+            const locations = barStatusStore.openPickupLocationNames
+            if (locations.length)
+                orderStore.setPickupLocation(locations[0])
+        }
     }
 
     @action toggleButton = (delivery) => {
-        orderStore.delivery = delivery
+        orderStore.setDelivery(delivery)
     }
-
-    isActive = (label) => orderStore.delivery === label
 
     renderLabel = label => {
         if (label === 'Table')
@@ -90,29 +88,38 @@ export class DeliveryMethod extends DownloadResultView {
         return 'Pickup'
     }
 
-    renderFinished = () => {
-        const tableService = barStatusStore.tableService
-        const pickup = barStatusStore.pickupLocationNames.length >= 1
-        var delivery = orderStore.delivery
-        if (!tableService)
-            delivery = 'Pickup'
-        if (!pickup && delivery === 'Pickup')
-            delivery = null
-        const tableNumber =
-            orderStore.tableNumber
-                ? "" + orderStore.tableNumber
-                : ""
-
-        if (!delivery) {
-            return <T style={this.styles.deliveryText}>
-                No table service or pickup available.
-            </T>
+    @computed get delivery() {
+        if (!barStatusStore.haveTableService) {
+            return 'Pickup'
+        } else if (!barStatusStore.haveOpenPickupLocations) {
+            return 'Table'
         }
+        return orderStore.delivery
+    }
+
+    isActive = (label) => this.delivery === label
+
+    renderFinished = () => {
+        if (!barStatusStore.acceptingOrders) {
+            return (
+                <T style={this.styles.serviceNotAvailableText}>
+                    Sorry, we are not currently accepting orders.
+                </T>
+            )
+        } else if (!barStatusStore.allowOrderPlacing) {
+            return (
+                <T style={this.styles.serviceNotAvailableText}>
+                    No table service or pickup available.
+                </T>
+            )
+        }
+
+        const tableNumber = orderStore.tableNumber || ""
 
         return <View style={this.props.style}>
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
                     primary={this.props.primary}>
-                { tableService &&
+                { barStatusStore.haveTableService &&
                     <SelectableButton
                         label='Table'
                         renderLabel={this.renderLabel}
@@ -122,8 +129,7 @@ export class DeliveryMethod extends DownloadResultView {
                         style={{flex: 1}}
                         />
                 }
-                {
-                    pickup &&
+                { barStatusStore.haveOpenPickupLocations &&
                     <SelectableButton
                         label='Pickup'
                         renderLabel={this.renderLabel}
@@ -135,29 +141,29 @@ export class DeliveryMethod extends DownloadResultView {
                 }
             </Header>
             <View style={this.styles.optStyle}>
-                { delivery === 'Table' &&
+                { this.delivery === 'Table' &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
                             style={{marginTop: -10, width: 250, textAlign: 'center'}}
                             placeholder="table number"
                             defaultValue={tableNumber}
-                            onChangeText={this.setTableNumber}
-                            /* onEndEditing={event => this.setTableNumber(event.nativeEvent.text)} */
+                            onChangeText={orderStore.setTableNumber}
+                            /* onEndEditing={event => orderStore.setTableNumber(event.nativeEvent.text)} */
                             />
                     </View>
                 }
-                { delivery === 'Pickup' &&
+                { this.delivery === 'Pickup' &&
                     <Picker selectedValue={orderStore.pickupLocation}
-                            onValueChange={location => orderStore.pickupLocation = location}
+                            onValueChange={orderStore.setPickupLocation}
                             style={this.styles.pickerStyle}
                             >
                         {
-                            barStatusStore.pickupLocationNames.map(label =>
+                            barStatusStore.openPickupLocations.map(p =>
                                 <Picker.Item
-                                    key={label}
-                                    label={label}
-                                    value={label}
+                                    key={p.name}
+                                    label={p.name}
+                                    value={p.name}
                                     />
                             )
                         }

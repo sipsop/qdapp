@@ -120,6 +120,23 @@ class BarStatusStore {
         return this.barStatus && this.barStatus.taking_orders
     }
 
+    @computed get allowOrderPlacing() {
+        return (
+            this.acceptingOrders &&
+            ( this.haveTableService ||
+              this.haveOpenPickupLocations
+            )
+        )
+    }
+
+    @computed get haveTableService() {
+        return this.tableService !== 'Disabled'
+    }
+
+    @computed get haveOpenPickupLocations() {
+        return this.openPickupLocations.length > 0
+    }
+
     @computed get tableService() : String {
         if (config.test.tableService)
             return 'FoodAndDrinks'
@@ -133,8 +150,16 @@ class BarStatusStore {
         return pickupLocations || []
     }
 
+    @computed get openPickupLocations() : Array<PickupLocation> {
+        return this.pickupLocations.filter(p => p.open)
+    }
+
     @computed get pickupLocationNames() : Array<String> {
         return this.pickupLocations.map(p => p.name)
+    }
+
+    @computed get openPickupLocationNames() : Array<PickupLocation> {
+        return this.openPickupLocations.map(p => p.name)
     }
 
     @computed get barStatusNotification() {

@@ -9,11 +9,12 @@ import { OrderStatusDownload } from '/network/api/orders/orderstatus'
 import { downloadManager } from '/network/http'
 
 /* TODO: Imports */
-import { addToSelection } from './orderSelection.js'
-import { barStore } from '../barstore.js'
-import { paymentStore } from './paymentstore.js'
-import { loginStore } from '../loginstore.js'
-import * as _ from '/utils/curry.js'
+import { addToSelection } from './orderSelection'
+import { barStore } from '../barstore'
+import { paymentStore } from './paymentstore'
+import { loginStore } from '../loginstore'
+import { barStatusStore } from '../barstatusstore'
+import * as _ from '/utils/curry'
 
 import type { BarID, MenuItemID, DateType, Time, OrderItemID } from '../bar/Bar.js'
 import type { Int, String } from '../Types.js'
@@ -94,12 +95,13 @@ class OrderStore {
     @observable orderList      : Array<OrderItem> = []
     @observable tipFactor      : Float = 0.0
     @observable tipAmount      : Int = 0
-    @observable delivery       : String = 'Table'
-    @observable tableNumber    : ?String = null
-    @observable pickupLocation : String = null
+
+    @observable _delivery       : String = 'Table'
+    @observable _tableNumber    : ?String = null
+    @observable _pickupLocation : String = null
     // Keep this so that we can update the % independently of the price in the UI
 
-    @observable checkoutVisible = false
+    @observable _checkoutVisible = false
     @observable activeOrderID : ?ID = null
     @observable orderID = null
 
@@ -155,9 +157,9 @@ class OrderStore {
             this.cartID = orderState.cartID
         this.checkoutID = orderState.checkoutID
         if (orderState.delivery) {
-            this.delivery = orderState.delivery.delivery
-            this.tableNumber = orderState.delivery.tableNumber
-            this.pickupLocation = orderState.delivery.pickupLocation
+            this._delivery = orderState.delivery.delivery
+            this._tableNumber = orderState.delivery.tableNumber
+            this._pickupLocation = orderState.delivery.pickupLocation
         }
         this.orderID = orderState.orderID
     }
@@ -340,11 +342,57 @@ class OrderStore {
     /* Checkout                                                          */
     /*********************************************************************/
 
+    @computed get delivery() : ?Delivery {
+        if (!barStatusStore.allowOrderPlacing)
+            return null
+        if (!barStatusStore.haveTableService && this._delivery === 'Table')
+            return null
+        else if (!barStatusStore.haveOpenPickupLocations && this._delivery === 'Pickup')
+            return null
+        return this._delivery
+    }
+
+    @computed get tableNumber() : ?String {
+        if (!barStatusStore.allowOrderPlacing || !barStatusStore.haveTableService)
+            return null
+        return this._tableNumber && "" + this._tableNumber
+    }
+
+    @computed get pickupLocation() : ?String {
+        if (!barStatusStore.allowOrderPlacing)
+            return null
+        if (!_.includes(barStatusStore.openPickupLocationNames, this._pickupLocation)) {
+            if (barStatusStore.openPickupLocationNames.length) {
+                return barStatusStore.openPickupLocationNames[0]
+            }
+            return null
+        }
+        return this._pickupLocation
+    }
+
     @computed get haveDeliveryMethod() {
+        if (!barStatusStore.allowOrderPlacing)
+            return false
         if (this.delivery === 'Table')
             return !!this.tableNumber
         else
             return !!this.pickupLocation
+    }
+
+    @computed get checkoutVisible() {
+        return this._checkoutVisible && this.haveDeliveryMethod
+    }
+
+    @action setDelivery = (delivery) => {
+        this._delivery = delivery
+    }
+
+    @action setTableNumber = (tableNumber) => {
+        this._tableNumber = tableNumber
+    }
+
+    @action setPickupLocation = (pickupLocation : String) => {
+        this._pickupLocation = pickupLocation
     }
 
     @action setTipFactor = (factor) => {
@@ -360,7 +408,7 @@ class OrderStore {
     }
 
     @action setCheckoutVisibility = (visible : Bool) => {
-        this.checkoutVisible = visible
+        this._checkoutVisible = visible
     }
 
     /*********************************************************************/
@@ -424,9 +472,9 @@ class OrderStore {
     /* Clear all order-related data, e.g. when switching bars */
     @action clearAllOrderData = () => {
         this.closeReceiptAndResetCart()
-        this.delivery = 'Table'
-        this.tableNumber = null
-        this.pickupLocation = null
+        this._delivery = 'Table'
+        this._tableNumber = null
+        this._pickupLocation = null
     }
 
 }

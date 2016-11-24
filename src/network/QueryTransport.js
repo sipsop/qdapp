@@ -62,6 +62,7 @@ export class QueryTransport {
     @action onOpen = (ws) => {
         if (!this.connected) {
             log("websocket connection established...", ws.readyState)
+            this.ws && this.ws.close()
             this.ws = ws
             this.ws.onmessage = this.onMessage
             this.ws.onerror = this.onError

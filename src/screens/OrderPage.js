@@ -153,7 +153,7 @@ class OrderButton extends PureComponent {
                 onConfirm={this.props.onPress}
                 />
             <LargeButton
-                label={`Checkout`}
+                label="Checkout"
                 style={largeButtonStyle}
                 onPress={this.handlePress}
                 /* backgroundColor={config.theme.primary.light} */

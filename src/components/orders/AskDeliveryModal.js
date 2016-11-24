@@ -17,7 +17,7 @@ import { observer } from 'mobx-react/native'
 import { SmallOkCancelModal } from '/components/Modals'
 import { DeliveryMethod } from './DeliveryMethod'
 
-import { store, orderStore } from '/model/store'
+import { store, orderStore, barStatusStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
