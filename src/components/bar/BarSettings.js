@@ -139,17 +139,6 @@ class TableService extends PureComponent {
 
 @observer
 class PickupLocations extends PureComponent {
-    addPickupLocationModal = null
-
-    setSelected = (value) => {
-        // if (value === 'AddNew') {
-        //     this.addPickupLocationModal.show()
-        // } else {
-        //     barSettingsStore.setPickupLocation(value)
-        // }
-        barSettingsStore.setPickupLocation(value)
-    }
-
     render = () => {
         const locationNames = barStatusStore.pickupLocations.map(
             pickupLocation => pickupLocation.name
@@ -165,7 +154,7 @@ class PickupLocations extends PureComponent {
                     valueLabels={[...locationNames/*, 'Add New Pickup Location'*/]}
                     values={[...locationNames/*, 'AddNew'*/]}
                     value={locationName}
-                    onPress={this.setSelected}
+                    onPress={barSettingsStore.setPickupLocationName}
                     />
             </View>
         )
@@ -173,36 +162,11 @@ class PickupLocations extends PureComponent {
 }
 
 @observer
-class AddPickupLocationModal extends PureComponent {
-
-    @observable barName = ""
-
-    show = () => this.modal.show()
-    close = () => this.modal.close()
-
-    @action confirm = () => {
-        barStatusStore.addBar(this.barName)
-        this.barName = ""
-    }
-
-    render = () => {
-        return (
-            <SmallOkCancelModal
-                ref={ref => this.addPickupLocationModal = ref}
-                showOkButton={orderStore.haveDeliveryMethod}
-                okLabel="Add Bar"
-                onConfirm={addBar}
-                >
-                <DeliveryMethod />
-            </SmallOkCancelModal>
-        )
-    }
-}
-
-@observer
 class OpenCloseBar extends PureComponent {
-    openOrCloseLocation = (open: Bool) => {
-        barStatusStore.setBarOpen(barSettingsStore.selectedPickupLocation, open)
+    toggle = () => {
+        const barName = barSettingsStore.getPickupLocationName()
+        const open = !barSettingsStore.pickupLocation.open
+        barStatusStore.setBarOpen(barName, open)
     }
 
     render = () => {
@@ -212,7 +176,7 @@ class OpenCloseBar extends PureComponent {
         return (
             <BarSettingsSwitch
                 label={`${pickupLocation.name} open:`}
-                onPress={this.openOrCloseLocation}
+                onPress={this.toggle}
                 value={pickupLocation.open}
                 />
         )
@@ -266,11 +230,11 @@ const switchStyles = StyleSheet.create({
         flex: 1,
         color: '#000',
         fontSize: 20,
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     switchView: {
         flex: 1,
-        alignItems: 'center',
+        alignItems: 'flex-end',
     },
 })
 

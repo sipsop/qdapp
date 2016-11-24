@@ -188,6 +188,8 @@ class BarStatusStore {
     }
 
     @action setBarOpen = (barName : String, open : Bool) => {
+        assert(barName != null, "barName is null...")
+        assert(open != null, "open is null...")
         this.updateBarStatus({
             SetBarOpen: {
                 name: barName,
