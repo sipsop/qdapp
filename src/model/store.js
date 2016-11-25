@@ -90,6 +90,7 @@ export class Store {
             segment.initialized(),
             downloadManager.initialized(),
             loginStore.initialized(),
+            orderStore.initialized(),
         ])
 
         segment.track('Application Opened', {

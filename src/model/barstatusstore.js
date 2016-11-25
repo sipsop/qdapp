@@ -106,7 +106,6 @@ class BarStatusStore {
     /*********************************************************************/
 
     @computed get barStatus() : ?BarStatus {
-        log("GOT BAR STATUS", this.barStatusDownload.barStatus)
         return this.barStatusDownload.barStatus
     }
 

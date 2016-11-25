@@ -66,16 +66,12 @@ export class DeliveryMethod extends DownloadResultView {
 
     @action tableDelivery = () => {
         orderStore.setDelivery('Table')
+        orderStore.confirmDeliveryMethod()
     }
 
     @action pickup = () => {
         orderStore.setDelivery('Pickup')
-        /* Initialize pickup location if not set already */
-        if (!orderStore.pickupLocation) {
-            const locations = barStatusStore.openPickupLocationNames
-            if (locations.length)
-                orderStore.setPickupLocation(locations[0])
-        }
+        orderStore.confirmDeliveryMethod()
     }
 
     @action setTableNumber = (tableNumber) => {
@@ -98,11 +94,7 @@ export class DeliveryMethod extends DownloadResultView {
         return 'Pickup'
     }
 
-    @computed get delivery() {
-        return orderStore.delivery || 'Table'
-    }
-
-    isActive = (label) => this.delivery === label
+    isActive = (label) => orderStore.defaultDelivery === label
 
     renderFinished = () => {
         if (!barStatusStore.acceptingOrders) {
@@ -117,9 +109,9 @@ export class DeliveryMethod extends DownloadResultView {
                     No table service or pickup available.
                 </T>
             )
+        } else {
+            assert(orderStore.defaultDelivery != null, "defaultDelivery is null...")
         }
-
-        const tableNumber = orderStore.tableNumber || ""
 
         return <View style={this.props.style}>
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
@@ -146,19 +138,19 @@ export class DeliveryMethod extends DownloadResultView {
                 }
             </Header>
             <View style={this.styles.optStyle}>
-                { this.delivery === 'Table' &&
+                { orderStore.defaultDelivery === 'Table' &&
                     <View style={{flex: 1, alignItems: 'center'}}>
                         <TextInput
                             keyboardType='phone-pad'
                             style={{marginTop: -10, width: 250, textAlign: 'center'}}
                             placeholder="table number"
-                            defaultValue={tableNumber}
+                            defaultValue={orderStore.defaultTableNumber}
                             onChangeText={this.setTableNumber}
                             />
                     </View>
                 }
-                { this.delivery === 'Pickup' &&
-                    <Picker selectedValue={orderStore.pickupLocation}
+                { orderStore.defaultDelivery === 'Pickup' &&
+                    <Picker selectedValue={orderStore.defaultPickupLocation}
                             onValueChange={this.setPickupLocation}
                             style={this.styles.pickerStyle}
                             >

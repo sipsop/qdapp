@@ -69,6 +69,7 @@ export class OrderPage extends DownloadResultView {
     getDownloadResult = () => barStore.getMenuDownloadResult()
 
     handleOrderPress = () => {
+        orderStore.confirmDeliveryMethod()
         orderStore.setCheckoutVisibility(true)
         orderStore.freshCheckoutID()
         analytics.trackCheckoutStart()

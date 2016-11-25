@@ -99,9 +99,9 @@ class OrderStore {
     @observable tipFactor      : Float = 0.0
     @observable tipAmount      : Int = 0
 
-    @observable _delivery       : String = 'Table'
-    @observable _tableNumber    : ?String = null
-    @observable _pickupLocation : String = null
+    @observable delivery       : String = 'Table'
+    @observable tableNumber    : ?String = null
+    @observable pickupLocation : String = null
     // Keep this so that we can update the % independently of the price in the UI
 
     @observable _checkoutVisible = false
@@ -160,9 +160,9 @@ class OrderStore {
             this.cartID = orderState.cartID
         this.checkoutID = orderState.checkoutID
         if (orderState.delivery) {
-            this._delivery = orderState.delivery.delivery
-            this._tableNumber = orderState.delivery.tableNumber
-            this._pickupLocation = orderState.delivery.pickupLocation
+            this.delivery = orderState.delivery.delivery
+            this.tableNumber = orderState.delivery.tableNumber
+            this.pickupLocation = orderState.delivery.pickupLocation
         }
         this.orderID = orderState.orderID
     }
@@ -200,16 +200,20 @@ class OrderStore {
                 },
             }
         ))
+    }
+
+    initialized = () => {
+        /*
+        When we have a valid bar status, it is possible the user has selected
+        a delivery method that is incompatible with this bar status. In this
+        case, show the delivery method popup to the user.
+        */
         autorun(() => {
-            if (this.deliveryMethodHasChanged) {
+            if (barStatusStore.barStatus != null &&
+                    this.deliveryMethodHasChanged &&
+                    !loginStore.isBarOwner) {
                 this.confirmDeliveryMethod()
                 modalStore.openDeliveryModal()
-                // messageStore.showMessage({
-                //     messageID: 'delivery method changed',
-                //     timestamp: getTime(),
-                //     title: 'Delivery Method Changed',
-                //     content: 'The bar has updated the way orders are accepted.',
-                // })
             }
         })
     }
@@ -217,11 +221,6 @@ class OrderStore {
     getPaymentTokenDownload = () => downloadManager.getDownload('stripe')
     getPlaceOrderDownload   = () => downloadManager.getDownload('placeOrder')
     getOrderStatusDownload  = () => downloadManager.getDownload('order status')
-
-    @action confirmDeliveryMethod = () => {
-        this._delivery = this.delivery
-        this._pickupLocation = this.pickupLocation
-    }
 
     @action setOrderID = (orderID) => {
         this.orderID = orderID
@@ -362,36 +361,52 @@ class OrderStore {
     /* Checkout                                                          */
     /*********************************************************************/
 
-    @computed get delivery() : ?Delivery {
+    /* Default delivery methods. For example, the user may have selected
+       table service, but this may be disabled by the bar. In this case
+       delivery === 'Table' but defaultDelivery === 'Pickup'.
+    */
+    @computed get defaultDelivery() : ?Delivery {
         if (!barStatusStore.allowOrderPlacing)
             return null
         if (!barStatusStore.haveTableService)
             return 'Pickup'
         else if (!barStatusStore.haveOpenPickupLocations)
             return 'Table'
-        return this._delivery
+        return this.delivery || 'Table'
     }
 
-    @computed get tableNumber() : ?String {
-        if (!barStatusStore.allowOrderPlacing || !barStatusStore.haveTableService)
-            return null
-        return this._tableNumber && "" + this._tableNumber
+    @computed get defaultTableNumber() : ?String {
+        return this.tableNumber && "" + this.tableNumber
     }
 
-    @computed get pickupLocation() : ?String {
-        if (!barStatusStore.allowOrderPlacing)
+    @computed get defaultPickupLocation() : ?String {
+        if (!barStatusStore.allowOrderPlacing || this.defaultDelivery !== 'Pickup')
             return null
-        if (!_.includes(barStatusStore.openPickupLocationNames, this._pickupLocation)) {
+        const pickDefault = (
+            !this.pickupLocation ||
+            !_.includes(barStatusStore.openPickupLocationNames, this.pickupLocation)
+        )
+        if (pickDefault) {
             if (barStatusStore.openPickupLocationNames.length) {
                 return barStatusStore.openPickupLocationNames[0]
             }
             return null
         }
-        return this._pickupLocation
+        return this.pickupLocation
+    }
+
+    @computed get deliveryMethodHasChanged() : Bool {
+        if (!this.delivery)
+            return false
+        return (
+            this.defaultDelivery !== this.delivery ||
+            this.defaultTableNumber !== this.tableNumber ||
+            this.defaultPickupLocation !== this.pickupLocation
+        )
     }
 
     @computed get haveDeliveryMethod() {
-        if (!barStatusStore.allowOrderPlacing || this.delivery == null)
+        if (!barStatusStore.allowOrderPlacing)
             return false
         if (this.delivery === 'Table')
             return !!this.tableNumber
@@ -399,12 +414,13 @@ class OrderStore {
             return !!this.pickupLocation
     }
 
-    @computed get deliveryMethodHasChanged() : Bool {
-        return (
-            this.delivery !== this._delivery ||
-            this.tableNumber !== this._tableNumber ||
-            this.pickupLocation !== this._pickupLocation
-        )
+    @computed get haveDefaultDeliveryMethod() {
+        if (!barStatusStore.allowOrderPlacing)
+            return false
+        if (this.defaultDelivery === 'Table')
+            return !!this.defaultTableNumber
+        else
+            return !!this.defaultPickupLocation
     }
 
     @computed get checkoutVisible() {
@@ -412,15 +428,20 @@ class OrderStore {
     }
 
     @action setDelivery = (delivery) => {
-        this._delivery = delivery
+        this.delivery = delivery
     }
 
     @action setTableNumber = (tableNumber) => {
-        this._tableNumber = tableNumber
+        this.tableNumber = tableNumber
     }
 
     @action setPickupLocation = (pickupLocation : String) => {
-        this._pickupLocation = pickupLocation
+        this.pickupLocation = pickupLocation
+    }
+
+    @action confirmDeliveryMethod = () => {
+        this.delivery = this.defaultDelivery
+        this.pickupLocation = this.defaultPickupLocation
     }
 
     @action setTipFactor = (factor) => {
@@ -500,9 +521,9 @@ class OrderStore {
     /* Clear all order-related data, e.g. when switching bars */
     @action clearAllOrderData = () => {
         this.closeReceiptAndResetCart()
-        this._delivery = 'Table'
-        this._tableNumber = null
-        this._pickupLocation = null
+        this.delivery = null
+        this.tableNumber = null
+        this.pickupLocation = null
     }
 
 }

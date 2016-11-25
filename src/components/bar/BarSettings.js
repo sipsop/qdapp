@@ -16,7 +16,7 @@ import { Header, HeaderText, TextHeader } from '../Header'
 import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 import { LargeButton } from '/components/Button'
 
-import { store, barStore, barStatusStore, barSettingsStore } from '/model/store'
+import { barStatusStore, barSettingsStore, modalStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -84,8 +84,18 @@ export class BarSettings extends PureComponent {
                         <TableService />
                         <Border />
                         <PickupLocations />
-                        <Border />
-                        <OpenCloseBar />
+                        {
+                            barStatusStore.pickupLocations.map(pickupLocation => {
+                                return (
+                                    <View key={pickupLocation.name}>
+                                        <Border />
+                                        <OpenCloseBar
+                                            pickupLocation={pickupLocation}
+                                            />
+                                    </View>
+                                )
+                            })
+                        }
                     </View>
                 }
                 <Border />
@@ -174,21 +184,24 @@ class PickupLocations extends PureComponent {
 
 @observer
 class OpenCloseBar extends PureComponent {
+    /* properties:
+        pickupLocation: PickupLocation
+    */
+
+    get pickupLocation() {
+        return this.props.pickupLocation
+    }
+
     toggle = () => {
-        const barName = barSettingsStore.pickupLocationName
-        const open = !barSettingsStore.pickupLocationOpen
-        barStatusStore.setBarOpen(barName, open)
+        barStatusStore.setBarOpen(this.pickupLocation.name, !this.pickupLocation.open)
     }
 
     render = () => {
-        const pickupLocation = barSettingsStore.pickupLocation
-        if (!pickupLocation)
-            return null
         return (
             <BarSettingsSwitch
-                label={`${pickupLocation.name} open:`}
+                label={`${this.pickupLocation.name} open:`}
                 onPress={this.toggle}
-                value={pickupLocation.open}
+                value={this.pickupLocation.open}
                 />
         )
     }

@@ -33,6 +33,10 @@ export class ConfirmDeliveryModal extends PureComponent {
 
     modal = null
 
+    static defaultProps = {
+        showCancelButton: true,
+    }
+
     show = () => this.modal.show()
     close = () => this.modal.close()
 
@@ -41,14 +45,19 @@ export class ConfirmDeliveryModal extends PureComponent {
         this.props.onConfirm && this.props.onConfirm()
     }
 
+    @action handleClose = () => {
+        orderStore.confirmDeliveryMethod()
+        this.props.onClose && this.props.onClose()
+    }
+
     render = () => {
         return (
             <SmallOkCancelModal
                 ref={ref => this.modal = ref}
-                showOkButton={orderStore.haveDeliveryMethod}
+                showOkButton={orderStore.haveDefaultDeliveryMethod}
                 okLabel={`Checkout`}
                 onConfirm={this.confirm}
-                onClose={this.props.onClose}
+                onClose={this.handleClose}
                 isVisible={this.props.isVisible}
                 >
                 <DeliveryMethod />

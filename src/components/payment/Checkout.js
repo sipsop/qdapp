@@ -85,7 +85,8 @@ export class Checkout extends DownloadResultView {
     @computed get disableBuyButton() {
         return (
             !barStore.getBar() ||
-            !downloadManager.connected
+            !downloadManager.connected ||
+            !orderStore.haveDeliveryMethod
         )
     }
 
