@@ -33,7 +33,6 @@ export class PlaceOrderModal extends PureComponent {
     }
 
     handleClose = () => {
-        log("CLOSING WITH DOWNLOAD STATE", this.downloadState)
         if (this.downloadState === 'Finished')
             this.close()
         else
@@ -62,7 +61,7 @@ export class PlaceOrderModal extends PureComponent {
                     okModal={this.handleClose}
                     cancelModal={this.handleClose}
                     >
-            <ConnectionBar />    
+            <ConnectionBar />
             <PlaceOrderDownloadView />
         </OkCancelModal>
     }

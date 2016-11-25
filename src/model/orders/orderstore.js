@@ -211,7 +211,9 @@ class OrderStore {
         autorun(() => {
             if (barStatusStore.barStatus != null &&
                     this.deliveryMethodHasChanged &&
-                    !loginStore.isBarOwner) {
+                    !loginStore.isBarOwner &&
+                    this.orderList.length > 0
+                ) {
                 this.confirmDeliveryMethod()
                 modalStore.openDeliveryModal()
             }
@@ -489,6 +491,7 @@ class OrderStore {
         if (this.stripeToken) {
             /* Submit order to server along with stripe token */
             await this.getPlaceOrderDownload().forceRefresh()
+            this.clearOrderList()
         }
     }
 
@@ -504,6 +507,10 @@ class OrderStore {
     /* Clear Orders                                                      */
     /*********************************************************************/
 
+    @action clearOrderList = () => {
+        this.setOrderList([])
+    }
+
     /* Close the receipt window, but keep the current shopping cart */
     @action closeReceipt = () => {
         this.activeOrderID = null
@@ -512,7 +519,7 @@ class OrderStore {
 
     /* Clear the order list at the bar, e.g. after closing the receipt window */
     @action closeReceiptAndResetCart = () => {
-        this.setOrderList([])
+        this.clearOrderList()
         this.activeOrderID = null
         this.cartID = _.uuid()
         this.resetTip()
