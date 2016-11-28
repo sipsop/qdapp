@@ -52,12 +52,13 @@ export class OrderPage extends DownloadResultView {
         },
         deliveryMethod: {
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: 10,
-            height: 120,
+            // borderRadius: 10,
+            // height: 120,
             margin: 5,
             padding: 10,
             borderWidth: 0.5,
-            borderColor: config.theme.primary.medium,
+            // borderColor: config.theme.primary.medium,
+            borderColor: '#000',
         },
         emptyView: {
             width: 1,

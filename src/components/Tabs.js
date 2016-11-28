@@ -27,7 +27,7 @@ export class TabView extends PureComponent {
                     renderTabBar={() => <TabBarWithMenu />}
                     style={{flex: 1}}
                     scrollWithoutAnimation={true}
-                    tabBarUnderlineColor={config.theme.primary.medium}
+                    tabBarUnderlineStyle={{backgroundColor: config.theme.primary.medium}}
                     tabBarActiveTextColor={config.theme.primary.medium}
                     /*
                     tabBarInactiveTextColor={config.theme.primary.dark}

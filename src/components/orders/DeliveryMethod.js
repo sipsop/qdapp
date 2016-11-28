@@ -97,6 +97,14 @@ export class DeliveryMethod extends DownloadResultView {
     isActive = (label) => orderStore.defaultDelivery === label
 
     renderFinished = () => {
+        return (
+            <View style={this.props.style}>
+                {this.renderDeliveryMethod()}
+            </View>
+        )
+    }
+
+    renderDeliveryMethod = () => {
         if (!barStatusStore.acceptingOrders) {
             return (
                 <T style={this.styles.serviceNotAvailableText}>
@@ -113,7 +121,7 @@ export class DeliveryMethod extends DownloadResultView {
             assert(orderStore.defaultDelivery != null, "defaultDelivery is null...")
         }
 
-        return <View style={this.props.style}>
+        return <View>
             <Header style={{flexDirection: 'row' /*, backgroundColor: '#000' */}}
                     primary={this.props.primary}>
                 { barStatusStore.haveTableService &&
