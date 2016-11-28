@@ -8,6 +8,8 @@ The real meat is in barStatusStore.
 class BarSettingsStore {
     @observable selectedLocationName : String = null
 
+    initialize = () => null
+
     @computed get pickupLocations() : Map<String, PickupLocation> {
         const result = {}
         barStatusStore.pickupLocations.forEach(pickupLocation => {

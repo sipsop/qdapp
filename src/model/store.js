@@ -10,7 +10,6 @@ import { favStore } from './favstore'
 import { tabStore } from './tabstore'
 import { barStore } from './barstore'
 import { barStatusStore } from './barstatusstore'
-import { barSettingsStore } from './admin/barsettingsstore'
 import { loginStore } from './loginstore'
 import { tagStore } from './tagstore'
 import { mapStore } from './mapstore'
@@ -23,6 +22,10 @@ import { SearchStore } from './searchstore'
 import { modalStore } from './modalstore'
 import { messageStore } from './messagestore'
 import { pushNotificationStore } from './pushnotificationstore'
+
+/* Admin Stores */
+import { barSettingsStore } from './admin/barsettingsstore'
+import { activeOrderStore } from './admin/activeorderstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -76,6 +79,9 @@ export class Store {
             timeStore.initialize(),
             segment.initialize(),
             pushNotificationStore.initialize(),
+
+            barSettingsStore.initialize(),
+            activeOrderStore.initialize(),
         ])
 
         try {
@@ -194,7 +200,6 @@ export {
     tabStore,
     barStore,
     barStatusStore,
-    barSettingsStore,
     loginStore,
     tagStore,
     mapStore,
@@ -208,4 +213,7 @@ export {
     modalStore,
     SearchStore,
     messageStore,
+
+    barSettingsStore,
+    activeOrderStore,
 }

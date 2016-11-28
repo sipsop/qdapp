@@ -34,8 +34,8 @@ const barOrderIcons = [
         getCounter={() => 3}
         />,
     <BarIcon
-        key="history"
-        label="history"
+        key="completed"
+        label="completed"
         name="list"
         />,
 ]
