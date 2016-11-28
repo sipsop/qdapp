@@ -16,6 +16,7 @@ import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
 import { MessageList } from '/components/messages/MessageList'
+import { IconBar, BarIcon } from '/components/IconBar'
 import { OrderStatusDownload } from '/network/api/orders/orderstatus'
 import { store, tabStore, loginStore, segment } from '/model/store.js'
 
@@ -119,25 +120,20 @@ class TimeEstimate extends PureComponent {
     }
 }
 
-const styles = StyleSheet.create({
-    icons: {
-        marginTop: 5,
-        marginBottom: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        // height: 70,
-    },
-    optionIcon: {
-        // flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#000',
-    },
-    iconSubText: {
-        flex: 1,
-        textAlign: 'center',
-    },
-})
+const receiptIcons = [
+    <BarIcon
+        key="messages"
+        Icon={MaterialIcon}
+        label="messages"
+        name="message"
+        />,
+    <BarIcon
+        key="receipt"
+        Icon={MaterialIcon}
+        label="receipt"
+        name="receipt"
+        />,
+]
 
 @observer
 class ReceiptOptions extends PureComponent {
@@ -145,59 +141,23 @@ class ReceiptOptions extends PureComponent {
         orderResult: OrderResult
     */
 
-    @observable messagesVisible = true
-
-    @action setMessagesVisible = (visible : Bool) => {
-        this.messagesVisible = visible
-    }
-
     render = () => {
         const orderResult = this.props.orderResult
-        const activeIconStyle = {
-            borderBottomWidth: 2,
-            borderColor: config.theme.primary.medium,
-        }
         return (
-            <View>
-                <View style={styles.icons}>
-                    <TouchableOpacity onPress={() => this.setMessagesVisible(true)}>
-                        <View>
-                            <MaterialIcon
-                                name="message"
-                                size={60}
-                                style={[styles.optionIcon, this.messagesVisible && activeIconStyle]}
-                                />
-                            <T style={styles.iconSubText}>Messages</T>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.setMessagesVisible(false)}>
-                        <View>
-                            <MaterialIcon
-                                name="receipt"
-                                size={60}
-                                style={[styles.optionIcon, !this.messagesVisible && activeIconStyle]}
-                                />
-                            <T style={styles.iconSubText}>Receipt</T>
-                        </View>
-                    </TouchableOpacity>
+            <IconBar icons={receiptIcons}>
+                <MessageLog orderResult={orderResult} />
+                <View>
+                    <View style={{height: 15, backgroundColor: '#fff'}} />
+                    <SimpleOrderList
+                        menuItems={orderResult.menuItems}
+                        orderList={orderResult.orderList}
+                        />
+                    <OrderTotal
+                        total={orderResult.totalPrice}
+                        tip={orderResult.tip}
+                        />
                 </View>
-                {this.messagesVisible &&
-                    <MessageLog orderResult={orderResult} />
-                }
-                {!this.messagesVisible &&
-                    <View>
-                        <View style={{height: 15, backgroundColor: '#fff'}} />
-                        <SimpleOrderList
-                            menuItems={orderResult.menuItems}
-                            orderList={orderResult.orderList}
-                            />
-                        <OrderTotal
-                            total={orderResult.totalPrice}
-                            tip={orderResult.tip}
-                            />
-                    </View>
-                }
-            </View>
+            </IconBar>
         )
     }
 }

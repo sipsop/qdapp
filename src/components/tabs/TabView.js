@@ -29,6 +29,7 @@ export class TabView extends PureComponent {
     render = () => {
         return (
             <ScrollableTabView
+                ref={this.props.getRef}
                 style={styles.tabStyle}
                 scrollWithoutAnimation={true}
                 tabBarUnderlineStyle={styles.tabBarUnderlineStyle}

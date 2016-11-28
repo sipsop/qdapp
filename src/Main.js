@@ -18,7 +18,7 @@ import { OrderPage } from './screens/OrderPage'
 import { handleBackButton } from './components/AndroidBackButton'
 import { SideMenu } from './components/sidemenu/SideMenu'
 import { ControlPanel } from './components/sidemenu/ControlPanel'
-import { TabView } from './components/tabs/TabView'
+import { MainTabView } from './components/tabs/MainTabView'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
 import { Checkout } from '/components/payment/Checkout'
@@ -74,7 +74,7 @@ export class Main extends Component {
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <Checkout />
                             <PlaceOrderModal />
-                            <TabView>
+                            <MainTabView>
                                 <View tabLabel='Discover' style={{flex: 1}}>
                                     <DiscoverPage />
                                 </View>
@@ -87,7 +87,7 @@ export class Main extends Component {
                                 <View tabLabel='Order' style={{flex: 1}}>
                                     <OrderPage />
                                 </View>
-                            </TabView>
+                            </MainTabView>
                         </View>
                     </SideMenu> :
                     <View style={{flex: 1}}>

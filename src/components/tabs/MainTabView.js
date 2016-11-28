@@ -7,7 +7,7 @@ import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 
 import { TabView } from './TabView'
-import { drawerStore, tabStore } from '../model/store'
+import { drawerStore, tabStore } from '/model/store'
 
 const { log, assert } = _.utils('/components/MainTabView')
 
@@ -15,7 +15,7 @@ export class MainTabView extends PureComponent {
     render = () => {
         return (
             <TabView
-                ref={tabStore.setTabView}
+                getRef={tabStore.setTabView}
                 initialPage={tabStore.initialPage}
                 renderTabBar={() => <TabBarWithMenu />}
                 /* NOTE: This is buggy, do not use! */
@@ -28,33 +28,6 @@ export class MainTabView extends PureComponent {
                 {this.props.children}
             </TabView>
         )
-    }
-}
-
-export class TabView extends PureComponent {
-    render = () => {
-        return <ScrollableTabView
-                    ref={tabStore.setTabView}
-                    initialPage={tabStore.initialPage}
-                    renderTabBar={() => <TabBarWithMenu />}
-                    style={{flex: 1}}
-                    scrollWithoutAnimation={true}
-                    tabBarUnderlineStyle={{backgroundColor: config.theme.primary.medium}}
-                    tabBarActiveTextColor={config.theme.primary.medium}
-                    /*
-                    tabBarInactiveTextColor={config.theme.primary.dark}
-                    tabBarBackgroundColor="#000"
-                    */
-                    tabBarTextStyle={{marginTop: 4, fontSize: 16, textAlign: 'center'}}
-                    /* NOTE: This is buggy, do not use! */
-                    /*page={store.currentTab}*/
-                    onChangeTab={
-                        changeEvent => {
-                            tabStore.setCurrentTab(changeEvent.i)
-                        }
-                    }>
-            {this.props.children}
-        </ScrollableTabView>
     }
 }
 
