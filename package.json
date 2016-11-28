@@ -30,6 +30,7 @@
     "react-native-drawer": "^2.3.0",
     "react-native-fcm": "^2.3.2",
     "react-native-fs": "^2.0.1-rc.2",
+    "react-native-icon-badge": "^1.1.1",
     "react-native-infinite-scroll-view": "^0.4.2",
     "react-native-linear-gradient": "^1.5.13",
     "react-native-lock": "^0.4.0",

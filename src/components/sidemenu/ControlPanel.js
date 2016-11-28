@@ -91,7 +91,7 @@ class AdminBarList extends PureComponent {
             <View>
                 <SideMenuEntry
                     text="Bar Admin"
-                    icon={icon("map-marker", "rgb(19, 58, 194)")}
+                    icon={icon("user", "rgb(19, 58, 194)")}
                     onPress={() => {
                         drawerStore.disable()
                         this.barListModal.show()

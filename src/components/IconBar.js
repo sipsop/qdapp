@@ -5,6 +5,8 @@ import {
 import { observable, action, autorun, computed, asMap } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import IconBadge from 'react-native-icon-badge'
+
 import { config } from '/utils/config.js'
 
 const styles = StyleSheet.create({
@@ -20,14 +22,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         color: '#000',
+        paddingBottom: 7,
     },
     selectedIconStyle: {
+        paddingBottom: 5,
         borderBottomWidth: 2,
         borderColor: config.theme.primary.medium,
     },
     iconSubText: {
         flex: 1,
         textAlign: 'center',
+    },
+    badge: {
+        backgroundColor: config.theme.primary.medium,
+        width: 25,
+        height: 25,
+    },
+    badgeText: {
+        color: '#fff',
     },
 })
 
@@ -98,15 +110,13 @@ export class BarIcon extends PureComponent {
     }
 
     @computed get counter() {
-        if (!this.props.getCounter)
-            return 0
-        return this.props.getCounter()
+        return this.props.getCounter && this.props.getCounter()
     }
 
     render = () => {
         const Icon = this.props.Icon
         /* TODO: use this.counter */
-        return (
+        const result = (
             <TouchableOpacity onPress={() => this.props.selectIcon()}>
                 <View>
                     <Icon
@@ -116,6 +126,17 @@ export class BarIcon extends PureComponent {
                     <T style={styles.iconSubText}>{this.props.label}</T>
                 </View>
             </TouchableOpacity>
+        )
+
+        if (!this.props.getCounter)
+            return result
+
+        return (
+            <IconBadge
+                MainElement={result}
+                BadgeElement={<T style={styles.badgeText}>{this.counter}</T>}
+                IconBadgeStyle={styles.badge}
+                />
         )
     }
 }

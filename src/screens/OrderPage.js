@@ -14,6 +14,7 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { BarOrderPage } from '/components/admin/BarOrderPage'
 import { Page, Loader } from '/components/Page'
 import { SimpleListView } from '/components/SimpleListView'
 import { LargeButton } from '/components/Button'
@@ -26,7 +27,7 @@ import { Message, SmallOkCancelModal } from '/components/Modals'
 import { DeliveryMethod } from '/components/orders/DeliveryMethod'
 import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 
-import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore, loginStore } from '/model/store'
 import { analytics } from '/model/analytics'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
@@ -41,7 +42,16 @@ const largeButtonStyle = {
 const { width } = Dimensions.get('window')
 
 @observer
-export class OrderPage extends DownloadResultView {
+export class OrderPage extends PureComponent {
+    render = () => {
+        if (loginStore.isBarOwner)
+            return <BarOrderPage />
+        return <UserOrderPage />
+    }
+}
+
+@observer
+class UserOrderPage extends DownloadResultView {
 
     styles = {
         deliveryMethodView: {
