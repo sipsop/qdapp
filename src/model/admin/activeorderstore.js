@@ -1,6 +1,11 @@
-import { observable, transaction, computed, action } from 'mobx'
+import { observable, transaction, computed, action, autorun } from 'mobx'
 import { barStore } from '../barstore'
 import { loginStore } from '../loginstore'
+import { downloadManager } from '/network/http'
+import { ActiveOrderDownload } from '/network/api/admin/active-orders'
+import * as _ from '/utils/curry'
+
+const { log, assert } = _.utils('/model/activeorderstore.js')
 
 class ActiveOrderStore {
     @observable activeOrderList : Array<OrderResult> = []
@@ -11,22 +16,27 @@ class ActiveOrderStore {
     /*********************************************************************/
 
     initialize = () => {
-        downloadManager.declareDownload(() => {
-            return {
-                barID: barStore.barID,
-                authToken: loginStore.getAuthToken(),
-                userIsBarOwner: loginStore.isBarOwner,
-            }, {
-                onFinish = () => {
-                    const feed = feed
-                    if (feed.orderDeleted) {
-                        this.deleteActiveOrderItem(feed.orderID)
-                    } else {
-                        this.addActiveOrderItem(feed.orderResult)
+        downloadManager.declareDownload(new ActiveOrderDownload(
+            () => {
+                return {
+                    barID: barStore.barID,
+                    authToken: loginStore.getAuthToken(),
+                    userIsBarOwner: loginStore.isBarOwner,
+                }
+            },
+            {
+                onFinish: () => {
+                    const feed = this.getActiveOrderFeed()
+                    if (feed.state === 'Finished') {
+                        if (feed.orderDeleted) {
+                            this.deleteActiveOrderItem(feed.orderID)
+                        } else {
+                            this.addActiveOrderItem(feed.orderResult)
+                        }
                     }
-                },
+                }
             }
-        })
+        ))
     }
 
     getActiveOrderFeed = () => downloadManager.getDownload('active orders')
@@ -36,6 +46,7 @@ class ActiveOrderStore {
     /*********************************************************************/
 
     @action addActiveOrderItem = (orderResult : OrderResult) => {
+        assert(orderResult != null)
         assert(orderResult.orderID != null)
         for (var i = 0; i < this.activeOrderList.length; i++) {
             const orderResult2 = this.activeOrderList[i]

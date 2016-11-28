@@ -437,9 +437,10 @@ export class Download {
         this.reset('Finished')
         this.value = value
         this.finish()
-        this.onFinish()
         if (this.value != null)
             this.lastValue = this.value
+        /* NOTE: onFinish should no longer modify this.value! */
+        this.onFinish()
     }
 
     @computed get state() {

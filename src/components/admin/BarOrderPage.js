@@ -15,16 +15,15 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { IconBar, BarIcon } from '/components/IconBar'
+import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
 
-import { store, tabStore, barStore, barStatusStore, orderStore, paymentStore } from '/model/store'
-import { analytics } from '/model/analytics'
+import { activeOrderStore } from '/model/store'
 import * as _ from '/utils/curry'
-import { config } from '/utils/config'
 
-const { assert, log } = _.utils('/screens/BarOrderPage')
+const { assert, log } = _.utils('/components/admin/BarOrderPage')
 
 const barOrderIcons = [
     <BarIcon
@@ -45,9 +44,36 @@ export class BarOrderPage extends PureComponent {
     render = () => {
         return (
             <IconBar icons={barOrderIcons}>
-                <View />
+                <ActiveOrderList />
                 <View />
             </IconBar>
         )
     }
+}
+
+@observer
+class ActiveOrderList extends PureComponent {
+
+    @computed get activeOrders() {
+        return _.reverse(activeOrderStore.activeOrderList)
+    }
+
+    render = () => {
+        return (
+            <ScrollView style={{flex: 1}}>
+                <ActiveOrderListDownloadErrors />
+                {
+                    this.activeOrders.map((activeOrder, i) => {
+                        return <T key={i}>JSON.stringify(activeOrder)</T>
+                    })
+                }
+            </ScrollView>
+        )
+    }
+}
+
+@observer
+class ActiveOrderListDownloadErrors extends DownloadResultView {
+    getDownloadResult = activeOrderStore.getActiveOrderFeed
+    renderFinished = () => null
 }

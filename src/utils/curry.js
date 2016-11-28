@@ -245,6 +245,12 @@ export function includes(xs, x, equals = (x, y) => x === y) {
     return false
 }
 
+export const reverse = (xs) => {
+    var result = xs.slice()
+    result.reverse()
+    return result
+}
+
 export function index(xs, i) {
     throw "Not implemented" // TODO: implement Maybe type
 }
