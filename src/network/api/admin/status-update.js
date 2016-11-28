@@ -2,7 +2,7 @@ import { computed } from 'mobx'
 import { QueryMutation } from '/network/http'
 import * as _ from '/utils/curry'
 
-const { log, assert } = _.utils('/network/api/bar/status-update')
+const { log, assert } = _.utils('/network/api/admin/status-update')
 
 export class UpdateBarStatusDownload extends QueryMutation {
     /* properties:

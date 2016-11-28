@@ -1,8 +1,8 @@
 import { observable, transaction, computed, action, asMap, autorun } from 'mobx'
 
 import { downloadManager, latest } from '/network/http'
-import { BarStatusDownload } from '/network/api/barstatus/status'
-import { UpdateBarStatusDownload } from '/network/api/barstatus/status-update'
+import { BarStatusDownload } from '/network/api/bar/barstatus'
+import { UpdateBarStatusDownload } from '/network/api/admin/status-update'
 import { segment } from '/network/segment'
 import { loginStore } from './loginstore'
 import { barStore } from './barstore'

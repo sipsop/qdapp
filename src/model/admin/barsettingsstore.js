@@ -1,5 +1,5 @@
 import { observable, transaction, computed, action } from 'mobx'
-import { barStatusStore } from './barstatusstore'
+import { barStatusStore } from '../barstatusstore'
 
 /* Store for controlling bar settings pickup location.
 
