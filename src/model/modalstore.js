@@ -34,7 +34,6 @@ class ModalStore {
     }
 
     @action closeDeliveryModal = () => {
-        console.log("CLOSING DELIVERY MODAL!")
         this.showDeliveryModal = false
     }
 
