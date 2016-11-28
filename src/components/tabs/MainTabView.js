@@ -1,23 +1,35 @@
-import {
-    React,
-    Component,
-    PureComponent,
-    View,
-    TouchableOpacity,
-    Icon,
-} from '/components/Component.js'
-import ScrollableTabView, { DefaultTabBar, ScrollableTabBar }
-       from 'react-native-scrollable-tab-view'
+import { React, Component, PureComponent, View, TouchableOpacity, Icon } from '/components/Component.js'
+import ScrollableTabView, { DefaultTabBar, ScrollableTabBar } from 'react-native-scrollable-tab-view'
 import { observable, transaction, computed, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 
-import { historyStore, drawerStore, tabStore } from '../model/store.js'
-import { analytics } from '/model/analytics.js'
+import { TabView } from './TabView'
+import { drawerStore, tabStore } from '../model/store'
 
-const { log, assert } = _.utils('./Tabs.js')
+const { log, assert } = _.utils('/components/MainTabView')
+
+export class MainTabView extends PureComponent {
+    render = () => {
+        return (
+            <TabView
+                ref={tabStore.setTabView}
+                initialPage={tabStore.initialPage}
+                renderTabBar={() => <TabBarWithMenu />}
+                /* NOTE: This is buggy, do not use! */
+                /*page={store.currentTab}*/
+                onChangeTab={
+                    changeEvent => {
+                        tabStore.setCurrentTab(changeEvent.i)
+                    }
+                }>
+                {this.props.children}
+            </TabView>
+        )
+    }
+}
 
 export class TabView extends PureComponent {
     render = () => {
