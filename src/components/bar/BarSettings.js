@@ -13,10 +13,11 @@ import { observer } from 'mobx-react/native'
 
 import { Loader } from '../Page'
 import { Header, HeaderText, TextHeader } from '../Header'
+import { Email } from '/components/Email'
 import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
 import { LargeButton } from '/components/Button'
 
-import { barStatusStore, barSettingsStore, modalStore } from '/model/store'
+import { barStore, barStatusStore, barSettingsStore, modalStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -41,10 +42,6 @@ const styles = StyleSheet.create({
     },
     loader: {
         width: 60,
-    },
-    subText: {
-        textAlign: 'center',
-        fontSize: 16,
     },
     borderView: {
         flex: 1,
@@ -160,26 +157,57 @@ class TableService extends PureComponent {
     }
 }
 
+const emailBody = () => `
+Hi!
+
+Could you please ADD the following pickup locations?
+
+    ...
+
+Could you please REMOVE the following pickup locations?
+
+    ...
+
+Thanks!
+${barStore.barName}
+(barID: ${barStore.barID})
+`
+
 @observer
 class PickupLocations extends PureComponent {
     render = () => {
-        const locationNames = barStatusStore.pickupLocationNames
-        const locationName = barSettingsStore.pickupLocationName
-
         return (
-            <View>
-                {/* TODO: */}
-                {/*<AddPickupLocationModal />*/}
-                <BarSettingsPicker
-                    label="Pickup Locations:"
-                    valueLabels={[...locationNames/*, 'Add New Pickup Location'*/]}
-                    values={[...locationNames/*, 'AddNew'*/]}
-                    value={locationName}
-                    onPress={barSettingsStore.setPickupLocationName}
-                    />
-            </View>
+            <Row label="Pickup Locations">
+                <Email
+                    email="support@qdodger.com"
+                    subject={`Add/Remove Pickup Locations for ${barStore.barName}`}
+                    body={emailBody()}
+                    >
+                    <T>Add/Remove</T>
+                </Email>
+            </Row>
         )
     }
+
+
+    // render = () => {
+    //     const locationNames = barStatusStore.pickupLocationNames
+    //     const locationName = barSettingsStore.pickupLocationName
+    //
+    //     return (
+    //         <View>
+    //             {/* TODO: */}
+    //             {/*<AddPickupLocationModal />*/}
+    //             <BarSettingsPicker
+    //                 label="Pickup Locations:"
+    //                 valueLabels={[...locationNames/*, 'Add New Pickup Location'*/]}
+    //                 values={[...locationNames/*, 'AddNew'*/]}
+    //                 value={locationName}
+    //                 onPress={barSettingsStore.setPickupLocationName}
+    //                 />
+    //         </View>
+    //     )
+    // }
 }
 
 @observer

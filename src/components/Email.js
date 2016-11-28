@@ -20,6 +20,7 @@ export class Email extends PureComponent {
         subject: ?String
         body: ?String
         style: style object
+        childen: ?[Component]
     */
 
     static defaultProps = {
@@ -40,9 +41,11 @@ export class Email extends PureComponent {
     render = () => {
         return (
             <TouchableOpacity onPress={this.sendEmail}>
-                <T style={this.props.style}>
-                    {this.props.email}
-                </T>
+                {this.props.children ||
+                    <T style={this.props.style}>
+                        {this.props.email}
+                    </T>
+                }
             </TouchableOpacity>
         )
     }
