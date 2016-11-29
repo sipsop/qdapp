@@ -13,6 +13,7 @@ EOF
 yarn add \
     '@exponent/ex-navigation' \
     babel-root-import \
+    babel-root-slash-import \
     babel-plugin-transform-dirname-filename \
     babel-plugin-transform-decorators-legacy \
     babel-plugin-transform-flow-strip-types \
