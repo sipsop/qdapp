@@ -2,6 +2,7 @@
 
 rm -rf node_modules
 rm package.json
+rm yarn.lock
 cat >package.json <<EOF
 {
     "name": "QDodger",
@@ -9,44 +10,46 @@ cat >package.json <<EOF
 }
 EOF
 
-npm install --save \
-    eslint \
-    es6-map \
-    lodash \
-    shortid \
-    mobx \
-    mobx-react \
-    merge \
-    credit-card-type \
-    react \
-    react-native \
-    react-native-fs \
-    react-addons-pure-render-mixin \
-    react-native-awesome-card-io \
-    react-native-checkbox \
-    react-native-drawer \
-    react-native-infinite-scroll-view \
-    react-native-linear-gradient \
-    react-native-lock \
-    react-native-maps \
-    react-native-modalbox \
-    react-native-communications \
-    react-native-parallax-scroll-view \
-    react-native-scrollable-tab-view \
-    react-native-slider \
-    react-native-swiper \
-    react-native-vector-icons \
+yarn add \
+    '@exponent/ex-navigation' \
     babel-root-import \
     babel-plugin-transform-dirname-filename \
     babel-plugin-transform-decorators-legacy \
+    babel-plugin-transform-flow-strip-types \
     babel-preset-react-native \
     babel-preset-react-native-stage-0 \
     babel-preset-stage-3 \
     babel-plugin-syntax-flow \
     babel-plugin-transform-flow-strip-types \
-
-
-npm install --save-dev
-    flow-bin
+    babel-register \
+    credit-card-type \
+    eslint \
+    es6-map \
+    lodash \
+    merge \
+    mobx \
+    mobx-react \
+    react \
+    react-addons-pure-render-mixin \
+    react-native \
+    react-native-awesome-card-io \
+    react-native-checkbox \
+    react-native-communications \
+    react-native-dismiss-keyboard \
+    react-native-drawer \
+    react-native-fs \
+    react-native-infinite-scroll-view \
+    react-native-linear-gradient \
+    react-native-lock \
+    react-native-maps \
+    react-native-markdown \
+    react-native-modalbox \
+    react-native-parallax-scroll-view \
+    react-native-scrollable-tab-view \
+    react-native-simple-markdown \
+    react-native-slider \
+    react-native-swiper \
+    react-native-vector-icons \
+    shortid
 
 echo "Now run 'react-native upgrade' and 'react-native link'"
