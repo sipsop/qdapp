@@ -37,6 +37,8 @@ import { tabStore, barStore, timeStore, mapStore, segment, modalStore } from '/m
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
+import { TableBookingOptions } from '/components/bar/TableBookingOptions'
+
 const { assert, log } = _.utils('/components/bar/BarPage')
 
 // EXP
@@ -85,6 +87,7 @@ export class BarPage extends Page {
                     /* refreshControl={this.getRefreshControl()} */
                     >
             <BarIcons />
+            <TableBookingOptions />
             <View style={this.styles.menuView}>
                 <MenuView />
             </View>
@@ -166,7 +169,7 @@ class BarIcons extends BarInfoFetcher {
 
     handleShowOpeningTimes = () => {
         // fire action to open modal here:
-        modalStore.openModal()
+        modalStore.openOpeningModal()
         segment.track('Show Opening Times', {
             placeID:    barStore.barID,
             placeName:  barStore.barName,
