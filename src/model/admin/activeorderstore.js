@@ -46,8 +46,8 @@ class ActiveOrderStore {
     /*********************************************************************/
 
     @action addActiveOrderItem = (orderResult : OrderResult) => {
-        assert(orderResult != null)
-        assert(orderResult.orderID != null)
+        assert(orderResult != null, "orderResult is null...")
+        assert(orderResult.orderID != null, "ordderResult.orderID is null...")
         for (var i = 0; i < this.activeOrderList.length; i++) {
             const orderResult2 = this.activeOrderList[i]
             if (orderResult.orderID === orderResult2.orderID) {
