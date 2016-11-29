@@ -15,6 +15,7 @@ import { Loader } from '../Page'
 import { Header, HeaderText, TextHeader } from '../Header'
 import { Email } from '/components/Email'
 import { ConfirmDeliveryModal } from '/components/orders/ConfirmDeliveryModal'
+import { DownloadResultView } from '/components/download/DownloadResultView'
 import { LargeButton } from '/components/Button'
 
 import { barStore, barStatusStore, barSettingsStore, modalStore } from '/model/store'
@@ -74,6 +75,7 @@ export class BarSettings extends PureComponent {
                     label="Admin"
                     rowHeight={55}
                     />
+                <BarSettingsErrors />
                 <AcceptingOrders />
                 {barStatusStore.acceptingOrders &&
                     <View>
@@ -104,6 +106,12 @@ export class BarSettings extends PureComponent {
             </View>
         )
     }
+}
+
+@observer
+class BarSettingsErrors extends DownloadResultView {
+    getDownloadResult = barStatusStore.updateBarStatusDownload
+    renderFinished = () => null
 }
 
 @observer
