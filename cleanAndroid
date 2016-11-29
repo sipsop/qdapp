@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd android
+./gradlew clean
+rm -rf build
+rm -rf app/build
