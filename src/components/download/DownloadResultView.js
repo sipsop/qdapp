@@ -73,6 +73,9 @@ export class DownloadResultView<T> extends PureComponent {
     /* Override default error message */
     errorMessage      = null
 
+    /* Whether to show the refresh button in error messages */
+    showRefreshButton = true
+
     render = () => {
         const res = this.getDownloadResult()
         assert(res != null, `Got null DownloadResult in component with error message "${this.errorMessage}"`)
@@ -140,15 +143,23 @@ export class DownloadResultView<T> extends PureComponent {
                 {
                     this.getDownloadResult().state === 'InProgress'
                         ? <Loader />
-                        : <TouchableOpacity onPress={this.refreshPage}>
-                            <View style={styles.errorRefresh}>
-                                <T style={styles.errorRefreshText}>
-                                    REFRESH
-                                </T>
-                            </View>
-                        </TouchableOpacity>
+                        : this.renderRefreshButton()
                 }
             </View>
+        )
+    }
+
+    renderRefreshButton = () => {
+        if (!this.showRefreshButton)
+            return null
+        return (
+            <TouchableOpacity onPress={this.refreshPage}>
+                <View style={styles.errorRefresh}>
+                    <T style={styles.errorRefreshText}>
+                        REFRESH
+                    </T>
+                </View>
+            </TouchableOpacity>
         )
     }
 }
