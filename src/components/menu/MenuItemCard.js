@@ -88,7 +88,7 @@ class MenuItemFooter extends PureComponent {
 
     styles = StyleSheet.create({
         content: {
-            flex: 0,
+            flex: 1,
             justifyContent: 'space-around',
             alignItems: 'flex-start',
             margin: 5,

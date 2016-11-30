@@ -111,7 +111,7 @@ export class BarSettings extends PureComponent {
 @observer
 class BarSettingsErrors extends DownloadResultView {
     showRefreshButton = false
-    getDownloadResult = barStatusStore.updateBarStatusDownload
+    getDownloadResult = () => barStatusStore.updateBarStatusDownload
     renderFinished = () => null
 }
 

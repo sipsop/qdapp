@@ -104,24 +104,28 @@ class MenuList extends PureComponent {
             NOTE: SimpleListView should be performant enough that this
                   is no longer necessary!
         */}
-        return <OrderList
-                    /* key={tagStore.tagSelection.join(';')} */
-                    orderStore={orderStore}
-                    getMenuItems={() => searchStore.activeItems}
-                    /* menuItems={barStore.allMenuItems} */
-                    onRefresh={this.handleRefresh}
-                    renderHeader={() => {
-                        return (
-                            <View>
-                                <TagView onTagChange={this.handleTagChange} />
-                                <SearchBar
-                                    placeholder='Search...'
-                                    searchStore={searchStore}
-                                    />
-                            </View>
-                        )
-                    }}
-                    visible={this.menuItemVisible} />
+        return (
+            <OrderList
+                /* key={tagStore.tagSelection.join(';')} */
+                orderStore={orderStore}
+                getMenuItems={() => searchStore.activeItems}
+                /* menuItems={barStore.allMenuItems} */
+                onRefresh={this.handleRefresh}
+                renderHeader={() => {
+                    return (
+                        <View>
+                            <TagView onTagChange={this.handleTagChange} />
+                            <SearchBar
+                                placeholder='Search...'
+                                searchStore={searchStore}
+                                />
+                        </View>
+                    )
+                }}
+                visible={this.menuItemVisible}
+                showTitle={true}
+                />
+        )
     }
 
     menuItemVisible = (i) => {
