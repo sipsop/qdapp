@@ -44,7 +44,7 @@ const { width } = Dimensions.get('window')
 @observer
 export class OrderPage extends PureComponent {
     render = () => {
-        if (loginStore.isBarOwner)
+        if (loginStore.isCurrentBarOwner)
             return <BarOrderPage />
         return <UserOrderPage />
     }

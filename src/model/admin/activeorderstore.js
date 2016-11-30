@@ -21,7 +21,7 @@ class ActiveOrderStore {
                 return {
                     barID: barStore.barID,
                     authToken: loginStore.getAuthToken(),
-                    userIsBarOwner: loginStore.isBarOwner,
+                    userIsBarOwner: loginStore.isCurrentBarOwner,
                 }
             },
             {
