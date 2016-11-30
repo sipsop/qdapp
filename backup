@@ -22,12 +22,16 @@ echo "    package.json"
 echo "    node_modules/"
 echo "    android/"
 echo "    ios/"
+echo "    src/"
+echo "    index.*.js"
 
 cp ../yarn.lock .
 cp ../package.json .
 cp -r ../node_modules/ .
 cp -r ../android/ .
 cp -r ../ios/ .
+cp -r ../src/ .
+cp ../index*.js .
 
 git add yarn.lock
 git add package.json
