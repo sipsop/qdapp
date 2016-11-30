@@ -39,14 +39,14 @@ export class ActiveOrderDownload extends FeedDownload {
     }
 
     @computed get orderID() {
-        return this.lastValue && this.lastValue.orderID
+        return this.value && this.value.orderID
     }
 
     @computed get orderDeleted() {
-        return this.lastValue && this.lastValue.orderDeleted
+        return this.value && this.value.orderDeleted
     }
 
     @computed get orderResult() {
-        return this.lastValue && this.lastValue.orderResult
+        return this.value && this.value.orderResult
     }
 }

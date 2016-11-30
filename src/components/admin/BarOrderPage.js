@@ -25,6 +25,12 @@ import * as _ from '/utils/curry'
 
 const { assert, log } = _.utils('/components/admin/BarOrderPage')
 
+const styles = StyleSheet.create({
+    iconBar: {
+        flex: 1,
+    }
+})
+
 const barOrderIcons = [
     <BarIcon
         key="messages"
@@ -43,7 +49,7 @@ const barOrderIcons = [
 export class BarOrderPage extends PureComponent {
     render = () => {
         return (
-            <IconBar icons={barOrderIcons}>
+            <IconBar style={styles.iconBar} icons={barOrderIcons}>
                 <ActiveOrderList />
                 <View />
             </IconBar>
@@ -54,7 +60,7 @@ export class BarOrderPage extends PureComponent {
 @observer
 class ActiveOrderList extends PureComponent {
 
-    @computed get activeOrders() {
+    @computed get activeOrderList() {
         return _.reverse(activeOrderStore.activeOrderList)
     }
 
@@ -63,8 +69,8 @@ class ActiveOrderList extends PureComponent {
             <ScrollView style={{flex: 1}}>
                 <ActiveOrderListDownloadErrors />
                 {
-                    this.activeOrders.map((activeOrder, i) => {
-                        return <T key={i}>JSON.stringify(activeOrder)</T>
+                    this.activeOrderList.map((activeOrder, i) => {
+                        return <T key={i}>{JSON.stringify(activeOrder)}</T>
                     })
                 }
             </ScrollView>

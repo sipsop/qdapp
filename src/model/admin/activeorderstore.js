@@ -27,7 +27,7 @@ class ActiveOrderStore {
             {
                 onFinish: () => {
                     const feed = this.getActiveOrderFeed()
-                    if (feed.state === 'Finished') {
+                    if (feed.value) {
                         if (feed.orderDeleted) {
                             this.deleteActiveOrderItem(feed.orderID)
                         } else {

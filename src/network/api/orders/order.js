@@ -22,6 +22,7 @@ export const RefundQuery = {
 
 export const OrderResultQuery = {
     errorMessage: 'String',
+    orderID:      'String',
     barID:        'String',
     timestamp:    'Float',
     userName:     'String',
