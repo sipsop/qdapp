@@ -17,7 +17,7 @@ export class App extends Component {
         modalStore.openOpeningModal()
     }
     closeRequestBookingModal = () => {
-        modalStore.closeBookingModal()
+        modalStore.closeBookingRequestModal()
     }
     componentDidMount() {
         console.disableYellowBox = true;
@@ -30,13 +30,14 @@ export class App extends Component {
               <View style={{flex: 1}}>
                 <Main />
                 <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
+                <RequestBookingModal onClosedProp={this.closeRequestBookingModal} isVisible={showBookingModal} />
               </View>
             )
         return (
             <NavigationProvider router={Router}>
                 <StackNavigation initialRoute={Router.getRoute('main')} />
                 <OpeningTimesModal onClosedProp={this.closeOpeningTimesModal} isVisible={showOpeningTimes} />
-                <RequestBookingModal onClosedProp={this.closeBookingModal} isVisible={showBookingModal} />
+                <RequestBookingModal onClosedProp={this.closeRequestBookingModal} isVisible={showBookingModal} />
             </NavigationProvider>
         )
     }
