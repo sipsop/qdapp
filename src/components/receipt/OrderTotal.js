@@ -33,14 +33,14 @@ export class OrderTotal extends PureComponent {
         return <View>
             { this.props.tip > 0.0 &&
                 <Header primary={false} rowHeight={30}>
-                    <View style={{...this.props.style, flexDirection: 'row'}}>
+                    <View style={[this.props.style, {flexDirection: 'row'}]}>
                         {headerText('Tip:', 18)}
                         {headerText(tipText, 18, 'right')}
                     </View>
                 </Header>
             }
             <Header primary={this.props.primary}>
-                <View style={{...this.props.style, flexDirection: 'row'}}>
+                <View style={[this.props.style, {flexDirection: 'row'}]}>
                     {headerText('Total:')}
                     {headerText(totalText, 25, 'right')}
                 </View>

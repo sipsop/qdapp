@@ -20,6 +20,8 @@ import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
 import { SimpleOrderList } from '../orders/OrderList'
+import { ReceiptHeader } from '../receipt/ReceiptHeader'
+import { OrderTotal } from '../receipt/OrderTotal'
 
 import { activeOrderStore } from '/model/store'
 import * as _ from '/utils/curry'
@@ -29,7 +31,10 @@ const { assert, log } = _.utils('/components/admin/BarOrderPage')
 const styles = StyleSheet.create({
     iconBar: {
         flex: 1,
-    }
+    },
+    activeOrder: {
+        marginTop: 15,
+    },
 })
 
 const barOrderIcons = [
@@ -37,7 +42,7 @@ const barOrderIcons = [
         key="messages"
         label="active"
         name="glass"
-        getCounter={() => 3}
+        getCounter={() => activeOrderStore.activeOrderList.length}
         />,
     <BarIcon
         key="completed"
@@ -60,18 +65,18 @@ export class BarOrderPage extends PureComponent {
 
 @observer
 class ActiveOrderList extends PureComponent {
-
-    @computed get activeOrderList() {
-        return _.reverse(activeOrderStore.activeOrderList)
-    }
-
     render = () => {
         return (
             <ScrollView style={{flex: 1}}>
                 <ActiveOrderListDownloadErrors />
                 {
-                    this.activeOrderList.map((activeOrder, i) => {
-                        return <T key={i}>{JSON.stringify(activeOrder)}</T>
+                    activeOrderStore.activeOrderList.map((orderResult, i) => {
+                        return (
+                            <ActiveOrder
+                                key={orderResult.orderID}
+                                orderResult={orderResult}
+                                />
+                        )
                     })
                 }
             </ScrollView>
@@ -86,11 +91,18 @@ class ActiveOrderListDownloadErrors extends DownloadResultView {
 }
 
 @observer
-class ReceiptOrder extends PureComponent {
+class ActiveOrder extends PureComponent {
+    /* properties:
+        orderResult: OrderResult
+    */
     render = () => {
+        const orderResult = this.props.orderResult
         return (
-            <View>
-                <View style={{height: 15, backgroundColor: '#fff'}} />
+            <View style={styles.activeOrder}>
+                <ReceiptHeader
+                    orderResult={orderResult}
+                    />
+                <View style={{height: 15}} />
                 <SimpleOrderList
                     menuItems={orderResult.menuItems}
                     orderList={orderResult.orderList}

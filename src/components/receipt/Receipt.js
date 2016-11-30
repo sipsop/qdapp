@@ -18,6 +18,7 @@ import { Loader } from '../Page.js'
 import { MessageList } from '/components/messages/MessageList'
 import { IconBar, BarIcon } from '/components/IconBar'
 import { OrderTotal } from './OrderTotal'
+import { ReceiptHeader } from './ReceiptHeader'
 import { headerText } from './utils'
 
 import { formatDuration } from '/utils/time'
@@ -203,49 +204,5 @@ class MessageLog extends PureComponent {
         //     Your order has been placed!{'\n'}
         //     Claim your order with this receipt.
         // </T>
-    }
-}
-
-@observer
-class ReceiptHeader extends PureComponent {
-    /* properties:
-        orderResult: OrderResult
-    */
-
-    receiptNumberModal = null
-
-    render = () => {
-        const orderResult = this.props.orderResult
-        return <Header>
-            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity
-                        style={{flex: 1}}
-                        onPress={() => this.receiptNumberModal.show()}>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        {/*headerText(orderResult.userName, 20)*/}
-                        {headerText('Receipt No.', 20)}
-                        {headerText('#' + orderResult.receipt)}
-                    </View>
-                </TouchableOpacity>
-                <Message
-                        ref={ref => this.receiptNumberModal = ref}
-                        >
-                    <View style={
-                            { justifyContent: 'center'
-                            , alignItems: 'center'
-                            , minHeight: 300
-                            }
-                        }>
-                        <T style={
-                                { fontSize: 100
-                                , color: config.theme.primary.medium
-                                }
-                            }>
-                            {'#' + orderResult.receipt}
-                        </T>
-                    </View>
-                </Message>
-            </View>
-        </Header>
     }
 }
