@@ -2,10 +2,10 @@ export let HOST : String
 export let WebSocketHOST : String
 
 HOST = 'https://qdodger.com'
-HOST = 'http://192.168.0.17'
+HOST = 'http://192.168.0.25'
 // HOST = 'http://192.168.0.19'
 
-WebSocketHOST = 'ws://192.168.0.17/api/v1/websocket/'
+WebSocketHOST = 'ws://192.168.0.25/api/v1/websocket/'
 // HOST = 'https://192.168.0.17'
 // HOST = 'http://10.248.100.107:5000'
 // HOST = 'http://104.199.33.201'          // qdodger host

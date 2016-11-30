@@ -38,6 +38,7 @@ yarn add \
     react-native-communications \
     react-native-dismiss-keyboard \
     react-native-drawer \
+    react-native-icon-badge \
     react-native-fs \
     react-native-infinite-scroll-view \
     react-native-linear-gradient \
