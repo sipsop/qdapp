@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ ! -d app-build ]; then
+    git clone git@github.com:markflorisson/app-build.git
+    cd app-build
+else
+    cd app-build
+    git fetch
+fi
+
+if [ ! $1 ]; then
+    echo "Please specify a branch name to backup to"
+    exit 1
+fi
+
+./cleanAndroid
+
+git checkout "$1" || git checkout -b "$1"
+echo "Backing up"
+echo "    yarn.lock"
+echo "    package.json"
+echo "    node_modules/"
+echo "    android/"
+echo "    ios/"
+
+cp ../yarn.lock .
+cp ../package.json .
+cp -r ../node_modules/ .
+cp -r ../android/ .
+cp -r ../ios/ .
+
+git add yarn.lock
+git add package.json
+git add node_modules
+git add android
+git add ios
+git commit -am "backup"
+git push
+
+echo "Backup to https://github.com/markflorisson/app-build complete!"
