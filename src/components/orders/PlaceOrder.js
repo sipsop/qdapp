@@ -8,7 +8,7 @@ import { observer } from 'mobx-react/native'
 import { DownloadResultView } from '../download/DownloadResultView'
 import { OkCancelModal } from '../Modals.js'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
-import { ReceiptDownload } from './Receipt'
+import { ReceiptDownload } from '../receipt/ReceiptDownload'
 import { barStore, tabStore, orderStore, loginStore, segment } from '/model/store'
 import * as _ from '/utils/curry'
 

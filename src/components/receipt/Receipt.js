@@ -17,59 +17,19 @@ import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
 import { MessageList } from '/components/messages/MessageList'
 import { IconBar, BarIcon } from '/components/IconBar'
-import { OrderStatusDownload } from '/network/api/orders/orderstatus'
-import { store, tabStore, loginStore, segment } from '/model/store.js'
+import { OrderTotal } from './OrderTotal'
+import { headerText } from './utils'
 
-import { barStore, orderStore } from '/model/store.js'
 import { formatDuration } from '/utils/time'
 import * as _ from '/utils/curry.js'
 
-import { SimpleOrderList } from './OrderList.js'
-import { paymentStore } from '/model/orders/paymentstore.js'
-import { getRefundedItemAmount, isRefundedCompletely } from '/model/orders/orderstore.js'
+import { SimpleOrderList } from '../orders/OrderList'
+import { paymentStore } from '/model/orders/paymentstore'
+import { getRefundedItemAmount, isRefundedCompletely } from '/model/orders/orderstore'
 
 import type { String, Int } from '../Types.js'
 
 const { log, assert } = _.utils('Orders/Receipt.js')
-
-@observer
-export class ReceiptDownload extends DownloadComponent {
-    /* properties:
-        bar: Bar
-        orderID: OrderID
-        onClose: () => void
-            called when receipt view is closed
-    */
-
-    inProgressMessage = "Retrieving order status..."
-
-    getDownload = () => {
-        return new OrderStatusDownload(() => {
-            return {
-                orderID:   this.props.orderID,
-                authToken: loginStore.getAuthToken(),
-            }
-        })
-    }
-
-    @computed get orderResult() {
-        return this.getDownloadResult().orderResult
-    }
-
-    renderFinished = (_) => {
-        if (!this.orderResult) {
-            /* TODO: Why is orderResult null sometimes? */
-            return this.renderInProgress()
-        }
-        return (
-            <Receipt
-                bar={this.props.bar}
-                orderResult={this.orderResult}
-                onClose={this.props.onClose}
-                />
-        )
-    }
-}
 
 @observer
 export class Receipt extends PureComponent {
@@ -257,7 +217,7 @@ class ReceiptHeader extends PureComponent {
     render = () => {
         const orderResult = this.props.orderResult
         return <Header>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
                         style={{flex: 1}}
                         onPress={() => this.receiptNumberModal.show()}>
@@ -288,50 +248,4 @@ class ReceiptHeader extends PureComponent {
             </View>
         </Header>
     }
-}
-
-@observer
-export class OrderTotal extends PureComponent {
-    /* properties:
-        total: Float
-        tip:   Float
-        style: style object
-        primary: bool
-            whether to use the primary or secondary theme color
-    */
-
-    static defaultProps = {
-        primary: true,
-    }
-
-    render = () => {
-        const tipText   = orderStore.formatPrice(this.props.tip)
-        const totalText = orderStore.formatPrice(this.props.total + this.props.tip)
-        return <View>
-            { this.props.tip > 0.0 &&
-                <Header primary={false} rowHeight={30}>
-                    <View style={{...this.props.style, flexDirection: 'row'}}>
-                        {headerText('Tip:', 18)}
-                        {headerText(tipText, 18, 'right')}
-                    </View>
-                </Header>
-            }
-            <Header primary={this.props.primary}>
-                <View style={{...this.props.style, flexDirection: 'row'}}>
-                    {headerText('Total:')}
-                    {headerText(totalText, 25, 'right')}
-                </View>
-            </Header>
-        </View>
-    }
-}
-
-const headerText = (text, fontSize = 25, textAlign = 'center') => {
-    return <HeaderText
-                fontSize={fontSize}
-                rowHeight={40}
-                style={{flex: 1, textAlign: textAlign}}
-                >
-        {text}
-    </HeaderText>
 }

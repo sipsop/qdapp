@@ -116,6 +116,8 @@ class BarStatusStore {
     }
 
     @computed get acceptingOrders() : Bool {
+        if (config.test.acceptingOrders)
+            return true
         return this.barStatus && this.barStatus.taking_orders
     }
 
@@ -144,7 +146,7 @@ class BarStatusStore {
 
     @computed get pickupLocations() : Array<PickupLocation> {
         const pickupLocations = this.barStatus && this.barStatus.pickup_locations
-        if (!(pickupLocations || pickupLocations.length) && config.test.pickupLocations)
+        if ((!pickupLocations || !pickupLocations.length) && config.test.pickupLocations)
             return [{name: 'Main Bar', open: true}, {name: 'First Floor', open: true}]
         return pickupLocations || []
     }

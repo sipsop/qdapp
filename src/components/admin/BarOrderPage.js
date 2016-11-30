@@ -19,6 +19,7 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
 import { Message, SmallOkCancelModal } from '/components/Modals'
+import { SimpleOrderList } from '../orders/OrderList'
 
 import { activeOrderStore } from '/model/store'
 import * as _ from '/utils/curry'
@@ -82,4 +83,23 @@ class ActiveOrderList extends PureComponent {
 class ActiveOrderListDownloadErrors extends DownloadResultView {
     getDownloadResult = activeOrderStore.getActiveOrderFeed
     renderFinished = () => null
+}
+
+@observer
+class ReceiptOrder extends PureComponent {
+    render = () => {
+        return (
+            <View>
+                <View style={{height: 15, backgroundColor: '#fff'}} />
+                <SimpleOrderList
+                    menuItems={orderResult.menuItems}
+                    orderList={orderResult.orderList}
+                    />
+                <OrderTotal
+                    total={orderResult.totalPrice}
+                    tip={orderResult.tip}
+                    />
+            </View>
+        )
+    }
 }

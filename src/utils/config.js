@@ -89,9 +89,10 @@ export const config = {
     },
     /* Test with some pre-fabricated data */
     test: {
-        qdodgerBar: false,
-        tableService: false,
-        pickupLocations: false,
+        qdodgerBar: true,
+        acceptingOrders: true,
+        tableService: true,
+        pickupLocations: true,
     },
     /* Simulated errors */
     errors: {

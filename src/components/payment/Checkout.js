@@ -6,7 +6,7 @@ import { observable, action, autorun, computed, asMap, transaction } from 'mobx'
 import { observer } from 'mobx-react/native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import { OrderTotal } from '../orders/Receipt'
+import { OrderTotal } from '../receipt/OrderTotal'
 import { LargeButton } from '../Button'
 import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
 import { SimpleListView, themedRefreshControl } from '../SimpleListView'
