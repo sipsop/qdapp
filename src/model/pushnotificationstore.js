@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx'
-import FCM from 'react-native-fcm'
+// import FCM from 'react-native-fcm'
 // import PushNotification from 'react-native-push-notification'
 
 import { messageStore, makeMessage } from './messagestore'

@@ -78,7 +78,7 @@ export class Store {
             historyStore.initialize(),
             timeStore.initialize(),
             segment.initialize(),
-            pushNotificationStore.initialize(),
+            // pushNotificationStore.initialize(),
 
             barSettingsStore.initialize(),
             activeOrderStore.initialize(),
