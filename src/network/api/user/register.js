@@ -12,7 +12,7 @@ export class RegisterUser extends QueryMutation {
     autoDownload = true
 
     @computed get active() {
-        return this.props.email != null
+        return this.props.email != null && this.props.fireToken != null
     }
 
     @computed get query() {
