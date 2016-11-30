@@ -17,6 +17,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         // height: 70,
     },
+    barIcon: {
+        justifyContent: 'center',
+        alignItems: 'stretch',
+    },
     optionIcon: {
         // flex: 1,
         justifyContent: 'center',
@@ -30,7 +34,7 @@ const styles = StyleSheet.create({
         borderColor: config.theme.primary.medium,
     },
     iconSubText: {
-        flex: 1,
+        // flex: 1,
         textAlign: 'center',
     },
     badge: {
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
 @observer
 export class IconBar extends PureComponent {
     /* properties:
+        style: style object
         icons: Array<TabIcon>
         children: Array<Component>
             each child should correspond to each icon in the icons list
@@ -65,7 +70,7 @@ export class IconBar extends PureComponent {
         const orderResult = this.props.orderResult
         const { Icon, iconSize } = this.props
         return (
-            <View>
+            <View style={this.props.style}>
                 <View style={styles.icons}>
                     {
                         this.props.icons.map((icon, i) => {
@@ -118,7 +123,7 @@ export class BarIcon extends PureComponent {
         /* TODO: use this.counter */
         const result = (
             <TouchableOpacity onPress={() => this.props.selectIcon()}>
-                <View>
+                <View style={styles.barIcon}>
                     <Icon
                         {...this.props}
                         style={[styles.optionIcon, this.props.isActive() && styles.selectedIconStyle]}
