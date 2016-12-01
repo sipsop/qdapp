@@ -11,7 +11,7 @@ export const OrderItemQuery = {
 
 export const RefundOrderItemQuery = {
     id: 'String',
-    'amount': 'Int',
+    amount: 'Int',
 }
 
 export const RefundQuery = {
