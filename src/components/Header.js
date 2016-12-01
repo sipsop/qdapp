@@ -1,6 +1,15 @@
-import { React, Component, PureComponent, View, T } from '/components/Component.js'
+import { React, Component, PureComponent, View, T, StyleSheet } from '/components/Component'
 import { observer } from 'mobx-react/native'
-import { config } from '/utils/config.js'
+import { config } from '/utils/config'
+
+const styles = StyleSheet.create({
+    header: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+})
 
 @observer
 export class Header extends PureComponent {
@@ -21,17 +30,13 @@ export class Header extends PureComponent {
             this.props.primary
                 ? config.theme.primary.medium
                 : config.theme.primary.dark
+
+        const style = {
+            backgroundColor: backgroundColor,
+            height: this.props.rowHeight,
+        }
         return (
-            <View style={
-                    { justifyContent: 'center'
-                    , alignItems: 'center'
-                    , backgroundColor: backgroundColor
-                    , height: this.props.rowHeight
-                    , paddingLeft: 5
-                    , paddingRight: 5
-                    , ...this.props.style
-                    }
-                }>
+            <View style={[styles.header, style, this.props.style]}>
                 {this.props.children}
             </View>
         )

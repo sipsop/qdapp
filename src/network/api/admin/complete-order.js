@@ -2,28 +2,31 @@ import { computed } from 'mobx'
 import { QueryMutation } from '/network/http'
 import * as _ from '/utils/curry'
 
-const { log, assert } = _.utils('/network/api/admin/status-update')
+const { log, assert } = _.utils('/network/api/admin/complete-order')
 
-export class UpdateBarStatusDownload extends QueryMutation {
+export class CompleteOrderDownload extends QueryMutation {
     /* properties:
         authToken: String
         orderID: String
     */
-    name = 'bar status update'
+    name = 'complete order'
 
     @computed get query() {
-        assert(this.props.statusUpdate != null)
+        assert(this.props.orderID != null)
         return {
-            UpdateBarStatus: {
+            CompleteOrder: {
                 args: {
-                    barID: this.props.barID,
                     authToken: this.props.authToken,
-                    statusUpdate: this.props.statusUpdate,
+                    orderID:   this.props.orderID,
                 },
                 result: {
                     status: 'String',
                 }
             }
         }
+    }
+
+    @computed get success() {
+        return this.value && this.value.status === 'OK'
     }
 }
