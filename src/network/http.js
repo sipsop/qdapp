@@ -599,6 +599,11 @@ export class QueryMutation extends QueryDownload {
 
 export class FeedDownload extends QueryDownload {
     cacheInfo = config.defaultRefreshCacheInfo
+    timeout   = true
+
+    @computed get useCache() {
+        return !this.cacheInfo.noCache
+    }
 
     refresh = async () => {
         log("REFRESHING FEED:", this.name, this.errorAttempts)
@@ -617,31 +622,48 @@ export class FeedDownload extends QueryDownload {
         /* Establish feed */
 
         const timeout = getTimeoutInfo({timeoutDesc: 'normal'})
+        const resolve = this.timeout
+            ? _.timeoutCallback(timeout.refreshTimeout, this.handleReceive, this.handleError)
+            : this.handleReceive
+
         downloadManager.queryTransport.feed({
             request: {
                 messageID: this.name,
                 type: 'feed',
                 query: this.query,
             },
-            resolve: _.timeoutCallback(timeout.refreshTimeout, this.onReceive, this.onError),
-            onStart: this.onStart,
+            resolve: resolve,
+            onStart: this.handleStart,
         })
 
-        /* In the meantime, load cache entry */
-        const cacheEntry = await cache.get(
-            this.cacheKey,
-            () => null, /* refreshCallback */
-            () => null, /* expiredCallback */
-            this.cacheInfo,
-        )
-        if (this.value == null && this.lastValue == null) {
-            this.receive(cacheEntry.value)
+        if (this.useCache) {
+            /* In the meantime, load cache entry */
+            const cacheEntry = await cache.get(
+                this.cacheKey,
+                () => null, /* refreshCallback */
+                () => null, /* expiredCallback */
+                this.cacheInfo,
+            )
+            if (this.value == null && this.lastValue == null) {
+                this.receive(cacheEntry.value)
+            }
         }
     }
 
-    onReceive = async (value) => {
+    handleReceive = async (value) => {
         this.receive(value)
-        await cache.set(this.cacheKey, value, this.cacheInfo)
+        if (this.useCache)
+            await cache.set(this.cacheKey, value, this.cacheInfo)
+    }
+
+    handleStart = () => {
+        if (!this.timeout)
+            this.reset('Finished')
+        this.onStart && this.onStart()
+    }
+
+    @action handleError = (message) => {
+        this.downloadError(message)
     }
 
     @action receive = (value) => {
@@ -649,25 +671,34 @@ export class FeedDownload extends QueryDownload {
         this._finishDownload(value)
     }
 
-    @action onError = (message) => {
-        this.downloadError(message)
-    }
-
     dispose = () => {
         downloadManager.queryTransport.unsubscribeFeed(this.name)
     }
 }
 
-export class FeedMutation extends FeedDownload {
+/*
+    A feed connected to a (perhaps (initially) empty) stream of values.
+    Disable timeouts and caching, as we are dealing with a stream.
+
+    Consumers should implement onFinish() to deal with newly arriving values.
+    See e.g. ActiveOrderDownload in active-orders.js.
+*/
+export class FeedStreamDownload extends FeedDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
-    restoreAfterRestart = true
-    autoDownload = false
-
-    @computed get cacheKey() {
-        return 'DO_NOT_CACHE'
-    }
+    timeout = false
 }
+
+// export class FeedMutation extends FeedDownload {
+//     cacheInfo = config.noCache
+//     refreshCacheInfo = config.noCache
+//     restoreAfterRestart = true
+//     autoDownload = false
+//
+//     @computed get cacheKey() {
+//         return 'DO_NOT_CACHE'
+//     }
+// }
 
 export const latest = (d1, d2) => {
     if (d1.state !== 'Finished' || !d1.timestamp)

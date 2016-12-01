@@ -1,11 +1,12 @@
 import { computed, transaction, action, autorun } from 'mobx'
-import { FeedDownload } from '/network/http'
+import { FeedStreamDownload } from '/network/http'
 import { OrderResultQuery } from '../orders/order'
+import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/network/api/admin/active-orders.js')
 
-export class ActiveOrderDownload extends FeedDownload {
+export class ActiveOrderDownload extends FeedStreamDownload {
     /* properties:
         barID: String
         authToken: String
