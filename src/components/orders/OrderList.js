@@ -204,7 +204,6 @@ export class SimpleMenuItem extends PureComponent {
                     , justifyContent: 'center'
                     , paddingLeft: 5
                     , paddingRight: 5
-                    , zIndex: 1
                     }
                 }>
                 <ScrollView horizontal={true}>
@@ -241,7 +240,6 @@ export class SimpleMenuItem extends PureComponent {
                 style={
                     { position: 'absolute'
                     , top: 0
-                    , zIndex: 50
                     , width: 80
                     , height: 80
                     , borderWidth: 0.5

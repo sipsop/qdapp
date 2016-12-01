@@ -86,6 +86,7 @@ const barOrderIcons = [
 export class BarOrderPage extends PureComponent {
     render = () => {
         return (
+            // <ActiveOrderList />
             <IconBar style={styles.iconBar} icons={barOrderIcons}>
                 <ActiveOrderList />
                 <View />
