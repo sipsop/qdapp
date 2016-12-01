@@ -21,35 +21,46 @@ const rowHeight     = 55
 const buttonHeight  = 45
 const iconHeight    = 45
 
+const styles = StyleSheet.create({
+    buttonRow: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        height: rowHeight,
+    },
+    buttons: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+})
+
 @observer
 export class ButtonRow extends Component {
     /* properties:
-        rowNumber: int
-        clearRow() -> void
+        style: style object
+        clearRow: ?() -> void
             callback invoked to clear the row
     */
 
     render = () => {
-        const backgroundColor = this.props.rowNumber % 2 == 0
-            ? config.theme.primary.medium
-            : config.theme.primary.dark
+        const style = {
+            backgroundColor:
+                this.props.rowNumber % 2 == 0
+                    ? config.theme.primary.medium
+                    : config.theme.primary.dark
+        }
 
         return (
-            <View style={
-                    { flex: 1
-                    , backgroundColor: backgroundColor
-                    , flexDirection: 'row'
-                    , justifyContent: 'flex-start'
-                    , alignItems: 'center'
-                    , height: rowHeight
-                    }
-                }>
-                <View style={{flexDirection: 'row', flex: 1}}>
+            <View style={[styles.buttonRow, this.props.style, style]}>
+                <View style={styles.buttons}>
                     {this.props.children}
                 </View>
-                <TouchableOpacity onPress={this.props.clearRow}>
-                    <EvilIcon name="close-o" size={iconHeight} color="#ffffff" />
-                </TouchableOpacity>
+                { this.props.clearRow &&
+                    <TouchableOpacity onPress={this.props.clearRow}>
+                        <EvilIcon name="close-o" size={iconHeight} color="#ffffff" />
+                    </TouchableOpacity>
+                }
             </View>
         )
     }

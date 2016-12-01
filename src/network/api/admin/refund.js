@@ -7,12 +7,11 @@ const { log, assert } = _.utils('/network/api/admin/complete-order')
 export class RefundOrderDownload extends QueryMutation {
     /* properties:
         authToken: String
-        barID: String
         orderID: String
         refundItems: Array<RefundOrderItem>
         reason: ?String
     */
-    name = 'complete order'
+    name = 'refund order'
 
     @computed get query() {
         return {

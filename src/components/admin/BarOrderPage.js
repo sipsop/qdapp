@@ -1,4 +1,4 @@
-import { React, Component, PureComponent, ScrollView, View, T, StyleSheet, Text } from '/components/Component'
+import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T, StyleSheet, Text } from '/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 0.5,
         borderBottomWidth: 0.5,
         borderColor: '#000',
+        marginBottom: 5,
     },
     activeOrderInfoText: {
         fontSize: 18,
@@ -51,6 +52,19 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'rgba(0, 0, 0, 0.8)',
         textAlign: 'center',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+    },
+    button: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 18,
     },
 })
 
@@ -154,12 +168,9 @@ class ActiveOrder extends PureComponent {
                     menuItems={orderResult.menuItems}
                     orderList={orderResult.orderList}
                     />
-                {/*
-                <OrderTotal
-                    total={orderResult.totalPrice}
-                    tip={orderResult.tip}
+                <OrderActions
+                    orderID={orderResult.orderID}
                     />
-                */}
             </View>
         )
     }
@@ -188,6 +199,74 @@ class TextRow extends PureComponent {
                 <Text style={[styles.rowText, style]}>
                     {this.props.text}
                 </Text>
+            </View>
+        )
+    }
+}
+
+@observer
+class OrderActions extends PureComponent {
+    /* properties:
+        orderID: String
+    */
+
+    confirmModal = null
+
+    refund = (refundedItems, refundReason) => {
+        activeOrderStore.refundOrder(this.props.orderID, refundItems, refundReason)
+    }
+
+    completeOrder = () => {
+        activeOrderStore.completeOrder(this.props.orderID)
+    }
+
+    render = () => {
+        return (
+            <ButtonRow>
+                <SmallOkCancelModal
+                    ref={ref => this.confirmModal = ref}
+                    message="Complete Order?"
+                    onConfirm={this.completeOrder}
+                    />
+                <Button
+                    label="Refund"
+                    onPress={this.refund}
+                    />
+                <Button
+                    label="Complete"
+                    onPress={() => this.confirmModal.show()}
+                    />
+            </ButtonRow>
+        )
+    }
+}
+
+@observer
+class ButtonRow extends PureComponent {
+    render = () => {
+        return (
+            <Header style={styles.buttonRow}>
+                {this.props.children}
+            </Header>
+        )
+    }
+}
+
+@observer
+class Button extends PureComponent {
+    /* properties:
+        textStyle: style object
+        label: String
+        onPress: () => void
+    */
+    render = () => {
+        return (
+            <View style={styles.button}>
+                <TouchableOpacity onPress={this.props.onPress}>
+                    <Text style={[styles.buttonText, this.props.textStyle]}>
+                        {this.props.label}
+                    </Text>
+                </TouchableOpacity>
             </View>
         )
     }
