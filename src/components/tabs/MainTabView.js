@@ -12,9 +12,9 @@ import { drawerStore, tabStore } from '/model/store'
 const { log, assert } = _.utils('/components/MainTabView')
 
 export class MainTabView extends PureComponent {
-    componentDidMount = () => {
-        tabStore.setCurrentTab(tabStore.currentPage)
-    }
+    // componentDidMount = () => {
+    //     tabStore.setCurrentTab(tabStore.currentPage)
+    // }
 
     render = () => {
         return (
