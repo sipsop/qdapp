@@ -85,7 +85,7 @@ export class OrderListDescriptor extends Descriptor {
                 rowNumber={i}
                 menuItem={menuItem}
                 orderStore={this.props.orderStore}
-                      /* visible={() => this.props.visible(i)} */
+                /* visible={() => this.props.visible(i)} */
                 showTitle={this.props.showTitle}
                 showPrice={this.props.showPrice}
                 showHeart={this.props.showHeart}
@@ -144,7 +144,6 @@ export class SimpleOrderList extends Page {
         orderList: [OrderItem]
             order items to show
     */
-
     renderView = () => {
         assert(this.props.menuItems != null)
         assert(this.props.orderList != null)
@@ -164,7 +163,6 @@ export class SimpleOrderList extends Page {
             }
         </View>
     }
-
 }
 
 const getOrderItems = (menuItem, orderItems) => {
@@ -199,29 +197,14 @@ export class SimpleMenuItem extends PureComponent {
         const backgroundColor = this.props.rowNumber % 2 === 0
             ? '#fff'
             : config.theme.menuItemBackgroundColorSecondary
-        return <View>
-            <MenuItemImage
-                menuItem={menuItem}
-                style={
-                    { position: 'absolute'
-                    , zIndex: 2
-                    , width: 80
-                    , height: 80
-                    , borderWidth: 0.5
-                    , borderColor: '#000'
-                    , borderRadius: 10
-                    , marginTop: -15
-                    , marginLeft: 10
-                    , marginRight: 10
-                    }
-                }
-                />
+        return <View style={{position: 'relative'}}>
             <View style={
                     { height: 50
                     , backgroundColor: config.theme.primary.medium
                     , justifyContent: 'center'
                     , paddingLeft: 5
                     , paddingRight: 5
+                    , zIndex: 1
                     }
                 }>
                 <ScrollView horizontal={true}>
@@ -253,6 +236,23 @@ export class SimpleMenuItem extends PureComponent {
                     })
                 }
             </View>
+            <MenuItemImage
+                menuItem={menuItem}
+                style={
+                    { position: 'absolute'
+                    , top: 0
+                    , zIndex: 50
+                    , width: 80
+                    , height: 80
+                    , borderWidth: 0.5
+                    , borderColor: '#000'
+                    , borderRadius: 10
+                    , marginTop: -15
+                    , marginLeft: 10
+                    , marginRight: 10
+                    }
+                }
+                />
         </View>
     }
 }

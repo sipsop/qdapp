@@ -5,8 +5,8 @@ import { observer } from 'mobx-react/native'
 import { IconBar, BarIcon } from '/components/IconBar'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
-import { OrderList, OrderListDescriptor } from '/components/orders/OrderList'
-import { Message, SmallOkCancelModal } from '/components/Modals'
+import { SimpleListView, Descriptor } from '../SimpleListView'
+import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleOrderList } from '../orders/OrderList'
 import { ReceiptHeader } from '../receipt/ReceiptHeader'
 import { OrderTotal } from '../receipt/OrderTotal'
@@ -96,23 +96,40 @@ export class BarOrderPage extends PureComponent {
 
 @observer
 class ActiveOrderList extends PureComponent {
+    @computed get descriptor() {
+        return new ActiveOrderDescriptor()
+    }
+
     render = () => {
         return (
-            <ScrollView style={{flex: 1}}>
-                <ActiveOrderListDownloadErrors />
-                {
-                    activeOrderStore.activeOrderList.map((orderResult, i) => {
-                        return (
-                            <ActiveOrder
-                                key={orderResult.orderID}
-                                orderResult={orderResult}
-                                />
-                        )
-                    })
-                }
-            </ScrollView>
+            <SimpleListView
+                descriptor={this.descriptor}
+                initialListSize={5}
+                pageSize={5}
+                />
         )
     }
+}
+
+class ActiveOrderDescriptor extends Descriptor {
+    @computed get rows() {
+        return activeOrderStore.activeOrderList
+    }
+
+    rowHasChanged = (ordeResult1, orderResult2) => {
+        return true
+        // return orderResult1.orderID !== orderResult2.orderID
+    }
+
+    renderHeader = () => <ActiveOrderListDownloadErrors />
+
+    refresh = async () => {
+        await this.runRefresh(
+            () => activeOrderStore.getActiveOrderFeed().forceRefresh()
+        )
+    }
+
+    renderRow = (orderResult) => <ActiveOrder orderResult={orderResult} />
 }
 
 @observer

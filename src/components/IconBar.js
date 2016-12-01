@@ -10,7 +10,8 @@ import IconBadge from 'react-native-icon-badge'
 import { config } from '/utils/config.js'
 
 const styles = StyleSheet.create({
-     icons: {
+    icons: {
+        // flex: 1,
         marginTop: 5,
         marginBottom: 5,
         flexDirection: 'row',
@@ -67,7 +68,6 @@ export class IconBar extends PureComponent {
     }
 
     render = () => {
-        const orderResult = this.props.orderResult
         const { Icon, iconSize } = this.props
         return (
             <View style={this.props.style}>
