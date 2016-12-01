@@ -605,7 +605,7 @@ export class FeedDownload extends QueryDownload {
 
         transaction(() => {
             this.downloadStarted()
-            this.onStart()
+            // this.onStart()
             if (this.refreshStateChanged) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
@@ -615,15 +615,17 @@ export class FeedDownload extends QueryDownload {
         })
 
         /* Establish feed */
-        downloadManager.feed(
-            this.name,              /* messageID */
-            this.query,             /* query */
-            async (value) => {      /* onReceive */
-                this.onReceive(value)
-                await cache.set(this.cacheKey, value, this.cacheInfo)
+
+        const timeout = getTimeoutInfo({timeoutDesc: 'normal'})
+        downloadManager.queryTransport.feed({
+            request: {
+                messageID: this.name,
+                type: 'feed',
+                query: this.query,
             },
-            this.onError,           /* onError */
-        )
+            resolve: _.timeoutCallback(timeout.refreshTimeout, this.onReceive, this.onError),
+            onStart: this.onStart,
+        })
 
         /* In the meantime, load cache entry */
         const cacheEntry = await cache.get(
@@ -633,11 +635,16 @@ export class FeedDownload extends QueryDownload {
             this.cacheInfo,
         )
         if (this.value == null && this.lastValue == null) {
-            this.onReceive(cacheEntry.value)
+            this.receive(cacheEntry.value)
         }
     }
 
-    @action onReceive = (value) => {
+    onReceive = async (value) => {
+        this.receive(value)
+        await cache.set(this.cacheKey, value, this.cacheInfo)
+    }
+
+    @action receive = (value) => {
         log(`Feed ${this.name} got an update.`)
         this._finishDownload(value)
     }
@@ -907,19 +914,6 @@ class DownloadManager {
                 }
                 return this.queryTransport.fetch(request, timeout)
             },
-        })
-    }
-
-    feed = (messageID, query, onReceive, onError) => {
-        const timeout = getTimeoutInfo({timeoutDesc: 'normal'})
-        const request = {
-            messageID: messageID,
-            type: 'feed',
-            query: query,
-        }
-        this.queryTransport.feed({
-            request,
-            resolve: _.timeoutCallback(timeout.refreshTimeout, onReceive, onError),
         })
     }
 }

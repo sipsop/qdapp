@@ -35,6 +35,9 @@ class ActiveOrderStore {
                 }
             },
             {
+                /* Clear all active orders on feed (re)start */
+                onStart: () => this.clearActiveOrders(),
+                /* Add any orders as they stream in, and delete completed ones */
                 onFinish: () => {
                     const feed = this.getActiveOrderFeed()
                     if (feed.value) {
@@ -88,7 +91,14 @@ class ActiveOrderStore {
         this.activeOrderList.push(orderResult)
     }
 
+    @action deleteActiveOrderItem = (orderID : String) => {
+        this.activeOrderList = this.activeOrderList.filter(
+            orderResult => orderResult.orderID !== orderID
+        )
+    }
+
     @action clearActiveOrders = () => {
+        log("CLEARING ACTIVE ORDER LIST!!!!")
         this.activeOrderList = []
     }
 

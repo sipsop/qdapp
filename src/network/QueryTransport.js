@@ -29,7 +29,7 @@ CLOSING = 2
 CLOSED = 3
 
 export class QueryTransport {
-    /* { messageID: { resolve, request } } */
+    /* { messageID: { resolve, request, onStart : ?() => void } } */
     activeQueries = {}
     timeouts = {}
     @observable connected = false
@@ -125,6 +125,8 @@ export class QueryTransport {
         // log("Scheduling request with messageID...", request.messageID)
         assert(request.messageID != null, "messageID is null...")
         this.activeQueries[request.messageID] = feedParams
+        if (feedParams.onStart)
+            feedParams.onStart()
         if (this.connected) {
             // log("SENDING MESSAGE...", request.messageID, request.query)
             this.send(request)

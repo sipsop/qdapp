@@ -112,6 +112,7 @@ export class BarSettings extends PureComponent {
 class BarSettingsErrors extends DownloadResultView {
     showRefreshButton = false
     getDownloadResult = () => barStatusStore.updateBarStatusDownload
+    renderInProgress = () => null
     renderFinished = () => null
 }
 
