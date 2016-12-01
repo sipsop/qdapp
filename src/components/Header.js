@@ -49,6 +49,7 @@ export class TextHeader extends PureComponent {
         label: String
         rowHeight: Int
         primary: bool
+        fontColor: String
     */
 
     static defaultProps = {
@@ -60,7 +61,10 @@ export class TextHeader extends PureComponent {
     render = () => {
         return (
             <Header {...this.props}>
-                <HeaderText fontSize={this.props.fontSize}>
+                <HeaderText
+                    fontSize={this.props.fontSize}
+                    fontColor={this.props.fontColor}
+                    >
                     {this.props.label}
                 </HeaderText>
             </Header>
@@ -71,15 +75,15 @@ export class TextHeader extends PureComponent {
 export class HeaderText extends PureComponent {
     static defaultProps = {
         fontSize: 25,
+        fontColor: '#fff',
     }
 
     render = () => {
-        return <T style={
-                { fontSize: this.props.fontSize
-                , color: '#fff'
-                , ...this.props.style
-                }
-            }>
+        const style = {
+            fontSize: this.props.fontSize,
+            color: this.props.fontColor,
+        }
+        return <T style={[style, this.props.style]}>
             {this.props.children}
         </T>
     }

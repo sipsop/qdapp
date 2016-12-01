@@ -21,14 +21,16 @@ const { assert, log } = _.utils('/components/admin/BarOrderPage')
 const styles = StyleSheet.create({
     iconBar: {
         flex: 1,
+        backgroundColor: '#fff',
     },
     activeOrder: {
         marginTop: 15,
     },
     activeOrderHeader: {
-        backgroundColor: '#000',
+        backgroundColor: '#fff',
+        borderTopWidth: 0.5,
         borderBottomWidth: 0.5,
-        borderColor: '#fff',
+        borderColor: '#000',
     },
     activeOrderInfoText: {
         fontSize: 18,
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
     },
     border: {
         borderBottomWidth: 0.5,
-        borderColor: 'rgba(255, 255, 255, 0.7)',
+        borderColor: 'rgba(0, 0, 0, 0.7)',
     },
     rowLabel: {
         fontWeight: 'bold',
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     rowText: {
         flex: 1,
         fontSize: 18,
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: 'rgba(0, 0, 0, 0.8)',
         textAlign: 'center',
     },
 })
@@ -121,6 +123,7 @@ class ActiveOrder extends PureComponent {
                 <TextHeader
                     label={`Order No. #${orderResult.receipt}`}
                     style={styles.activeOrderHeader}
+                    fontColor='#000'
                     />
                 <View>
                     <TextRow
@@ -174,15 +177,15 @@ class TextRow extends PureComponent {
     render = () => {
         const style = {}
         if (this.props.emphasize)
-            style.backgroundColor = config.theme.primary.medium
+            style.color = config.theme.primary.medium
         else
-            style.backgroundColor = '#000'
+            style.color = '#000'
         return (
-            <View style={[styles.textRow, style]}>
-                <Text style={[styles.rowText, styles.rowLabel]}>
+            <View style={styles.textRow}>
+                <Text style={[styles.rowText, styles.rowLabel, style]}>
                     {this.props.label}
                 </Text>
-                <Text style={styles.rowText}>
+                <Text style={[styles.rowText, style]}>
                     {this.props.text}
                 </Text>
             </View>
