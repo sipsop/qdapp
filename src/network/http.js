@@ -177,6 +177,7 @@ export class Download {
     @observable timestamp = null
     @observable errorAttempts : Int = 0
     @observable lastRefreshState = null
+    @observable lastProps = null
     @observable promise = null
 
     @observable name            : String = null
@@ -304,6 +305,22 @@ export class Download {
         return !_.deepEqual(this.refreshState, this.lastRefreshState)
     }
 
+    /*
+    Override this to select which properties should be considered to decide
+    whether lastValue should be cleared. For example, we may want to clear
+    lastValue when userID changes, but not when authToken changes.
+    */
+    getClearingProps = (props) => {
+        return props
+    }
+
+    @computed get shouldClearLastValue() {
+        return !_.deepEqual(
+            this.getClearingProps(this.props || {}),
+            this.getClearingProps(this.lastProps || {}),
+        )
+    }
+
     /* Should we start refreshing the download now? */
     @computed get shouldRefreshNow() {
         return (
@@ -324,7 +341,6 @@ export class Download {
 
     refresh = async (cacheInfo) => {
         log("REFRESHING:", this.name, this.errorAttempts)
-        const refreshState = this.refreshState
         const timestamp = getTime()
 
         // Update timestamp
@@ -332,12 +348,13 @@ export class Download {
             this.downloadStarted()
             this.onStart()
             this.timestamp = timestamp
-            if (this.refreshStateChanged) {
+            if (this.shouldClearLastValue) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
                 this._message  = null
             }
-            this.lastRefreshState = refreshState
+            this.lastRefreshState = this.refreshState
+            this.lastProps = this.props
         })
 
         // Download
@@ -611,12 +628,13 @@ export class FeedDownload extends QueryDownload {
         transaction(() => {
             this.downloadStarted()
             // this.onStart()
-            if (this.refreshStateChanged) {
+            if (this.shouldClearLastValue) {
                 /* lastValue and _message have become stale, clear them */
                 this.lastValue = null
                 this._message  = null
             }
             this.lastRefreshState = this.refreshState
+            this.lastProps = this.props
         })
 
         /* Establish feed */

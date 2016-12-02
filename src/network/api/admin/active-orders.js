@@ -1,6 +1,7 @@
 import { computed, transaction, action, autorun } from 'mobx'
 import { FeedStreamDownload } from '/network/http'
 import { OrderResultQuery } from '../orders/order'
+import { getClearingProps } from '../user/userquery'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -22,6 +23,8 @@ export class ActiveOrderDownload extends FeedStreamDownload {
     @computed get cacheKey() {
         return `qd:activeOrders:barID=${this.props.barID}`
     }
+
+    getClearingProps = getClearingProps
 
     @computed get query() {
         return {

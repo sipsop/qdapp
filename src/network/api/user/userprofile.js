@@ -1,5 +1,6 @@
-import { computed } from 'mobx'
+import { toJS, computed } from 'mobx'
 import { QueryDownload } from '/network/http'
+import { getClearingProps } from './userquery'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -23,6 +24,8 @@ export class UserProfileDownload extends QueryDownload {
         return this.props.isLoggedIn
     }
 
+    getClearingProps = getClearingProps
+
     @computed get query() {
         return {
             UserProfile: {
@@ -40,6 +43,7 @@ export class UserProfileDownload extends QueryDownload {
     }
 
     @computed get profile() {
+        log("GOT PROFILE:", this.state, this.value, this.lastValue)
         return this.lastValue && this.lastValue.profile
     }
 }

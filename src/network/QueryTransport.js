@@ -1,5 +1,6 @@
 import { observable, transaction, computed, action, autorun } from 'mobx'
 import { parseJSON } from '/utils/utils'
+import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/network/QueryTransport')
@@ -51,10 +52,10 @@ export class QueryTransport {
 
     connect = () => {
         log("Trying to establish a websocket connection...")
-        ws = new WebSocket(this.endpoint)
+        ws = new WebSocket(this.endpoint, config.websocketOptions)
         ws.onopen = () => this.onOpen(ws)
         ws.onmessage = () => null
-        ws.onerror = () => null
+        ws.onerror = (e) => console.log(e.message)
         ws.onclose = () => null
     }
 
@@ -95,7 +96,7 @@ export class QueryTransport {
     }
 
     @action onError = (e) => {
-        // log("WEBSOCKET ERROR:", e.message)
+        log("WEBSOCKET ERROR:", e.message)
         this.onClose()
     }
 

@@ -2,6 +2,7 @@ import { computed } from 'mobx'
 import { FeedDownload } from '/network/http'
 import { OrderResultQuery } from './order'
 import * as _ from '/utils/curry'
+import { getClearingProps } from '../user/userquery'
 import { config } from '/utils/config'
 
 const { assert, log } = _.utils('/network/api/order/orderstatus.js')
@@ -25,6 +26,8 @@ export class OrderStatusDownload extends FeedDownload {
     @computed get cacheKey() {
         return `qd:orderstatus:userID=${this.props.userID}:orderID=${this.props.orderID}`
     }
+
+    getClearingProps = getClearingProps
 
     @computed get query() {
         return {

@@ -192,7 +192,7 @@ class LoginStore {
     /*********************************************************************/
 
     @computed get isLoggedIn() {
-        return this.profile && this.getAuthToken()
+        return this.profile ? !!this.getAuthToken() : false
     }
 
     @computed get userID() {
@@ -275,5 +275,5 @@ const periodicallyRefreshToken = async () => {
             () => null, /* callbackError */
         )
     }
-    setTimeout(periodicallyRefreshToken, 60000)
+    setTimeout(periodicallyRefreshToken, 10000)
 }

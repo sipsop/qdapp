@@ -66,6 +66,11 @@ export const config = {
         menuReceiptImgSize: 'small',
         menuCardImgSize: 'large',
     },
+    websocketOptions: {
+        // Disable TLS cert validation
+        // TODO: DISABLE for production!
+        rejectUnauthorized: false,
+    },
     nearbyCacheInfo: {
         noCache:      false,
         // refreshAfter: 20 * Minute,

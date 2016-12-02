@@ -1,6 +1,7 @@
 import { computed, transaction, action, autorun } from 'mobx'
 import { QueryDownload } from '/network/http.js'
 import { OrderResultQuery } from './order.js'
+import { getClearingProps } from '../user/userquery'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/network/api/orders/history.js')
@@ -30,6 +31,8 @@ export class HistoryQueryDownload extends QueryDownload {
     @computed get active() {
         return this.props.isLoggedIn
     }
+
+    getClearingProps = getClearingProps
 
     @computed get query() {
         return {
