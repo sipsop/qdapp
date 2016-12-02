@@ -22,6 +22,7 @@ import { segment } from '/network/segment.js'
 import { config } from '/utils/config.js'
 import { cache } from '/network/cache.js'
 import * as _ from '/utils/curry.js'
+import { Bookings } from './Bookings'
 
 const icon = (iconName, color) => <Icon name={iconName} size={25} color='rgba(255, 255, 255, 0.5)' />
 
@@ -34,9 +35,11 @@ export class ControlPanel extends PureComponent {
         return <ScrollView style={{flex: 1}}>
             <LoginInfo />
             <PaymentConfig />
+            <Bookings />
             <OrderHistory />
             <Settings />
             {/*<Feedback />*/}
+
             <Signout />
         </ScrollView>
     }
@@ -64,6 +67,8 @@ class PaymentConfig extends PureComponent {
         </View>
     }
 }
+
+
 
 @observer
 class OrderHistory extends PureComponent {
@@ -323,4 +328,4 @@ export class BarOwnerProfile extends DownloadResultView {
     }
 }
 
-const SideMenuEntry = props => <RowTextButton {...props} fontColor='#fff' borderBottomColor='rgba(255, 255, 255, 0.8)' />
+export const SideMenuEntry = props => <RowTextButton {...props} fontColor='#fff' borderBottomColor='rgba(255, 255, 255, 0.8)' />
