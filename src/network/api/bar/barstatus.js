@@ -9,10 +9,7 @@ export class BarStatusDownload extends FeedDownload {
     */
 
     name = 'bar status'
-
-    // update bar status every 30s
-    // cacheInfo = config.defaultRefreshCacheInfo
-    // periodicRefresh = 30
+    restoreAfterRestart = true
 
     @computed get active() {
         return this.props.barID != null

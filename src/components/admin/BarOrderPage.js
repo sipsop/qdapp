@@ -11,7 +11,7 @@ import { SimpleOrderList } from '../orders/OrderList'
 import { ReceiptHeader } from '../receipt/ReceiptHeader'
 import { OrderTotal } from '../receipt/OrderTotal'
 
-import { orderStore, activeOrderStore } from '/model/store'
+import { orderStore, activeOrderStore, completedOrderStore } from '/model/store'
 import { formatTime } from '/utils/time'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -84,12 +84,22 @@ const barOrderIcons = [
 
 @observer
 export class BarOrderPage extends PureComponent {
+    @action handleSelectionChange = (i) => {
+        if (i === 1) {
+            /* User selected completed order history */
+            completedOrderStore.refresh()
+        }
+    }
+
     render = () => {
         return (
-            // <ActiveOrderList />
-            <IconBar style={styles.iconBar} icons={barOrderIcons}>
+            <IconBar
+                style={styles.iconBar}
+                icons={barOrderIcons}
+                onSelectionChange={this.handleSelectionChange}
+                >
                 <ActiveOrderList />
-                <View />
+                <CompletedOrderList />
             </IconBar>
         )
     }
@@ -130,7 +140,14 @@ class ActiveOrderDescriptor extends Descriptor {
         )
     }
 
-    renderRow = (orderResult) => <ActiveOrder orderResult={orderResult} />
+    renderRow = (orderResult) => {
+        return (
+            <PlacedOrder
+                orderResult={orderResult}
+                active={true}
+                />
+        )
+    }
 }
 
 @observer
@@ -139,10 +156,60 @@ class ActiveOrderListDownloadErrors extends DownloadResultView {
     renderFinished = () => null
 }
 
+/*********************************************************************/
+/* Completed Orders                                                  */
+/*********************************************************************/
+
 @observer
-class ActiveOrder extends PureComponent {
+class CompletedOrderList extends PureComponent {
+    @computed get descriptor() {
+        return new CompletedOrderDescriptor()
+    }
+
+    render = () => {
+        return (
+            <SimpleListView
+                descriptor={this.descriptor}
+                initialListSize={5}
+                pageSize={5}
+                />
+        )
+    }
+}
+
+class CompletedOrderDescriptor extends ActiveOrderDescriptor {
+    @computed get rows() {
+        return completedOrderStore.completed
+    }
+
+    refresh = () => this.runRefresh(completedOrderStore.refresh)
+
+    renderHeader = () => <CompletedOrdersDownloadErrors />
+    renderRow = (orderResult) => {
+        return (
+            <PlacedOrder
+                orderResult={orderResult}
+                active={false}
+                />
+        )
+    }
+}
+
+@observer
+class CompletedOrdersDownloadErrors extends DownloadResultView {
+    getDownloadResult = completedOrderStore.getDownload
+    renderFinished = () => null
+}
+
+/*********************************************************************/
+/* UI                                                                */
+/*********************************************************************/
+
+@observer
+class PlacedOrder extends PureComponent {
     /* properties:
         orderResult: OrderResult
+        active: Bool
     */
     render = () => {
         const orderResult = this.props.orderResult
@@ -188,6 +255,7 @@ class ActiveOrder extends PureComponent {
                     />
                 <OrderActions
                     orderID={orderResult.orderID}
+                    active={this.props.active}
                     />
             </View>
         )
@@ -226,6 +294,7 @@ class TextRow extends PureComponent {
 class OrderActions extends PureComponent {
     /* properties:
         orderID: String
+        active: Bool
     */
 
     confirmModal = null
@@ -250,10 +319,13 @@ class OrderActions extends PureComponent {
                     label="Refund"
                     onPress={this.refund}
                     />
-                <Button
-                    label="Complete"
-                    onPress={() => this.confirmModal.show()}
-                    />
+                {
+                    this.props.active &&
+                        <Button
+                            label="Complete"
+                            onPress={() => this.confirmModal.show()}
+                            />
+                }
             </ButtonRow>
         )
     }

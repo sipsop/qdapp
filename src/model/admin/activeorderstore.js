@@ -130,7 +130,7 @@ class ActiveOrderStore {
 export const activeOrderStore = new ActiveOrderStore()
 
 autorun(() => {
-    if (barStore.barIDHasChanged) {
+    if (activeOrderStore.barIDHasChanged) {
         activeOrderStore.clearActiveOrders()
         activeOrderStore.barID = barStore.barID
     }

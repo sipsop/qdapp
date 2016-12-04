@@ -705,6 +705,10 @@ export class FeedStreamDownload extends FeedDownload {
     cacheInfo = config.noCache
     refreshCacheInfo = config.noCache
     timeout = false
+
+    @computed get cacheKey() {
+        throw Error("Cache key not required for feed stream!")
+    }
 }
 
 // export class FeedMutation extends FeedDownload {

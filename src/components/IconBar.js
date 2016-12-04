@@ -53,6 +53,7 @@ export class IconBar extends PureComponent {
     /* properties:
         style: style object
         icons: Array<TabIcon>
+        onSelectionChange: ?(i : Int) => void
         children: Array<Component>
             each child should correspond to each icon in the icons list
     */
@@ -61,6 +62,7 @@ export class IconBar extends PureComponent {
 
     @action selectIcon = (i : Int) => {
         this.selectedIconIdx = i
+        this.props.onSelectionChange && this.props.onSelectionChange(i)
     }
 
     isSelected = (i) => {

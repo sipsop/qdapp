@@ -20,10 +20,6 @@ export class ActiveOrderDownload extends FeedStreamDownload {
         return this.props.userIsBarOwner
     }
 
-    @computed get cacheKey() {
-        return `qd:activeOrders:barID=${this.props.barID}`
-    }
-
     getClearingProps = getClearingProps
 
     @computed get query() {

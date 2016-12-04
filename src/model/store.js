@@ -26,6 +26,7 @@ import { pushNotificationStore } from './pushnotificationstore'
 /* Admin Stores */
 import { barSettingsStore } from './admin/barsettingsstore'
 import { activeOrderStore } from './admin/activeorderstore'
+import { completedOrderStore } from './admin/completedorderstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -82,6 +83,7 @@ export class Store {
 
             barSettingsStore.initialize(),
             activeOrderStore.initialize(),
+            completedOrderStore.initialize(),
         ])
 
         try {
@@ -216,4 +218,5 @@ export {
 
     barSettingsStore,
     activeOrderStore,
+    completedOrderStore,
 }
