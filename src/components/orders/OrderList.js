@@ -197,7 +197,6 @@ export class SimpleMenuItem extends PureComponent {
         const backgroundColor = this.props.rowNumber % 2 === 0
             ? '#fff'
             : '#fff'
-            // : config.theme.menuItemBackgroundColorSecondary
         return <View style={{position: 'relative'}}>
             <View style={
                     { height: 50

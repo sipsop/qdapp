@@ -115,8 +115,8 @@ export class SimpleListView extends PureComponent {
     }
 
     @action handleEndReached = () => {
-        // log("END REACHED, INCREASE VISIBLE ROWS")
         this.visibleRows += this.visibleRowsIncrement
+        this.props.descriptor.onEndReached()
     }
 
     @computed get dataSource() {
@@ -201,6 +201,8 @@ export class Descriptor {
     renderRow = (rowData, i) => {
         throw Error("renderRow not implemented")
     }
+
+    onEndReached = () => undefined
 
     refresh : ?() => void = undefined
     startRefresh = () => this.refreshing = true

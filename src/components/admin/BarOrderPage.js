@@ -195,9 +195,12 @@ class CompletedOrderDescriptor extends ActiveOrderDescriptor {
         return completedOrderStore.completed
     }
 
-    refresh = () => this.runRefresh(completedOrderStore.refresh)
+    onEndReached = () => {
+        completedOrderStore.fetchMore()
+    }
 
-    renderHeader = () => <CompletedOrdersDownloadErrors />
+    refresh = () => this.runRefresh(completedOrderStore.refresh)
+    renderFooter = () => <CompletedOrdersDownloadErrors />
 }
 
 @observer

@@ -29,10 +29,11 @@ class CompletedOrderStore {
                 onFinish: () => {
                     const completed = this.getDownload().completedOrders
                     if (completed) {
-                        if (completed.length)
+                        if (completed.length) {
                             this.addCompletedOrders(completed)
-                        else
+                        } else {
                             this.endReached = true
+                        }
                     }
                 }
             }
