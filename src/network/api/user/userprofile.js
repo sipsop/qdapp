@@ -14,7 +14,8 @@ export class UserProfileDownload extends QueryDownload {
     */
 
     name = 'user profile'
-    cacheInfo = config.defaultRefreshCacheInfo
+    // TODO: RENABLE THIS!
+    // cacheInfo = config.defaultRefreshCacheInfo
 
     @computed get cacheKey() {
         return `qd:userProfile:userID${this.props.userID}`
