@@ -5,6 +5,16 @@ import { getTime } from './time.js'
 
 export const DEV = true
 
+/*********************** Monkey Patching ******************************/
+
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item)
+}
+
+Array.prototype.extend = function (xs) {
+    xs.forEach((item) => this.push(item))
+}
+
 /*********************** Error Handling ******************************/
 
 /* Force a MobX value to a javascript object */
