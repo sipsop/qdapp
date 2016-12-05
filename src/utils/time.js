@@ -16,16 +16,16 @@ export const formatDateTime = (time : Float) => {
 export const formatDate = (time : Float) => {
     const d = new Date(time * 1000)
     const year  = d.getFullYear()
-    const month = d.getMonth()
-    const day   = d.getDay()
-    return `${year}/${month}/${day}`
+    const month = d.getMonth() + 1 // Yes, really... we're counting months from 0
+    const day   = d.getDate() // d.getDay() <- this returns [0-6] for Mon-Sat...
+    return `${formatNumber(day)}/${formatNumber(month)}/${year}`
 }
 
 export const formatTime = (time : Float) => {
     const d = new Date(time * 1000)
     const hour = d.getHours()
     const minutes = d.getMinutes()
-    return `${renderNumber(hour)}:${renderNumber(minutes)}`
+    return `${formatNumber(hour)}:${formatNumber(minutes)}`
 }
 
 export const formatDuration = (time : Float) => {
@@ -35,19 +35,19 @@ export const formatDuration = (time : Float) => {
     const minutes = Math.floor(time / 60)
     const hours   = Math.floor(time / 3600)
     if (hours)
-        return `${renderTime('hour', hours)} and ${renderTime('minute', minutes)}`
+        return `${timeUnit('hour', hours)} and ${timeUnit('minute', minutes)}`
     if (minutes)
-        return renderTime('minute', minutes)
-    return renderTime('second', seconds)
+        return timeUnit('minute', minutes)
+    return timeUnit('second', seconds)
 }
 
-const renderNumber = (n : Int) => {
+const formatNumber = (n : Int) => {
     if (n < 10)
         return '0' + n
     return '' + n
 }
 
-const renderTime = (unit, value) => {
+const timeUnit = (unit, value) => {
     if (value > 1)
         unit += 's'
     return `${value} ${unit}`
