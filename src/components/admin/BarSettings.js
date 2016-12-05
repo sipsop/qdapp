@@ -61,6 +61,12 @@ const styles = StyleSheet.create({
     testButtonStyle: {
         height: 40,
     },
+    addRemovePickupLocation: {
+        /* Increase button size */
+        marginLeft: 10,
+        marginTop: 5,
+        marginBottom: 5,
+    },
 })
 
 const Border = (props) => <View style={styles.borderView} />
@@ -193,7 +199,9 @@ class PickupLocations extends PureComponent {
                     subject={`Add/Remove Pickup Locations for ${barStore.barName}`}
                     body={emailBody()}
                     >
-                    <T>Add/Remove</T>
+                    <T style={styles.addRemovePickupLocation}>
+                        Add/Remove
+                    </T>
                 </Email>
             </Row>
         )
