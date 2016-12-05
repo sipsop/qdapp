@@ -24,10 +24,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     activeOrder: {
-        marginTop: 15,
+        // marginTop: 15,
     },
     completedOrder: {
-        marginTop: 15,
+        // marginTop: 15,
         // backgroundColor: 'rgba(0, 0, 0, 0.15)',
     },
     activeOrderHeader: {
@@ -148,7 +148,19 @@ class ActiveOrderDescriptor extends Descriptor {
         )
     }
 
-    renderRow = (orderResult) => <PlacedOrder orderResult={orderResult} />
+    renderRow = (orderResult, i) => {
+        return (
+            <View>
+                { i > 0 &&
+                    <View style={{height: 2.5, backgroundColor: config.theme.primary.medium, margin: 15, marginLeft: 70, marginRight: 70}} />
+                }
+                <PlacedOrder
+                    rowNumber={i + 1}
+                    orderResult={orderResult}
+                    />
+            </View>
+        )
+    }
 }
 
 @observer
@@ -202,6 +214,7 @@ class CompletedOrdersDownloadErrors extends DownloadResultView {
 @observer
 class PlacedOrder extends PureComponent {
     /* properties:
+        rowNumber: Int
         orderResult: OrderResult
     */
 
@@ -229,10 +242,24 @@ class PlacedOrder extends PureComponent {
         const totalText = orderStore.formatPrice(total + tip)
         const completed = orderResult.completed
 
+        const submittedTime = formatTime(orderResult.timetamp)
+        const submittedDate = formatDate(orderResult.timestamp)
+        var completedTime
+        var completedDate
+        var headerText
+        if (orderResult.completed) {
+            completedTime = formatTime(orderResult.completedTimestamp)
+            completedDate = formatDate(orderResult.completedTimestamp)
+            headerText = `Order: #${orderResult.receipt}`
+        } else {
+            headerText = `Order No. ${this.props.rowNumber}: #${orderResult.receipt}`
+        }
+
+
         return (
             <View style={this.style.style}>
                 <TextHeader
-                    label={`Order No. #${orderResult.receipt}`}
+                    label={headerText}
                     style={this.style.headerStyle}
                     fontColor={this.style.headerFontColor}
                     />
@@ -264,17 +291,24 @@ class PlacedOrder extends PureComponent {
                         text={formatTime(orderResult.timestamp)}
                         />
                     {
-                        orderResult.completed &&
+                        completed && completedDate !== submittedDate &&
                             <TextRow
-                                label="Completed"
-                                text={formatTime(orderResult.completedTimestamp)}
+                                label="Submitted Date"
+                                text={submittedDate}
                                 />
                     }
                     {
-                        orderResult.completed &&
+                        completed &&
+                            <TextRow
+                                label="Completed"
+                                text={completedTime}
+                                />
+                    }
+                    {
+                        completed &&
                             <TextRow
                                 label="Date"
-                                text={formatDate(orderResult.completedTimestamp)}
+                                text={completedDate}
                                 />
                     }
 
