@@ -11,7 +11,7 @@ export class CompletedOrdersDownload extends QueryDownload {
     /* properties:
         authToken: String
         barID: String
-        before: ?TimeStamp
+        completedBefore: ?TimeStamp
             get order history before the given timestamp
     */
 
@@ -32,7 +32,7 @@ export class CompletedOrdersDownload extends QueryDownload {
                     authToken: this.props.authToken,
                     barID: this.props.barID,
                     before: {
-                        timestamp: this.props.before,
+                       completedTimestamp: this.props.completedBefore,
                     },
                 },
                 result: {

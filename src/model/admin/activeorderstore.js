@@ -98,7 +98,6 @@ class ActiveOrderStore {
     }
 
     @action clearActiveOrders = () => {
-        log("CLEARING ACTIVE ORDER LIST!!!!")
         this.activeOrderList = []
     }
 

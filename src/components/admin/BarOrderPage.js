@@ -1,4 +1,4 @@
-import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T, StyleSheet, Text } from '/components/Component'
+import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T, StyleSheet, Text, Picker, Switch } from '/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -11,12 +11,43 @@ import { SimpleOrderList } from '../orders/OrderList'
 import { ReceiptHeader } from '../receipt/ReceiptHeader'
 import { OrderTotal } from '../receipt/OrderTotal'
 
-import { orderStore, activeOrderStore, completedOrderStore } from '/model/store'
+import { orderStore, barStatusStore, activeOrderStore, completedOrderStore } from '/model/store'
 import { formatDate, formatTime } from '/utils/time'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
 const { assert, log } = _.utils('/components/admin/BarOrderPage')
+
+class OrderFilterStore {
+    @observable showTableService = true
+    @observable pickupLocationName = 'All' // All, None, Main Bar, etc
+
+    filterOrders = (orders : Array<OrderResult>) => {
+        return orders.filter(orderResult => {
+            if (orderResult.delivery === 'Table') {
+                return this.showTableService
+            } else {
+                if (this.pickupLocationName === 'None') {
+                    return false
+                } else if (this.pickupLocationName === 'All') {
+                    return true
+                } else {
+                    return orderResult.pickupLocation === this.pickupLocationName
+                }
+            }
+        })
+    }
+
+    @action setTableService = (showTableService) => {
+        this.showTableService = showTableService
+    }
+
+    @action setPickupLocation = (pickupLocationName) => {
+        this.pickupLocationName = pickupLocationName
+    }
+}
+
+const orderFilterStore = new OrderFilterStore()
 
 const styles = StyleSheet.create({
     iconBar: {
@@ -44,13 +75,32 @@ const styles = StyleSheet.create({
     activeOrderInfoText: {
         fontSize: 18,
     },
+    orderFilter: {
+        height: 55,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    tableService: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     textRow: {
         flexDirection: 'row',
         justifyContent: 'space-around',
     },
     border: {
-        borderBottomWidth: 0.5,
-        borderColor: 'rgba(0, 0, 0, 0.7)',
+        height: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        marginLeft: 40,
+        marginRight: 40,
+    },
+    separator: {
+        height: 2.5,
+        backgroundColor: config.theme.primary.medium,
+        margin: 15,
+        marginLeft: 70,
+        marginRight: 70,
     },
     rowLabel: {
         fontWeight: 'bold',
@@ -72,7 +122,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 20,
     },
 })
 
@@ -92,6 +142,11 @@ const barOrderIcons = [
 
 @observer
 export class BarOrderPage extends PureComponent {
+    @observable filterProps = {
+        showTableService: true,
+        pickupLocation: 'All',
+    }
+
     @action handleSelectionChange = (i) => {
         if (i === 1) {
             /* User selected completed order history */
@@ -106,9 +161,57 @@ export class BarOrderPage extends PureComponent {
                 icons={barOrderIcons}
                 onSelectionChange={this.handleSelectionChange}
                 >
-                <ActiveOrderList />
-                <CompletedOrderList />
+                <View style={{flex: 1}}>
+                    <OrderFilter />
+                    <ActiveOrderList />
+                </View>
+                <View style={{flex: 1}}>
+                    <OrderFilter />
+                    <CompletedOrderList />
+                </View>
             </IconBar>
+        )
+    }
+}
+
+@observer
+class OrderFilter extends PureComponent {
+    @computed get pickupLocationNames() {
+        const result = ['All']
+        result.extend(barStatusStore.pickupLocationNames)
+        result.push('None')
+        return result
+    }
+
+    render = () => {
+        return (
+            <View style={styles.orderFilter}>
+                <Picker
+                    style={{width: 130}}
+                    selectedValue={orderFilterStore.pickupLocationName}
+                    onValueChange={orderFilterStore.setPickupLocation}
+                    >
+                    {
+                        this.pickupLocationNames.map((value, i) => {
+                            return (
+                                <Picker.Item
+                                    key={value}
+                                    label={value}
+                                    value={value}
+                                    />
+                            )
+                        })
+                    }
+                </Picker>
+                <View style={styles.tableService}>
+                    <T>Show Table Service</T>
+                    <Switch
+                        value={orderFilterStore.showTableService}
+                        onValueChange={orderFilterStore.setTableService}
+                        onTintColor={config.theme.primary.medium}
+                        />
+                </View>
+            </View>
         )
     }
 }
@@ -132,7 +235,7 @@ class ActiveOrderList extends PureComponent {
 
 class ActiveOrderDescriptor extends Descriptor {
     @computed get rows() {
-        return activeOrderStore.activeOrderList
+        return orderFilterStore.filterOrders(activeOrderStore.activeOrderList)
     }
 
     rowHasChanged = (ordeResult1, orderResult2) => {
@@ -152,7 +255,7 @@ class ActiveOrderDescriptor extends Descriptor {
         return (
             <View>
                 { i > 0 &&
-                    <View style={{height: 2.5, backgroundColor: config.theme.primary.medium, margin: 15, marginLeft: 70, marginRight: 70}} />
+                    <View style={styles.separator} />
                 }
                 <PlacedOrder
                     rowNumber={i + 1}
@@ -192,7 +295,7 @@ class CompletedOrderList extends PureComponent {
 
 class CompletedOrderDescriptor extends ActiveOrderDescriptor {
     @computed get rows() {
-        return completedOrderStore.completed
+        return orderFilterStore.filterOrders(completedOrderStore.completed)
     }
 
     onEndReached = () => {
@@ -245,7 +348,7 @@ class PlacedOrder extends PureComponent {
         const totalText = orderStore.formatPrice(total + tip)
         const completed = orderResult.completed
 
-        const submittedTime = formatTime(orderResult.timetamp)
+        const submittedTime = formatTime(orderResult.timestamp)
         const submittedDate = formatDate(orderResult.timestamp)
         var completedTime
         var completedDate
@@ -272,6 +375,43 @@ class PlacedOrder extends PureComponent {
                         text={orderResult.userName}
                         />
                     {
+                        orderResult.delivery === 'Table' &&
+                            <TextRow
+                                label="Table No."
+                                text={orderResult.tableNumber}
+                                emphasize={true}
+                                />
+                    }
+                    {
+                        orderResult.delivery === 'Pickup' &&
+                            <TextRow
+                                label="Pickup Location"
+                                text={orderResult.pickupLocation}
+                                emphasize={true}
+                                />
+                    }
+                    {border}
+                    <TextRow
+                        label={
+                            completed
+                                ? "Submitted"
+                                : "Time"
+                        }
+                        text={
+                            completed
+                                ? `${submittedDate} ${submittedTime}`
+                                : submittedTime // TODO: Calculate how long ago this was
+                        }
+                        />
+                    {
+                        completed &&
+                            <TextRow
+                                label="Completed"
+                                text={`${completedDate} ${completedTime}`}
+                                />
+                    }
+                    {border}
+                    {
                         tip > 0.0 &&
                             <View>
                                 <TextRow
@@ -285,36 +425,6 @@ class PlacedOrder extends PureComponent {
                         label="Total"
                         text={totalText}
                         />
-                    <TextRow
-                        label={
-                            orderResult.completed
-                                ? "Submitted"
-                                : "Time"
-                        }
-                        text={formatTime(orderResult.timestamp)}
-                        />
-                    {
-                        completed && completedDate !== submittedDate &&
-                            <TextRow
-                                label="Submitted Date"
-                                text={submittedDate}
-                                />
-                    }
-                    {
-                        completed &&
-                            <TextRow
-                                label="Completed"
-                                text={completedTime}
-                                />
-                    }
-                    {
-                        completed &&
-                            <TextRow
-                                label="Date"
-                                text={completedDate}
-                                />
-                    }
-
                 </View>
                 <View style={{height: 20}} />
                 <SimpleOrderList
@@ -338,6 +448,8 @@ class TextRow extends PureComponent {
         label: String
         text: String
         emphasize: Bool
+        borderBottom: Bool
+        borderTop: Bool
     */
     render = () => {
         const style = {}

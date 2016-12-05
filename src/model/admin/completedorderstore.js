@@ -22,7 +22,7 @@ class CompletedOrderStore {
                 return {
                     authToken:   loginStore.getAuthToken(),
                     barID:       barStore.barID,
-                    before:      this.getBeforeTimestamp(),
+                    completedBefore: this.getBeforeTimestamp(),
                 }
             },
             {
@@ -32,6 +32,7 @@ class CompletedOrderStore {
                         if (completed.length) {
                             this.addCompletedOrders(completed)
                         } else {
+                            log("END REACHED!!!!")
                             this.endReached = true
                         }
                     }
@@ -55,7 +56,7 @@ class CompletedOrderStore {
     getBeforeTimestamp = () : ?Float => {
         if (!this.completed.length)
             return undefined
-        return _.last(this.completed).timestamp
+        return _.last(this.completed).completedTimestamp
     }
 
     /*********************************************************************/
