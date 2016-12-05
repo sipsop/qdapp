@@ -12,7 +12,7 @@ import { ReceiptHeader } from '../receipt/ReceiptHeader'
 import { OrderTotal } from '../receipt/OrderTotal'
 
 import { orderStore, activeOrderStore, completedOrderStore } from '/model/store'
-import { formatTime } from '/utils/time'
+import { formatDate, formatTime } from '/utils/time'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -26,11 +26,19 @@ const styles = StyleSheet.create({
     activeOrder: {
         marginTop: 15,
     },
+    completedOrder: {
+        marginTop: 15,
+        // backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    },
     activeOrderHeader: {
         backgroundColor: '#fff',
         borderTopWidth: 0.5,
         borderBottomWidth: 0.5,
         borderColor: '#000',
+        marginBottom: 5,
+    },
+    completedOrderHeader: {
+        backgroundColor: '#000',
         marginBottom: 5,
     },
     activeOrderInfoText: {
@@ -140,14 +148,7 @@ class ActiveOrderDescriptor extends Descriptor {
         )
     }
 
-    renderRow = (orderResult) => {
-        return (
-            <PlacedOrder
-                orderResult={orderResult}
-                active={true}
-                />
-        )
-    }
+    renderRow = (orderResult) => <PlacedOrder orderResult={orderResult} />
 }
 
 @observer
@@ -185,18 +186,11 @@ class CompletedOrderDescriptor extends ActiveOrderDescriptor {
     refresh = () => this.runRefresh(completedOrderStore.refresh)
 
     renderHeader = () => <CompletedOrdersDownloadErrors />
-    renderRow = (orderResult) => {
-        return (
-            <PlacedOrder
-                orderResult={orderResult}
-                active={false}
-                />
-        )
-    }
 }
 
 @observer
 class CompletedOrdersDownloadErrors extends DownloadResultView {
+    finishOnLastValue = false
     getDownloadResult = completedOrderStore.getDownload
     renderFinished = () => null
 }
@@ -209,20 +203,38 @@ class CompletedOrdersDownloadErrors extends DownloadResultView {
 class PlacedOrder extends PureComponent {
     /* properties:
         orderResult: OrderResult
-        active: Bool
     */
+
+    @computed get style() {
+        if (!this.props.orderResult.completed) {
+            return {
+                style: styles.activeOrder,
+                headerStyle: styles.activeOrderHeader,
+                headerFontColor: '#000',
+            }
+        } else {
+            return {
+                style: styles.completedOrder,
+                headerStyle: styles.completedOrderHeader,
+                headerFontColor: '#fff',
+            }
+        }
+    }
+
     render = () => {
         const orderResult = this.props.orderResult
         const tip = orderResult.tip
         const total = orderResult.totalPrice
         const tipText = orderStore.formatPrice(orderResult.tip)
         const totalText = orderStore.formatPrice(total + tip)
+        const completed = orderResult.completed
+
         return (
-            <View style={styles.activeOrder}>
+            <View style={this.style.style}>
                 <TextHeader
                     label={`Order No. #${orderResult.receipt}`}
-                    style={styles.activeOrderHeader}
-                    fontColor='#000'
+                    style={this.style.headerStyle}
+                    fontColor={this.style.headerFontColor}
                     />
                 <View>
                     <TextRow
@@ -244,9 +256,28 @@ class PlacedOrder extends PureComponent {
                         text={totalText}
                         />
                     <TextRow
-                        label="Time"
+                        label={
+                            orderResult.completed
+                                ? "Submitted"
+                                : "Time"
+                        }
                         text={formatTime(orderResult.timestamp)}
                         />
+                    {
+                        orderResult.completed &&
+                            <TextRow
+                                label="Completed"
+                                text={formatTime(orderResult.completedTimestamp)}
+                                />
+                    }
+                    {
+                        orderResult.completed &&
+                            <TextRow
+                                label="Date"
+                                text={formatDate(orderResult.completedTimestamp)}
+                                />
+                    }
+
                 </View>
                 <View style={{height: 20}} />
                 <SimpleOrderList
@@ -255,7 +286,7 @@ class PlacedOrder extends PureComponent {
                     />
                 <OrderActions
                     orderID={orderResult.orderID}
-                    active={this.props.active}
+                    active={!orderResult.completed}
                     />
             </View>
         )
