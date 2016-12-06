@@ -226,7 +226,6 @@ class LoginStore {
     initialize = () => {
         downloadManager.declareDownload(new UserProfileDownload(() => {
             return {
-                isLoggedIn: this.isLoggedIn,
                 authToken:  this.getAuthToken(),
                 userID:     this.userID,
             }

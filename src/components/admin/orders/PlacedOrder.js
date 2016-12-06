@@ -3,8 +3,8 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { TextHeader } from '/components/Header'
-import { SmallOkCancelModal } from '/components/Modals'
-import { SimpleOrderList } from '/components/orders/OrderList'
+import { OkCancelModal, SmallOkCancelModal } from '/components/Modals'
+import { SimpleOrderList } from '/components/orders/SimpleOrderList'
 import { ActionButtons, ActionButton } from '/components/ActionButtons'
 
 import { orderStore, activeOrderStore } from '/model/store'
@@ -70,7 +70,14 @@ export class PlacedOrder extends PureComponent {
     /* properties:
         rowNumber: Int
         orderResult: OrderResult
+        showActions: Bool
+            whether to show the Refund and Complete buttons
     */
+
+    static defaultProps = {
+        rowNumber: 1,
+        showActions: true,
+    }
 
     @computed get style() {
         if (!this.props.orderResult.completed) {
@@ -179,10 +186,9 @@ export class PlacedOrder extends PureComponent {
                     menuItems={orderResult.menuItems}
                     orderList={orderResult.orderList}
                     />
-                <OrderActions
-                    orderID={orderResult.orderID}
-                    active={!orderResult.completed}
-                    />
+                { this.props.showActions &&
+                    <OrderActions orderResult={orderResult} />
+                }
             </View>
         )
     }
@@ -221,18 +227,14 @@ class TextRow extends PureComponent {
 @observer
 class OrderActions extends PureComponent {
     /* properties:
-        orderID: String
-        active: Bool
+        orderResult: String
     */
 
     confirmModal = null
-
-    refund = (refundedItems, refundReason) => {
-        activeOrderStore.refundOrder(this.props.orderID, refundItems, refundReason)
-    }
+    refundModal  = null
 
     completeOrder = () => {
-        activeOrderStore.completeOrder(this.props.orderID)
+        activeOrderStore.completeOrder(this.props.orderResult.orderID)
     }
 
     render = () => {
@@ -243,18 +245,63 @@ class OrderActions extends PureComponent {
                     message="Complete Order?"
                     onConfirm={this.completeOrder}
                     />
+                <RefundModal
+                    ref={ref => this.refundModal = ref}
+                    orderResult={this.props.orderResult}
+                    />
                 <ActionButton
                     label="Refund"
-                    onPress={this.refund}
+                    onPress={() => this.refundModal.show()}
                     />
                 {
-                    this.props.active &&
+                    !this.props.orderResult.completed &&
                         <ActionButton
                             label="Complete"
                             onPress={() => this.confirmModal.show()}
                             />
                 }
             </ActionButtons>
+        )
+    }
+}
+
+@observer
+export class RefundModal extends PureComponent {
+    /* properties:
+        orderResult: String
+    */
+    @observable visible = false
+
+    show = () => this.visible = true
+    close = () => this.visible = false
+
+    @computed get refundButtonEnabled() {
+        return true
+    }
+
+    refund = (refundedItems, refundReason) => {
+        activeOrderStore.refundOrder(this.props.orderResult.orderID, refundItems, refundReason)
+    }
+
+    render = () => {
+        return (
+            <OkCancelModal
+                visible={this.visible}
+                showOkButton={true}
+                okLabel="Refund Now"
+                okDisabled={!this.refundButtonEnabled}
+                okModal={this.close}
+                showCancelButton={true}
+                cancelLabel="Cancel"
+                cancelModal={this.close}
+                >
+                <ScrollView style={{flex: 1}}>
+                    <PlacedOrder
+                        orderResult={this.props.orderResult}
+                        showActions={false}
+                        />
+                </ScrollView>
+            </OkCancelModal>
         )
     }
 }

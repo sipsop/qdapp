@@ -8,7 +8,6 @@ const { log, assert } = _.utils('/network/api/user/userprofile.js')
 
 export class UserProfileDownload extends QueryDownload {
     /* properties:
-        isLoggedIn: Bool
         authToken: String
         userID: String
     */
@@ -22,7 +21,7 @@ export class UserProfileDownload extends QueryDownload {
     }
 
     @computed get active() {
-        return this.props.isLoggedIn
+        return !!this.props.authToken
     }
 
     getClearingProps = getClearingProps
@@ -44,7 +43,6 @@ export class UserProfileDownload extends QueryDownload {
     }
 
     @computed get profile() {
-        log("GOT PROFILE:", this.state, this.value, this.lastValue)
         return this.lastValue && this.lastValue.profile
     }
 }
