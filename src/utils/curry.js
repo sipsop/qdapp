@@ -5,14 +5,18 @@ import { getTime } from './time.js'
 
 export const DEV = true
 
-/*********************** Monkey Patching ******************************/
+/*********************** Array *****************************/
 
-Array.prototype.insert = function (index, item) {
-  this.splice(index, 0, item)
+export const insert = (xs, index, item) => {
+  xs.splice(index, 0, item)
 }
 
-Array.prototype.extend = function (xs) {
-    xs.forEach((item) => this.push(item))
+export const remove = (xs, index) => {
+    xs.splice(index, 1)
+}
+
+export const extend = (xs, ys) => {
+    ys.forEach((item) => xs.push(item))
 }
 
 /*********************** Error Handling ******************************/

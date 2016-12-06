@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 export class OrderFilter extends PureComponent {
     @computed get pickupLocationNames() {
         const result = ['All']
-        result.extend(barStatusStore.pickupLocationNames)
+        _.extend(result, barStatusStore.pickupLocationNames)
         result.push('None')
         return result
     }

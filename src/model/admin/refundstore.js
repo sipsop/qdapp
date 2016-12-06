@@ -2,13 +2,15 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { orderStore } from '/model/orders/orderstore'
 import * as _ from '/utils/curry'
 
+const { log, assert } = _.utils('/model/admin/refundstore')
+
 export class RefundStore {
-    @observable refundOrderItems = []
+    @observable refundOrderIndices = []
     @observable refundAmount = 0.0
     orderList = null
 
     constructor(orderList) {
-        this.orderList = orderList
+        this.orderList = orderStore.decompressOrderList(orderList)
     }
 
     /*********************************************************************/
@@ -16,30 +18,39 @@ export class RefundStore {
     /*********************************************************************/
 
     /* Add an order item to the refund list */
-    @action addRefundOrderItem = (orderItem) => {
-        this.refundOrderItems.push(orderItem)
+    @action addRefund = (orderIndex : Int) => {
+        this.refundOrderIndices.push(orderIndex)
     }
 
-    @action removeRefundOrderItem = (orderItem) => {
-        this.refundOrderItems = this.refundOrderItems.filter(
-            o => o.id !== orderItem.id
+    @action removeRefund = (orderIndex : Int) => {
+        this.refundOrderIndices = this.refundOrderIndices.filter(
+            idx => idx !== orderIndex
         )
     }
 
     @action selectAll = () => {
-        this.refundOrderItems = this.orderList.slice()
+        this.refundOrderIndices = _.range(this.orderList.length)
     }
 
     @action deselectAll = () => {
-        this.refundOrderItems = []
+        this.refundOrderIndices = []
     }
 
     /*********************************************************************/
     /* Compute                                                           */
     /*********************************************************************/
 
+    getOrderList = () => this.orderList
+
+    @computed get refundOrderItems() {
+        return this.orderList.filter((orderItem, orderIndex) => {
+            // quadratic...
+            return this.refunded(orderIndex)
+        })
+    }
+
     @computed get allItemsRefunded() {
-        return this.refundOrderItems.length === this.orderList.length
+        return this.refundOrderIndices.length === this.orderList.length
     }
 
     @computed get orderListTotal() {
@@ -59,11 +70,7 @@ export class RefundStore {
     }
 
     /* Whether `orderItem` has been refunded */
-    refunded = (orderItem) : Bool => {
-        return _.includes(
-            this.refundOrderItems,
-            orderItem,
-            (o1, o2) => o1.id === o2.id,
-        )
+    refunded = (orderIndex) : Bool => {
+        return _.includes(this.refundOrderIndices, orderIndex)
     }
 }

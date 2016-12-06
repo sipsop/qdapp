@@ -274,6 +274,49 @@ class OrderStore {
     }
 
     /*********************************************************************/
+    /* Order List Compression                                            */
+    /*********************************************************************/
+
+    /*
+    Users can add the same item multiple times, or with an amount > 1.
+    This function "compresses" all orderItems of the same type together, adding
+    up their amounts.
+    */
+    compressOrderList = (orderList : Array<OrderItem>) : Array<OrderItem> => {
+        const key = orderItem => orderItem.menuItemID + _.flatten(orderItem.selectedOptions).join('+')
+        const items = {}
+        orderList.forEach(orderItem => {
+            const k = key(orderItem)
+            if (items[k]) {
+                items[k].amount += orderItem.amount
+            } else {
+                items[k] = orderItem
+            }
+        })
+        return Object.values(items)
+    }
+
+    /* Decompress an orderList, duplicating the items and setting the 'amount' to 1 */
+    decompressOrderList = (orderList : Array<OrderItem>) : Array<OrderItem> => {
+        return _.flatten(
+            orderList.map(orderItem => {
+                if (orderItem.amount > 1) {
+                    return _.range(orderItem.amount).map(i => {
+                        return {
+                            id: orderItem.id,
+                            menuItemID: orderItem.menuItemID,
+                            selectedOptions: orderItem.selectedOptions,
+                            amount: 1,
+                        }
+                    })
+                } else {
+                    return [orderItem]
+                }
+            })
+        )
+    }
+
+    /*********************************************************************/
     /* Tips and Total                                                    */
     /*********************************************************************/
 

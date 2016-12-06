@@ -164,11 +164,17 @@ export class SimpleMenuItemOptions extends PureComponent {
         return !!this.props.refundStore
     }
 
+    @computed get orderItems() {
+        if (this.refundable) {
+            return this.props.refundStore.getOrderList()
+        }
+        return this.props.orderItems
+    }
+
     render = () => {
-        const orderItems = this.props.orderItems
         return (
             <View style={styles.menuItemOptions}>
-                {orderItems.map(this.renderOrderItem)}
+                {this.orderItems.map(this.renderOrderItem)}
             </View>
         )
     }
@@ -179,7 +185,7 @@ export class SimpleMenuItemOptions extends PureComponent {
         const price = orderStore.getTotal(orderItem)
         const priceText = orderStore.formatPrice(price)
         return (
-            <View key={orderItem.id}>
+            <View key={rowNumber}>
                 <View style={styles.orderItemRow}>
                     <T style={[styles.amountText, styles.itemText]}>
                         {orderItem.amount}
@@ -201,6 +207,7 @@ export class SimpleMenuItemOptions extends PureComponent {
                         <RefundSwitch
                             refundStore={this.props.refundStore}
                             orderItem={orderItem}
+                            orderIndex={rowNumber}
                             style={styles.refundSwitch}
                             />
                     </View>
@@ -215,17 +222,18 @@ class RefundSwitch extends PureComponent {
     /* properties:
         refundStore: RefundStore
         orderItem: OrderItem
+        orderIndex: Int
         style: style obj
     */
     @computed get refunded() {
-        return this.props.refundStore.refunded(this.props.orderItem)
+        return this.props.refundStore.refunded(this.props.orderIndex)
     }
 
     @action selectRefundItem = (value) => {
         if (this.refunded)
-            this.props.refundStore.removeRefundOrderItem(this.props.orderItem)
+            this.props.refundStore.removeRefund(this.props.orderIndex)
         else
-            this.props.refundStore.addRefundOrderItem(this.props.orderItem)
+            this.props.refundStore.addRefund(this.props.orderIndex)
     }
 
     render = () => {
