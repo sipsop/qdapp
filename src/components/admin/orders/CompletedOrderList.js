@@ -11,7 +11,7 @@ import { completedOrderStore, orderFilterStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
-const { assert, log } = _.utils('/components/admin/orders/CompletedOrderList')
+const { assert, log } = _.utils('/components/admin/orders/CompletedOrderList.js')
 
 @observer
 export class CompletedOrderList extends PureComponent {

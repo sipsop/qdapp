@@ -10,7 +10,7 @@ import { activeOrderStore, orderFilterStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
-const { assert, log } = _.utils('/components/admin/orders/ActiveOrders')
+const { assert, log } = _.utils('/components/admin/orders/ActiveOrders.js')
 
 const styles = StyleSheet.create({
     separator: {

@@ -1,6 +1,7 @@
 import { React, Component, View, Modal, TouchableOpacity, PureComponent, ScrollView, T, Text } from '/components/Component'
 import { LargeButton, PrimaryButton, SecondaryButton } from './Button'
 import { TextHeader } from './Header'
+import { ActionButtons, ActionButton } from './ActionButtons'
 import { MarkdownLoader } from './markdown/MarkdownLoader'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -117,6 +118,24 @@ export class SmallOkCancelModal extends PureComponent {
                         ? <T style={textStyle}>{this.props.message}</T>
                         : this.props.children
                 }
+                {/*
+                <ActionButtons>
+                    {
+                        this.props.showCancelButton &&
+                            <ActionButton
+                                label={this.props.cancelLabel || 'Cancel'}
+                                onPress={this.close}
+                                />
+                    }
+                    {
+                        this.props.showOkButton &&
+                            <ActionButton
+                                label={this.props.okLabel || 'Ok'}
+                                onPress={this.confirm}
+                                />
+                    }
+                </ActionButtons>
+                */}
                 <View style={
                         { flexDirection: 'row'
                         , justifyContent: 'flex-end'
@@ -284,6 +303,30 @@ export class OkCancelModal extends PureComponent {
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: "#fff"}}>
                     {this.props.children}
                 </View>
+                {/*
+                <ActionButtons>
+                    {
+                        this.props.showCancelButton &&
+                            <ActionButton
+                                label={this.props.cancelLabel}
+                                onPress={this.props.cancelModal}
+                                disabled={this.props.cancelDisabled}
+                                disabledColor={this.props.cancelDisabledColor || this.props.disabledColor}
+                                backgroundColor={this.props.cancelBackgroundColor}
+                                />
+                    }
+                    {
+                        this.props.showOkButton &&
+                            <ActionButton
+                                label={this.props.okLabel || 'Ok'}
+                                onPress={this.props.okModal}
+                                disabled={this.props.okDisabled}
+                                disabledColor={this.props.okDisabledColor || this.props.disabledColor}
+                                backgroundColor={this.props.okBackgroundColor}
+                                />
+                    }
+                </ActionButtons>
+                */}
                 <View style={
                         { flexDirection: 'row'
                         , justifyContent: 'space-around'

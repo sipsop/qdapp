@@ -40,13 +40,11 @@ export class ActionButton extends PureComponent {
     */
     render = () => {
         return (
-            <View style={styles.button}>
-                <TouchableOpacity onPress={this.props.onPress}>
-                    <Text style={[styles.buttonText, this.props.textStyle]}>
-                        {this.props.label}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={styles.button} onPress={this.props.onPress}>
+                <Text style={[styles.buttonText, this.props.textStyle]}>
+                    {this.props.label}
+                </Text>
+            </TouchableOpacity>
         )
     }
 }
