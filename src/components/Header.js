@@ -46,10 +46,10 @@ export class Header extends PureComponent {
 @observer
 export class TextHeader extends PureComponent {
     /* properties:
-        label: String
-        rowHeight: Int
-        primary: bool
-        fontColor: String
+        label:     String
+        rowHeight: ?Int
+        primary:   ?Bool
+        fontColor: ?String
     */
 
     static defaultProps = {
