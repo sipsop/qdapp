@@ -14,11 +14,10 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { BarOrderPage } from '/components/admin/BarOrderPage'
+import { BarOrderPage } from '/components/admin/orders/BarOrderPage'
 import { Page, Loader } from '/components/Page'
 import { SimpleListView } from '/components/SimpleListView'
 import { LargeButton } from '/components/Button'
-import { SelectableButton } from '/components/ButtonRow'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Checkout, SelectedCardInfo } from '/components/payment/Checkout'
 import { Header, TextHeader } from '/components/Header'

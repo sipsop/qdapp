@@ -27,6 +27,7 @@ import { pushNotificationStore } from './pushnotificationstore'
 import { barSettingsStore } from './admin/barsettingsstore'
 import { activeOrderStore } from './admin/activeorderstore'
 import { completedOrderStore } from './admin/completedorderstore'
+import { orderFilterStore } from './admin/orderfilterstore'
 
 import { notificationStore } from './notificationstore'
 
@@ -219,4 +220,5 @@ export {
     barSettingsStore,
     activeOrderStore,
     completedOrderStore,
+    orderFilterStore,
 }

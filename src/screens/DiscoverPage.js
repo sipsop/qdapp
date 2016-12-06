@@ -14,7 +14,6 @@ import { MapView } from '/components/MapView'
 import { DiscoverBarCard } from '/components/bar/DiscoverBarCard'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
-import { SelectableButton } from '/components/ButtonRow'
 import { Descriptor, SimpleListView } from '/components/SimpleListView'
 import { store, mapStore, historyStore, segment, searchStore } from '/model/store'
 import * as _ from '/utils/curry'
@@ -158,15 +157,6 @@ class NearbyButton extends PureComponent {
                 fonrSize={16}
                 onPress={this.showNearby} />
         </View>
-    }
-
-    render2 = () => {
-        return  <SelectableButton
-                    label={this.nearbyLabel}
-                    onPress={this.showNearby}
-                    active={!store.mapVisible}
-                    disabled={!store.mapVisible} /* disable active buttons */
-                    style={{flex: 1}} />
     }
 }
 
