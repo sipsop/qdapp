@@ -5,6 +5,7 @@ import { observer } from 'mobx-react/native'
 import { ActiveOrderList } from './ActiveOrderList'
 import { CompletedOrderList } from './CompletedOrderList'
 import { OrderFilter } from './OrderFilter'
+import { RefundModal } from './RefundModal'
 
 import { IconBar, BarIcon } from '/components/IconBar'
 import { DownloadResultView } from '/components/download/DownloadResultView'
@@ -22,9 +23,12 @@ import * as _ from '/utils/curry'
 const { assert, log } = _.utils('/components/admin/orders/BarOrderPage')
 
 const styles = StyleSheet.create({
-    iconBar: {
+    main: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    iconBar: {
+        flex: 1,
     },
 })
 
@@ -58,20 +62,23 @@ export class BarOrderPage extends PureComponent {
 
     render = () => {
         return (
-            <IconBar
-                style={styles.iconBar}
-                icons={barOrderIcons}
-                onSelectionChange={this.handleSelectionChange}
-                >
-                <View style={{flex: 1}}>
-                    <OrderFilter />
-                    <ActiveOrderList />
-                </View>
-                <View style={{flex: 1}}>
-                    <OrderFilter />
-                    <CompletedOrderList />
-                </View>
-            </IconBar>
+            <View style={styles.main}>
+                <RefundModal />
+                <IconBar
+                    style={styles.iconBar}
+                    icons={barOrderIcons}
+                    onSelectionChange={this.handleSelectionChange}
+                    >
+                    <View style={{flex: 1}}>
+                        <OrderFilter />
+                        <ActiveOrderList />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <OrderFilter />
+                        <CompletedOrderList />
+                    </View>
+                </IconBar>
+            </View>
         )
     }
 }

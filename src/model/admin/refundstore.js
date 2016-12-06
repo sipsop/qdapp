@@ -7,15 +7,27 @@ const { log, assert } = _.utils('/model/admin/refundstore')
 export class RefundStore {
     @observable refundOrderIndices = []
     @observable refundAmount = 0.0
-    orderList = null
+    @observable refundReason = "Not available, sorry."
+    @observable refundOrderID = null
+    @observable orderList = null
 
-    constructor(orderList) {
-        this.orderList = orderStore.decompressOrderList(orderList)
+    initialize = () => {
+
     }
 
     /*********************************************************************/
     /* Actions                                                           */
     /*********************************************************************/
+
+    @action showModal = (orderResult) => {
+        this.orderList = orderStore.decompressOrderList(orderResult.orderList)
+        this.refundOrderID = orderResult.orderID
+    }
+
+    @action closeModal = () => {
+        this.orderList = []
+        this.refundOrderID = null
+    }
 
     /* Add an order item to the refund list */
     @action addRefund = (orderIndex : Int) => {
@@ -74,3 +86,5 @@ export class RefundStore {
         return _.includes(this.refundOrderIndices, orderIndex)
     }
 }
+
+export const refundStore = new RefundStore()

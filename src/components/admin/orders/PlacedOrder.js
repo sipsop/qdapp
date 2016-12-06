@@ -2,14 +2,12 @@ import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T,
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { RefundStore } from '/model/admin/refundstore'
 import { TextHeader } from '/components/Header'
-import { OkCancelModal, SmallOkCancelModal } from '/components/Modals'
+import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleOrderList } from '/components/orders/SimpleOrderList'
 import { ActionButtons, ActionButton } from '/components/ActionButtons'
-import { LargeButton } from '/components/Button'
 
-import { orderStore, activeOrderStore } from '/model/store'
+import { orderStore, activeOrderStore, refundStore } from '/model/store'
 import { formatDate, formatTime } from '/utils/time'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -70,16 +68,6 @@ const styles = StyleSheet.create({
         color: 'rgba(0, 0, 0, 0.8)',
         textAlign: 'center',
     },
-    selectAll: {
-        flex: 1,
-        height: 55,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 5,
-    },
-    selectAllButton: {
-        height: 40,
-    },
 })
 
 
@@ -88,10 +76,8 @@ export class PlacedOrder extends PureComponent {
     /* properties:
         rowNumber: Int
         orderResult: OrderResult
-        showActions: Bool
-            whether to show the Refund and Complete buttons
-        refundStore: ?RefundStore
-            whether to show refund options
+        refund: Bool
+            whether the result should include refund buttons
     */
 
     static defaultProps = {
@@ -205,10 +191,16 @@ export class PlacedOrder extends PureComponent {
                 <SimpleOrderList
                     menuItems={orderResult.menuItems}
                     orderList={orderResult.orderList}
-                    refundStore={this.props.refundStore}
+                    refundStore={
+                        this.props.refund
+                            ? refundStore
+                            : undefined
+                    }
                     />
-                { this.props.showActions &&
-                    <OrderActions orderResult={orderResult} />
+                { !this.props.refund &&
+                    <OrderActions
+                        orderResult={orderResult}
+                        />
                 }
             </View>
         )
@@ -250,16 +242,21 @@ class TextRow extends PureComponent {
 class OrderActions extends PureComponent {
     /* properties:
         orderResult: String
+        refundStore: RefundStore
     */
 
     confirmModal = null
-    refundModal  = null
 
     completeOrder = () => {
         activeOrderStore.completeOrder(this.props.orderResult.orderID)
     }
 
+    refundOrder = () => {
+        refundStore.showModal(this.props.orderResult)
+    }
+
     render = () => {
+        const orderResult = this.props.orderResult
         return (
             <ActionButtons>
                 <SmallOkCancelModal
@@ -267,134 +264,18 @@ class OrderActions extends PureComponent {
                     message="Complete Order?"
                     onConfirm={this.completeOrder}
                     />
-                <RefundModal
-                    ref={ref => this.refundModal = ref}
-                    orderResult={this.props.orderResult}
-                    />
                 <ActionButton
                     label="Refund"
-                    onPress={() => this.refundModal.show()}
+                    onPress={this.refundOrder}
                     />
                 {
-                    !this.props.orderResult.completed &&
+                    !orderResult.completed &&
                         <ActionButton
                             label="Complete"
                             onPress={() => this.confirmModal.show()}
                             />
                 }
             </ActionButtons>
-        )
-    }
-}
-
-@observer
-export class RefundModal extends PureComponent {
-    /* properties:
-        orderResult: String
-    */
-    @observable visible = false
-    @observable refundStore = null
-
-    @action show = () => {
-        this.visible = true
-        this.refundStore = new RefundStore(this.props.orderResult.orderList)
-    }
-
-    @action close = () => this.visible = false
-
-    @computed get refundButtonEnabled() {
-        return this.refundStore.refundTotal > 0.0
-    }
-
-    refund = (refundedItems, refundReason) => {
-        activeOrderStore.refundOrder(this.props.orderResult.orderID, refundItems, refundReason)
-    }
-
-    render = () => {
-        if (!this.visible)
-            return null
-
-        return (
-            <OkCancelModal
-                visible={this.visible}
-                showOkButton={true}
-                okLabel="Refund Now"
-                okDisabled={!this.refundButtonEnabled}
-                okModal={this.close}
-                showCancelButton={true}
-                cancelLabel="Cancel"
-                cancelModal={this.close}
-                >
-                <ScrollView style={{flex: 1}}>
-                    <PlacedOrder
-                        orderResult={this.props.orderResult}
-                        showActions={false}
-                        refundStore={this.refundStore}
-                        />
-                    {border}
-                    <SelectAllButton
-                        orderResult={this.props.orderResult}
-                        refundStore={this.refundStore}
-                        />
-                    {/*
-                    {border}
-                    <T>OR</T>
-                    {border}
-                    <RefundAmount
-                        refundStore={this.refundStore}
-                        />
-                    */}
-                    <RefundTotal
-                        refundStore={this.refundStore}
-                        />
-                </ScrollView>
-            </OkCancelModal>
-        )
-    }
-}
-
-@observer
-class SelectAllButton extends PureComponent {
-    /* properties:
-        orderResult: OrderResult
-        refundStore: RefundStore
-    */
-    selectAll = () => this.props.refundStore.selectAll()
-    deselectAll = () => this.props.refundStore.deselectAll()
-
-    render = () => {
-        const props = !this.props.refundStore.allItemsRefunded
-            ? { label: "Select All", onPress: this.selectAll }
-            : { label: "Deselect All", onPress: this.deselectAll }
-        return (
-            <View style={styles.selectAll}>
-                <LargeButton
-                    {...props}
-                    style={styles.selectAllButton}
-                    prominent={false}
-                    textColor={config.theme.primary.medium}
-                    textColor='#000'
-                    borderColor='#000'
-                    fontSize={15}
-                    borderColor={config.theme.primary.medium}
-                    />
-            </View>
-        )
-    }
-}
-
-@observer
-class RefundTotal extends PureComponent {
-    /* properties:
-        refundStore: RefundStore
-    */
-
-    render = () => {
-        const refundTotal = this.props.refundStore.refundTotal
-        return (
-            <TextHeader
-                label={`Refund Total: ${orderStore.formatPrice(refundTotal)}`}
-                />
         )
     }
 }

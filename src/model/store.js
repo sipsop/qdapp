@@ -27,6 +27,7 @@ import { pushNotificationStore } from './pushnotificationstore'
 import { barSettingsStore } from './admin/barsettingsstore'
 import { activeOrderStore } from './admin/activeorderstore'
 import { completedOrderStore } from './admin/completedorderstore'
+import { refundStore } from './admin/refundstore'
 import { orderFilterStore } from './admin/orderfilterstore'
 
 import { notificationStore } from './notificationstore'
@@ -85,6 +86,7 @@ export class Store {
             barSettingsStore.initialize(),
             activeOrderStore.initialize(),
             completedOrderStore.initialize(),
+            refundStore.initialize(),
         ])
 
         try {
@@ -220,5 +222,6 @@ export {
     barSettingsStore,
     activeOrderStore,
     completedOrderStore,
+    refundStore,
     orderFilterStore,
 }

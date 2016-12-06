@@ -62,8 +62,8 @@ class ActiveOrderStore {
             () => {
                 return {
                     authToken: loginStore.getAuthToken(),
-                    orderID: this.refundedOrderID,
-                    refundItems: this.refundedItems,
+                    orderID: this.refundOrderID,
+                    refundItems: this.refundItems,
                     reason: this.refundReason,
                 }
             }

@@ -96,13 +96,12 @@ export class SimpleOrderList extends Page {
             {
                 this.props.menuItems.map(
                     (menuItem, i) => {
-                        const orderItems = getOrderItems(menuItem, this.props.orderList)
                         return (
                             <SimpleMenuItem
                                 key={menuItem.id}
                                 rowNumber={i}
                                 menuItem={menuItem}
-                                orderItems={orderItems}
+                                orderItems={this.props.orderList}
                                 refundStore={this.props.refundStore}
                                 />
                         )
@@ -127,9 +126,24 @@ class SimpleMenuItem extends PureComponent {
         rowNumber: Int
         refundStore: ?RefundStore
     */
+
+    @computed get refundable() {
+        return !!this.props.refundStore
+    }
+
+    @computed get orderItems() {
+        if (this.refundable) {
+            /* TODO: Return only those items that can still be refunded */
+            // return this.props.orderItems
+            return this.props.refundStore.getOrderList()
+        }
+        return this.props.orderItems
+    }
+
+
     render = () => {
         const menuItem = this.props.menuItem
-        const orderItems = this.props.orderItems
+        const orderItems = getOrderItems(menuItem, this.orderItems)
         const orderListHeight = orderItems.length * 50
         return <View style={styles.menuItem}>
             <View style={styles.menuItemName}>
@@ -142,7 +156,7 @@ class SimpleMenuItem extends PureComponent {
                 </ScrollView>
             </View>
             <SimpleMenuItemOptions
-                orderItems={this.props.orderItems}
+                orderItems={orderItems}
                 refundStore={this.props.refundStore}
                 />
             <MenuItemImage
@@ -164,17 +178,10 @@ export class SimpleMenuItemOptions extends PureComponent {
         return !!this.props.refundStore
     }
 
-    @computed get orderItems() {
-        if (this.refundable) {
-            return this.props.refundStore.getOrderList()
-        }
-        return this.props.orderItems
-    }
-
     render = () => {
         return (
             <View style={styles.menuItemOptions}>
-                {this.orderItems.map(this.renderOrderItem)}
+                {this.props.orderItems.map(this.renderOrderItem)}
             </View>
         )
     }
