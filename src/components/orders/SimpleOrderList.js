@@ -12,10 +12,57 @@ import { config } from '/utils/config'
 
 const { log, assert } = _.utils('/components/orders/SimpleOrderList.js')
 
-const styles = ({
-    itemTextStyle = {
+const styles = StyleSheet.create({
+    menuItem: {
+        position: 'relative',
+    },
+    menuItemName: {
+        height: 50,
+        backgroundColor: config.theme.primary.medium,
+        justifyContent: 'center',
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    menuItemNameText: {
+        marginLeft: 100,
+    },
+    menuItemImage: {
+        position: 'absolute',
+        top: 0,
+        width: 80,
+        height: 80,
+        borderWidth: 0.5,
+        borderColor: '#000',
+        borderRadius: 10,
+        marginTop: -15,
+        marginLeft: 10,
+        marginRight: 10,
+    },
+    menuItemOptions: {
+        paddingTop: 15,
+        paddingBottom: 15,
+        backgroundColor: '#fff',
+    },
+    itemText: {
         fontSize: 20,
         color: '#000',
+    },
+    amountText: {
+        paddingLeft: 5,
+        minWidth: 50,
+        textAlign: 'center',
+    },
+    options: {
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    optionsText: {
+        flex: 1,
+    },
+    priceText: {
+        minWidth: 80,
+        textAlign: 'right',
+        marginRight: 5,
     },
 })
 
@@ -65,27 +112,36 @@ class SimpleMenuItem extends PureComponent {
         const menuItem = this.props.menuItem
         const orderItems = this.props.orderItems
         const orderListHeight = orderItems.length * 50
-        const backgroundColor = this.props.rowNumber % 2 === 0
-            ? '#fff'
-            : '#fff'
-        return <View style={{position: 'relative'}}>
-            <View style={
-                    { height: 50
-                    , backgroundColor: config.theme.primary.medium
-                    , justifyContent: 'center'
-                    , paddingLeft: 5
-                    , paddingRight: 5
-                    }
-                }>
+        return <View style={styles.menuItem}>
+            <View style={styles.menuItemName}>
                 <ScrollView horizontal={true}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                        <HeaderText style={{marginLeft: 100}} fontSize={20}>
+                        <HeaderText style={styles.menuItemNameText} fontSize={20}>
                             {menuItem.name}
                         </HeaderText>
                     </View>
                 </ScrollView>
             </View>
-            <View style={{paddingTop: 15, paddingBottom: 15, backgroundColor: backgroundColor}}>
+            <SimpleMenuItemOptions
+                orderItems={this.props.orderItems}
+                />
+            <MenuItemImage
+                menuItem={menuItem}
+                style={styles.menuItemImage}
+                />
+        </View>
+    }
+}
+
+@observer
+export class SimpleMenuItemOptions extends PureComponent {
+     /* properties:
+        orderItems: [OrderItem]
+    */
+    render = () => {
+        const orderItems = this.props.orderItems
+        return (
+            <View style={styles.menuItemOptions}>
                 {
                     orderItems.map((orderItem, rowNumber) => {
                         const selectedOptions = _.asData(orderItem.selectedOptions)
@@ -93,35 +149,21 @@ class SimpleMenuItem extends PureComponent {
                         const price = orderStore.getTotal(orderItem)
                         const priceText = orderStore.formatPrice(price)
                         return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
-                            <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...styles.itemTextStyle}}>
+                            <T style={[styles.amountText, styles.itemText]}>
                                 {orderItem.amount}
                             </T>
-                            <ScrollView horizontal={true} style={{paddingLeft: 5, paddingRight: 5}}>
-                                <T style={{flex: 1, ...styles.itemTextStyle}}>{opts}</T>
+                            <ScrollView horizontal={true} style={styles.options}>
+                                <T style={[styles.optionsText, styles.itemText]}>
+                                    {opts}
+                                </T>
                             </ScrollView>
-                            <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...styles.itemTextStyle}}>
+                            <T style={[styles.priceText, styles.itemText]}>
                                 {priceText}
                             </T>
                         </View>
                     })
                 }
             </View>
-            <MenuItemImage
-                menuItem={menuItem}
-                style={
-                    { position: 'absolute'
-                    , top: 0
-                    , width: 80
-                    , height: 80
-                    , borderWidth: 0.5
-                    , borderColor: '#000'
-                    , borderRadius: 10
-                    , marginTop: -15
-                    , marginLeft: 10
-                    , marginRight: 10
-                    }
-                }
-                />
-        </View>
+        )
     }
 }
