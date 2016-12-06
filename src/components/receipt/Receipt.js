@@ -24,7 +24,7 @@ import { headerText } from './utils'
 import { formatDuration } from '/utils/time'
 import * as _ from '/utils/curry.js'
 
-import { SimpleOrderList } from '../orders/OrderList'
+import { SimpleOrderList } from '../orders/SimpleOrderList'
 import { paymentStore } from '/model/orders/paymentstore'
 import { getRefundedItemAmount, isRefundedCompletely } from '/model/orders/orderstore'
 

@@ -3,16 +3,21 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { store, barStore, orderStore, searchStore } from '/model/store'
-import { SimpleListView, Descriptor } from '../SimpleListView'
 import { Page } from '../Page'
 import { MenuItem } from '../menu/DetailedMenuItem'
 import { MenuItemImage } from '../menu/MenuItemImage'
-import { FancyMenuItem } from '../menu/FancyMenuItem'
 import { Header, HeaderText } from '../Header'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
 const { log, assert } = _.utils('/components/orders/SimpleOrderList.js')
+
+const styles = ({
+    itemTextStyle = {
+        fontSize: 20,
+        color: '#000',
+    },
+})
 
 @observer
 export class SimpleOrderList extends Page {
@@ -49,20 +54,8 @@ const getOrderItems = (menuItem, orderItems) => {
     )
 }
 
-const titleTextStyle = {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: config.theme.primary.medium, //'#000',
-    textDecorationLine: 'underline',
-}
-
-const itemTextStyle = {
-    fontSize: 20,
-    color: '#000',
-}
-
 @observer
-export class SimpleMenuItem extends PureComponent {
+class SimpleMenuItem extends PureComponent {
     /* properties:
         menuItem: MenuItem
         orderItems: [OrderItem]
@@ -100,13 +93,13 @@ export class SimpleMenuItem extends PureComponent {
                         const price = orderStore.getTotal(orderItem)
                         const priceText = orderStore.formatPrice(price)
                         return <View key={orderItem.id} style={{flexDirection: 'row', marginBottom: 5}}>
-                            <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...itemTextStyle}}>
+                            <T style={{paddingLeft: 5, minWidth: 50, textAlign: 'center', ...styles.itemTextStyle}}>
                                 {orderItem.amount}
                             </T>
                             <ScrollView horizontal={true} style={{paddingLeft: 5, paddingRight: 5}}>
-                                <T style={{flex: 1, ...itemTextStyle}}>{opts}</T>
+                                <T style={{flex: 1, ...styles.itemTextStyle}}>{opts}</T>
                             </ScrollView>
-                            <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...itemTextStyle}}>
+                            <T style={{minWidth: 80, textAlign: 'right', marginRight: 5, ...styles.itemTextStyle}}>
                                 {priceText}
                             </T>
                         </View>

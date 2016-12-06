@@ -11,7 +11,6 @@ import { DownloadResultView } from '/components/download/DownloadResultView'
 import { Header, TextHeader } from '/components/Header'
 import { SimpleListView, Descriptor } from '/components/SimpleListView'
 import { SmallOkCancelModal } from '/components/Modals'
-import { SimpleOrderList } from '/components/orders/OrderList'
 import { ReceiptHeader } from '/components/receipt/ReceiptHeader'
 import { OrderTotal } from '/components/receipt/OrderTotal'
 
