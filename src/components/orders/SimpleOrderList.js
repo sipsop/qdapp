@@ -1,4 +1,4 @@
-import { React, Component, View, ScrollView, PureComponent, T, StyleSheet, Switch } from '/components/Component'
+import { React, Component, View, ScrollView, PureComponent, T, StyleSheet, TouchableOpacity, EvilIcon } from '/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
     },
     orderItemRow: {
         flexDirection: 'row',
-        marginBottom: 5,
+        alignItems: 'center',
+        // marginBottom: 5,
     },
     itemText: {
         fontSize: 20,
@@ -192,46 +193,42 @@ export class SimpleMenuItemOptions extends PureComponent {
         const price = orderStore.getTotal(orderItem)
         const priceText = orderStore.formatPrice(price)
         return (
-            <View key={rowNumber}>
-                <View style={styles.orderItemRow}>
-                    <T style={[styles.amountText, styles.itemText]}>
-                        {orderItem.amount}
+            <View key={rowNumber} style={styles.orderItemRow}>
+                <T style={[styles.amountText, styles.itemText]}>
+                    {!this.refundable
+                        ? orderItem.amount
+                        : "refund: "
+                    }
+                </T>
+                <ScrollView horizontal={true} style={styles.options}>
+                    <T style={[styles.optionsText, styles.itemText]}>
+                        {opts}
                     </T>
-                    <ScrollView horizontal={true} style={styles.options}>
-                        <T style={[styles.optionsText, styles.itemText]}>
-                            {opts}
-                        </T>
-                    </ScrollView>
-                    <T style={[styles.priceText, styles.itemText]}>
-                        {priceText}
-                    </T>
-                </View>
+                </ScrollView>
                 { this.refundable &&
-                    <View style={styles.orderItemRow}>
-                        <T style={[styles.refundText, styles.itemText]}>
-                            refund
-                        </T>
-                        <RefundSwitch
-                            refundStore={this.props.refundStore}
-                            orderItem={orderItem}
-                            orderIndex={rowNumber}
-                            style={styles.refundSwitch}
-                            />
-                    </View>
+                    <RefundItem
+                        refundStore={this.props.refundStore}
+                        orderItem={orderItem}
+                        />
                 }
+                <T style={[styles.priceText, styles.itemText]}>
+                    {priceText}
+                </T>
             </View>
         )
     }
 }
 
+const iconBoxSize = 55
+const iconSize = 45
+
 @observer
-class RefundSwitch extends PureComponent {
+class RefundItem extends PureComponent {
     /* properties:
         refundStore: RefundStore
         orderItem: OrderItem
-        orderIndex: Int
-        style: style obj
     */
+
     @computed get refunded() {
         return this.props.refundStore.refunded(this.props.orderIndex)
     }
@@ -243,13 +240,30 @@ class RefundSwitch extends PureComponent {
             this.props.refundStore.addRefund(this.props.orderIndex)
     }
 
+    @action handleIncrease = () => {
+
+    }
+
+    @action handleDecrease = () => {
+
+    }
+
     render = () => {
         return (
-            <Switch
-                value={this.refunded}
-                onValueChange={this.selectRefundItem}
-                style={this.props.style}
-                />
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity onPress={this.handleDecrease} style={{height: iconBoxSize, justifyContent: 'center'}}>
+                    <EvilIcon name="minus" size={iconSize} color={config.theme.removeColor} />
+                </TouchableOpacity>
+                <T style={[styles.amountText, styles.itemText]}>
+                    {this.props.orderItem.amount}
+                </T>
+                <TouchableOpacity
+                        onPress={this.handleIncrease}
+                        style={{height: iconBoxSize, justifyContent: 'center'}}
+                        >
+                    <EvilIcon name="plus" size={iconSize} color={config.theme.addColor} />
+                </TouchableOpacity>
+            </View>
         )
     }
 }

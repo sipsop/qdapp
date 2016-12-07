@@ -83,6 +83,7 @@ export class PlacedOrder extends PureComponent {
     static defaultProps = {
         rowNumber: 1,
         showActions: true,
+        refund: false,
     }
 
     @computed get style() {
