@@ -9,14 +9,14 @@ export const OrderItemQuery = {
     amount:             'Int',
 }
 
-export const RefundOrderItemQuery = {
+export const RefundItemQuery = {
     id: 'String',
     amount: 'Int',
 }
 
 export const RefundQuery = {
     timestamp: 'Float',
-    refundedItems: [RefundOrderItemQuery],
+    refundedItems: [RefundItemQuery],
     reason: 'String',
 }
 

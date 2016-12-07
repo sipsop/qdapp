@@ -43,16 +43,10 @@ export class RefundModal extends PureComponent {
     }
 
     @action refund = () => {
-        const refundItems = refundStore.refundOrderItems.map(orderItem => {
-            return {
-                id: orderItem.id,
-                amount: orderItem.amount,
-            }
-        })
         refundStore.deselectAll()
         activeOrderStore.refundOrder(
             refundStore.refundOrderID,
-            refundItems,
+            refundStore.refundItems,
             refundStore.refundReason,
         )
     }

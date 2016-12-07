@@ -110,7 +110,7 @@ class ActiveOrderStore {
         downloadManager.forceRefresh('complete order')
     }
 
-    @action refundOrder = (orderID, refundItems : Array<RefundOrderItem>, refundReason : ?String) => {
+    @action refundOrder = (orderID, refundItems : Array<RefundItem>, refundReason : ?String) => {
         this.refundOrderID = orderID
         this.refundItems = refundItems
         this.refundReason = refundReason

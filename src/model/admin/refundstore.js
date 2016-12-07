@@ -96,7 +96,7 @@ export class RefundStore {
             })
     }
 
-    @computed get refundItems() : Array<RefundOrderItem> {
+    @computed get refundItems() : Array<RefundItem> {
         return this.refundOrderItems.map(orderItem => {
             return {
                 id: orderItem.id,

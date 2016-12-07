@@ -5,21 +5,9 @@ import { getTime } from './time.js'
 
 export const DEV = true
 
-/*********************** Array *****************************/
-
-export const insert = (xs, index, item) => {
-  xs.splice(index, 0, item)
-}
-
-export const remove = (xs, index) => {
-    xs.splice(index, 1)
-}
-
-export const extend = (xs, ys) => {
-    ys.forEach((item) => xs.push(item))
-}
-
-/*********************** Error Handling ******************************/
+/*********************************************************************/
+/* Logging & Error Handling                                          */
+/*********************************************************************/
 
 /* Force a MobX value to a javascript object */
 export const asData = x => {
@@ -93,6 +81,20 @@ export const safeAutorun = callback => autorun(() => {
 })
 
 /*********************************************************************/
+/* Lists                                                             */
+/*********************************************************************/
+
+export const insert = (xs, index, item) => {
+  xs.splice(index, 0, item)
+}
+
+export const remove = (xs, index) => {
+    xs.splice(index, 1)
+}
+
+export const extend = (xs, ys) => {
+    ys.forEach((item) => xs.push(item))
+}
 
 export const makeList = (xs) => {
     if (Array.isArray(xs))
@@ -388,8 +390,6 @@ export const utils = (modname : String) => {
 
 export const sortBy = _.sortBy
 export const deepEqual = _.isEqual
-export const intersection = _.intersection
-export const union = _.union
 export const clone = _.clone
 export const sum = xs => fold((x, y) => x + y, 0, xs)
 export const product = xs => fold((x, y) => x * y, 1, xs)
@@ -403,7 +403,28 @@ export const uuid = () => {
     return id
 }
 
-/*********************** Async Stuff ******************************/
+/*********************************************************************/
+/* Maps                                                              */
+/*********************************************************************/
+
+export const makeMap = (xs : Array<T1>, key : (T1) => T2, value : ?(T1) => T3) => {
+    const result = {}
+    xs.forEach(x => {
+        result[key(x)] = x
+    })
+    return result
+}
+
+/*********************************************************************/
+/* Sets                                                              */
+/*********************************************************************/
+
+export const intersection = _.intersection
+export const union = _.union
+
+/*********************************************************************/
+/* Timing                                                            */
+/*********************************************************************/
 
 /* Throttle how often `f` may be called */
 export const throttler = (period, f) => {
@@ -512,8 +533,9 @@ export const sleep = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
 
-/************************************************************************/
-/* Strings */
+/*********************************************************************/
+/* Strings                                                           */
+/*********************************************************************/
 
 if (!String.prototype.strip) {
     String.prototype.strip = function () {

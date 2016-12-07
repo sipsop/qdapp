@@ -8,7 +8,7 @@ export class RefundOrderDownload extends QueryMutation {
     /* properties:
         authToken: String
         orderID: String
-        refundItems: Array<RefundOrderItem>
+        refundItems: Array<RefundItem>
         reason: ?String
     */
     name = 'refund order'

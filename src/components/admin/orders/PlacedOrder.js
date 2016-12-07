@@ -123,7 +123,6 @@ export class PlacedOrder extends PureComponent {
             headerText = `Order No. ${this.props.rowNumber}: #${orderResult.receipt}`
         }
 
-
         return (
             <View style={this.style.style}>
                 <TextHeader
