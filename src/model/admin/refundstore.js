@@ -5,8 +5,8 @@ import * as _ from '/utils/curry'
 const { log, assert } = _.utils('/model/admin/refundstore')
 
 export class RefundStore {
-    @observable refundOrderIndices = []
-    @observable refundAmount = 0.0
+    @observable refundAmounts = {}
+    @observable additionalRefundAmount = 0.0
     @observable refundReason = "Not available, sorry."
     @observable refundOrderID = null
     @observable orderList = null
@@ -20,8 +20,9 @@ export class RefundStore {
     /*********************************************************************/
 
     @action showModal = (orderResult) => {
-        this.orderList = orderStore.decompressOrderList(orderResult.orderList)
+        this.orderList = orderResult.orderList
         this.refundOrderID = orderResult.orderID
+        this.selectAll()
     }
 
     @action closeModal = () => {
@@ -30,22 +31,26 @@ export class RefundStore {
     }
 
     /* Add an order item to the refund list */
-    @action addRefund = (orderIndex : Int) => {
-        this.refundOrderIndices.push(orderIndex)
+    @action increaseRefundAmount = (orderItemID : String) => {
+        this.refundAmounts[orderItemID] = _.min(
+            this.maximumRefunds[orderItemID],
+            this.refundAmounts[orderItemID] + 1
+        )
     }
 
-    @action removeRefund = (orderIndex : Int) => {
-        this.refundOrderIndices = this.refundOrderIndices.filter(
-            idx => idx !== orderIndex
+    @action decreaseRefundAmount = (orderItemID : String) => {
+        this.refundAmounts[orderItemID] = _.max(
+            0,
+            this.refundAmounts[orderItemID] - 1
         )
     }
 
     @action selectAll = () => {
-        this.refundOrderIndices = _.range(this.orderList.length)
+        this.refundAmounts = this.maximumRefunds
     }
 
     @action deselectAll = () => {
-        this.refundOrderIndices = []
+        this.refundAmounts = this.minimumRefunds
     }
 
     /*********************************************************************/
@@ -54,36 +59,78 @@ export class RefundStore {
 
     getOrderList = () => this.orderList
 
-    @computed get refundOrderItems() {
-        return this.orderList.filter((orderItem, orderIndex) => {
-            // quadratic...
-            return this.refunded(orderIndex)
+    @computed get orderID2OrderItem() : {OrderItemID: OrderItem} {
+        const orderItems = {}
+        this.orderList.forEach(orderItem => {
+            orderItems[orderItem.id] = orderItem
+        })
+        return orderItems
+    }
+
+    @computed get minimumRefunds() : {OrderItemID: Int} {
+        const refundAmounts = {}
+        this.orderList.forEach(orderItem => {
+            refundAmounts[orderItem.id] = 0
+        })
+        return refundAmounts
+    }
+
+    @computed get maximumRefunds() : {OrderItemID: Int} {
+        const refundAmounts = {}
+        this.orderList.forEach(orderItem => {
+            refundAmounts[orderItem.id] = orderItem.amount
+        })
+        return refundAmounts
+    }
+
+    @computed get refundOrderItems() : Array<OrderItem> {
+        return this.orderList
+            .filter(this.refunded)
+            .map(orderItem => {
+                return {
+                    id: orderItem.id,
+                    menuItemID: orderItem.menuItemID,
+                    selectedOptions: orderItem.selectedOptions,
+                    amount: this.refundAmounts[orderItem.id],
+                }
+            })
+    }
+
+    @computed get refundItems() : Array<RefundOrderItem> {
+        return this.refundOrderItems.map(orderItem => {
+            return {
+                id: orderItem.id,
+                amount: orderItem.amount,
+            }
         })
     }
 
-    @computed get allItemsRefunded() {
-        return this.refundOrderIndices.length === this.orderList.length
-    }
-
-    @computed get orderListTotal() {
+    @computed get orderListTotal() : Int {
         return orderStore.orderListTotal(this.orderList)
     }
 
-    @computed get refundItemTotal() {
+    @computed get refundItemTotal() : Int {
         return orderStore.orderListTotal(this.refundOrderItems)
     }
 
-    @computed get refundTotal() {
-        return this.refundItemTotal + this.refundAmount
+    @computed get refundTotal() : Int {
+        return this.refundItemTotal + this.additionalRefundAmount
     }
 
-    @computed get refundAmountValid() {
+    @computed get allItemsRefunded() : Bool {
+        return this.refundItemTotal === this.orderListTotal
+    }
+
+    @computed get refundAmountValid() : Bool {
         return this.refundTotal <= this.orderListTotal
     }
 
-    /* Whether `orderItem` has been refunded */
-    refunded = (orderIndex) : Bool => {
-        return _.includes(this.refundOrderIndices, orderIndex)
+    refundAmount = (orderItem : OrderItem) : Int => {
+        return this.refundAmounts[orderItem.id]
+    }
+
+    refunded = (orderItem : OrderItem) : Bool => {
+        return this.refundAmount(orderItem) > 0
     }
 }
 

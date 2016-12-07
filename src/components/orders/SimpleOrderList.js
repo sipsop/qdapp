@@ -58,25 +58,35 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     options: {
+        flex: 2,
         paddingLeft: 5,
         paddingRight: 5,
     },
     optionsText: {
         flex: 1,
+        textAlign: 'center',
     },
     priceText: {
         minWidth: 80,
         textAlign: 'right',
         marginRight: 5,
     },
+    refundOptions: {
+        flex: 2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 55,
+    },
     refundText: {
-        flex: 1,
-        textAlign: 'right',
+        textAlign: 'center',
+        marginLeft: 5,
         marginRight: 5,
     },
     refundSwitch: {
         alignItems: 'flex-end',
         marginRight: 5,
+        textAlign: 'center',
     },
 })
 
@@ -194,19 +204,18 @@ export class SimpleMenuItemOptions extends PureComponent {
         const priceText = orderStore.formatPrice(price)
         return (
             <View key={rowNumber} style={styles.orderItemRow}>
-                <T style={[styles.amountText, styles.itemText]}>
-                    {!this.refundable
-                        ? orderItem.amount
-                        : "refund: "
-                    }
-                </T>
+                {!this.refundable &&
+                    <T style={[styles.amountText, styles.itemText]}>
+                        {orderItem.amount}
+                    </T>
+                }
                 <ScrollView horizontal={true} style={styles.options}>
                     <T style={[styles.optionsText, styles.itemText]}>
                         {opts}
                     </T>
                 </ScrollView>
                 { this.refundable &&
-                    <RefundItem
+                    <RefundOptions
                         refundStore={this.props.refundStore}
                         orderItem={orderItem}
                         />
@@ -219,50 +228,36 @@ export class SimpleMenuItemOptions extends PureComponent {
     }
 }
 
-const iconBoxSize = 55
-const iconSize = 45
-
 @observer
-class RefundItem extends PureComponent {
+class RefundOptions extends PureComponent {
     /* properties:
         refundStore: RefundStore
         orderItem: OrderItem
     */
 
-    @computed get refunded() {
-        return this.props.refundStore.refunded(this.props.orderIndex)
-    }
-
-    @action selectRefundItem = (value) => {
-        if (this.refunded)
-            this.props.refundStore.removeRefund(this.props.orderIndex)
-        else
-            this.props.refundStore.addRefund(this.props.orderIndex)
-    }
-
     @action handleIncrease = () => {
-
+        this.props.refundStore.increaseRefundAmount(this.props.orderItem.id)
     }
 
     @action handleDecrease = () => {
-
+        this.props.refundStore.decreaseRefundAmount(this.props.orderItem.id)
     }
 
     render = () => {
+        const textStyle = [styles.refundText, styles.itemText]
         return (
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableOpacity onPress={this.handleDecrease} style={{height: iconBoxSize, justifyContent: 'center'}}>
-                    <EvilIcon name="minus" size={iconSize} color={config.theme.removeColor} />
+            <View style={styles.refundOptions}>
+                <TouchableOpacity onPress={this.handleDecrease}>
+                    <EvilIcon name="minus" size={45} color={config.theme.removeColor} />
                 </TouchableOpacity>
-                <T style={[styles.amountText, styles.itemText]}>
-                    {this.props.orderItem.amount}
+                <T style={textStyle}>
+                    {this.props.refundStore.refundAmount(this.props.orderItem)}
                 </T>
-                <TouchableOpacity
-                        onPress={this.handleIncrease}
-                        style={{height: iconBoxSize, justifyContent: 'center'}}
-                        >
-                    <EvilIcon name="plus" size={iconSize} color={config.theme.addColor} />
+                <TouchableOpacity onPress={this.handleIncrease}>
+                    <EvilIcon name="plus" size={45} color={config.theme.addColor} />
                 </TouchableOpacity>
+                <T style={textStyle}>/</T>
+                <T style={textStyle}>{this.props.orderItem.amount}</T>
             </View>
         )
     }

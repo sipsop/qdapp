@@ -125,8 +125,8 @@ class SelectAllButton extends PureComponent {
     */
     render = () => {
         const props = !refundStore.allItemsRefunded
-            ? { label: "Select All", onPress: refundStore.selectAll }
-            : { label: "Deselect All", onPress: refundStore.deselectAll }
+            ? { label: "Refund All", onPress: refundStore.selectAll }
+            : { label: "Refund None", onPress: refundStore.deselectAll }
         return (
             <View style={styles.selectAll}>
                 <LargeButton
