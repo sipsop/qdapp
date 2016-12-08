@@ -169,7 +169,7 @@ export class Receipt extends PureComponent {
 
         // this.updateEstimate()
 
-        return <ScrollView>
+        return <ScrollView style={{flex: 1}}>
             <CurrentBarPhoto
                 onBack={this.props.onClose}
                 />
@@ -258,7 +258,7 @@ class ReceiptHeader extends PureComponent {
     render = () => {
         const orderResult = this.props.orderResult
         return <Header>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
                         style={{flex: 1}}
                         onPress={() => this.receiptModal.show()}>
