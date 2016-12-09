@@ -2,6 +2,7 @@ import _ from 'lodash'
 import shortid from 'shortid'
 import { autorun, observable } from 'mobx'
 import { getTime } from './time.js'
+import recursiveDiff from 'recursive-diff'
 
 export const DEV = true
 
@@ -391,9 +392,10 @@ export const utils = (modname : String) => {
 export const sortBy = _.sortBy
 export const deepEqual = _.isEqual
 export const clone = _.clone
+export const cloneDeep = _.cloneDeep
+export const diff = (o1, o2) => recursiveDiff.getDiff(asData(o1), asData(o2))
 export const sum = xs => fold((x, y) => x + y, 0, xs)
 export const product = xs => fold((x, y) => x * y, 1, xs)
-
 
 export const uuid = () => {
     let id = ""

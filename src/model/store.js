@@ -177,9 +177,9 @@ export class Store {
 
     saveToLocalStorage = async (state) => {
         if (this.initialized && !_.deepEqual(state, this.previousState)) {
-            // log(state)
+            // log("SAVING STORE STATE", _.diff(state, this.previousState))
             // log(this.previousState)
-            this.previousState = state
+            this.previousState = state // _.cloneDeep(state)
             await cache.set('qd:state', state)
         }
     }

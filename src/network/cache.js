@@ -117,12 +117,12 @@ class Cache {
         } catch (e) {
 
         }
-        log("LOADED STATE!!!!!!!!!!!!1", this.state)
     }
 
     periodicallySaveCacheState = async () => {
         if (!_.deepEqual(this.state, this.lastSavedState)) {
             const stamp = getTime() + 1000000000
+            log("SAVING STATE!!!!!!!!!!!1", this.state, this.lastSavedState)
             await this.storage.set('__cache_state:v1',
                 new CacheEntry(
                     '__cache_state:v1',
@@ -131,7 +131,7 @@ class Cache {
                     stamp, /* expiresAfter, not applicable */
                 )
             )
-            this.lastSavedState = this.state
+            this.lastSavedState = _.cloneDeep(this.state)
         }
         setTimeout(this.periodicallySaveCacheState, 10000)
     }
@@ -238,11 +238,13 @@ class Cache {
         const keysToDelete = times.slice(0, cutoff)
         const keysToKeep = times.slice(cutoff)
 
-        log("DELETING KEYS FROM CACHE", keysToDelete)
-        keysToDelete.forEach(keys => {
+        keysToDelete.forEach(key => {
             delete lastAccessed[key]
         })
         this.state.count = keysToKeep.length
+        // log("DELETING KEYS FROM CACHE", keysToDelete)
+        // log("KEEPING KEYS", keysToKeep)
+        // log("NEW STATE", this.state)
         await this.storage.removeKeys(keysToDelete)
     }
 
@@ -296,7 +298,7 @@ class CacheEntry {
 const KB = (x) => x * 1024
 const MB = (x) => KB(x) * 1024
 
-const maxEntries = 5
+const maxEntries = 250
 const storage = new Storage(AsyncStorage, maxEntries)
 export const cache = new Cache(storage, maxEntries)
 cache.initialize()

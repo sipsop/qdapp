@@ -19,23 +19,19 @@ export class Segment {
     }
 
     getState = () => {
-        return {
-            messages: this.messages,
-        }
+        return null
     }
 
     emptyState = () => {
-        return {
-            messages: [],
-        }
+        return null
     }
 
     setState = (segmentState) => {
-        // this.messages = segmentState.messages || []
+
     }
 
     initialize = () => {
-    
+
     }
 
     initialized = () => {
