@@ -52,7 +52,7 @@ export type Refund = {
 }
 
 const normalizeOrderList = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
-    orderList = orderList.map(orderItem => {...orderItem}) // copy
+    orderList = orderList.map(orderItem => ({...orderItem})) // copy
     const id2item = _.makeMap(orderList, orderItem => orderItem.id)
     refundItems.forEach(refundItem => {
         id2item[refundItem.id] -= refundItem.amount

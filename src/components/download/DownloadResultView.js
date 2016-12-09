@@ -25,6 +25,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    inProgressText: {
+        fontSize: 20,
+        color: '#000',
+    },
     error: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -121,16 +125,12 @@ export class DownloadResultView<T> extends PureComponent {
 
     renderInProgress = () => {
         return <View style={styles.inProgress}>
-            {
-                this.inProgressMessage
-                    ? <T style={{fontSize: 20, color: '#000'}}>
-                        {this.inProgressMessage}
-                      </T>
-                    : undefined
+            { this.inProgressMessage &&
+                <T style={styles.inProgressText}>
+                    {this.inProgressMessage}
+                </T>
             }
-            <View>
-                <Loader />
-            </View>
+            <Loader />
         </View>
     }
 
