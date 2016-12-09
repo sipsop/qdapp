@@ -52,44 +52,13 @@ export class Storage {
         this.maxEntries = maxEntries
     }
 
-    initialize = async () => {
-        await this.prune()
-    }
-
-    prune = async () => {
-        const allKeys = await this.getKeys()
-        const pruneResult = await this.pruneExpired(allKeys)
-
-        if (allKeys.length - pruneResult.deleted.length > this.maxEntries) {
-            /* TODO: sort by lastAccessTime and remove some entries */
-        }
-    }
-
-    /*
-        Remove expired keys.
-        Returns the lastAccessTime for each entry for which a key was provided.
-    */
-    pruneExpired = async (allKeys) => {
-        const entriesToDelete = []
-        const accessTimes = []
-        const now = getTime()
-        const chunks = _.chunking(allKeys, 100)
-        for (let i = 0; i < chunks.length; i++) {
-            const keys = chunks[i]
-            const cacheEntries = await this.getMulti(keys)
-            cacheEntries.forEach((cacheEntry, i) => {
-                if (cacheEntry.expiresAfter < now)
-                    entriesToDelete.push(keys[i])
-                accessTimes.push(cacheEntry.lastAccessed)
-            })
-        }
-        await this.backend.deleteMulti(entriesToDelete)
-        return { lastAccessTimes: lastAccessTimes, deleted: entriesToDelete }
-    }
-
     getKeys = async () => {
         let keys = await this.backend.getAllKeys()
         return keys.filter(key => key.startsWith('qd:'))
+    }
+
+    removeKeys = async (keys) => {
+        await this.backend.multiRemove(keys)
     }
 
     clear = async () => {
@@ -120,12 +89,69 @@ export class Storage {
 }
 
 class Cache {
-    constructor(storage) {
+    lastSavedState = null
+
+    constructor(storage, maxEntries) {
         this.storage = storage
+        this.state = null
+        this.maxEntries = maxEntries
     }
+
+    /*********************************************************************/
+    /* Cache State                                                       */
+    /*********************************************************************/
+
+    initialize = async () => {
+        await this.loadCacheState()
+        await this.periodicallySaveCacheState()
+    }
+
+    loadCacheState = async () => {
+        this.state = {
+            lastAccessed: {},
+            count: 0,
+        }
+        try {
+            const cacheEntry = await this.storage.get('__cache_state:v1')
+            this.state = cacheEntry.value
+        } catch (e) {
+
+        }
+        log("LOADED STATE!!!!!!!!!!!!1", this.state)
+    }
+
+    periodicallySaveCacheState = async () => {
+        if (!_.deepEqual(this.state, this.lastSavedState)) {
+            const stamp = getTime() + 1000000000
+            await this.storage.set('__cache_state:v1',
+                new CacheEntry(
+                    '__cache_state:v1',
+                    this.state,
+                    stamp, /* refreshAfter, not applicable */
+                    stamp, /* expiresAfter, not applicable */
+                )
+            )
+            this.lastSavedState = this.state
+        }
+        setTimeout(this.periodicallySaveCacheState, 10000)
+    }
+
+    keyAccessed = (key) => {
+        if (!this.state.lastAccessed[key]) {
+            this.state.count += 1
+            if (this.state.count > this.maxEntries)
+                this.prune()
+        }
+        this.state.lastAccessed[key] = getTime()
+    }
+
+    /*********************************************************************/
+    /* Cache Retrieval / Update                                          */
+    /*********************************************************************/
 
     get = async (key, refreshCallback, expiredCallback, cacheInfo : CacheInfo) => {
         let cacheEntry
+        this.keyAccessed(key)
         try {
             cacheEntry = await this.storage.get(key)
             return await this.refreshIfNeeded(key, cacheEntry, refreshCallback, expiredCallback, cacheInfo)
@@ -193,9 +219,31 @@ class Cache {
 
     set = async (key, value, cacheInfo : CacheInfo) : CacheEntry => {
         const cacheEntry = CacheEntry.freshEntry(key, value, cacheInfo)
+        this.keyAccessed(key)
         await this.storage.set(key, cacheEntry)
         // log("Cached entry with key", key)
         return cacheEntry
+    }
+
+    /*********************************************************************/
+    /* Cache Clearing                                                    */
+    /*********************************************************************/
+
+    prune = async () => {
+        const lastAccessed = this.state.lastAccessed
+        const times = _.sortBy(Object.keys(lastAccessed), key => lastAccessed[key])
+        const cutoff = Math.floor(this.maxEntries / 2)
+
+        /* Determine which cache keys to keep, and which to delete */
+        const keysToDelete = times.slice(0, cutoff)
+        const keysToKeep = times.slice(cutoff)
+
+        log("DELETING KEYS FROM CACHE", keysToDelete)
+        keysToDelete.forEach(keys => {
+            delete lastAccessed[key]
+        })
+        this.state.count = keysToKeep.length
+        await this.storage.removeKeys(keysToDelete)
     }
 
     clear = async () => {
@@ -248,6 +296,8 @@ class CacheEntry {
 const KB = (x) => x * 1024
 const MB = (x) => KB(x) * 1024
 
-const storage = new Storage(AsyncStorage /* backend */, 100 /* maxEntries */)
-export const cache = new Cache(storage)
+const maxEntries = 5
+const storage = new Storage(AsyncStorage, maxEntries)
+export const cache = new Cache(storage, maxEntries)
+cache.initialize()
 // cache.clearAll()
