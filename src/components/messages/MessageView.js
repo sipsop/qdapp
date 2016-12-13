@@ -64,14 +64,14 @@ const styles = StyleSheet.create({
 export class MessageView extends PureComponent {
     /* properties:
         message: Message
-        useDefaultButton: Bool
+        useDismissButton: Bool
         style: style obj
         numberOfLines: Int
         showTimeStamp: Bool
     */
 
     static defaultProps = {
-        useDefaultButton: true,
+        useDismissButton: true,
         showTimeStamp: false,
     }
 
@@ -83,7 +83,7 @@ export class MessageView extends PureComponent {
         // TODO: open deep links
         var buttonLabel = message.buttonLabel
         var buttonPress = message.buttonPress
-        if (this.props.useDefaultButton) {
+        if (this.props.useDismissButton) {
             buttonLabel = buttonLabel || 'DISMISS'
             buttonPress = buttonPress || this.dismiss
         }

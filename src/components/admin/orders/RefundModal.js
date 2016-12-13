@@ -44,11 +44,7 @@ export class RefundModal extends PureComponent {
 
     @action refund = () => {
         refundStore.deselectAll()
-        activeOrderStore.refundOrder(
-            refundStore.refundOrderID,
-            refundStore.refundItems,
-            refundStore.refundReason,
-        )
+        activeOrderStore.refundNow()
     }
 
     render = () => {
@@ -69,6 +65,7 @@ export class RefundModal extends PureComponent {
                 <RefundView
                     orderID={refundStore.refundOrderID}
                     />
+                <RefundDownloadView />
             </OkCancelModal>
         )
     }
@@ -109,6 +106,13 @@ class OrderStatusDownloadErrors extends DownloadResultView {
     */
     finishOnLastValue = false
     getDownloadResult = () => this.props.download
+    renderFinished = () => null
+}
+
+@observer
+class RefundDownloadView extends DownloadResultView {
+    finishOnLastValue = false
+    getDownloadResult = refundStore.getRefundOrderDownload
     renderFinished = () => null
 }
 

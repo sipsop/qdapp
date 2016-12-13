@@ -122,7 +122,6 @@ class Cache {
     periodicallySaveCacheState = async () => {
         if (!_.deepEqual(this.state, this.lastSavedState)) {
             const stamp = getTime() + 1000000000
-            log("SAVING STATE!!!!!!!!!!!1", this.state, this.lastSavedState)
             await this.storage.set('__cache_state:v1',
                 new CacheEntry(
                     '__cache_state:v1',

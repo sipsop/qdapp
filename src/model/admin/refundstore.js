@@ -1,19 +1,42 @@
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { orderStore } from '/model/orders/orderstore'
+import { downloadManager } from '/network/http'
+import { RefundOrderDownload } from '/network/api/admin/refund'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/model/admin/refundstore')
 
 export class RefundStore {
     @observable refundAmounts = {}
+
     @observable additionalRefundAmount = 0.0
-    @observable refundReason = "Not available, sorry."
+
     @observable refundOrderID = null
+    @observable refundReason = "Not available, sorry."
     @observable orderList = null
 
     initialize = () => {
-
+        downloadManager.declareDownload(new RefundOrderDownload(
+            () => {
+                return {
+                    authToken: loginStore.getAuthToken(),
+                    orderID: this.refundOrderID,
+                    refundItems: this.refundItems,
+                    reason: this.refundReason,
+                }
+            }
+        ))
     }
+
+    /*********************************************************************/
+    /* Order Refunds                                                     */
+    /*********************************************************************/
+
+    @action refundNow = () => {
+        downloadManager.forceRefresh('refund order')
+    }
+
+    getRefundOrderDownload = () => downloadManager.getDownload('refund order')
 
     /*********************************************************************/
     /* Actions                                                           */

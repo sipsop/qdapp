@@ -4,7 +4,6 @@ import { loginStore } from '../loginstore'
 import { downloadManager } from '/network/http'
 import { ActiveOrderDownload } from '/network/api/admin/active-orders'
 import { CompleteOrderDownload } from '/network/api/admin/complete-order'
-import { RefundOrderDownload } from '/network/api/admin/refund'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/model/activeorderstore.js')
@@ -15,11 +14,6 @@ class ActiveOrderStore {
 
     /* order completion download params */
     @observable completedOrderID = null
-
-    /* refund download params */
-    @observable refundOrderID  = null
-    @observable refundItems    = null
-    @observable refundReason     = null
 
     /*********************************************************************/
     /* Downloads                                                         */
@@ -58,16 +52,6 @@ class ActiveOrderStore {
                 }
             }
         ))
-        downloadManager.declareDownload(new RefundOrderDownload(
-            () => {
-                return {
-                    authToken: loginStore.getAuthToken(),
-                    orderID: this.refundOrderID,
-                    refundItems: this.refundItems,
-                    reason: this.refundReason,
-                }
-            }
-        ))
     }
 
     getActiveOrderFeed = () => downloadManager.getDownload('active orders')
@@ -102,19 +86,12 @@ class ActiveOrderStore {
     }
 
     /*********************************************************************/
-    /* Order Completion and Order Refunds                                */
+    /* Order Completion                                                  */
     /*********************************************************************/
 
     @action completeOrder = (orderID) => {
         this.completedOrderID = orderID
         downloadManager.forceRefresh('complete order')
-    }
-
-    @action refundOrder = (orderID, refundItems : Array<RefundItem>, refundReason : ?String) => {
-        this.refundOrderID = orderID
-        this.refundItems = refundItems
-        this.refundReason = refundReason
-        downloadManager.forceRefresh('refund order')
     }
 
     /*********************************************************************/

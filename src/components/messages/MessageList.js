@@ -80,7 +80,7 @@ class MessageListDescriptor extends Descriptor {
         return (
             /* alignment is set to 'stretch', so reset it... */
             <MessageView
-                useDefaultButton={false}
+                useDismissButton={false}
                 message={message}
                 showTimeStamp={true}
                 />

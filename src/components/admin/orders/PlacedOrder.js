@@ -5,6 +5,7 @@ import { observer } from 'mobx-react/native'
 import { TextHeader } from '/components/Header'
 import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleOrderList } from '/components/orders/SimpleOrderList'
+import { OrderMessages } from './OrderMessages'
 import { ActionButtons, ActionButton } from '/components/ActionButtons'
 
 import { orderStore, activeOrderStore, refundStore } from '/model/store'
@@ -197,6 +198,7 @@ export class PlacedOrder extends PureComponent {
                             : undefined
                     }
                     />
+                <OrderMessages orderResult={orderResult} />
                 { !this.props.refund &&
                     <OrderActions
                         orderResult={orderResult}

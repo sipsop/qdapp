@@ -15,7 +15,7 @@ import { OkCancelModal, SmallOkCancelModal, Message } from '../Modals.js'
 import { config } from '/utils/config.js'
 import { Selector, SelectorItem } from '../Selector.js'
 import { Loader } from '../Page.js'
-import { MessageList } from '/components/messages/MessageList'
+import { ReceiptMessages } from './ReceiptMessages.js'
 import { IconBar, BarIcon } from '/components/IconBar'
 import { OrderTotal } from './OrderTotal'
 import { ReceiptHeader } from './ReceiptHeader'
@@ -30,7 +30,7 @@ import { getRefundedItemAmount, isRefundedCompletely } from '/model/orders/order
 
 import type { String, Int } from '../Types.js'
 
-const { log, assert } = _.utils('Orders/Receipt.js')
+const { log, assert } = _.utils('/components/receipt/Receipt.js')
 
 @observer
 export class Receipt extends PureComponent {
@@ -104,9 +104,10 @@ class ReceiptOptions extends PureComponent {
 
     render = () => {
         const orderResult = this.props.orderResult
+        log("RENDERING RECEIPT OPTIONS", orderResult)
         return (
             <IconBar icons={receiptIcons}>
-                <MessageLog orderResult={orderResult} />
+                <ReceiptMessages orderResult={orderResult} />
                 <View>
                     <View style={{height: 15, backgroundColor: '#fff'}} />
                     <SimpleOrderList
@@ -120,89 +121,5 @@ class ReceiptOptions extends PureComponent {
                 </View>
             </IconBar>
         )
-    }
-}
-
-@observer
-class MessageLog extends PureComponent {
-    /* properties:
-        orderResult: OrderResult
-    */
-
-    @computed get orderPlacedMessage() {
-        var content
-        const orderResult = this.props.orderResult
-        if (orderResult.delivery === 'Table') {
-            content = `It will be delivered to table ${orderResult.tableNumber}.`
-        } else {
-            content = `You can pick it up later at ${orderResult.pickupLocation}.`
-        }
-        return {
-            title: "Your order has been placed!",
-            content: content,
-            timestamp: this.props.orderResult.timestamp,
-        }
-    }
-
-    @computed get refundMessages() {
-        return this.props.orderResult.refunds.map(refund => {
-            const reason = refund.reason ? `: ${refund.reason}` : ""
-            return {
-                title: "You got a Refund",
-                content: `${getRefundedItemAmount(refund)} items have been refunded${reason}`,
-                timestamp: refund.timestamp,
-            }
-        })
-    }
-
-    @computed get completedMessages() {
-        const orderResult = this.props.orderResult
-        if (!orderResult.completed)
-            return []
-
-        if (isRefundedCompletely(orderResult)) {
-            return [{
-                title: "Order Refunded",
-                content: "Your order has been refunded.",
-                timestamp: orderResult.completedTimestamp,
-            }]
-        } else {
-            return [{
-                title: "Order Completed",
-                content: orderResult.delivery === 'Table'
-                    ? `Your order will be delivered to your table shortly`
-                    : `Your order is available for pickup (at ${orderResult.pickupLocation})`
-                    ,
-                timestamp: orderResult.completedTimestamp,
-            }]
-        }
-    }
-
-    @computed get messages() {
-        return [
-            this.orderPlacedMessage,
-            ...this.refundMessages,
-            ...this.completedMessages,
-        ]
-    }
-
-    render = () => {
-        return (
-            <MessageList
-                insideScrollView={true}
-                getRows={() => this.messages}
-                />
-        )
-        // return <T style={
-        //             { fontSize: 18
-        //             , color: '#000'
-        //             , textAlign: 'center'
-        //             , marginTop: 10
-        //             , marginBottom: 5
-        //             }
-        //         }>
-        //     Your order has been placed!{'\n'}
-        //     Claim your order with this receipt.
-        // </T>
     }
 }
