@@ -3,7 +3,6 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { ActiveOrderDescriptor } from './ActiveOrderList'
-import { PlacedOrder } from './PlacedOrder'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { SimpleListView, Descriptor } from '/components/SimpleListView'
 

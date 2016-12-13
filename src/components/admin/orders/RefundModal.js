@@ -3,6 +3,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { PlacedOrder } from './PlacedOrder'
+import { OrderMessages } from './OrderMessages'
 import { TextHeader } from '/components/Header'
 import { OkCancelModal } from '/components/Modals'
 import { OrderStatusView } from '/components/receipt/OrderStatusView'
@@ -88,6 +89,9 @@ class RefundView extends OrderStatusView {
                     />
                 {border}
                 <SelectAllButton
+                    orderResult={this.orderResult}
+                    />
+                <OrderMessages
                     orderResult={this.orderResult}
                     />
                 <RefundTotal />

@@ -2,11 +2,14 @@ import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T,
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { OrderMessages } from './OrderMessages'
 import { PlacedOrder } from './PlacedOrder'
 import { DownloadResultView } from '/components/download/DownloadResultView'
+import { ActionButtons, ActionButton } from '/components/ActionButtons'
+import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleListView, Descriptor } from '/components/SimpleListView'
 
-import { activeOrderStore, orderFilterStore } from '/model/store'
+import { activeOrderStore, orderFilterStore, refundStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -68,6 +71,8 @@ export class ActiveOrderDescriptor extends Descriptor {
                     rowNumber={i + 1}
                     orderResult={orderResult}
                     />
+                <OrderMessages orderResult={orderResult} />
+                <OrderActions orderResult={orderResult} />
             </View>
         )
     }
@@ -77,4 +82,45 @@ export class ActiveOrderDescriptor extends Descriptor {
 class ActiveOrderListDownloadErrors extends DownloadResultView {
     getDownloadResult = activeOrderStore.getActiveOrderFeed
     renderFinished = () => null
+}
+
+@observer
+class OrderActions extends PureComponent {
+    /* properties:
+        orderResult: String
+    */
+
+    confirmModal = null
+
+    completeOrder = () => {
+        activeOrderStore.completeOrder(this.props.orderResult.orderID)
+    }
+
+    refundOrder = () => {
+        refundStore.showModal(this.props.orderResult)
+    }
+
+    render = () => {
+        const orderResult = this.props.orderResult
+        return (
+            <ActionButtons>
+                <SmallOkCancelModal
+                    ref={ref => this.confirmModal = ref}
+                    message="Complete Order?"
+                    onConfirm={this.completeOrder}
+                    />
+                <ActionButton
+                    label="Refund"
+                    onPress={this.refundOrder}
+                    />
+                {
+                    !orderResult.completed &&
+                        <ActionButton
+                            label="Complete"
+                            onPress={() => this.confirmModal.show()}
+                            />
+                }
+            </ActionButtons>
+        )
+    }
 }

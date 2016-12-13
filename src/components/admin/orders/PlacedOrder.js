@@ -3,10 +3,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { TextHeader } from '/components/Header'
-import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleOrderList } from '/components/orders/SimpleOrderList'
-import { OrderMessages } from './OrderMessages'
-import { ActionButtons, ActionButton } from '/components/ActionButtons'
 
 import { orderStore, activeOrderStore, refundStore } from '/model/store'
 import { formatDate, formatTime } from '/utils/time'
@@ -198,12 +195,6 @@ export class PlacedOrder extends PureComponent {
                             : undefined
                     }
                     />
-                <OrderMessages orderResult={orderResult} />
-                { !this.props.refund &&
-                    <OrderActions
-                        orderResult={orderResult}
-                        />
-                }
             </View>
         )
     }
@@ -236,48 +227,6 @@ class TextRow extends PureComponent {
                     {this.props.text}
                 </Text>
             </View>
-        )
-    }
-}
-
-@observer
-class OrderActions extends PureComponent {
-    /* properties:
-        orderResult: String
-        refundStore: RefundStore
-    */
-
-    confirmModal = null
-
-    completeOrder = () => {
-        activeOrderStore.completeOrder(this.props.orderResult.orderID)
-    }
-
-    refundOrder = () => {
-        refundStore.showModal(this.props.orderResult)
-    }
-
-    render = () => {
-        const orderResult = this.props.orderResult
-        return (
-            <ActionButtons>
-                <SmallOkCancelModal
-                    ref={ref => this.confirmModal = ref}
-                    message="Complete Order?"
-                    onConfirm={this.completeOrder}
-                    />
-                <ActionButton
-                    label="Refund"
-                    onPress={this.refundOrder}
-                    />
-                {
-                    !orderResult.completed &&
-                        <ActionButton
-                            label="Complete"
-                            onPress={() => this.confirmModal.show()}
-                            />
-                }
-            </ActionButtons>
         )
     }
 }
