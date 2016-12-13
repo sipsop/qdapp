@@ -59,6 +59,11 @@ export const getRefundMessages = (orderResult : OrderResult, isUser = true) => {
         }
     })
     if (isRefundedCompletely(orderResult)) {
+        const timestamp = _.fold(
+            _.max, /* f */
+            orderResult.completedTimestamp, /* z */
+            orderResult.refunds.map(refund => refund.timestamp), /* xs */
+        )
         messages.push({
             title: "Order Refunded",
             content:
@@ -66,7 +71,7 @@ export const getRefundMessages = (orderResult : OrderResult, isUser = true) => {
                     ? "Your order has been refunded."
                     : "The order has been refunded."
                     ,
-            timestamp: orderResult.completedTimestamp,
+            timestamp: timestamp,
         })
     }
     return messages

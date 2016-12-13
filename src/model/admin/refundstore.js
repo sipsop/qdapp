@@ -1,4 +1,5 @@
 import { observable, computed, transaction, autorun, action } from 'mobx'
+import { loginStore } from '/model/loginstore'
 import { orderStore } from '/model/orders/orderstore'
 import { downloadManager } from '/network/http'
 import { RefundOrderDownload } from '/network/api/admin/refund'

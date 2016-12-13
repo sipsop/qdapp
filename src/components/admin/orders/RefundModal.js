@@ -44,7 +44,7 @@ export class RefundModal extends PureComponent {
 
     @action refund = () => {
         refundStore.deselectAll()
-        activeOrderStore.refundNow()
+        refundStore.refundNow()
     }
 
     render = () => {
