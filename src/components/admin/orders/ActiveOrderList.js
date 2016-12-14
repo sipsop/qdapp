@@ -9,6 +9,7 @@ import { SmallOkCancelModal } from '/components/Modals'
 import { SimpleListView, Descriptor } from '/components/SimpleListView'
 
 import { activeOrderStore, orderFilterStore, refundStore } from '/model/store'
+import { isRefundedCompletely } from '/model/orders/orderstore'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -70,7 +71,9 @@ export class ActiveOrderDescriptor extends Descriptor {
                     rowNumber={i + 1}
                     orderResult={orderResult}
                     />
-                <OrderActions orderResult={orderResult} />
+                { !isRefundedCompletely(orderResult) &&
+                    <OrderActions orderResult={orderResult} />
+                }
             </View>
         )
     }
