@@ -2,11 +2,12 @@ import { React, Component, View, ScrollView, PureComponent, T, StyleSheet, Touch
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { store, barStore, orderStore, searchStore } from '/model/store'
 import { Page } from '../Page'
 import { MenuItem } from '../menu/DetailedMenuItem'
 import { MenuItemImage } from '../menu/MenuItemImage'
 import { Header, HeaderText } from '../Header'
+
+import { store, barStore, orderStore, searchStore, refundStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
@@ -15,6 +16,7 @@ const { log, assert } = _.utils('/components/orders/SimpleOrderList.js')
 const styles = StyleSheet.create({
     menuItem: {
         position: 'relative',
+        marginBottom: 10,
     },
     menuItemName: {
         height: 50,
@@ -23,8 +25,18 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
     },
+    menuItemNameStrikeThrough: {
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    },
     menuItemNameText: {
         marginLeft: 100,
+    },
+    strikeThrough: {
+        textDecorationLine: 'line-through',
+        color: 'rgba(0, 0, 0, 0.4)',
+    },
+    strikeThroughHeader: {
+        textDecorationLine: 'line-through',
     },
     menuItemImage: {
         position: 'absolute',
@@ -65,6 +77,7 @@ const styles = StyleSheet.create({
     optionsText: {
         flex: 1,
         textAlign: 'center',
+        paddingLeft: 5,
     },
     priceText: {
         minWidth: 80,
@@ -90,42 +103,137 @@ const styles = StyleSheet.create({
     },
 })
 
+/*********************************************************************/
+/* Utilities                                                         */
+/*********************************************************************/
+
+export const normalizeOrderList = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
+    orderList = orderList.map(orderItem => ({...orderItem})) // copy
+    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
+    refundItems.forEach(refundItem => {
+        id2item[refundItem.id].amount -= refundItem.amount
+    })
+    return orderList
+}
+
+export const getRefundedOrderItems = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
+    orderList = orderList.map(orderItem => {
+        return {
+            ...orderItem,
+            amount: 0,
+        }
+    })
+    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
+    refundItems.forEach(refundItem => {
+        id2item[refundItem.id].amount += refundItem.amount
+    })
+    return orderList.filter(orderItem => orderItem.amount > 0)
+}
+
+/*********************************************************************/
+/* Components                                                        */
+/*********************************************************************/
+
 @observer
 export class SimpleOrderList extends Page {
+    /* properties:
+        orderResult: OrderResult
+        showRefundOptions: Bool
+            whether to show refund options (+ and - signs)
+    */
+
+    static defaultProps = {
+        showRefundOptions: false,
+    }
+
+    @computed get refundItems() {
+        return _.flatten(this.props.orderResult.refunds.map(refund => {
+            return refund.refundedItems
+        }))
+    }
+
+    @computed get normalizedOrderList() {
+        return normalizeOrderList(this.props.orderResult.orderList, this.refundItems)
+    }
+
+    @computed get refundedOrderList() {
+        return getRefundedOrderItems(this.props.orderResult.orderList, this.refundItems)
+    }
+
+    renderView = () => {
+        log("RENDERING SIMPLE ORDER LIST")
+        log("ORDER LIST", this.normalizedOrderList)
+        log("REFUNDED ORDER LIST" ,this.refundedOrderList)
+        log("REFUND ITEMS", this.refundItems)
+        log("REFUNDS", this.props.orderResult.refunds)
+        return (
+            <View>
+                <View style={{height: 20}} />
+                <OrderList
+                    menuItems={this.props.orderResult.menuItems}
+                    orderList={this.normalizedOrderList}
+                    showRefundOptions={this.props.showRefundOptions}
+                    />
+                { this.refundedOrderList.length > 0 &&
+                    <View>
+                        <OrderList
+                            menuItems={this.props.orderResult.menuItems}
+                            orderList={this.refundedOrderList}
+                            strikeThrough={true}
+                            showRefundOptions={false}
+                            />
+                    </View>
+                }
+            </View>
+        )
+    }
+}
+
+@observer
+class OrderList extends PureComponent {
     /* properties:
         menuItems: [MenuItem]
             menu items to show
         orderList: [OrderItem]
             order items to show
-        refundStore: ?RefundStore
-            to allow the bar admin to select refunds for the items
+        refundItems: [RefundItem]
+        strikeThrough: Bool
+            whether to strike through the items (e.g. in case they have been
+            refunded)
+        showRefundOptions: Bool
+            whether to show refund options (+ and - signs)
     */
-    renderView = () => {
+
+    static defaultProps = {
+        showRefundOptions: false,
+        strikeThrough: false,
+    }
+
+    render = () => {
         assert(this.props.menuItems != null)
         assert(this.props.orderList != null)
-        return <View>
-            {
-                this.props.menuItems.map(
-                    (menuItem, i) => {
-                        return (
-                            <SimpleMenuItem
-                                key={menuItem.id}
-                                rowNumber={i}
-                                menuItem={menuItem}
-                                orderItems={this.props.orderList}
-                                refundStore={this.props.refundStore}
-                                />
-                        )
-                    }
-                )
-            }
-        </View>
+        return (
+            <View>
+                { this.props.menuItems.map(
+                    (menuItem, i) =>
+                        <SimpleMenuItem
+                            key={menuItem.id}
+                            rowNumber={i}
+                            menuItem={menuItem}
+                            orderItems={this.props.orderList}
+                            strikeThrough={this.props.strikeThrough}
+                            showRefundOptions={this.props.showRefundOptions}
+                            />
+                    )
+                }
+            </View>
+        )
     }
 }
 
 const getOrderItems = (menuItem, orderItems) => {
     return orderItems.filter(
-        orderItem => menuItem.id === orderItem.menuItemID
+        orderItem => menuItem.id === orderItem.menuItemID && orderItem.amount > 0
     )
 }
 
@@ -135,32 +243,29 @@ class SimpleMenuItem extends PureComponent {
         menuItem: MenuItem
         orderItems: [OrderItem]
         rowNumber: Int
-        refundStore: ?RefundStore
+        strikeThrough: Bool
+            whether to strike through the items (e.g. in case they have been
+            refunded)
+        showRefundOptions: Bool
+            whether to show refund options (+ and - signs)
     */
-
-    @computed get refundable() {
-        return !!this.props.refundStore
-    }
-
-    @computed get orderItems() {
-        if (this.refundable) {
-            /* TODO: Return only those items that can still be refunded */
-            // return this.props.orderItems
-            return this.props.refundStore.getOrderList()
-        }
-        return this.props.orderItems
-    }
-
-
     render = () => {
         const menuItem = this.props.menuItem
-        const orderItems = getOrderItems(menuItem, this.orderItems)
+        const orderItems = getOrderItems(menuItem, this.props.orderItems)
+        if (!orderItems.length)
+            return null
         const orderListHeight = orderItems.length * 50
         return <View style={styles.menuItem}>
-            <View style={styles.menuItemName}>
+            <View style={[
+                    styles.menuItemName,
+                    this.props.strikeThrough && styles.menuItemNameStrikeThrough,
+                ]}>
                 <ScrollView horizontal={true}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                        <HeaderText style={styles.menuItemNameText} fontSize={20}>
+                        <HeaderText style={[
+                                styles.menuItemNameText,
+                                this.props.strikeThrough && styles.strikeThroughHeader,
+                            ]} fontSize={20}>
                             {menuItem.name}
                         </HeaderText>
                     </View>
@@ -168,7 +273,8 @@ class SimpleMenuItem extends PureComponent {
             </View>
             <SimpleMenuItemOptions
                 orderItems={orderItems}
-                refundStore={this.props.refundStore}
+                strikeThrough={this.props.strikeThrough}
+                showRefundOptions={this.props.showRefundOptions}
                 />
             <MenuItemImage
                 menuItem={menuItem}
@@ -182,12 +288,12 @@ class SimpleMenuItem extends PureComponent {
 export class SimpleMenuItemOptions extends PureComponent {
      /* properties:
         orderItems: [OrderItem]
-        refundStore: ?RefundStore
+        strikeThrough: Bool
+            whether to strike through the items (e.g. in case they have been
+            refunded)
+        showRefundOptions: Bool
+            whether to show refund options (+ and - signs)
     */
-
-    @computed get refundable() {
-        return !!this.props.refundStore
-    }
 
     render = () => {
         return (
@@ -204,23 +310,34 @@ export class SimpleMenuItemOptions extends PureComponent {
         const priceText = orderStore.formatPrice(price)
         return (
             <View key={rowNumber} style={styles.orderItemRow}>
-                {!this.refundable &&
-                    <T style={[styles.amountText, styles.itemText]}>
+                {!this.props.showRefundOptions &&
+                    <T style={[
+                            styles.amountText,
+                            styles.itemText,
+                            this.props.strikeThrough && styles.strikeThrough,
+                        ]}>
                         {orderItem.amount}
                     </T>
                 }
                 <ScrollView horizontal={true} style={styles.options}>
-                    <T style={[styles.optionsText, styles.itemText]}>
+                    <T style={[
+                            styles.optionsText,
+                            styles.itemText,
+                            this.props.strikeThrough && styles.strikeThrough,
+                        ]}>
                         {opts}
                     </T>
                 </ScrollView>
-                { this.refundable &&
+                { this.props.showRefundOptions &&
                     <RefundOptions
-                        refundStore={this.props.refundStore}
                         orderItem={orderItem}
                         />
                 }
-                <T style={[styles.priceText, styles.itemText]}>
+                <T style={[
+                        styles.priceText,
+                        styles.itemText,
+                        this.props.strikeThrough && styles.strikeThrough,
+                    ]}>
                     {priceText}
                 </T>
             </View>
@@ -231,16 +348,15 @@ export class SimpleMenuItemOptions extends PureComponent {
 @observer
 class RefundOptions extends PureComponent {
     /* properties:
-        refundStore: RefundStore
         orderItem: OrderItem
     */
 
     @action handleIncrease = () => {
-        this.props.refundStore.increaseRefundAmount(this.props.orderItem.id)
+        refundStore.increaseRefundAmount(this.props.orderItem.id)
     }
 
     @action handleDecrease = () => {
-        this.props.refundStore.decreaseRefundAmount(this.props.orderItem.id)
+        refundStore.decreaseRefundAmount(this.props.orderItem.id)
     }
 
     render = () => {
@@ -251,7 +367,7 @@ class RefundOptions extends PureComponent {
                     <EvilIcon name="minus" size={45} color={config.theme.removeColor} />
                 </TouchableOpacity>
                 <T style={textStyle}>
-                    {this.props.refundStore.refundAmount(this.props.orderItem)}
+                    {refundStore.refundAmount(this.props.orderItem)}
                 </T>
                 <TouchableOpacity onPress={this.handleIncrease}>
                     <EvilIcon name="plus" size={45} color={config.theme.addColor} />

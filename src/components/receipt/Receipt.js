@@ -104,15 +104,13 @@ class ReceiptOptions extends PureComponent {
 
     render = () => {
         const orderResult = this.props.orderResult
-        log("RENDERING RECEIPT OPTIONS", orderResult)
         return (
             <IconBar icons={receiptIcons}>
                 <ReceiptMessages orderResult={orderResult} />
                 <View>
                     <View style={{height: 15, backgroundColor: '#fff'}} />
                     <SimpleOrderList
-                        menuItems={orderResult.menuItems}
-                        orderList={orderResult.orderList}
+                        orderResult={orderResult}
                         />
                     <OrderTotal
                         total={orderResult.totalPrice}

@@ -6,7 +6,8 @@ import { OrderMessages } from './OrderMessages'
 import { TextHeader } from '/components/Header'
 import { SimpleOrderList } from '/components/orders/SimpleOrderList'
 
-import { orderStore, activeOrderStore, refundStore } from '/model/store'
+import { activeOrderStore, refundStore } from '/model/store'
+import { orderStore, getRefundItems } from '/model/orders/orderstore'
 import { formatDate, formatTime } from '/utils/time'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
@@ -75,14 +76,14 @@ export class PlacedOrder extends PureComponent {
     /* properties:
         rowNumber: Int
         orderResult: OrderResult
-        refund: Bool
-            whether the result should include refund buttons
+        showRefundOptions: Bool
+            whether the result should include refund buttons (+ and -)
     */
 
     static defaultProps = {
         rowNumber: 1,
         showActions: true,
-        refund: false,
+        showRefundOptions: false,
     }
 
     @computed get style() {
@@ -99,6 +100,17 @@ export class PlacedOrder extends PureComponent {
                 headerFontColor: '#fff',
             }
         }
+    }
+
+    @computed get normalizedOrderList() {
+        return normalizeOrderList(
+            this.props.orderResult.orderList,
+            this.props.orderResult.refundItems,
+        )
+    }
+
+    @computed get refundedOrderList() {
+        return getRefundedOrderItems(this.props.orderResult)
     }
 
     render = () => {
@@ -186,16 +198,12 @@ export class PlacedOrder extends PureComponent {
                         text={totalText}
                         />
                 </View>
-                <OrderMessages orderResult={orderResult} />
-                <View style={{height: 20}} />
+                <OrderMessages
+                    orderResult={orderResult}
+                    />
                 <SimpleOrderList
-                    menuItems={orderResult.menuItems}
-                    orderList={orderResult.orderList}
-                    refundStore={
-                        this.props.refund
-                            ? refundStore
-                            : undefined
-                    }
+                    orderResult={orderResult}
+                    showRefundOptions={this.props.showRefundOptions}
                     />
             </View>
         )

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         marginRight: 40,
     },
     refundReason: {
-        // flex: 1,
+        flex: 1,
         alignItems: 'center',
     },
     refundReasonPickerView: {
@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
     },
     refundReasonPicker: {
         flex: 1,
-        width: 150,
+        alignItems: 'center',
+        width: 80,
     },
     refundReasonTextInput: {
         width: 240,
@@ -113,7 +114,7 @@ class RefundView extends OrderStatusView {
             <ScrollView style={{flex: 1}}>
                 <PlacedOrder
                     orderResult={this.orderResult}
-                    refund={true}
+                    showRefundOptions={true}
                     />
                 {border}
                 <SelectAllButton

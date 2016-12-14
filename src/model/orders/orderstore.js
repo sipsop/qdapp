@@ -51,15 +51,6 @@ export type Refund = {
     reason:         ?String,
 }
 
-const normalizeOrderList = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
-    orderList = orderList.map(orderItem => ({...orderItem})) // copy
-    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
-    refundItems.forEach(refundItem => {
-        id2item[refundItem.id] -= refundItem.amount
-    })
-    return orderList
-}
-
 export type OrderResult = {
     // date:           DateType,
     // time:           Time,
@@ -85,6 +76,10 @@ export type OrderResult = {
     completed:      Bool,
     completedTimestamp: ?Float,
 }
+
+/*********************************************************************/
+/* Utilities                                                         */
+/*********************************************************************/
 
 export const getRefundedItemAmount = (refund : Refund) => {
     return _.sum(refund.refundedItems.map(
