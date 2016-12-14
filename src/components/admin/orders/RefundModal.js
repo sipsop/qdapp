@@ -68,13 +68,22 @@ const border = <View style={styles.border} />
 
 @observer
 export class RefundModal extends PureComponent {
+    @observable refundButtonPressed = false
+
     @computed get refundButtonEnabled() {
         return refundStore.refundTotal > 0.0
+    }
+
+    @computed get cancelLabel() {
+        if (this.refundButtonPressed && refundStore.getRefundOrderDownload().success)
+            return "Done"
+        return "Cancel"
     }
 
     @action refund = () => {
         refundStore.deselectAll()
         refundStore.refundNow()
+        this.refundButtonPressed = true
     }
 
     render = () => {
@@ -89,7 +98,7 @@ export class RefundModal extends PureComponent {
                 okDisabled={!this.refundButtonEnabled}
                 okModal={this.refund}
                 showCancelButton={true}
-                cancelLabel="Cancel"
+                cancelLabel={this.cancelLabel}
                 cancelModal={refundStore.closeModal}
                 >
                 <RefundView
