@@ -77,6 +77,10 @@ export class RefundStore {
         this.refundAmounts = this.minimumRefunds
     }
 
+    @action setRefundReason = (reason : String) => {
+        this.refundReason = reason
+    }
+
     /*********************************************************************/
     /* Compute                                                           */
     /*********************************************************************/

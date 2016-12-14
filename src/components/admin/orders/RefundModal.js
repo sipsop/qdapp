@@ -1,4 +1,4 @@
-import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T, StyleSheet } from '/components/Component'
+import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T, StyleSheet, Picker, TextInput } from '/components/Component'
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
@@ -32,6 +32,35 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.4)',
         marginLeft: 40,
         marginRight: 40,
+    },
+    refundReason: {
+        // flex: 1,
+        alignItems: 'center',
+    },
+    refundReasonPickerView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    refundText: {
+        flex: 1,
+        fontSize: 18,
+        color: '#000',
+        textAlign: 'center',
+    },
+    refundReasonPicker: {
+        flex: 1,
+        width: 150,
+    },
+    refundReasonTextInput: {
+        width: 240,
+        height: 100,
+        borderWidth: 0.5,
+        borderColor: 'rgba(0, 0, 0, 0.50)',
+        borderRadius: 10,
+        textAlign: 'left',
+        textAlignVertical: 'top',
+        marginBottom: 15,
     },
 })
 
@@ -94,6 +123,7 @@ class RefundView extends OrderStatusView {
                 <OrderMessages
                     orderResult={this.orderResult}
                     />
+                <RefundReason />
                 <RefundTotal />
                 <OrderStatusDownloadErrors
                     download={this.getDownloadResult()}
@@ -141,6 +171,54 @@ class SelectAllButton extends PureComponent {
                     fontSize={15}
                     borderColor={config.theme.primary.medium}
                     />
+            </View>
+        )
+    }
+}
+
+@observer
+class RefundReason extends PureComponent {
+    @observable value = "NA"
+
+    @action setPickerValue = (value) => {
+        this.value = value
+        if (this.value === "NA") {
+            refundStore.setRefundReason("Item(s) not available, sorry.")
+        } else {
+            refundStore.setRefundReason("")
+        }
+    }
+
+    render = () => {
+        return (
+            <View style={styles.refundReason}>
+                <View style={styles.refundReasonPickerView}>
+                    <T style={styles.refundText}>Reason:</T>
+                    <Picker
+                        style={styles.refundReasonPicker}
+                        selectedValue={this.value}
+                        onValueChange={this.setPickerValue}
+                        >
+                        <Picker.Item
+                            label="Not Available"
+                            value="NA"
+                            />
+                        <Picker.Item
+                            label="Other"
+                            value="Other"
+                            />
+                    </Picker>
+                </View>
+                { this.value === "Other" &&
+                    <TextInput
+                        style={styles.refundReasonTextInput}
+                        autoFocus={true}
+                        multiline={true}
+                        onChangeText={refundStore.setRefundReason}
+                        value={refundStore.refundReason}
+                        underlineColorAndroid='rgba(255, 255, 255, 0)'
+                        />
+                }
             </View>
         )
     }
