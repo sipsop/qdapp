@@ -2,6 +2,7 @@ import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T,
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
+import { OrderMessages } from './OrderMessages'
 import { TextHeader } from '/components/Header'
 import { SimpleOrderList } from '/components/orders/SimpleOrderList'
 
@@ -185,6 +186,7 @@ export class PlacedOrder extends PureComponent {
                         text={totalText}
                         />
                 </View>
+                <OrderMessages orderResult={orderResult} />
                 <View style={{height: 20}} />
                 <SimpleOrderList
                     menuItems={orderResult.menuItems}

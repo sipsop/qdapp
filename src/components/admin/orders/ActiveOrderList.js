@@ -2,7 +2,6 @@ import { React, Component, PureComponent, ScrollView, TouchableOpacity, View, T,
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { OrderMessages } from './OrderMessages'
 import { PlacedOrder } from './PlacedOrder'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { ActionButtons, ActionButton } from '/components/ActionButtons'
@@ -71,7 +70,6 @@ export class ActiveOrderDescriptor extends Descriptor {
                     rowNumber={i + 1}
                     orderResult={orderResult}
                     />
-                <OrderMessages orderResult={orderResult} />
                 <OrderActions orderResult={orderResult} />
             </View>
         )
