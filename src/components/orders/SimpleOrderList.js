@@ -7,7 +7,8 @@ import { MenuItem } from '../menu/DetailedMenuItem'
 import { MenuItemImage } from '../menu/MenuItemImage'
 import { Header, HeaderText } from '../Header'
 
-import { store, barStore, orderStore, searchStore, refundStore } from '/model/store'
+import { store, barStore, searchStore, refundStore } from '/model/store'
+import { orderStore, normalizeOrderList, getRefundedOrderItems } from '/model/orders/orderstore'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
@@ -103,39 +104,8 @@ const styles = StyleSheet.create({
     },
 })
 
-/*********************************************************************/
-/* Utilities                                                         */
-/*********************************************************************/
-
-export const normalizeOrderList = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
-    orderList = orderList.map(orderItem => ({...orderItem})) // copy
-    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
-    refundItems.forEach(refundItem => {
-        id2item[refundItem.id].amount -= refundItem.amount
-    })
-    return orderList
-}
-
-export const getRefundedOrderItems = (orderList : Array<OrderItem>, refundItems : Array<RefundItem>) => {
-    orderList = orderList.map(orderItem => {
-        return {
-            ...orderItem,
-            amount: 0,
-        }
-    })
-    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
-    refundItems.forEach(refundItem => {
-        id2item[refundItem.id].amount += refundItem.amount
-    })
-    return orderList.filter(orderItem => orderItem.amount > 0)
-}
-
-/*********************************************************************/
-/* Components                                                        */
-/*********************************************************************/
-
 @observer
-export class SimpleOrderList extends Page {
+export class SimpleOrderList extends PureComponent {
     /* properties:
         orderResult: OrderResult
         showRefundOptions: Bool
@@ -146,26 +116,15 @@ export class SimpleOrderList extends Page {
         showRefundOptions: false,
     }
 
-    @computed get refundItems() {
-        return _.flatten(this.props.orderResult.refunds.map(refund => {
-            return refund.refundedItems
-        }))
-    }
-
     @computed get normalizedOrderList() {
-        return normalizeOrderList(this.props.orderResult.orderList, this.refundItems)
+        return normalizeOrderList(this.props.orderResult)
     }
 
     @computed get refundedOrderList() {
-        return getRefundedOrderItems(this.props.orderResult.orderList, this.refundItems)
+        return getRefundedOrderItems(this.props.orderResult)
     }
 
-    renderView = () => {
-        log("RENDERING SIMPLE ORDER LIST")
-        log("ORDER LIST", this.normalizedOrderList)
-        log("REFUNDED ORDER LIST" ,this.refundedOrderList)
-        log("REFUND ITEMS", this.refundItems)
-        log("REFUNDS", this.props.orderResult.refunds)
+    render = () => {
         return (
             <View>
                 <View style={{height: 20}} />
@@ -196,7 +155,6 @@ class OrderList extends PureComponent {
             menu items to show
         orderList: [OrderItem]
             order items to show
-        refundItems: [RefundItem]
         strikeThrough: Bool
             whether to strike through the items (e.g. in case they have been
             refunded)

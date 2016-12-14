@@ -1,11 +1,15 @@
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { loginStore } from '/model/loginstore'
-import { orderStore } from '/model/orders/orderstore'
+import { orderStore, normalizeOrderList } from '/model/orders/orderstore'
 import { downloadManager } from '/network/http'
 import { RefundOrderDownload } from '/network/api/admin/refund'
 import * as _ from '/utils/curry'
 
 const { log, assert } = _.utils('/model/admin/refundstore')
+
+/*********************************************************************/
+/* Store                                                             */
+/*********************************************************************/
 
 export class RefundStore {
     @observable refundAmounts = {}
@@ -44,7 +48,7 @@ export class RefundStore {
     /*********************************************************************/
 
     @action showModal = (orderResult) => {
-        this.orderList = orderResult.orderList
+        this.orderList = normalizeOrderList(orderResult)
         this.refundOrderID = orderResult.orderID
         this.selectAll()
     }

@@ -93,6 +93,36 @@ export const isRefundedCompletely = (orderResult) => {
     return totalOrderedAmount === totalRefundedAmount
 }
 
+export const getRefundItems = (orderResult : OrderResult) : Array<RefundItem> => {
+    return _.flatten(orderResult.refunds.map(refund => {
+        return refund.refundedItems
+    }))
+}
+
+export const normalizeOrderList = (orderResult : OrderResult) : Array<OrderItem> => {
+    const orderList = orderResult.orderList.map(orderItem => ({...orderItem})) // copy
+    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
+    getRefundItems(orderResult).forEach(refundItem => {
+        id2item[refundItem.id].amount -= refundItem.amount
+    })
+    return orderList
+}
+
+export const getRefundedOrderItems = (orderResult : OrderResult) : Array<OrderItem> => {
+    const orderList = orderResult.orderList.map(orderItem => {
+        return {
+            ...orderItem,
+            amount: 0,
+        }
+    })
+    const id2item = _.makeMap(orderList, orderItem => orderItem.id)
+    getRefundItems(orderResult).forEach(refundItem => {
+        id2item[refundItem.id].amount += refundItem.amount
+    })
+    return orderList.filter(orderItem => orderItem.amount > 0)
+}
+
+
 /*********************************************************************/
 /* Store                                                             */
 /*********************************************************************/
