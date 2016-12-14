@@ -16,8 +16,12 @@ import * as _ from '/utils/curry'
 const { assert, log } = _.utils('/components/admin/orders/RefundModal.js')
 
 const styles = StyleSheet.create({
+    placedOrder: {
+        marginBottom: -10,
+    },
     selectAll: {
         flex: 1,
+        marginTop: 10,
         height: 55,
         justifyContent: 'center',
         alignItems: 'center',
@@ -33,7 +37,6 @@ const styles = StyleSheet.create({
         marginRight: 40,
     },
     refundReason: {
-        flex: 1,
         alignItems: 'center',
     },
     refundReasonPickerView: {
@@ -42,15 +45,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     refundText: {
-        flex: 1,
         fontSize: 18,
         color: '#000',
         textAlign: 'center',
     },
     refundReasonPicker: {
-        flex: 1,
         alignItems: 'center',
-        width: 80,
+        width: 150,
     },
     refundReasonTextInput: {
         width: 240,
@@ -122,6 +123,7 @@ class RefundView extends OrderStatusView {
         return (
             <ScrollView style={{flex: 1}}>
                 <PlacedOrder
+                    style={styles.placedOrder}
                     orderResult={this.orderResult}
                     showRefundOptions={true}
                     />

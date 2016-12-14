@@ -11,6 +11,7 @@ class CompletedOrderStore {
     @observable completed : Array<OrderResult> = []
     @observable barID = null
     @observable endReached = false
+    @observable shouldFetchMore = false
 
     /*********************************************************************/
     /* Downloads                                                         */
@@ -20,12 +21,16 @@ class CompletedOrderStore {
         downloadManager.declareDownload(new CompletedOrdersDownload(
             () => {
                 return {
-                    authToken:   loginStore.getAuthToken(),
-                    barID:       barStore.barID,
+                    authToken: loginStore.getAuthToken(),
+                    barID: barStore.barID,
                     completedBefore: this.getBeforeTimestamp(),
+                    active: this.shouldFetchMore,
                 }
             },
             {
+                onStart: () => {
+                    this.shouldFetchMore = false
+                },
                 onFinish: () => {
                     const completed = this.getDownload().completedOrders
                     if (completed) {
@@ -47,8 +52,9 @@ class CompletedOrderStore {
     }
 
     @action fetchMore = () => {
-        if (!this.endReached)
-            this.getDownload().forceRefresh()
+        if (!this.endReached && this.getDownload().state !== 'Error') {
+            this.shouldFetchMore = true
+        }
     }
 
     getDownload = () => downloadManager.getDownload('completed orders')

@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
 @observer
 export class PlacedOrder extends PureComponent {
     /* properties:
+        style: style obj
         rowNumber: Int
         orderResult: OrderResult
         showRefundOptions: Bool
@@ -135,7 +136,7 @@ export class PlacedOrder extends PureComponent {
         }
 
         return (
-            <View style={this.style.style}>
+            <View style={[this.style.style, this.props.style]}>
                 <TextHeader
                     label={headerText}
                     style={this.style.headerStyle}

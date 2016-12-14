@@ -13,11 +13,16 @@ export class CompletedOrdersDownload extends QueryDownload {
         barID: String
         completedBefore: ?TimeStamp
             get order history before the given timestamp
+        active: Bool
+            whether the download is active
     */
 
     name = 'completed orders'
-    autoDownload = false
     cacheInfo = config.defaultRefreshCacheInfo
+
+    @computed get active() {
+        return this.props.active
+    }
 
     @computed get cacheKey() {
         return `qd:barID=${this.props.barID}:before=${this.props.before}`

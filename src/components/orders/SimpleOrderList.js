@@ -15,6 +15,9 @@ import { config } from '/utils/config'
 const { log, assert } = _.utils('/components/orders/SimpleOrderList.js')
 
 const styles = StyleSheet.create({
+    orderList: {
+
+    },
     menuItem: {
         position: 'relative',
         marginBottom: 10,
@@ -171,7 +174,7 @@ class OrderList extends PureComponent {
         assert(this.props.menuItems != null)
         assert(this.props.orderList != null)
         return (
-            <View>
+            <View style={styles.orderList}>
                 { this.props.menuItems.map(
                     (menuItem, i) =>
                         <SimpleMenuItem

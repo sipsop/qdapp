@@ -8,6 +8,7 @@ export class CompleteOrderDownload extends QueryMutation {
     /* properties:
         authToken: String
         orderID: String
+        shouldFetchMore: Bool
     */
     name = 'complete order'
 
