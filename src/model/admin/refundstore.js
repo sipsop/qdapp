@@ -37,8 +37,8 @@ export class RefundStore {
     /* Order Refunds                                                     */
     /*********************************************************************/
 
-    @action refundNow = () => {
-        downloadManager.forceRefresh('refund order')
+    @action refundNow = async () => {
+        await downloadManager.forceRefresh('refund order')
     }
 
     getRefundOrderDownload = () => downloadManager.getDownload('refund order')
@@ -51,6 +51,7 @@ export class RefundStore {
         this.orderList = normalizeOrderList(orderResult)
         this.refundOrderID = orderResult.orderID
         this.selectAll()
+        this.getRefundOrderDownload().reset()
     }
 
     @action closeModal = () => {

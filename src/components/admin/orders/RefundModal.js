@@ -9,7 +9,8 @@ import { OrderStatusView } from '/components/receipt/OrderStatusView'
 import { DownloadResultView } from '/components/download/DownloadResultView'
 import { LargeButton } from '/components/Button'
 
-import { orderStore, activeOrderStore, refundStore } from '/model/store'
+import { activeOrderStore, refundStore } from '/model/store'
+import { orderStore, isRefundedCompletely } from '/model/orders/orderstore'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -67,34 +68,70 @@ const styles = StyleSheet.create({
 
 const border = <View style={styles.border} />
 
+// @observer
+// export class RefundModal extends PureComponent {
+//     render = () => {
+//         if (!refundStore.refundOrderID)
+//             return null
+//         return <_RefundModal orderID={refundStore.refundOrderID} />
+//     }
+// }
+
 @observer
 export class RefundModal extends PureComponent {
+    /* properties:
+        orderID: String
+            inherited from OrderStatusView
+    */
     @observable refundButtonPressed = false
+    @observable haveRefundView = false
+    refundView = null
+
+    @computed get refundDownload() {
+        return refundStore.getRefundOrderDownload()
+    }
 
     @computed get refundButtonEnabled() {
-        return refundStore.refundTotal > 0.0
+        return (
+            this.refundDownload.state !== 'InProgress' &&
+            refundStore.refundTotal > 0.0
+        )
+    }
+
+    @computed get refundSuccessful() {
+        return this.refundDownload.success
+    }
+
+    @computed get showRefundButton() {
+        if (!this.haveRefundView || !this.refundView.orderResult)
+            return true
+        return !isRefundedCompletely(this.refundView.orderResult)
     }
 
     @computed get cancelLabel() {
-        if (this.refundButtonPressed && refundStore.getRefundOrderDownload().success)
+        if (this.refundButtonPressed)
             return "Done"
         return "Cancel"
     }
 
     @action refund = () => {
-        refundStore.deselectAll()
-        refundStore.refundNow()
         this.refundButtonPressed = true
+        refundStore.refundNow()
+        refundStore.deselectAll()
+    }
+
+    @action setRefundView = (refundView) => {
+        this.refundView = refundView
+        this.haveRefundView = true
     }
 
     render = () => {
         if (!refundStore.refundOrderID)
             return null
-
         return (
             <OkCancelModal
                 visible={true}
-                showOkButton={true}
+                showOkButton={this.showRefundButton}
                 okLabel="Refund Now"
                 okDisabled={!this.refundButtonEnabled}
                 okModal={this.refund}
@@ -103,9 +140,9 @@ export class RefundModal extends PureComponent {
                 cancelModal={refundStore.closeModal}
                 >
                 <RefundView
+                    ref={this.setRefundView}
                     orderID={refundStore.refundOrderID}
                     />
-                <RefundDownloadView />
             </OkCancelModal>
         )
     }
@@ -114,12 +151,12 @@ export class RefundModal extends PureComponent {
 @observer
 class RefundView extends OrderStatusView {
     /* properties:
-        orderID: OrderID
+        orderID: OrderResult
     */
-
     renderFinished = () => {
-        if (!this.orderResult)
+        if (!this.orderResult) {
             return this.renderInProgress()
+        }
         return (
             <ScrollView style={{flex: 1}}>
                 <PlacedOrder
@@ -133,9 +170,8 @@ class RefundView extends OrderStatusView {
                     />
                 <RefundReason />
                 <RefundTotal />
-                <OrderStatusDownloadErrors
-                    download={this.getDownloadResult()}
-                    />
+                <OrderStatusDownloadErrors download={this.getDownloadResult()} />
+                <RefundDownloadView />
             </ScrollView>
         )
     }
