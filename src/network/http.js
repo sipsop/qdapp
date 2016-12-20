@@ -8,8 +8,6 @@ import { getTime, Second, Minute } from '/utils/time'
 import { QueryTransport } from './QueryTransport'
 import * as _ from '/utils/curry'
 
-import type { Int, Float, String, URL } from '/utils/types'
-
 const { log, assert } = _.utils('/network/http')
 
 export type HTTPOptions = RequestOptions
@@ -19,7 +17,6 @@ export type DownloadState =
     | 'InProgress'  // download error
     | 'Finished'    // download error
     | 'Error'       // download error
-
 
 /***********************************************************************/
 /* Exceptions                                                          */
@@ -37,129 +34,8 @@ export class NetworkError {
 /* Network stuff                                                       */
 /***********************************************************************/
 
-export class DownloadResult<T> {
-
-    @observable state   : DownloadState = 'NotStarted'
-    @observable message : ?string       = undefined
-    @observable value   : ?T            = null
-
-    static combine = (downloadResults : Array<DownloadResult<*>>) => {
-        return new CombinedDownloadResult(downloadResults)
-    }
-
-    getState = () => {
-        return {
-            state:      this.state,
-            message:    this.message,
-            value:      this.value,
-        }
-    }
-
-    @action setState = (downloadState) => {
-        this.state   = downloadState.state
-        this.message = downloadState.message
-        this.value   = downloadState.value
-        if (downloadState.state === 'InProgress') {
-            this.state = 'Error'
-            this.message = 'Please try again'
-        }
-    }
-
-    @action from = (downloadResult : DownloadResult<T>) => {
-        this.state   = downloadResult.state
-        this.message = downloadResult.message
-        this.value   = downloadResult.value
-    }
-
-    @action reset = (state = 'NotStarted') : DownloadResult<T> => {
-        this.state   = state
-        this.message = null
-        this.value   = null
-        return this
-    }
-
-    @action downloadStarted = () : DownloadResult<T> => {
-        return this.reset('InProgress')
-    }
-
-    @action downloadError = (message : string, refresh : () => void) : DownloadResult<T> => {
-        this.reset('Error')
-        this.message = message
-        return this
-    }
-
-    @action downloadFinished = (value : T) : DownloadResult<T> => {
-        this.reset('Finished')
-        this.value   = value
-        return this
-    }
-
-    update = (f : (value : T) => T) : DownloadResult<T> => {
-        if (this.state == 'Finished') {
-            this.value = f(this.value)
-        }
-        return this
-    }
-}
-
-class CombinedDownloadResult<T> {
-
-    constructor(downloadResults : Array<DownloadResult>) {
-        this.downloadResults = downloadResults
-        this._value = null
-    }
-
-    @computed get state() {
-        if (_.any(this.downloadResults.map(result => result.state === 'Error')))
-            return 'Error'
-        if (_.any(this.downloadResults.map(result => result.state === 'InProgress')))
-            return 'InProgress'
-        if (_.all(this.downloadResults.map(result => result.state === 'Finished')))
-            return 'Finished'
-        return 'NotStarted'
-    }
-
-    @computed get errorIndex() {
-        const results = this.downloadResults
-        for (let i = 0; i < results.length; i++) {
-            if (results[i].state === 'Error')
-                return i
-        }
-        return -1
-    }
-
-    @computed get haveError() {
-        return this.errorIndex >= 0
-    }
-
-    @computed get message() {
-        return this.downloadResults[this.errorIndex].message
-    }
-
-    @computed get refresh() {
-        if (!this.haveError)
-            return null
-        return this.downloadResults[this.errorIndex].refresh
-    }
-
-    @computed get value() {
-        if (this._value)
-            return this._value
-        if (this.state !== 'Finished')
-            return null
-        return this.downloadResults.map(downloadResult => downloadResult.value)
-    }
-
-    update = (f : (value : T) => T) : DownloadResult<T> => {
-        if (this.state == 'Finished') {
-            this._value = f(this.value)
-        }
-        return this
-    }
-}
-
 export const emptyResult = <T>() : DownloadResult<T> => {
-    return new DownloadResult()
+    return new Download(() => null)
 }
 
 /* Class for declarating an JSON API request */
@@ -361,27 +237,27 @@ export class Download {
         cacheInfo = cacheInfo || this.cacheInfo
         const promise = this.fetch(cacheInfo)
         this.promise = promise
-        const downloadResult = await promise
+        var value
+        try {
+            value = await promise
+        } catch (e) {
+            if (isNetworkError(e)) {
+                this.downloadError(e.message)
+                return
+            }
+            throw e
+        }
 
         if (timestamp < this.timestamp) {
             // Result from an out-of-date download -- do not use
             return
         }
 
-        transaction(() => {
-            // Update state
-            if (downloadResult.state === 'Finished') {
-                /* NOTE: Do not use downloadFinished(), as it sets 'lastValue',
-                         and the downloaded value may indicate an error that
-                         could result in downloadError() being called instead.
-                */
-                this._finishDownload(downloadResult.value)
-            } else if (downloadResult.state === 'Error') {
-                this.downloadError(downloadResult.message)
-            } else {
-                throw Error(`Invalid download state: ${downloadResult.state}`)
-            }
-        })
+        /* NOTE: Do not use downloadFinished(), as it sets 'lastValue',
+                 and the downloaded value may indicate an error that
+                 could result in downloadError() being called instead.
+        */
+        this._finishDownload(value)
     }
 
     fetch = () : Promise<T> => {
@@ -711,17 +587,6 @@ export class FeedStreamDownload extends FeedDownload {
     }
 }
 
-// export class FeedMutation extends FeedDownload {
-//     cacheInfo = config.noCache
-//     refreshCacheInfo = config.noCache
-//     restoreAfterRestart = true
-//     autoDownload = false
-//
-//     @computed get cacheKey() {
-//         return 'DO_NOT_CACHE'
-//     }
-// }
-
 export const latest = (d1, d2) => {
     if (d1.state !== 'Finished' || !d1.timestamp)
         return d2
@@ -990,29 +855,23 @@ const fetchWithTimeouts = async ({
     const expiredCallback = () => _fetchNow(timeoutInfo.expiredTimeout)
 
     var result
-    try {
-        if (cacheInfo && (cacheInfo.noCache || cacheInfo.getFromCache === false)) {
-            result = await refreshCallback()
-            if (!cacheInfo.noCache) {
-                /* TODO: Make sure getFromCache is set by all callers */
-                cache.set(key, result, cacheInfo)
-            }
-        } else {
-            const cachedValue = await cache.get(key, refreshCallback, null, cacheInfo)
-            if (cachedValue.fromCache && !acceptValueFromCache(cachedValue.value)) {
-                /* Do not accept value from cache (e.g. due to incomplete/erroroneous download */
-                result = await refreshCallback()
-                cache.set(key, result, cacheInfo)
-            } else {
-                result = cachedValue.value
-            }
+    if (cacheInfo && (cacheInfo.noCache || cacheInfo.getFromCache === false)) {
+        result = await refreshCallback()
+        if (!cacheInfo.noCache) {
+            /* TODO: Make sure getFromCache is set by all callers */
+            cache.set(key, result, cacheInfo)
         }
-        return emptyResult().downloadFinished(result)
-    } catch (e) {
-        if (isNetworkError(e))
-            return emptyResult().downloadError(e.message)
-        throw e
+    } else {
+        const cachedValue = await cache.get(key, refreshCallback, null, cacheInfo)
+        if (cachedValue.fromCache && !acceptValueFromCache(cachedValue.value)) {
+            /* Do not accept value from cache (e.g. due to incomplete/erroroneous download */
+            result = await refreshCallback()
+            cache.set(key, result, cacheInfo)
+        } else {
+            result = cachedValue.value
+        }
     }
+    return result
 }
 
 export const simpleFetch = async /*<T>*/(
