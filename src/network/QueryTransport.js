@@ -129,10 +129,7 @@ export class QueryTransport {
         if (feedParams.onStart)
             feedParams.onStart()
         if (this.connected) {
-            // log("SENDING MESSAGE...", request.messageID, request.query)
             this.send(request)
-        } else {
-            // log("NOT CONNECTED! WILL SEND LATER...", request.messageID)
         }
     }
 

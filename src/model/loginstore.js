@@ -275,4 +275,5 @@ const periodicallyRefreshToken = async () => {
         )
     }
     setTimeout(periodicallyRefreshToken, 10000)
+    // log(loginStore.profile)
 }

@@ -52,6 +52,7 @@ yarn add \
     react-native-slider \
     react-native-swiper \
     react-native-vector-icons \
+    recursive-diff \
     shortid
 
 echo "Now run 'react-native upgrade' and 'react-native link'"

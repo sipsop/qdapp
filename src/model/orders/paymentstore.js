@@ -19,7 +19,7 @@ export type CardState = {
     cards:              Array<Card>,
 }
 
-const { log, assert } = _.utils('Payment/PaymentStore.sj')
+const { log, assert } = _.utils('Payment/PaymentStore.js')
 
 class PaymentStore {
     @observable cards               : Array<Card> = []
