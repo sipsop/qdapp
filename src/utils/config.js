@@ -32,6 +32,7 @@ const pinkPalette = {
     light:  pink300,
     medium: pink500,
     dark:   pink700,
+    getMedium: (a) => `rgba(233, 30, 99, ${a})`,
 }
 
 const purplePalette = {

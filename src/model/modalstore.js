@@ -4,7 +4,9 @@ import { messageStore } from './messagestore'
 
 class ModalStore {
     @observable showOpeningTimesModal = false
-    @observable showDeliveryModal = false
+    @observable showDeliveryModal     = false
+    @observable showOrderModal        = false
+    @observable showCheckoutModal     = false
 
     initialize = () => {
     }
@@ -37,10 +39,21 @@ class ModalStore {
         this.showDeliveryModal = false
     }
 
-    @computed get getModalStatus () {
-        return this.showOpeningTimesModal
+    @action openOrderModal = () => {
+        this.showOrderModal = true
     }
 
+    @action closeOrderModal = () => {
+        this.showOrderModal = false
+    }
+
+    @action openCheckoutModal = () => {
+        this.showCheckoutModal = true
+    }
+
+    @action closeCheckoutModal = () => {
+        this.showCheckoutModal = false
+    }
 }
 
 export const modalStore = new ModalStore()

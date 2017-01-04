@@ -138,7 +138,6 @@ class OrderStore {
     @observable pickupLocation : String = null
     // Keep this so that we can update the % independently of the price in the UI
 
-    @observable _checkoutVisible = false
     @observable activeOrderID : ?ID = null
     @observable orderID = null
 
@@ -502,10 +501,6 @@ class OrderStore {
             return !!this.defaultPickupLocation
     }
 
-    @computed get checkoutVisible() {
-        return this._checkoutVisible // && this.haveDeliveryMethod
-    }
-
     @action setDelivery = (delivery) => {
         this.delivery = delivery
     }
@@ -533,10 +528,6 @@ class OrderStore {
         const total = this.total
         this.tipFactor = amount / total
         this.tipAmount = Math.ceil(amount)
-    }
-
-    @action setCheckoutVisibility = (visible : Bool) => {
-        this._checkoutVisible = visible
     }
 
     /*********************************************************************/

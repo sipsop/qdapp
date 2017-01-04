@@ -9,7 +9,7 @@ import { RemoveCardButton } from './RemoveCardButton'
 import { getCreditCardIcon } from './CreditCardInfo'
 import * as _ from '/utils/curry'
 
-const { log, assert } = _.utils('./Checkout')
+const { log, assert } = _.utils('/components/payment/CreditCard')
 
 @observer
 export class CreditCard extends PureComponent {

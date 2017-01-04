@@ -118,13 +118,10 @@ export class OrderList extends PureComponent {
     render = () => {
         const orderListDesc = new OrderListDescriptor(
             this.props,
-            () => store.orderListScrollView,
+            () => this.simpleListView,
         )
         return <SimpleListView
-                    /* TODO: This should probably move to MenuPage! */
-                    ref={(ref) => {
-                        store.orderListScrollView = ref
-                    }}
+                    ref={ref => this.simpleListView = ref}
                     descriptor={orderListDesc}
                     /* NOTE:
                         This does not give enough space to trigger

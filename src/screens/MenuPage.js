@@ -17,6 +17,7 @@ import { observer } from 'mobx-react/native'
 // import Modal from 'react-native-modalbox'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import EvilIcon from 'react-native-vector-icons/EvilIcons'
+import ActionButton from 'react-native-action-button'
 
 import { downloadManager } from '/network/http'
 import { DownloadResultView } from '/components/download/DownloadResultView'
@@ -25,7 +26,7 @@ import { LargeButton } from '/components/Button'
 import { TagView } from '/components/TagView'
 import { SearchBar } from '/components/search/SearchBar'
 
-import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, SearchStore } from '/model/store'
+import { store, tabStore, barStore, barStatusStore, tagStore, orderStore, modalStore, SearchStore } from '/model/store'
 import { config } from '/utils/config'
 import * as _ from '/utils/curry'
 
@@ -133,6 +134,14 @@ class MenuList extends PureComponent {
     }
 }
 
+const cartIcon = (
+    <Icon
+        name="shopping-cart"
+        size={30}
+        color="#fff"
+        />
+)
+
 @observer
 class ReviewButton extends PureComponent {
     /* properties:
@@ -142,15 +151,28 @@ class ReviewButton extends PureComponent {
         return orderStore.menuItemsOnOrder.length > 0
     }
 
+    reviewOrder = () => {
+        // tabStore.setCurrentTab(3)
+        modalStore.openOrderModal()
+    }
+
     render = () => {
         if (!this.reviewButtonVisible)
-            return <View />
+            return null
+
+        return (
+            <ActionButton
+                // buttonColor="rgba(0, 0, 0, 0.5)"
+                buttonColor={config.theme.primary.getMedium(0.7)}
+                onPress={this.reviewOrder}
+                offsetY={0}
+                icon={cartIcon}
+                />
+        )
 
         return <LargeButton
                     label={`Review`}
-                    onPress={() => {
-                        tabStore.setCurrentTab(3)
-                    }}
+                    onPress={this.reviewOrder}
                     style={{margin: 5, height: rowHeight}}
                     /*
                     prominent={false}

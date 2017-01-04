@@ -13,7 +13,7 @@ import { SimpleListView, themedRefreshControl } from '../SimpleListView'
 import { OkCancelModal, SmallOkCancelModal } from '../Modals'
 import { Selector, SelectorItem } from '../Selector'
 import { Header, HeaderText, TextHeader } from '../Header'
-import { barStore, orderStore, loginStore } from '/model/store'
+import { barStore, orderStore, loginStore, modalStore } from '/model/store'
 import { DownloadResultView } from '../download/DownloadResultView'
 import { CreditCard } from './CreditCard'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
@@ -29,7 +29,7 @@ import { TipComponent, TipRoundButton } from './Tips'
 
 import type { String, Int } from '../Types'
 
-const { log, assert } = _.utils('/components/payment/Checkout')
+const { log, assert } = _.utils('/components/payment/CheckoutModal')
 
 const styles = StyleSheet.create({
     cardInfo: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 })
 
 @observer
-export class Checkout extends DownloadResultView {
+export class CheckoutModal extends DownloadResultView {
     /* properties:
     */
 
@@ -74,7 +74,7 @@ export class Checkout extends DownloadResultView {
     }
 
     close = () => {
-        orderStore.setCheckoutVisibility(false)
+        modalStore.closeCheckoutModal()
     }
 
     cancel = () => {
@@ -91,10 +91,10 @@ export class Checkout extends DownloadResultView {
     }
 
     render = () => {
-        if (!orderStore.checkoutVisible)
+        if (!modalStore.showCheckoutModal)
             null
         return <OkCancelModal
-                    visible={orderStore.checkoutVisible}
+                    visible={modalStore.showCheckoutModal}
                     showOkButton={this.haveCardNumber}
                     showCancelButton={false}
                     cancelModal={this.close}

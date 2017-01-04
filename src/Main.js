@@ -13,7 +13,7 @@ import { observer } from 'mobx-react/native'
 import { DiscoverPage } from './screens//DiscoverPage'
 import { BarPage } from './screens/BarPage'
 import { MenuPage } from './screens/MenuPage'
-import { OrderPage } from './screens/OrderPage'
+import { BarOrderPage } from '/components/admin/orders/BarOrderPage'
 
 import { handleBackButton } from './components/AndroidBackButton'
 import { SideMenu } from './components/sidemenu/SideMenu'
@@ -21,11 +21,12 @@ import { ControlPanel } from './components/sidemenu/ControlPanel'
 import { MainTabView } from './components/tabs/MainTabView'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
-import { Checkout } from '/components/payment/Checkout'
+import { OrderModal } from '/components/orders/OrderModal'
+import { CheckoutModal } from '/components/payment/CheckoutModal'
 import { PlaceOrderModal } from '/components/orders/PlaceOrder'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
 
-import { store, barStore, tabStore } from './model/store'
+import { store, barStore, tabStore, loginStore } from './model/store'
 import * as _ from './utils/curry'
 
 const { log, assert } = _.utils('/Main')
@@ -41,7 +42,10 @@ const styles = {
     searchIcon: {
         width: 30,
         height: 30
-    }
+    },
+    page: {
+        flex: 1,
+    },
 }
 
 @observer
@@ -66,31 +70,35 @@ export class Main extends Component {
             return <DiscoverPage />
         }
         return (
-            <View style={{flex: 1}}>
+            <View style={styles.page}>
                 <ConnectionBar />
                 { this.barSelected ?
                     <SideMenu content={<ControlPanel />}>
                         <NotificationBar />
                         <View style={{flex: 1, flexDirection: 'row'}}>
-                            <Checkout />
+                            <OrderModal />
+                            <CheckoutModal />
                             <PlaceOrderModal />
                             <MainTabView>
-                                <View tabLabel='Discover' style={{flex: 1}}>
+                                <View tabLabel='Discover' style={styles.page}>
                                     <DiscoverPage />
                                 </View>
-                                <View tabLabel='Bar' style={{flex: 1}}>
+                                <View tabLabel='Bar' style={styles.page}>
                                     <BarPage />
                                 </View>
-                                <View tabLabel='Menu' style={{flex: 1}}>
+                                <View tabLabel='Menu' style={styles.page}>
                                     <MenuPage />
                                 </View>
-                                <View tabLabel='Order' style={{flex: 1}}>
-                                    <OrderPage />
-                                </View>
+                                {
+                                    loginStore.isCurrentBarOwner &&
+                                        <View tabLabel='Orders' style={styles.page}>
+                                            <BarOrderPage />
+                                        </View>
+                                }
                             </MainTabView>
                         </View>
                     </SideMenu> :
-                    <View style={{flex: 1}}>
+                    <View style={styles.page}>
                         <NotificationBar />
                         <DiscoverPage />
                     </View>
