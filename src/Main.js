@@ -21,6 +21,7 @@ import { ControlPanel } from './components/sidemenu/ControlPanel'
 import { MainTabView } from './components/tabs/MainTabView'
 import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
+import { MenuItemModal } from '/components/menu/MenuItemModal'
 import { OrderModal } from '/components/orders/OrderModal'
 import { CheckoutModal } from '/components/payment/CheckoutModal'
 import { PlaceOrderModal } from '/components/orders/PlaceOrder'
@@ -76,6 +77,7 @@ export class Main extends Component {
                     <SideMenu content={<ControlPanel />}>
                         <NotificationBar />
                         <View style={{flex: 1, flexDirection: 'row'}}>
+                            <MenuItemModal />
                             <OrderModal />
                             <CheckoutModal />
                             <PlaceOrderModal />

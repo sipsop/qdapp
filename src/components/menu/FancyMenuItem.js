@@ -21,10 +21,10 @@ import { FavItemContainer } from '../Fav.js'
 import { createOrderItem, orderStore } from '/model/orders/orderstore.js'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
-import { tagStore } from '/model/store.js'
+import { tagStore, menuItemModalStore } from '/model/store.js'
 import { analytics } from '/model/analytics.js'
 
-const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
+const { log, assert } = _.utils('/components/menu/FancyMenuItem.js')
 
 @observer
 export class FancyMenuItem extends PureComponent {
@@ -38,9 +38,6 @@ export class FancyMenuItem extends PureComponent {
             scroll vertically relative to the current scroll position
     */
 
-    @observable showModalFor : ?OrderItem = null
-    tracked = false
-
     static defaultProps = {
         showTitle: true,
         showPrice: true,
@@ -48,14 +45,11 @@ export class FancyMenuItem extends PureComponent {
     }
 
     @action showModal = () => {
-        const orderItem = createOrderItem(this.props.menuItem)
-        this.props.orderStore.addOrderItem(orderItem)
-        this.showModalFor = orderItem
+        menuItemModalStore.open({menuItem: this.props.menuItem, type: 'Add'})
         analytics.trackMenuItemClicked(this.props.menuItem, this.props.rowNumber)
     }
 
     @action modalClosed = (scrollDown) => {
-        this.showModalFor = null
         /* The first time scroll down more as we have added a 'Review' button
            that takes up some additional space.
         */
@@ -79,22 +73,10 @@ export class FancyMenuItem extends PureComponent {
         },
     })
 
-    componentDidMount = () => {
-        /* TODO: Is this guard necessary? */
-        if (!this.tracked) {
-            // analytics.trackScrollMenu(this.props.rowNumber)
-            // analytics.trackMenuItemViewed(this.props.menuItem, this.props.rowNumber)
-            this.tracked = true
-        }
-    }
-
     render = () => {
         const menuItem = this.props.menuItem
         const isEven = this.props.rowNumber % 2 === 0
         const backgroundColor = '#fff'
-            // isEven
-            //     ? '#fff'
-            //     : config.theme.menuItemBackgroundColor
         const marginBottom = this.haveOrderItems ? 0 : 0
 
         return <View style={this.props.style}>
@@ -113,8 +95,6 @@ export class FancyMenuItem extends PureComponent {
                 </TouchableOpacity>
                 <MenuItemOrderList
                     menuItem={menuItem}
-                    showModalFor={this.showModalFor}
-                    onModalClose={this.modalClosed}
                     orderStore={this.props.orderStore}
                     />
             </View>

@@ -13,6 +13,7 @@ import { barStatusStore } from './barstatusstore'
 import { loginStore } from './loginstore'
 import { tagStore } from './tagstore'
 import { mapStore } from './mapstore'
+import { menuItemModalStore } from './menuitemmodalstore'
 import { orderStore } from './orders/orderstore'
 import { paymentStore } from './orders/paymentstore'
 import { historyStore } from './historystore'
@@ -208,6 +209,7 @@ export {
     loginStore,
     tagStore,
     mapStore,
+    menuItemModalStore,
     orderStore,
     paymentStore,
     historyStore,

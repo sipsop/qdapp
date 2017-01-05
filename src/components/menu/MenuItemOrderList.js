@@ -15,16 +15,13 @@ import {
 import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
-import { MenuItemCard } from './MenuItemCard.js'
-import { LazyComponent, lazyWrap } from '../LazyComponent.js'
-import { PickerCollection, PickerItem } from '../Pickers.js'
-import { store, orderStore } from '/model/store.js'
+import { store, orderStore, menuItemModalStore } from '/model/store.js'
 import { analytics } from '/model/analytics.js'
-import { getMenuItemImage } from './MenuItemImage.js'
+import { TextButton } from '../Button.js'
 import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 
-const { log, assert } = _.utils('./menu/MenuItemOrderList.js')
+const { log, assert } = _.utils('/components/menu/MenuItemOrderList.js')
 
 @observer
 export class MenuItemOrderList extends PureComponent {
@@ -32,7 +29,6 @@ export class MenuItemOrderList extends PureComponent {
 
     Render the order selection, e.g. "1x pint + shandy"
         menuItem: MenuItem
-        showModalFor: ?OrderItem
             order item that we should show a modal for (just once)
         onModalClose: () => void
         orderStore: OrderStore
@@ -65,36 +61,32 @@ export class MenuItemOrderList extends PureComponent {
 
     render = () => {
         if (!this.orderItems.length)
-            return <View />
+            return null
 
-        return <View style={this.styles.view}>
-            <View style={this.styles.row}>
-                <View style={this.styles.orderItem}>
-                    {
-                        this.orderItems.map(this.renderOrderItem)
-                    }
+        return (
+            <View style={this.styles.view}>
+                <View style={this.styles.row}>
+                    <View style={this.styles.orderItem}>
+                        {
+                            this.orderItems.map(this.renderOrderItem)
+                        }
+                    </View>
+                    <PriceColumn
+                        orderItems={this.orderItems}
+                        orderStore={this.props.orderStore}
+                        />
                 </View>
-                <PriceColumn
-                    orderItems={this.orderItems}
-                    orderStore={this.props.orderStore}
-                    />
             </View>
-        </View>
+        )
     }
 
     renderOrderItem = (orderItem : OrderItem, i : Int) : Component => {
-        const showModal = this.props.showModalFor
-            ? orderItem.id === this.props.showModalFor.id
-            : false
-
         return <OrderSelection
                     key={orderItem.id}
                     rowNumber={i}
                     menuItem={this.props.menuItem}
                     orderStore={this.props.orderStore}
-                    orderItem={orderItem}
-                    showModal={showModal}
-                    onModalClose={this.props.onModalClose} />
+                    orderItem={orderItem} />
     }
 }
 
@@ -158,7 +150,7 @@ const styles = {
 }
 
 const N = 50
-const rowHeight = 55
+const rowHeight = 50
 const buttonHeight = 45
 const iconBoxSize = 60
 const iconSize = iconBoxSize
@@ -176,41 +168,6 @@ export class OrderSelection extends PureComponent {
 
     get orderItem() {
         return this.props.orderItem
-    }
-
-    @computed get amountPickerItem() {
-        // log("recomputing amountPickerItem", this.props.rowNumber)
-        const subTotal = this.props.orderStore.getSubTotal(this.orderItem) || 0.0
-        const numbers = _.range(N+1)
-        return new PickerItem(
-            "Number of Drinks:",
-            numbers.map(i => "" + i),
-            numbers.map(i => this.makeAbsPrice(i * subTotal)),
-            -1,                             /* defaultOption */
-            [this.orderItem.amount],             /* selection */
-            'Single',                       /* optionType */
-        )
-    }
-
-    @computed get optionPickerItems() {
-        // log("recomputing optionPickerItems", this.props.rowNumber)
-        const menuItem = this.props.menuItem
-        return menuItem.options.map((menuItemOption, i) => {
-            /* Use the name of the menu item for the first option (e.g. 'Guiness') */
-            const name = i === 0 ? menuItem.name : menuItemOption.name
-            const selectedOptions = this.orderItem.selectedOptions[i]
-            const selectedIntOptions = selectedOptions.map(
-                stringOption => _.find(menuItemOption.optionList, stringOption)
-            )
-            return new PickerItem(
-                name,
-                menuItemOption.optionList,
-                menuItemOption.prices,
-                menuItemOption.defaultOption || -1,
-                selectedIntOptions,
-                menuItemOption.optionType,
-            )
-        })
     }
 
     makeAbsPrice = (price) => {
@@ -269,34 +226,6 @@ export class OrderSelection extends PureComponent {
         return this.props.showModal
     }
 
-    /* Render menu image */
-    renderHeader = () => {
-        const menuItem = this.props.menuItem
-        const url = getMenuItemImage(menuItem)
-        // return <View style={{height: 200, backgroundColor: '#000'}} />
-        if (!url)
-            return <View />
-
-        return <LazyComponent style={{height: 200}}>
-            <MenuItemCard
-                key={url}
-                menuItem={menuItem}
-                /* onBack={this.handleClose} */
-                showTitle={false}
-                showHeart={true}
-                showTags={true}
-                imageHeight={200}
-                />
-            {/*
-            <Img
-                key={url}
-                url={url}
-                style={{height: 200}}
-                />
-            */}
-        </LazyComponent>
-    }
-
     render = () => {
         log("re-rendering OrderItem", this.props.rowNumber)
         return <View style={
@@ -308,38 +237,56 @@ export class OrderSelection extends PureComponent {
                     }
                 }   >
             <View style={{flex: 2, height: buttonHeight}}>
-                <PickerCollection
-                    pickerItems={this.optionPickerItems}
-                    onAcceptChanges={this.handleAcceptOptions}
-                    rowNumber={this.props.rowNumber}
-                    showModal={this.showModal}
-                    onFirstAccept={this.handleFirstAccept}
-                    onFirstCancel={this.handleFirstCancel}
-                    okLabel={this.showModal ? 'Add' : 'Change'}
-                    showOkButton={true}
-                    renderHeader={this.renderHeader}
+                <CustomizeButton
+                    menuItem={this.props.menuItem}
+                    orderItem={this.props.orderItem}
                     />
             </View>
             <TouchableOpacity onPress={this.handleDecrease} style={{flex: 0, height: iconBoxSize, width: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}>
-                {/*<Icon name="minus-circle" size={iconSize} color="#900" />*/}
                 <EvilIcon name="minus" size={iconSize} color={config.theme.removeColor} />
             </TouchableOpacity>
-            <View style={{flex: 1, height: buttonHeight}}>
-                <PickerCollection
-                    pickerItems={[this.amountPickerItem]}
-                    onAcceptChanges={this.handleAcceptAmountChanges}
-                    rowNumber={this.props.rowNumber}
-                    useListView={true}
-                    showOkButton={false}
-                    />
-            </View>
+            <T style={{fontSize: 18, color: '#000', minWidth: 25, textAlign: 'center'}}>{this.orderItem.amount}</T>
             <TouchableOpacity
                     onPress={this.handleIncrease}
                     style={{flex: 0, width: iconBoxSize, height: iconBoxSize, justifyContent: 'center', alignItems: 'center'}}
                     >
-                {/*<Icon name="plus-circle" size={iconSize} color="rgb(51, 162, 37)" />*/}
                 <EvilIcon name="plus" size={iconSize} color={config.theme.addColor} />
             </TouchableOpacity>
          </View>
+    }
+}
+
+@observer
+class CustomizeButton extends PureComponent {
+    /* properties:
+        menuItem: MenuItem
+        orderItem: OrderItem
+    */
+
+    @computed get label() {
+        return _.flatten(this.props.orderItem.selectedOptions)
+    }
+
+    @action customize = () => {
+        menuItemModalStore.open({
+            menuItem:  this.props.menuItem,
+            orderItem: this.props.orderItem,
+            type:      'Change',
+        })
+    }
+
+    render = () => {
+        return (
+            <TextButton
+                label={this.label}
+                fontSize={16}
+                onPress={this.customize}
+                style={{flex: 1}}
+                alignLeft={true}
+                // borderColor={color}
+                textColor='#000'
+                prominent={false}
+                />
+        )
     }
 }

@@ -3,7 +3,6 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { Page } from '../Page'
-import { MenuItem } from '../menu/DetailedMenuItem'
 import { MenuItemImage } from '../menu/MenuItemImage'
 import { Header, HeaderText } from '../Header'
 

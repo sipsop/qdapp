@@ -21,7 +21,7 @@ import * as _ from '/utils/curry.js'
 import { config } from '/utils/config.js'
 import { tagStore } from '/model/store.js'
 
-const { log, assert } = _.utils('./menu/DetailedMenuItem.js')
+const { log, assert } = _.utils('/components/menu/MenuItemCard.js')
 
 @observer
 export class MenuItemCard extends PureComponent {
