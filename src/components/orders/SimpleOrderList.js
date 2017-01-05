@@ -107,6 +107,9 @@ const styles = StyleSheet.create({
     },
 })
 
+/* Order list used for the receipt and admin views.
+   In the simple order list the menu item options can no longer be modified.
+*/
 @observer
 export class SimpleOrderList extends PureComponent {
     /* properties:

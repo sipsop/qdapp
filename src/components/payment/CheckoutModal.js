@@ -73,8 +73,9 @@ export class CheckoutModal extends DownloadResultView {
         )
     }
 
-    close = () => {
+    @action close = () => {
         modalStore.closeCheckoutModal()
+        modalStore.openOrderModal()
     }
 
     cancel = () => {

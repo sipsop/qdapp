@@ -178,24 +178,6 @@ class MenuItemFooter extends PureComponent {
                             />
                 }
             </View>
-            {/*
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
-                    <T style={this.textStyles.tagText}>
-                        {
-                            menuItem.tags
-                                .filter(tagStore.tagIsDefined)
-                                .map(tagStore.getTagName)
-                                .join(' ')
-                        }
-                    </T>
-                    <T style={this.textStyles.infoText} numberOfLines={3}>
-                        {menuItem.desc}
-                    </T>
-                </View>
-                <FavItemContainer menuItemID={this.props.menuItem.id} style={this.styles.favIcon} iconSize={45} />
-            </View>
-            */}
         </View>
     }
 }
