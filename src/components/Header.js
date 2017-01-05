@@ -1,15 +1,8 @@
 import { React, Component, PureComponent, View, T, StyleSheet } from '/components/Component'
+import { computed } from 'mobx'
 import { observer } from 'mobx-react/native'
+import { BackButton } from './BackButton'
 import { config } from '/utils/config'
-
-const styles = StyleSheet.create({
-    header: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingLeft: 5,
-        paddingRight: 5,
-    },
-})
 
 @observer
 export class Header extends PureComponent {
@@ -17,6 +10,7 @@ export class Header extends PureComponent {
         children: [Component]
         primary: bool
         style
+        onBack: ?() => void
     */
 
     static defaultProps = {
@@ -25,18 +19,39 @@ export class Header extends PureComponent {
         style: {},
     }
 
-    render = () => {
+    @computed get styles() {
         const backgroundColor =
             this.props.primary
                 ? config.theme.primary.medium
                 : config.theme.primary.dark
 
-        const style = {
-            backgroundColor: backgroundColor,
-            height: this.props.rowHeight,
-        }
+        return StyleSheet.create({
+            header: {
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingLeft: 5,
+                paddingRight: 5,
+                backgroundColor: backgroundColor,
+                height: this.props.rowHeight,
+            },
+            backButton: {
+                position: 'absolute',
+                // top:      Math.floor((this.props.rowHeight - 30) / 2),
+                left:     5,
+            },
+        })
+    }
+
+    render = () => {
         return (
-            <View style={[styles.header, style, this.props.style]}>
+            <View style={[this.styles.header, this.props.style]}>
+                {
+                    this.props.onBack &&
+                        <View style={this.styles.backButton}>
+                            <BackButton onBack={this.props.onBack} />
+                        </View>
+                }
                 {this.props.children}
             </View>
         )
@@ -50,6 +65,7 @@ export class TextHeader extends PureComponent {
         rowHeight: ?Int
         primary:   ?Bool
         fontColor: ?String
+        onBack:    ?() => void
     */
 
     static defaultProps = {

@@ -49,17 +49,17 @@ export class FancyMenuItem extends PureComponent {
         analytics.trackMenuItemClicked(this.props.menuItem, this.props.rowNumber)
     }
 
-    @action modalClosed = (scrollDown) => {
-        /* The first time scroll down more as we have added a 'Review' button
-           that takes up some additional space.
-        */
-        const scrollPixels =
-            this.props.orderStore.orderList.length === 1
-                ? 125
-                : 60
-        if (scrollDown)
-            this.props.scrollRelative(scrollPixels)
-    }
+    // @action modalClosed = (scrollDown) => {
+    //     /* The first time scroll down more as we have added a 'Review' button
+    //        that takes up some additional space.
+    //     */
+    //     const scrollPixels =
+    //         this.props.orderStore.orderList.length === 1
+    //             ? 125
+    //             : 60
+    //     if (scrollDown)
+    //         this.props.scrollRelative(scrollPixels)
+    // }
 
     @computed get haveOrderItems() : Array<OrderItem> {
         return this.props.orderStore.getOrderList(this.props.menuItem.id).length > 0

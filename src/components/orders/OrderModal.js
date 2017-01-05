@@ -40,28 +40,6 @@ const { width } = Dimensions.get('window')
 
 @observer
 export class OrderModal extends PureComponent {
-    // styles = {
-    //     deliveryMethodView: {
-    //         // position: 'absolute',
-    //         width: width - 10,
-    //         // top: 5,
-    //         // left: 5,
-    //     },
-    //     deliveryMethod: {
-    //         backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    //         // borderRadius: 10,
-    //         // height: 120,
-    //         margin: 5,
-    //         padding: 10,
-    //         borderWidth: 0.5,
-    //         // borderColor: config.theme.primary.medium,
-    //         borderColor: '#000',
-    //     },
-    //     emptyView: {
-    //         width: 1,
-    //         height: 125,
-    //     },
-    // }
 
     @action handleOrderPress = () => {
         orderStore.freshCheckoutID()
@@ -93,24 +71,19 @@ class OrderReviewList extends PureComponent {
     @computed get descriptor() {
         return new OrderListDescriptor(
             {
-                // renderHeader: () => {
-                //     return (
-                //         <View>
-                //             <DeliveryMethod
-                //                 style={this.styles.deliveryMethod}
-                //                 primary={true}
-                //                 />
-                //         </View>
-                //     )
-                // },
-                // renderFooter:   () => <DeliveryMethod primary={false} />,
                 renderHeader:   () => {
                     return (
                         <View>
                             <ConnectionBar />
+                            <TextHeader
+                                label="Review Order"
+                                onBack={modalStore.closeOrderModal}
+                                />
+                            {/*
                             <CurrentBarPhoto
                                 onBack={modalStore.closeOrderModal}
                                 />
+                            */}
                         </View>
                     )
                 },

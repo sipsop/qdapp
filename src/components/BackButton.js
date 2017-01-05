@@ -19,13 +19,14 @@ export class BackButton extends PureComponent {
         buttonStyle: style object
     */
     static defaultProps = {
-        color: '#fff',
+        color:    '#fff',
         iconSize: 30,
+        enabled:  true,
     }
 
     render = () => {
         if (!this.props.enabled) {
-            return <View />
+            return null
         }
         return (
             <TouchableOpacity
