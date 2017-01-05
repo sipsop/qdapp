@@ -266,4 +266,16 @@ export const getBarOpenTime = (bar : Bar) : ?OpeningTime => {
     return bar.openingTimes[timeStore.today]
 }
 
+export const getMenuItemCategory = (menuItem : MenuItem) => {
+    const categories = [
+        '#beer', '#wine', '#spirits', '#cocktails', '#water', '#snacks', '#food',
+    ]
+    for (var i = 0; i < categories.length; i++) {
+        if (_.includes(menuItem.tags, categories[i])) {
+            return categories[i]
+        }
+    }
+    return null
+}
+
 export const barStore = new BarStore()

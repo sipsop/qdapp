@@ -29,10 +29,12 @@ const grey = t => `rgba(0, 0, 0, ${t})`
 const menuItemBackgroundColor = grey(0.03)
 
 const pinkPalette = {
-    light:  pink300,
-    medium: pink500,
-    dark:   pink700,
-    getMedium: (a) => `rgba(233, 30, 99, ${a})`,
+    light:      pink300,
+    medium:     pink500,
+    dark:       pink700,
+    getLight:   (a) => `rgba(240, 98, 146, ${a})`,
+    getMedium:  (a) => `rgba(233, 30, 99,  ${a})`,
+    getDark:    (a) => `rgba(194, 24, 91,  ${a})`,
 }
 
 const purplePalette = {
