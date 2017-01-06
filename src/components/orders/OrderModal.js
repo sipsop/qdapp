@@ -70,6 +70,7 @@ class TextOrderListDescriptor extends Descriptor {
                 rowNumber={i}
                 menuItem={menuItem}
                 orderStore={orderStore}
+                showPrice={false}
                 />
         )
     }
