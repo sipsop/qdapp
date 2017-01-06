@@ -13,7 +13,7 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 import LinearGradient from 'react-native-linear-gradient'
 
-import { MenuItemImage, getMenuItemImage } from './MenuItemImage.js'
+import { getMenuItemImage } from './MenuItemImage.js'
 import { BackButton } from '../BackButton.js'
 import { Price } from '../Price.js'
 import { FavItemContainer } from '../Fav.js'

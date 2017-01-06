@@ -77,8 +77,8 @@ export class TextMenuItem extends PureComponent {
         const isEven = this.props.rowNumber % 2 === 0
         const buttonStyle =
             isEven
-                ? { backgroundColor: config.theme.primary.getMedium(0.9) }
-                : { backgroundColor: config.theme.primary.getDark(0.9) }
+                ? { backgroundColor: config.theme.primary.getMedium(0.8) }
+                : { backgroundColor: config.theme.primary.getDark(0.8) }
 
         return (
             <View style={styles.textMenuItem}>

@@ -13,7 +13,6 @@ import { observable, computed, transaction, autorun, action } from 'mobx'
 import { observer } from 'mobx-react/native'
 
 import { MenuItemOrderList } from './MenuItemOrderList.js'
-import { MenuItemImage, getMenuItemImage } from './MenuItemImage.js'
 import { MenuItemCard } from './MenuItemCard.js'
 import { BackButton } from '../BackButton.js'
 import { FavItemContainer } from '../Fav.js'
