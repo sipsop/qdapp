@@ -260,7 +260,7 @@ class TestConfiguration extends PureComponent {
             <View style={styles.testConfiguration}>
                 <LargeButton
                     label={`Test Configuration`}
-                    onPress={modalStore.openDeliveryModal}
+                    onPress={modalStore.openConfirmDeliveryModal}
                     style={styles.testButtonStyle}
                     prominent={false}
                     textColor={config.theme.primary.medium}

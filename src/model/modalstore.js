@@ -3,10 +3,11 @@ import { drawerStore } from './drawerstore'
 import { messageStore } from './messagestore'
 
 class ModalStore {
-    @observable showOpeningTimesModal = false
-    @observable showDeliveryModal     = false
-    @observable showOrderModal        = false
-    @observable showCheckoutModal     = false
+    @observable showOpeningTimesModal    = false
+    @observable showOrderModal           = false
+    @observable showConfirmDeliveryModal = false
+    @observable showDeliveryModal        = false
+    @observable showCheckoutModal        = false
 
     initialize = () => {
     }
@@ -31,20 +32,28 @@ class ModalStore {
         this.showOpeningTimesModal = false
     }
 
-    @action openDeliveryModal = () => {
-        this.showDeliveryModal = true
-    }
-
-    @action closeDeliveryModal = () => {
-        this.showDeliveryModal = false
-    }
-
     @action openOrderModal = () => {
         this.showOrderModal = true
     }
 
     @action closeOrderModal = () => {
         this.showOrderModal = false
+    }
+
+    @action openConfirmDeliveryModal = () => {
+        this.showConfirmDeliveryModal = true
+    }
+
+    @action closeConfirmDeliveryModal = () => {
+        this.showConfirmDeliveryModal = false
+    }
+
+    @action openDeliveryModal = () => {
+        this.showDeliveryModal = true
+    }
+
+    @action closeDeliveryModal = () => {
+        this.showDeliveryModal = false
     }
 
     @action openCheckoutModal = () => {

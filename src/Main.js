@@ -23,6 +23,7 @@ import { Loader } from './components/Page'
 import { NotificationBar } from './components/notification/NotificationBar'
 import { MenuItemModal } from '/components/menu/MenuItemModal'
 import { OrderModal } from '/components/orders/OrderModal'
+import { DeliveryModal } from '/components/orders/DeliveryModal'
 import { CheckoutModal } from '/components/payment/CheckoutModal'
 import { PlaceOrderModal } from '/components/orders/PlaceOrder'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
@@ -79,6 +80,7 @@ export class Main extends Component {
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <MenuItemModal />
                             <OrderModal />
+                            <DeliveryModal />
                             <CheckoutModal />
                             <PlaceOrderModal />
                             <MainTabView>

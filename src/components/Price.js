@@ -12,6 +12,8 @@ export class Price extends PureComponent {
     */
     render = () => {
         const price = this.props.price
+        if (!price)
+            return null
         /* TODO: Move formatPrice into this module */
         const priceText = orderStore.formatPrice(price.price, price.currency)
         let prefix = ""

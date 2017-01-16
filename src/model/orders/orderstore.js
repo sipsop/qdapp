@@ -248,7 +248,7 @@ class OrderStore {
                     this.orderList.length > 0
                 ) {
                 this.confirmDeliveryMethod()
-                modalStore.openDeliveryModal()
+                modalStore.openConfirmDeliveryModal()
             }
         })
     }

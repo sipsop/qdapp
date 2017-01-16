@@ -27,8 +27,8 @@ export class App extends PureComponent {
                     />
                 <MessagePopup />
                 <ConfirmDeliveryModal
-                    isVisible={() => modalStore.showDeliveryModal}
-                    onClose={modalStore.closeDeliveryModal}
+                    isVisible={() => modalStore.showConfirmDeliveryModal}
+                    onClose={modalStore.closeConfirmDeliveryModal}
                     />
             </MainApp>
         )

@@ -17,7 +17,7 @@ import { observer } from 'mobx-react/native'
 import { SimpleListView, Descriptor } from '/components/SimpleListView'
 import { TextHeader } from '/components/Header'
 import { TextMenuItem } from '../menu/TextMenuItem'
-// import { OrderListDescriptor } from '/components/orders/OrderList'
+// import { DeliveryMethod } from './DeliveryMethod'
 import { OkCancelModal } from '/components/Modals'
 import { ConnectionBar } from '/components/notification/ConnectionBar'
 // import { CurrentBarPhoto } from '../bar/CurrentBarPhoto'
@@ -34,7 +34,7 @@ export class OrderModal extends PureComponent {
 
     @action handleOrderPress = () => {
         orderStore.freshCheckoutID()
-        modalStore.openCheckoutModal()
+        modalStore.openDeliveryModal()
         modalStore.closeOrderModal()
         analytics.trackCheckoutStart()
     }
@@ -64,6 +64,18 @@ class TextOrderListDescriptor extends Descriptor {
         return menuItem1.id !== menuItem2.id
     }
 
+    // renderFooter = () => {
+    //     return (
+    //         <View>
+    //             <TextHeader
+    //                 label="Delivery Method"
+    //                 onBack={this.handleBack}
+    //                 />
+    //             <DeliveryMethod />
+    //         </View>
+    //     )
+    // }
+
     renderRow = (menuItem, i) => {
         return (
             <TextMenuItem
@@ -80,23 +92,6 @@ const textOrderListDescriptor = new TextOrderListDescriptor()
 
 @observer
 class OrderReviewList extends PureComponent {
-    // simpleListView = null
-
-    // @computed get descriptor() {
-    //     return new OrderListDescriptor(
-    //         {
-    //             orderStore:     orderStore,
-    //             getMenuItems:   () => orderStore.menuItemsOnOrder,
-    //             visible:        (i) => true,
-    //             showTitle:      true,
-    //             showPrice:      false,
-    //             showHeart:      false,
-    //             onRefresh:      this.handleRefresh,
-    //         },
-    //         () => this.simpleListView,
-    //     )
-    // }
-
     render = () => {
         return (
             <View style={{flex: 1}}>

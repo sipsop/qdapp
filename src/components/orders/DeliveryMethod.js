@@ -90,7 +90,7 @@ export class DeliveryMethod extends DownloadResultView {
 
     renderLabel = label => {
         if (label === 'Table')
-            return 'Table Delivery'
+            return 'Table Number'
         return 'Pickup'
     }
 

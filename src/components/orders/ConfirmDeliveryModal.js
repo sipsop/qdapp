@@ -21,7 +21,7 @@ import { orderStore, modalStore } from '/model/store'
 import * as _ from '/utils/curry'
 import { config } from '/utils/config'
 
-const { assert, log } = _.utils('/components/orders/AskDeliveryModal')
+const { assert, log } = _.utils('/components/orders/ConfirmDeliveryModal')
 
 @observer
 export class ConfirmDeliveryModal extends PureComponent {

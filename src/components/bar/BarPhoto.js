@@ -22,6 +22,11 @@ export class BarPhoto extends PureComponent {
         footer: ?Component
             bar card footer to render
     */
+
+    static defaultProps = {
+        showBackButton: false,
+    }
+
   render = () => {
     let photo = this.props.photo
     const pictureIsGeneric = !photo
